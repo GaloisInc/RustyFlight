@@ -1,3 +1,4 @@
 [submodule "cleanflight"]
-	path = cleanflight
-	url = https://github.com/cleanflight/cleanflight
+  path = cleanflight
+  url = https://github.com/GaloisInc/cleanflight
+  branch = translate/c2rust

@@ -110,7 +110,21 @@ reasons:
   1. Duplicated variables; in particular, in `cleanflight`, we see a lot of
      duplications of `SystemCoreClock`. It's not clear why.
   1. Missing variables due to failed translations; usually "convert vector not
-     supported". Go back into your `c2rst` log and see if you can find any
+     supported". Go back into your `c2rust` log and see if you can find any
      errors. If you do, you'll either need to fix `c2rust` for that problem or
-     simply hand-add the missing symbols.
+     simply hand-add the missing symbols. If the problem *is* "convert vector
+     not supported", this generally has to do with nested structures, and is
+     probably most easily fixed by hand. See commit `6a2c991b` in the Galois
+     CleanFlight repo to get a feel for the pattern of the change.
 
+NOTE: When transpiling for the SPRACINGF3NEO, it might be important to add the
+`-fblocks` argument to `clang`. You can do this with the following `sed` script:
+
+```
+sed -i -e 's/"-c"/"-c", "-fblocks"/g' compile_commands.json
+```
+
+## Rebuilding `src`
+
+TBD. The goal, however, is that `src` contains the actual, hand-refactored
+source code.
