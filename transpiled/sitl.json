@@ -76,7 +76,7 @@
             "cc", 
             "-c", 
             "-o", 
-            "obj/main/SITL/fc/fc_hardfaults.o", 
+            "obj/main/SITL/pg/pinio.o", 
             "-I./src/main", 
             "-I./src/main/target", 
             "-I./lib/main/dyad", 
@@ -102,10 +102,10 @@
             "-flto", 
             "-ffast-math", 
             "-Ofast", 
-            "src/main/fc/fc_hardfaults.c"
+            "src/main/pg/pinio.c"
         ], 
         "directory": "/home/rustyflight/rustyflight/cleanflight", 
-        "file": "src/main/fc/fc_hardfaults.c"
+        "file": "src/main/pg/pinio.c"
     }, 
     {
         "arguments": [
@@ -142,42 +142,6 @@
         ], 
         "directory": "/home/rustyflight/rustyflight/cleanflight", 
         "file": "src/main/common/gps_conversion.c"
-    }, 
-    {
-        "arguments": [
-            "cc", 
-            "-c", 
-            "-o", 
-            "obj/main/SITL/common/streambuf.o", 
-            "-I./src/main", 
-            "-I./src/main/target", 
-            "-I./lib/main/dyad", 
-            "-I./lib/main/MAVLink", 
-            "-I./src/main/target/SITL", 
-            "-std=gnu99", 
-            "-Wall", 
-            "-Wextra", 
-            "-Wdouble-promotion", 
-            "-ffunction-sections", 
-            "-fdata-sections", 
-            "-pedantic", 
-            "-DFLASH_SIZE=2048", 
-            "-DHSE_VALUE=8000000", 
-            "-D_GNU_SOURCE", 
-            "-DUSE_STDPERIPH_DRIVER", 
-            "-DSITL", 
-            "-DSIMULATOR_BUILD", 
-            "-DSITL", 
-            "-D__FORKNAME__=\"cleanflight\"", 
-            "-D__TARGET__=\"SITL\"", 
-            "-D__REVISION__=\"3b0824b83\"", 
-            "-flto", 
-            "-ffast-math", 
-            "-Ofast", 
-            "src/main/common/streambuf.c"
-        ], 
-        "directory": "/home/rustyflight/rustyflight/cleanflight", 
-        "file": "src/main/common/streambuf.c"
     }, 
     {
         "arguments": [
@@ -256,7 +220,7 @@
             "cc", 
             "-c", 
             "-o", 
-            "obj/main/SITL/interface/msp_box.o", 
+            "obj/main/SITL/io/ledstrip.o", 
             "-I./src/main", 
             "-I./src/main/target", 
             "-I./lib/main/dyad", 
@@ -282,46 +246,10 @@
             "-flto", 
             "-ffast-math", 
             "-Ofast", 
-            "src/main/interface/msp_box.c"
+            "src/main/io/ledstrip.c"
         ], 
         "directory": "/home/rustyflight/rustyflight/cleanflight", 
-        "file": "src/main/interface/msp_box.c"
-    }, 
-    {
-        "arguments": [
-            "cc", 
-            "-c", 
-            "-o", 
-            "obj/main/SITL/common/filter.o", 
-            "-I./src/main", 
-            "-I./src/main/target", 
-            "-I./lib/main/dyad", 
-            "-I./lib/main/MAVLink", 
-            "-I./src/main/target/SITL", 
-            "-std=gnu99", 
-            "-Wall", 
-            "-Wextra", 
-            "-Wdouble-promotion", 
-            "-ffunction-sections", 
-            "-fdata-sections", 
-            "-pedantic", 
-            "-DFLASH_SIZE=2048", 
-            "-DHSE_VALUE=8000000", 
-            "-D_GNU_SOURCE", 
-            "-DUSE_STDPERIPH_DRIVER", 
-            "-DSITL", 
-            "-DSIMULATOR_BUILD", 
-            "-DSITL", 
-            "-D__FORKNAME__=\"cleanflight\"", 
-            "-D__TARGET__=\"SITL\"", 
-            "-D__REVISION__=\"3b0824b83\"", 
-            "-flto", 
-            "-ffast-math", 
-            "-Ofast", 
-            "src/main/common/filter.c"
-        ], 
-        "directory": "/home/rustyflight/rustyflight/cleanflight", 
-        "file": "src/main/common/filter.c"
+        "file": "src/main/io/ledstrip.c"
     }, 
     {
         "arguments": [
@@ -364,7 +292,7 @@
             "cc", 
             "-c", 
             "-o", 
-            "obj/main/SITL/cms/cms.o", 
+            "obj/main/SITL/drivers/bus_i2c_busdev.o", 
             "-I./src/main", 
             "-I./src/main/target", 
             "-I./lib/main/dyad", 
@@ -389,11 +317,11 @@
             "-D__REVISION__=\"3b0824b83\"", 
             "-flto", 
             "-ffast-math", 
-            "-Os", 
-            "src/main/cms/cms.c"
+            "-Ofast", 
+            "src/main/drivers/bus_i2c_busdev.c"
         ], 
         "directory": "/home/rustyflight/rustyflight/cleanflight", 
-        "file": "src/main/cms/cms.c"
+        "file": "src/main/drivers/bus_i2c_busdev.c"
     }, 
     {
         "arguments": [
@@ -436,7 +364,7 @@
             "cc", 
             "-c", 
             "-o", 
-            "obj/main/SITL/sensors/gyro.o", 
+            "obj/main/SITL/sensors/esc_sensor.o", 
             "-I./src/main", 
             "-I./src/main/target", 
             "-I./lib/main/dyad", 
@@ -462,10 +390,10 @@
             "-flto", 
             "-ffast-math", 
             "-Ofast", 
-            "src/main/sensors/gyro.c"
+            "src/main/sensors/esc_sensor.c"
         ], 
         "directory": "/home/rustyflight/rustyflight/cleanflight", 
-        "file": "src/main/sensors/gyro.c"
+        "file": "src/main/sensors/esc_sensor.c"
     }, 
     {
         "arguments": [
@@ -508,7 +436,7 @@
             "cc", 
             "-c", 
             "-o", 
-            "obj/main/SITL/fc/fc_dispatch.o", 
+            "obj/main/SITL/drivers/resource.o", 
             "-I./src/main", 
             "-I./src/main/target", 
             "-I./lib/main/dyad", 
@@ -534,10 +462,10 @@
             "-flto", 
             "-ffast-math", 
             "-Ofast", 
-            "src/main/fc/fc_dispatch.c"
+            "src/main/drivers/resource.c"
         ], 
         "directory": "/home/rustyflight/rustyflight/cleanflight", 
-        "file": "src/main/fc/fc_dispatch.c"
+        "file": "src/main/drivers/resource.c"
     }, 
     {
         "arguments": [
@@ -652,7 +580,7 @@
             "cc", 
             "-c", 
             "-o", 
-            "obj/main/SITL/fc/config.o", 
+            "obj/main/SITL/fc/fc_hardfaults.o", 
             "-I./src/main", 
             "-I./src/main/target", 
             "-I./lib/main/dyad", 
@@ -678,10 +606,10 @@
             "-flto", 
             "-ffast-math", 
             "-Ofast", 
-            "src/main/fc/config.c"
+            "src/main/fc/fc_hardfaults.c"
         ], 
         "directory": "/home/rustyflight/rustyflight/cleanflight", 
-        "file": "src/main/fc/config.c"
+        "file": "src/main/fc/fc_hardfaults.c"
     }, 
     {
         "arguments": [
@@ -724,7 +652,7 @@
             "cc", 
             "-c", 
             "-o", 
-            "obj/main/SITL/fc/rc_adjustments.o", 
+            "obj/main/SITL/drivers/bus_i2c_soft.o", 
             "-I./src/main", 
             "-I./src/main/target", 
             "-I./lib/main/dyad", 
@@ -750,10 +678,10 @@
             "-flto", 
             "-ffast-math", 
             "-Ofast", 
-            "src/main/fc/rc_adjustments.c"
+            "src/main/drivers/bus_i2c_soft.c"
         ], 
         "directory": "/home/rustyflight/rustyflight/cleanflight", 
-        "file": "src/main/fc/rc_adjustments.c"
+        "file": "src/main/drivers/bus_i2c_soft.c"
     }, 
     {
         "arguments": [
@@ -940,7 +868,7 @@
             "cc", 
             "-c", 
             "-o", 
-            "obj/main/SITL/telemetry/ibus_shared.o", 
+            "obj/main/SITL/build/version.o", 
             "-I./src/main", 
             "-I./src/main/target", 
             "-I./lib/main/dyad", 
@@ -966,10 +894,10 @@
             "-flto", 
             "-ffast-math", 
             "-Ofast", 
-            "src/main/telemetry/ibus_shared.c"
+            "src/main/build/version.c"
         ], 
         "directory": "/home/rustyflight/rustyflight/cleanflight", 
-        "file": "src/main/telemetry/ibus_shared.c"
+        "file": "src/main/build/version.c"
     }, 
     {
         "arguments": [
@@ -1006,6 +934,42 @@
         ], 
         "directory": "/home/rustyflight/rustyflight/cleanflight", 
         "file": "src/main/pg/beeper.c"
+    }, 
+    {
+        "arguments": [
+            "cc", 
+            "-c", 
+            "-o", 
+            "obj/main/SITL/pg/rcdevice.o", 
+            "-I./src/main", 
+            "-I./src/main/target", 
+            "-I./lib/main/dyad", 
+            "-I./lib/main/MAVLink", 
+            "-I./src/main/target/SITL", 
+            "-std=gnu99", 
+            "-Wall", 
+            "-Wextra", 
+            "-Wdouble-promotion", 
+            "-ffunction-sections", 
+            "-fdata-sections", 
+            "-pedantic", 
+            "-DFLASH_SIZE=2048", 
+            "-DHSE_VALUE=8000000", 
+            "-D_GNU_SOURCE", 
+            "-DUSE_STDPERIPH_DRIVER", 
+            "-DSITL", 
+            "-DSIMULATOR_BUILD", 
+            "-DSITL", 
+            "-D__FORKNAME__=\"cleanflight\"", 
+            "-D__TARGET__=\"SITL\"", 
+            "-D__REVISION__=\"3b0824b83\"", 
+            "-flto", 
+            "-ffast-math", 
+            "-Ofast", 
+            "src/main/pg/rcdevice.c"
+        ], 
+        "directory": "/home/rustyflight/rustyflight/cleanflight", 
+        "file": "src/main/pg/rcdevice.c"
     }, 
     {
         "arguments": [
@@ -1120,7 +1084,7 @@
             "cc", 
             "-c", 
             "-o", 
-            "obj/main/SITL/drivers/bus_i2c_busdev.o", 
+            "obj/main/SITL/cms/cms.o", 
             "-I./src/main", 
             "-I./src/main/target", 
             "-I./lib/main/dyad", 
@@ -1145,11 +1109,11 @@
             "-D__REVISION__=\"3b0824b83\"", 
             "-flto", 
             "-ffast-math", 
-            "-Ofast", 
-            "src/main/drivers/bus_i2c_busdev.c"
+            "-Os", 
+            "src/main/cms/cms.c"
         ], 
         "directory": "/home/rustyflight/rustyflight/cleanflight", 
-        "file": "src/main/drivers/bus_i2c_busdev.c"
+        "file": "src/main/cms/cms.c"
     }, 
     {
         "arguments": [
@@ -1228,7 +1192,7 @@
             "cc", 
             "-c", 
             "-o", 
-            "obj/main/SITL/build/version.o", 
+            "obj/main/SITL/io/displayport_msp.o", 
             "-I./src/main", 
             "-I./src/main/target", 
             "-I./lib/main/dyad", 
@@ -1254,10 +1218,118 @@
             "-flto", 
             "-ffast-math", 
             "-Ofast", 
-            "src/main/build/version.c"
+            "src/main/io/displayport_msp.c"
         ], 
         "directory": "/home/rustyflight/rustyflight/cleanflight", 
-        "file": "src/main/build/version.c"
+        "file": "src/main/io/displayport_msp.c"
+    }, 
+    {
+        "arguments": [
+            "cc", 
+            "-c", 
+            "-o", 
+            "obj/main/SITL/rx/jetiexbus.o", 
+            "-I./src/main", 
+            "-I./src/main/target", 
+            "-I./lib/main/dyad", 
+            "-I./lib/main/MAVLink", 
+            "-I./src/main/target/SITL", 
+            "-std=gnu99", 
+            "-Wall", 
+            "-Wextra", 
+            "-Wdouble-promotion", 
+            "-ffunction-sections", 
+            "-fdata-sections", 
+            "-pedantic", 
+            "-DFLASH_SIZE=2048", 
+            "-DHSE_VALUE=8000000", 
+            "-D_GNU_SOURCE", 
+            "-DUSE_STDPERIPH_DRIVER", 
+            "-DSITL", 
+            "-DSIMULATOR_BUILD", 
+            "-DSITL", 
+            "-D__FORKNAME__=\"cleanflight\"", 
+            "-D__TARGET__=\"SITL\"", 
+            "-D__REVISION__=\"3b0824b83\"", 
+            "-flto", 
+            "-ffast-math", 
+            "-Ofast", 
+            "src/main/rx/jetiexbus.c"
+        ], 
+        "directory": "/home/rustyflight/rustyflight/cleanflight", 
+        "file": "src/main/rx/jetiexbus.c"
+    }, 
+    {
+        "arguments": [
+            "cc", 
+            "-c", 
+            "-o", 
+            "obj/main/SITL/blackbox/blackbox_encoding.o", 
+            "-I./src/main", 
+            "-I./src/main/target", 
+            "-I./lib/main/dyad", 
+            "-I./lib/main/MAVLink", 
+            "-I./src/main/target/SITL", 
+            "-std=gnu99", 
+            "-Wall", 
+            "-Wextra", 
+            "-Wdouble-promotion", 
+            "-ffunction-sections", 
+            "-fdata-sections", 
+            "-pedantic", 
+            "-DFLASH_SIZE=2048", 
+            "-DHSE_VALUE=8000000", 
+            "-D_GNU_SOURCE", 
+            "-DUSE_STDPERIPH_DRIVER", 
+            "-DSITL", 
+            "-DSIMULATOR_BUILD", 
+            "-DSITL", 
+            "-D__FORKNAME__=\"cleanflight\"", 
+            "-D__TARGET__=\"SITL\"", 
+            "-D__REVISION__=\"3b0824b83\"", 
+            "-flto", 
+            "-ffast-math", 
+            "-Ofast", 
+            "src/main/blackbox/blackbox_encoding.c"
+        ], 
+        "directory": "/home/rustyflight/rustyflight/cleanflight", 
+        "file": "src/main/blackbox/blackbox_encoding.c"
+    }, 
+    {
+        "arguments": [
+            "cc", 
+            "-c", 
+            "-o", 
+            "obj/main/SITL/drivers/exti.o", 
+            "-I./src/main", 
+            "-I./src/main/target", 
+            "-I./lib/main/dyad", 
+            "-I./lib/main/MAVLink", 
+            "-I./src/main/target/SITL", 
+            "-std=gnu99", 
+            "-Wall", 
+            "-Wextra", 
+            "-Wdouble-promotion", 
+            "-ffunction-sections", 
+            "-fdata-sections", 
+            "-pedantic", 
+            "-DFLASH_SIZE=2048", 
+            "-DHSE_VALUE=8000000", 
+            "-D_GNU_SOURCE", 
+            "-DUSE_STDPERIPH_DRIVER", 
+            "-DSITL", 
+            "-DSIMULATOR_BUILD", 
+            "-DSITL", 
+            "-D__FORKNAME__=\"cleanflight\"", 
+            "-D__TARGET__=\"SITL\"", 
+            "-D__REVISION__=\"3b0824b83\"", 
+            "-flto", 
+            "-ffast-math", 
+            "-Ofast", 
+            "src/main/drivers/exti.c"
+        ], 
+        "directory": "/home/rustyflight/rustyflight/cleanflight", 
+        "file": "src/main/drivers/exti.c"
     }, 
     {
         "arguments": [
@@ -1336,7 +1408,7 @@
             "cc", 
             "-c", 
             "-o", 
-            "obj/main/SITL/common/crc.o", 
+            "obj/main/SITL/common/streambuf.o", 
             "-I./src/main", 
             "-I./src/main/target", 
             "-I./lib/main/dyad", 
@@ -1362,10 +1434,10 @@
             "-flto", 
             "-ffast-math", 
             "-Ofast", 
-            "src/main/common/crc.c"
+            "src/main/common/streambuf.c"
         ], 
         "directory": "/home/rustyflight/rustyflight/cleanflight", 
-        "file": "src/main/common/crc.c"
+        "file": "src/main/common/streambuf.c"
     }, 
     {
         "arguments": [
@@ -1408,7 +1480,7 @@
             "cc", 
             "-c", 
             "-o", 
-            "obj/main/SITL/rx/crsf.o", 
+            "obj/main/SITL/interface/msp_box.o", 
             "-I./src/main", 
             "-I./src/main/target", 
             "-I./lib/main/dyad", 
@@ -1434,10 +1506,10 @@
             "-flto", 
             "-ffast-math", 
             "-Ofast", 
-            "src/main/rx/crsf.c"
+            "src/main/interface/msp_box.c"
         ], 
         "directory": "/home/rustyflight/rustyflight/cleanflight", 
-        "file": "src/main/rx/crsf.c"
+        "file": "src/main/interface/msp_box.c"
     }, 
     {
         "arguments": [
@@ -1660,7 +1732,7 @@
             "cc", 
             "-c", 
             "-o", 
-            "obj/main/SITL/interface/settings.o", 
+            "obj/main/SITL/pg/pg.o", 
             "-I./src/main", 
             "-I./src/main/target", 
             "-I./lib/main/dyad", 
@@ -1685,47 +1757,11 @@
             "-D__REVISION__=\"3b0824b83\"", 
             "-flto", 
             "-ffast-math", 
-            "-Os", 
-            "src/main/interface/settings.c"
+            "-Ofast", 
+            "src/main/pg/pg.c"
         ], 
         "directory": "/home/rustyflight/rustyflight/cleanflight", 
-        "file": "src/main/interface/settings.c"
-    }, 
-    {
-        "arguments": [
-            "cc", 
-            "-c", 
-            "-o", 
-            "obj/main/SITL/io/serial_4way_avrootloader.o", 
-            "-I./src/main", 
-            "-I./src/main/target", 
-            "-I./lib/main/dyad", 
-            "-I./lib/main/MAVLink", 
-            "-I./src/main/target/SITL", 
-            "-std=gnu99", 
-            "-Wall", 
-            "-Wextra", 
-            "-Wdouble-promotion", 
-            "-ffunction-sections", 
-            "-fdata-sections", 
-            "-pedantic", 
-            "-DFLASH_SIZE=2048", 
-            "-DHSE_VALUE=8000000", 
-            "-D_GNU_SOURCE", 
-            "-DUSE_STDPERIPH_DRIVER", 
-            "-DSITL", 
-            "-DSIMULATOR_BUILD", 
-            "-DSITL", 
-            "-D__FORKNAME__=\"cleanflight\"", 
-            "-D__TARGET__=\"SITL\"", 
-            "-D__REVISION__=\"3b0824b83\"", 
-            "-flto", 
-            "-ffast-math", 
-            "-Os", 
-            "src/main/io/serial_4way_avrootloader.c"
-        ], 
-        "directory": "/home/rustyflight/rustyflight/cleanflight", 
-        "file": "src/main/io/serial_4way_avrootloader.c"
+        "file": "src/main/pg/pg.c"
     }, 
     {
         "arguments": [
@@ -1876,7 +1912,7 @@
             "cc", 
             "-c", 
             "-o", 
-            "obj/main/SITL/sensors/initialisation.o", 
+            "obj/main/SITL/build/debug.o", 
             "-I./src/main", 
             "-I./src/main/target", 
             "-I./lib/main/dyad", 
@@ -1902,10 +1938,10 @@
             "-flto", 
             "-ffast-math", 
             "-Ofast", 
-            "src/main/sensors/initialisation.c"
+            "src/main/build/debug.c"
         ], 
         "directory": "/home/rustyflight/rustyflight/cleanflight", 
-        "file": "src/main/sensors/initialisation.c"
+        "file": "src/main/build/debug.c"
     }, 
     {
         "arguments": [
@@ -1984,7 +2020,7 @@
             "cc", 
             "-c", 
             "-o", 
-            "obj/main/SITL/telemetry/ltm.o", 
+            "obj/main/SITL/fc/fc_rc.o", 
             "-I./src/main", 
             "-I./src/main/target", 
             "-I./lib/main/dyad", 
@@ -2010,10 +2046,10 @@
             "-flto", 
             "-ffast-math", 
             "-Ofast", 
-            "src/main/telemetry/ltm.c"
+            "src/main/fc/fc_rc.c"
         ], 
         "directory": "/home/rustyflight/rustyflight/cleanflight", 
-        "file": "src/main/telemetry/ltm.c"
+        "file": "src/main/fc/fc_rc.c"
     }, 
     {
         "arguments": [
@@ -2236,7 +2272,7 @@
             "cc", 
             "-c", 
             "-o", 
-            "obj/main/SITL/sensors/esc_sensor.o", 
+            "obj/main/SITL/sensors/gyro.o", 
             "-I./src/main", 
             "-I./src/main/target", 
             "-I./lib/main/dyad", 
@@ -2262,17 +2298,17 @@
             "-flto", 
             "-ffast-math", 
             "-Ofast", 
-            "src/main/sensors/esc_sensor.c"
+            "src/main/sensors/gyro.c"
         ], 
         "directory": "/home/rustyflight/rustyflight/cleanflight", 
-        "file": "src/main/sensors/esc_sensor.c"
+        "file": "src/main/sensors/gyro.c"
     }, 
     {
         "arguments": [
             "cc", 
             "-c", 
             "-o", 
-            "obj/main/SITL/drivers/exti.o", 
+            "obj/main/SITL/rx/crsf.o", 
             "-I./src/main", 
             "-I./src/main/target", 
             "-I./lib/main/dyad", 
@@ -2298,10 +2334,46 @@
             "-flto", 
             "-ffast-math", 
             "-Ofast", 
-            "src/main/drivers/exti.c"
+            "src/main/rx/crsf.c"
         ], 
         "directory": "/home/rustyflight/rustyflight/cleanflight", 
-        "file": "src/main/drivers/exti.c"
+        "file": "src/main/rx/crsf.c"
+    }, 
+    {
+        "arguments": [
+            "cc", 
+            "-c", 
+            "-o", 
+            "obj/main/SITL/cms/cms_menu_ledstrip.o", 
+            "-I./src/main", 
+            "-I./src/main/target", 
+            "-I./lib/main/dyad", 
+            "-I./lib/main/MAVLink", 
+            "-I./src/main/target/SITL", 
+            "-std=gnu99", 
+            "-Wall", 
+            "-Wextra", 
+            "-Wdouble-promotion", 
+            "-ffunction-sections", 
+            "-fdata-sections", 
+            "-pedantic", 
+            "-DFLASH_SIZE=2048", 
+            "-DHSE_VALUE=8000000", 
+            "-D_GNU_SOURCE", 
+            "-DUSE_STDPERIPH_DRIVER", 
+            "-DSITL", 
+            "-DSIMULATOR_BUILD", 
+            "-DSITL", 
+            "-D__FORKNAME__=\"cleanflight\"", 
+            "-D__TARGET__=\"SITL\"", 
+            "-D__REVISION__=\"3b0824b83\"", 
+            "-flto", 
+            "-ffast-math", 
+            "-Os", 
+            "src/main/cms/cms_menu_ledstrip.c"
+        ], 
+        "directory": "/home/rustyflight/rustyflight/cleanflight", 
+        "file": "src/main/cms/cms_menu_ledstrip.c"
     }, 
     {
         "arguments": [
@@ -2380,7 +2452,7 @@
             "cc", 
             "-c", 
             "-o", 
-            "obj/main/SITL/drivers/io.o", 
+            "obj/main/SITL/common/crc.o", 
             "-I./src/main", 
             "-I./src/main/target", 
             "-I./lib/main/dyad", 
@@ -2406,17 +2478,17 @@
             "-flto", 
             "-ffast-math", 
             "-Ofast", 
-            "src/main/drivers/io.c"
+            "src/main/common/crc.c"
         ], 
         "directory": "/home/rustyflight/rustyflight/cleanflight", 
-        "file": "src/main/drivers/io.c"
+        "file": "src/main/common/crc.c"
     }, 
     {
         "arguments": [
             "cc", 
             "-c", 
             "-o", 
-            "obj/main/SITL/drivers/pinio.o", 
+            "obj/main/SITL/pg/beeper_dev.o", 
             "-I./src/main", 
             "-I./src/main/target", 
             "-I./lib/main/dyad", 
@@ -2442,10 +2514,10 @@
             "-flto", 
             "-ffast-math", 
             "-Ofast", 
-            "src/main/drivers/pinio.c"
+            "src/main/pg/beeper_dev.c"
         ], 
         "directory": "/home/rustyflight/rustyflight/cleanflight", 
-        "file": "src/main/drivers/pinio.c"
+        "file": "src/main/pg/beeper_dev.c"
     }, 
     {
         "arguments": [
@@ -2488,7 +2560,7 @@
             "cc", 
             "-c", 
             "-o", 
-            "obj/main/SITL/common/huffman_table.o", 
+            "obj/main/SITL/drivers/transponder_ir_ilap.o", 
             "-I./src/main", 
             "-I./src/main/target", 
             "-I./lib/main/dyad", 
@@ -2514,10 +2586,10 @@
             "-flto", 
             "-ffast-math", 
             "-Ofast", 
-            "src/main/common/huffman_table.c"
+            "src/main/drivers/transponder_ir_ilap.c"
         ], 
         "directory": "/home/rustyflight/rustyflight/cleanflight", 
-        "file": "src/main/common/huffman_table.c"
+        "file": "src/main/drivers/transponder_ir_ilap.c"
     }, 
     {
         "arguments": [
@@ -2632,42 +2704,6 @@
             "cc", 
             "-c", 
             "-o", 
-            "obj/main/SITL/io/vtx_smartaudio.o", 
-            "-I./src/main", 
-            "-I./src/main/target", 
-            "-I./lib/main/dyad", 
-            "-I./lib/main/MAVLink", 
-            "-I./src/main/target/SITL", 
-            "-std=gnu99", 
-            "-Wall", 
-            "-Wextra", 
-            "-Wdouble-promotion", 
-            "-ffunction-sections", 
-            "-fdata-sections", 
-            "-pedantic", 
-            "-DFLASH_SIZE=2048", 
-            "-DHSE_VALUE=8000000", 
-            "-D_GNU_SOURCE", 
-            "-DUSE_STDPERIPH_DRIVER", 
-            "-DSITL", 
-            "-DSIMULATOR_BUILD", 
-            "-DSITL", 
-            "-D__FORKNAME__=\"cleanflight\"", 
-            "-D__TARGET__=\"SITL\"", 
-            "-D__REVISION__=\"3b0824b83\"", 
-            "-flto", 
-            "-ffast-math", 
-            "-Os", 
-            "src/main/io/vtx_smartaudio.c"
-        ], 
-        "directory": "/home/rustyflight/rustyflight/cleanflight", 
-        "file": "src/main/io/vtx_smartaudio.c"
-    }, 
-    {
-        "arguments": [
-            "cc", 
-            "-c", 
-            "-o", 
             "obj/main/SITL/io/vtx_rtc6705.o", 
             "-I./src/main", 
             "-I./src/main/target", 
@@ -2770,6 +2806,42 @@
         ], 
         "directory": "/home/rustyflight/rustyflight/cleanflight", 
         "file": "src/main/sensors/acceleration.c"
+    }, 
+    {
+        "arguments": [
+            "cc", 
+            "-c", 
+            "-o", 
+            "obj/main/SITL/fc/fc_dispatch.o", 
+            "-I./src/main", 
+            "-I./src/main/target", 
+            "-I./lib/main/dyad", 
+            "-I./lib/main/MAVLink", 
+            "-I./src/main/target/SITL", 
+            "-std=gnu99", 
+            "-Wall", 
+            "-Wextra", 
+            "-Wdouble-promotion", 
+            "-ffunction-sections", 
+            "-fdata-sections", 
+            "-pedantic", 
+            "-DFLASH_SIZE=2048", 
+            "-DHSE_VALUE=8000000", 
+            "-D_GNU_SOURCE", 
+            "-DUSE_STDPERIPH_DRIVER", 
+            "-DSITL", 
+            "-DSIMULATOR_BUILD", 
+            "-DSITL", 
+            "-D__FORKNAME__=\"cleanflight\"", 
+            "-D__TARGET__=\"SITL\"", 
+            "-D__REVISION__=\"3b0824b83\"", 
+            "-flto", 
+            "-ffast-math", 
+            "-Ofast", 
+            "src/main/fc/fc_dispatch.c"
+        ], 
+        "directory": "/home/rustyflight/rustyflight/cleanflight", 
+        "file": "src/main/fc/fc_dispatch.c"
     }, 
     {
         "arguments": [
@@ -2920,7 +2992,7 @@
             "cc", 
             "-c", 
             "-o", 
-            "obj/main/SITL/cms/cms_menu_builtin.o", 
+            "obj/main/SITL/fc/fc_core.o", 
             "-I./src/main", 
             "-I./src/main/target", 
             "-I./lib/main/dyad", 
@@ -2945,11 +3017,11 @@
             "-D__REVISION__=\"3b0824b83\"", 
             "-flto", 
             "-ffast-math", 
-            "-Os", 
-            "src/main/cms/cms_menu_builtin.c"
+            "-Ofast", 
+            "src/main/fc/fc_core.c"
         ], 
         "directory": "/home/rustyflight/rustyflight/cleanflight", 
-        "file": "src/main/cms/cms_menu_builtin.c"
+        "file": "src/main/fc/fc_core.c"
     }, 
     {
         "arguments": [
@@ -3064,7 +3136,7 @@
             "cc", 
             "-c", 
             "-o", 
-            "obj/main/SITL/io/osd.o", 
+            "obj/main/SITL/io/vtx_smartaudio.o", 
             "-I./src/main", 
             "-I./src/main/target", 
             "-I./lib/main/dyad", 
@@ -3090,17 +3162,17 @@
             "-flto", 
             "-ffast-math", 
             "-Os", 
-            "src/main/io/osd.c"
+            "src/main/io/vtx_smartaudio.c"
         ], 
         "directory": "/home/rustyflight/rustyflight/cleanflight", 
-        "file": "src/main/io/osd.c"
+        "file": "src/main/io/vtx_smartaudio.c"
     }, 
     {
         "arguments": [
             "cc", 
             "-c", 
             "-o", 
-            "obj/main/SITL/io/piniobox.o", 
+            "obj/main/SITL/rx/xbus.o", 
             "-I./src/main", 
             "-I./src/main/target", 
             "-I./lib/main/dyad", 
@@ -3126,10 +3198,10 @@
             "-flto", 
             "-ffast-math", 
             "-Ofast", 
-            "src/main/io/piniobox.c"
+            "src/main/rx/xbus.c"
         ], 
         "directory": "/home/rustyflight/rustyflight/cleanflight", 
-        "file": "src/main/io/piniobox.c"
+        "file": "src/main/rx/xbus.c"
     }, 
     {
         "arguments": [
@@ -3280,7 +3352,7 @@
             "cc", 
             "-c", 
             "-o", 
-            "obj/main/SITL/drivers/serial_softserial.o", 
+            "obj/main/SITL/fc/board_info.o", 
             "-I./src/main", 
             "-I./src/main/target", 
             "-I./lib/main/dyad", 
@@ -3305,47 +3377,11 @@
             "-D__REVISION__=\"3b0824b83\"", 
             "-flto", 
             "-ffast-math", 
-            "-Ofast", 
-            "src/main/drivers/serial_softserial.c"
+            "-Os", 
+            "src/main/fc/board_info.c"
         ], 
         "directory": "/home/rustyflight/rustyflight/cleanflight", 
-        "file": "src/main/drivers/serial_softserial.c"
-    }, 
-    {
-        "arguments": [
-            "cc", 
-            "-c", 
-            "-o", 
-            "obj/main/SITL/io/displayport_crsf.o", 
-            "-I./src/main", 
-            "-I./src/main/target", 
-            "-I./lib/main/dyad", 
-            "-I./lib/main/MAVLink", 
-            "-I./src/main/target/SITL", 
-            "-std=gnu99", 
-            "-Wall", 
-            "-Wextra", 
-            "-Wdouble-promotion", 
-            "-ffunction-sections", 
-            "-fdata-sections", 
-            "-pedantic", 
-            "-DFLASH_SIZE=2048", 
-            "-DHSE_VALUE=8000000", 
-            "-D_GNU_SOURCE", 
-            "-DUSE_STDPERIPH_DRIVER", 
-            "-DSITL", 
-            "-DSIMULATOR_BUILD", 
-            "-DSITL", 
-            "-D__FORKNAME__=\"cleanflight\"", 
-            "-D__TARGET__=\"SITL\"", 
-            "-D__REVISION__=\"3b0824b83\"", 
-            "-flto", 
-            "-ffast-math", 
-            "-Ofast", 
-            "src/main/io/displayport_crsf.c"
-        ], 
-        "directory": "/home/rustyflight/rustyflight/cleanflight", 
-        "file": "src/main/io/displayport_crsf.c"
+        "file": "src/main/fc/board_info.c"
     }, 
     {
         "arguments": [
@@ -3424,7 +3460,7 @@
             "cc", 
             "-c", 
             "-o", 
-            "obj/main/SITL/io/ledstrip.o", 
+            "obj/main/SITL/io/serial_4way_avrootloader.o", 
             "-I./src/main", 
             "-I./src/main/target", 
             "-I./lib/main/dyad", 
@@ -3449,11 +3485,11 @@
             "-D__REVISION__=\"3b0824b83\"", 
             "-flto", 
             "-ffast-math", 
-            "-Ofast", 
-            "src/main/io/ledstrip.c"
+            "-Os", 
+            "src/main/io/serial_4way_avrootloader.c"
         ], 
         "directory": "/home/rustyflight/rustyflight/cleanflight", 
-        "file": "src/main/io/ledstrip.c"
+        "file": "src/main/io/serial_4way_avrootloader.c"
     }, 
     {
         "arguments": [
@@ -3604,7 +3640,7 @@
             "cc", 
             "-c", 
             "-o", 
-            "obj/main/SITL/flight/servos.o", 
+            "obj/main/SITL/io/dashboard.o", 
             "-I./src/main", 
             "-I./src/main/target", 
             "-I./lib/main/dyad", 
@@ -3629,47 +3665,11 @@
             "-D__REVISION__=\"3b0824b83\"", 
             "-flto", 
             "-ffast-math", 
-            "-Ofast", 
-            "src/main/flight/servos.c"
+            "-Os", 
+            "src/main/io/dashboard.c"
         ], 
         "directory": "/home/rustyflight/rustyflight/cleanflight", 
-        "file": "src/main/flight/servos.c"
-    }, 
-    {
-        "arguments": [
-            "cc", 
-            "-c", 
-            "-o", 
-            "obj/main/SITL/fc/fc_rc.o", 
-            "-I./src/main", 
-            "-I./src/main/target", 
-            "-I./lib/main/dyad", 
-            "-I./lib/main/MAVLink", 
-            "-I./src/main/target/SITL", 
-            "-std=gnu99", 
-            "-Wall", 
-            "-Wextra", 
-            "-Wdouble-promotion", 
-            "-ffunction-sections", 
-            "-fdata-sections", 
-            "-pedantic", 
-            "-DFLASH_SIZE=2048", 
-            "-DHSE_VALUE=8000000", 
-            "-D_GNU_SOURCE", 
-            "-DUSE_STDPERIPH_DRIVER", 
-            "-DSITL", 
-            "-DSIMULATOR_BUILD", 
-            "-DSITL", 
-            "-D__FORKNAME__=\"cleanflight\"", 
-            "-D__TARGET__=\"SITL\"", 
-            "-D__REVISION__=\"3b0824b83\"", 
-            "-flto", 
-            "-ffast-math", 
-            "-Ofast", 
-            "src/main/fc/fc_rc.c"
-        ], 
-        "directory": "/home/rustyflight/rustyflight/cleanflight", 
-        "file": "src/main/fc/fc_rc.c"
+        "file": "src/main/io/dashboard.c"
     }, 
     {
         "arguments": [
@@ -3892,7 +3892,7 @@
             "cc", 
             "-c", 
             "-o", 
-            "obj/main/SITL/rx/jetiexbus.o", 
+            "obj/main/SITL/flight/servos.o", 
             "-I./src/main", 
             "-I./src/main/target", 
             "-I./lib/main/dyad", 
@@ -3918,82 +3918,10 @@
             "-flto", 
             "-ffast-math", 
             "-Ofast", 
-            "src/main/rx/jetiexbus.c"
+            "src/main/flight/servos.c"
         ], 
         "directory": "/home/rustyflight/rustyflight/cleanflight", 
-        "file": "src/main/rx/jetiexbus.c"
-    }, 
-    {
-        "arguments": [
-            "cc", 
-            "-c", 
-            "-o", 
-            "obj/main/SITL/rx/xbus.o", 
-            "-I./src/main", 
-            "-I./src/main/target", 
-            "-I./lib/main/dyad", 
-            "-I./lib/main/MAVLink", 
-            "-I./src/main/target/SITL", 
-            "-std=gnu99", 
-            "-Wall", 
-            "-Wextra", 
-            "-Wdouble-promotion", 
-            "-ffunction-sections", 
-            "-fdata-sections", 
-            "-pedantic", 
-            "-DFLASH_SIZE=2048", 
-            "-DHSE_VALUE=8000000", 
-            "-D_GNU_SOURCE", 
-            "-DUSE_STDPERIPH_DRIVER", 
-            "-DSITL", 
-            "-DSIMULATOR_BUILD", 
-            "-DSITL", 
-            "-D__FORKNAME__=\"cleanflight\"", 
-            "-D__TARGET__=\"SITL\"", 
-            "-D__REVISION__=\"3b0824b83\"", 
-            "-flto", 
-            "-ffast-math", 
-            "-Ofast", 
-            "src/main/rx/xbus.c"
-        ], 
-        "directory": "/home/rustyflight/rustyflight/cleanflight", 
-        "file": "src/main/rx/xbus.c"
-    }, 
-    {
-        "arguments": [
-            "cc", 
-            "-c", 
-            "-o", 
-            "obj/main/SITL/drivers/transponder_ir_ilap.o", 
-            "-I./src/main", 
-            "-I./src/main/target", 
-            "-I./lib/main/dyad", 
-            "-I./lib/main/MAVLink", 
-            "-I./src/main/target/SITL", 
-            "-std=gnu99", 
-            "-Wall", 
-            "-Wextra", 
-            "-Wdouble-promotion", 
-            "-ffunction-sections", 
-            "-fdata-sections", 
-            "-pedantic", 
-            "-DFLASH_SIZE=2048", 
-            "-DHSE_VALUE=8000000", 
-            "-D_GNU_SOURCE", 
-            "-DUSE_STDPERIPH_DRIVER", 
-            "-DSITL", 
-            "-DSIMULATOR_BUILD", 
-            "-DSITL", 
-            "-D__FORKNAME__=\"cleanflight\"", 
-            "-D__TARGET__=\"SITL\"", 
-            "-D__REVISION__=\"3b0824b83\"", 
-            "-flto", 
-            "-ffast-math", 
-            "-Ofast", 
-            "src/main/drivers/transponder_ir_ilap.c"
-        ], 
-        "directory": "/home/rustyflight/rustyflight/cleanflight", 
-        "file": "src/main/drivers/transponder_ir_ilap.c"
+        "file": "src/main/flight/servos.c"
     }, 
     {
         "arguments": [
@@ -4216,42 +4144,6 @@
             "cc", 
             "-c", 
             "-o", 
-            "obj/main/SITL/io/dashboard.o", 
-            "-I./src/main", 
-            "-I./src/main/target", 
-            "-I./lib/main/dyad", 
-            "-I./lib/main/MAVLink", 
-            "-I./src/main/target/SITL", 
-            "-std=gnu99", 
-            "-Wall", 
-            "-Wextra", 
-            "-Wdouble-promotion", 
-            "-ffunction-sections", 
-            "-fdata-sections", 
-            "-pedantic", 
-            "-DFLASH_SIZE=2048", 
-            "-DHSE_VALUE=8000000", 
-            "-D_GNU_SOURCE", 
-            "-DUSE_STDPERIPH_DRIVER", 
-            "-DSITL", 
-            "-DSIMULATOR_BUILD", 
-            "-DSITL", 
-            "-D__FORKNAME__=\"cleanflight\"", 
-            "-D__TARGET__=\"SITL\"", 
-            "-D__REVISION__=\"3b0824b83\"", 
-            "-flto", 
-            "-ffast-math", 
-            "-Os", 
-            "src/main/io/dashboard.c"
-        ], 
-        "directory": "/home/rustyflight/rustyflight/cleanflight", 
-        "file": "src/main/io/dashboard.c"
-    }, 
-    {
-        "arguments": [
-            "cc", 
-            "-c", 
-            "-o", 
             "obj/main/SITL/interface/smartaudio_protocol.o", 
             "-I./src/main", 
             "-I./src/main/target", 
@@ -4288,7 +4180,7 @@
             "cc", 
             "-c", 
             "-o", 
-            "obj/main/SITL/telemetry/jetiexbus.o", 
+            "obj/main/SITL/common/huffman_table.o", 
             "-I./src/main", 
             "-I./src/main/target", 
             "-I./lib/main/dyad", 
@@ -4314,10 +4206,10 @@
             "-flto", 
             "-ffast-math", 
             "-Ofast", 
-            "src/main/telemetry/jetiexbus.c"
+            "src/main/common/huffman_table.c"
         ], 
         "directory": "/home/rustyflight/rustyflight/cleanflight", 
-        "file": "src/main/telemetry/jetiexbus.c"
+        "file": "src/main/common/huffman_table.c"
     }, 
     {
         "arguments": [
@@ -4396,7 +4288,7 @@
             "cc", 
             "-c", 
             "-o", 
-            "obj/main/SITL/rx/fport.o", 
+            "obj/main/SITL/interface/cli.o", 
             "-I./src/main", 
             "-I./src/main/target", 
             "-I./lib/main/dyad", 
@@ -4421,11 +4313,11 @@
             "-D__REVISION__=\"3b0824b83\"", 
             "-flto", 
             "-ffast-math", 
-            "-Ofast", 
-            "src/main/rx/fport.c"
+            "-Os", 
+            "src/main/interface/cli.c"
         ], 
         "directory": "/home/rustyflight/rustyflight/cleanflight", 
-        "file": "src/main/rx/fport.c"
+        "file": "src/main/interface/cli.c"
     }, 
     {
         "arguments": [
@@ -4576,6 +4468,42 @@
             "cc", 
             "-c", 
             "-o", 
+            "obj/main/SITL/fc/config.o", 
+            "-I./src/main", 
+            "-I./src/main/target", 
+            "-I./lib/main/dyad", 
+            "-I./lib/main/MAVLink", 
+            "-I./src/main/target/SITL", 
+            "-std=gnu99", 
+            "-Wall", 
+            "-Wextra", 
+            "-Wdouble-promotion", 
+            "-ffunction-sections", 
+            "-fdata-sections", 
+            "-pedantic", 
+            "-DFLASH_SIZE=2048", 
+            "-DHSE_VALUE=8000000", 
+            "-D_GNU_SOURCE", 
+            "-DUSE_STDPERIPH_DRIVER", 
+            "-DSITL", 
+            "-DSIMULATOR_BUILD", 
+            "-DSITL", 
+            "-D__FORKNAME__=\"cleanflight\"", 
+            "-D__TARGET__=\"SITL\"", 
+            "-D__REVISION__=\"3b0824b83\"", 
+            "-flto", 
+            "-ffast-math", 
+            "-Ofast", 
+            "src/main/fc/config.c"
+        ], 
+        "directory": "/home/rustyflight/rustyflight/cleanflight", 
+        "file": "src/main/fc/config.c"
+    }, 
+    {
+        "arguments": [
+            "cc", 
+            "-c", 
+            "-o", 
             "obj/main/SITL/scheduler/scheduler.o", 
             "-I./src/main", 
             "-I./src/main/target", 
@@ -4612,43 +4540,7 @@
             "cc", 
             "-c", 
             "-o", 
-            "obj/main/SITL/common/maths.o", 
-            "-I./src/main", 
-            "-I./src/main/target", 
-            "-I./lib/main/dyad", 
-            "-I./lib/main/MAVLink", 
-            "-I./src/main/target/SITL", 
-            "-std=gnu99", 
-            "-Wall", 
-            "-Wextra", 
-            "-Wdouble-promotion", 
-            "-ffunction-sections", 
-            "-fdata-sections", 
-            "-pedantic", 
-            "-DFLASH_SIZE=2048", 
-            "-DHSE_VALUE=8000000", 
-            "-D_GNU_SOURCE", 
-            "-DUSE_STDPERIPH_DRIVER", 
-            "-DSITL", 
-            "-DSIMULATOR_BUILD", 
-            "-DSITL", 
-            "-D__FORKNAME__=\"cleanflight\"", 
-            "-D__TARGET__=\"SITL\"", 
-            "-D__REVISION__=\"3b0824b83\"", 
-            "-flto", 
-            "-ffast-math", 
-            "-Ofast", 
-            "src/main/common/maths.c"
-        ], 
-        "directory": "/home/rustyflight/rustyflight/cleanflight", 
-        "file": "src/main/common/maths.c"
-    }, 
-    {
-        "arguments": [
-            "cc", 
-            "-c", 
-            "-o", 
-            "obj/main/SITL/fc/board_info.o", 
+            "obj/main/SITL/io/serial_4way.o", 
             "-I./src/main", 
             "-I./src/main/target", 
             "-I./lib/main/dyad", 
@@ -4674,10 +4566,82 @@
             "-flto", 
             "-ffast-math", 
             "-Os", 
-            "src/main/fc/board_info.c"
+            "src/main/io/serial_4way.c"
         ], 
         "directory": "/home/rustyflight/rustyflight/cleanflight", 
-        "file": "src/main/fc/board_info.c"
+        "file": "src/main/io/serial_4way.c"
+    }, 
+    {
+        "arguments": [
+            "cc", 
+            "-c", 
+            "-o", 
+            "obj/main/SITL/telemetry/ltm.o", 
+            "-I./src/main", 
+            "-I./src/main/target", 
+            "-I./lib/main/dyad", 
+            "-I./lib/main/MAVLink", 
+            "-I./src/main/target/SITL", 
+            "-std=gnu99", 
+            "-Wall", 
+            "-Wextra", 
+            "-Wdouble-promotion", 
+            "-ffunction-sections", 
+            "-fdata-sections", 
+            "-pedantic", 
+            "-DFLASH_SIZE=2048", 
+            "-DHSE_VALUE=8000000", 
+            "-D_GNU_SOURCE", 
+            "-DUSE_STDPERIPH_DRIVER", 
+            "-DSITL", 
+            "-DSIMULATOR_BUILD", 
+            "-DSITL", 
+            "-D__FORKNAME__=\"cleanflight\"", 
+            "-D__TARGET__=\"SITL\"", 
+            "-D__REVISION__=\"3b0824b83\"", 
+            "-flto", 
+            "-ffast-math", 
+            "-Ofast", 
+            "src/main/telemetry/ltm.c"
+        ], 
+        "directory": "/home/rustyflight/rustyflight/cleanflight", 
+        "file": "src/main/telemetry/ltm.c"
+    }, 
+    {
+        "arguments": [
+            "cc", 
+            "-c", 
+            "-o", 
+            "obj/main/SITL/common/printf.o", 
+            "-I./src/main", 
+            "-I./src/main/target", 
+            "-I./lib/main/dyad", 
+            "-I./lib/main/MAVLink", 
+            "-I./src/main/target/SITL", 
+            "-std=gnu99", 
+            "-Wall", 
+            "-Wextra", 
+            "-Wdouble-promotion", 
+            "-ffunction-sections", 
+            "-fdata-sections", 
+            "-pedantic", 
+            "-DFLASH_SIZE=2048", 
+            "-DHSE_VALUE=8000000", 
+            "-D_GNU_SOURCE", 
+            "-DUSE_STDPERIPH_DRIVER", 
+            "-DSITL", 
+            "-DSIMULATOR_BUILD", 
+            "-DSITL", 
+            "-D__FORKNAME__=\"cleanflight\"", 
+            "-D__TARGET__=\"SITL\"", 
+            "-D__REVISION__=\"3b0824b83\"", 
+            "-flto", 
+            "-ffast-math", 
+            "-Ofast", 
+            "src/main/common/printf.c"
+        ], 
+        "directory": "/home/rustyflight/rustyflight/cleanflight", 
+        "file": "src/main/common/printf.c"
     }, 
     {
         "arguments": [
@@ -4720,7 +4684,7 @@
             "cc", 
             "-c", 
             "-o", 
-            "obj/main/SITL/telemetry/telemetry.o", 
+            "obj/main/SITL/telemetry/jetiexbus.o", 
             "-I./src/main", 
             "-I./src/main/target", 
             "-I./lib/main/dyad", 
@@ -4746,17 +4710,17 @@
             "-flto", 
             "-ffast-math", 
             "-Ofast", 
-            "src/main/telemetry/telemetry.c"
+            "src/main/telemetry/jetiexbus.c"
         ], 
         "directory": "/home/rustyflight/rustyflight/cleanflight", 
-        "file": "src/main/telemetry/telemetry.c"
+        "file": "src/main/telemetry/jetiexbus.c"
     }, 
     {
         "arguments": [
             "cc", 
             "-c", 
             "-o", 
-            "obj/main/SITL/drivers/resource.o", 
+            "obj/main/SITL/fc/rc_adjustments.o", 
             "-I./src/main", 
             "-I./src/main/target", 
             "-I./lib/main/dyad", 
@@ -4782,46 +4746,10 @@
             "-flto", 
             "-ffast-math", 
             "-Ofast", 
-            "src/main/drivers/resource.c"
+            "src/main/fc/rc_adjustments.c"
         ], 
         "directory": "/home/rustyflight/rustyflight/cleanflight", 
-        "file": "src/main/drivers/resource.c"
-    }, 
-    {
-        "arguments": [
-            "cc", 
-            "-c", 
-            "-o", 
-            "obj/main/SITL/cms/cms_menu_ledstrip.o", 
-            "-I./src/main", 
-            "-I./src/main/target", 
-            "-I./lib/main/dyad", 
-            "-I./lib/main/MAVLink", 
-            "-I./src/main/target/SITL", 
-            "-std=gnu99", 
-            "-Wall", 
-            "-Wextra", 
-            "-Wdouble-promotion", 
-            "-ffunction-sections", 
-            "-fdata-sections", 
-            "-pedantic", 
-            "-DFLASH_SIZE=2048", 
-            "-DHSE_VALUE=8000000", 
-            "-D_GNU_SOURCE", 
-            "-DUSE_STDPERIPH_DRIVER", 
-            "-DSITL", 
-            "-DSIMULATOR_BUILD", 
-            "-DSITL", 
-            "-D__FORKNAME__=\"cleanflight\"", 
-            "-D__TARGET__=\"SITL\"", 
-            "-D__REVISION__=\"3b0824b83\"", 
-            "-flto", 
-            "-ffast-math", 
-            "-Os", 
-            "src/main/cms/cms_menu_ledstrip.c"
-        ], 
-        "directory": "/home/rustyflight/rustyflight/cleanflight", 
-        "file": "src/main/cms/cms_menu_ledstrip.c"
+        "file": "src/main/fc/rc_adjustments.c"
     }, 
     {
         "arguments": [
@@ -4864,7 +4792,7 @@
             "cc", 
             "-c", 
             "-o", 
-            "obj/main/SITL/io/serial_4way.o", 
+            "obj/main/SITL/common/maths.o", 
             "-I./src/main", 
             "-I./src/main/target", 
             "-I./lib/main/dyad", 
@@ -4889,11 +4817,11 @@
             "-D__REVISION__=\"3b0824b83\"", 
             "-flto", 
             "-ffast-math", 
-            "-Os", 
-            "src/main/io/serial_4way.c"
+            "-Ofast", 
+            "src/main/common/maths.c"
         ], 
         "directory": "/home/rustyflight/rustyflight/cleanflight", 
-        "file": "src/main/io/serial_4way.c"
+        "file": "src/main/common/maths.c"
     }, 
     {
         "arguments": [
@@ -5008,6 +4936,42 @@
             "cc", 
             "-c", 
             "-o", 
+            "obj/main/SITL/target/config_helper.o", 
+            "-I./src/main", 
+            "-I./src/main/target", 
+            "-I./lib/main/dyad", 
+            "-I./lib/main/MAVLink", 
+            "-I./src/main/target/SITL", 
+            "-std=gnu99", 
+            "-Wall", 
+            "-Wextra", 
+            "-Wdouble-promotion", 
+            "-ffunction-sections", 
+            "-fdata-sections", 
+            "-pedantic", 
+            "-DFLASH_SIZE=2048", 
+            "-DHSE_VALUE=8000000", 
+            "-D_GNU_SOURCE", 
+            "-DUSE_STDPERIPH_DRIVER", 
+            "-DSITL", 
+            "-DSIMULATOR_BUILD", 
+            "-DSITL", 
+            "-D__FORKNAME__=\"cleanflight\"", 
+            "-D__TARGET__=\"SITL\"", 
+            "-D__REVISION__=\"3b0824b83\"", 
+            "-flto", 
+            "-ffast-math", 
+            "-Ofast", 
+            "src/main/target/config_helper.c"
+        ], 
+        "directory": "/home/rustyflight/rustyflight/cleanflight", 
+        "file": "src/main/target/config_helper.c"
+    }, 
+    {
+        "arguments": [
+            "cc", 
+            "-c", 
+            "-o", 
             "obj/main/SITL/sensors/barometer.o", 
             "-I./src/main", 
             "-I./src/main/target", 
@@ -5080,7 +5044,7 @@
             "cc", 
             "-c", 
             "-o", 
-            "obj/main/SITL/build/debug.o", 
+            "obj/main/SITL/drivers/pinio.o", 
             "-I./src/main", 
             "-I./src/main/target", 
             "-I./lib/main/dyad", 
@@ -5106,46 +5070,10 @@
             "-flto", 
             "-ffast-math", 
             "-Ofast", 
-            "src/main/build/debug.c"
+            "src/main/drivers/pinio.c"
         ], 
         "directory": "/home/rustyflight/rustyflight/cleanflight", 
-        "file": "src/main/build/debug.c"
-    }, 
-    {
-        "arguments": [
-            "cc", 
-            "-c", 
-            "-o", 
-            "obj/main/SITL/pg/beeper_dev.o", 
-            "-I./src/main", 
-            "-I./src/main/target", 
-            "-I./lib/main/dyad", 
-            "-I./lib/main/MAVLink", 
-            "-I./src/main/target/SITL", 
-            "-std=gnu99", 
-            "-Wall", 
-            "-Wextra", 
-            "-Wdouble-promotion", 
-            "-ffunction-sections", 
-            "-fdata-sections", 
-            "-pedantic", 
-            "-DFLASH_SIZE=2048", 
-            "-DHSE_VALUE=8000000", 
-            "-D_GNU_SOURCE", 
-            "-DUSE_STDPERIPH_DRIVER", 
-            "-DSITL", 
-            "-DSIMULATOR_BUILD", 
-            "-DSITL", 
-            "-D__FORKNAME__=\"cleanflight\"", 
-            "-D__TARGET__=\"SITL\"", 
-            "-D__REVISION__=\"3b0824b83\"", 
-            "-flto", 
-            "-ffast-math", 
-            "-Ofast", 
-            "src/main/pg/beeper_dev.c"
-        ], 
-        "directory": "/home/rustyflight/rustyflight/cleanflight", 
-        "file": "src/main/pg/beeper_dev.c"
+        "file": "src/main/drivers/pinio.c"
     }, 
     {
         "arguments": [
@@ -5296,7 +5224,7 @@
             "cc", 
             "-c", 
             "-o", 
-            "obj/main/SITL/pg/rx_pwm.o", 
+            "obj/main/SITL/io/piniobox.o", 
             "-I./src/main", 
             "-I./src/main/target", 
             "-I./lib/main/dyad", 
@@ -5322,10 +5250,10 @@
             "-flto", 
             "-ffast-math", 
             "-Ofast", 
-            "src/main/pg/rx_pwm.c"
+            "src/main/io/piniobox.c"
         ], 
         "directory": "/home/rustyflight/rustyflight/cleanflight", 
-        "file": "src/main/pg/rx_pwm.c"
+        "file": "src/main/io/piniobox.c"
     }, 
     {
         "arguments": [
@@ -5404,6 +5332,42 @@
             "cc", 
             "-c", 
             "-o", 
+            "obj/main/SITL/io/osd.o", 
+            "-I./src/main", 
+            "-I./src/main/target", 
+            "-I./lib/main/dyad", 
+            "-I./lib/main/MAVLink", 
+            "-I./src/main/target/SITL", 
+            "-std=gnu99", 
+            "-Wall", 
+            "-Wextra", 
+            "-Wdouble-promotion", 
+            "-ffunction-sections", 
+            "-fdata-sections", 
+            "-pedantic", 
+            "-DFLASH_SIZE=2048", 
+            "-DHSE_VALUE=8000000", 
+            "-D_GNU_SOURCE", 
+            "-DUSE_STDPERIPH_DRIVER", 
+            "-DSITL", 
+            "-DSIMULATOR_BUILD", 
+            "-DSITL", 
+            "-D__FORKNAME__=\"cleanflight\"", 
+            "-D__TARGET__=\"SITL\"", 
+            "-D__REVISION__=\"3b0824b83\"", 
+            "-flto", 
+            "-ffast-math", 
+            "-Os", 
+            "src/main/io/osd.c"
+        ], 
+        "directory": "/home/rustyflight/rustyflight/cleanflight", 
+        "file": "src/main/io/osd.c"
+    }, 
+    {
+        "arguments": [
+            "cc", 
+            "-c", 
+            "-o", 
             "obj/main/SITL/drivers/light_ws2811strip.o", 
             "-I./src/main", 
             "-I./src/main/target", 
@@ -5440,7 +5404,7 @@
             "cc", 
             "-c", 
             "-o", 
-            "obj/main/SITL/interface/cli.o", 
+            "obj/main/SITL/main.o", 
             "-I./src/main", 
             "-I./src/main/target", 
             "-I./lib/main/dyad", 
@@ -5465,11 +5429,11 @@
             "-D__REVISION__=\"3b0824b83\"", 
             "-flto", 
             "-ffast-math", 
-            "-Os", 
-            "src/main/interface/cli.c"
+            "-Ofast", 
+            "src/main/main.c"
         ], 
         "directory": "/home/rustyflight/rustyflight/cleanflight", 
-        "file": "src/main/interface/cli.c"
+        "file": "src/main/main.c"
     }, 
     {
         "arguments": [
@@ -5584,7 +5548,7 @@
             "cc", 
             "-c", 
             "-o", 
-            "obj/main/SITL/target/config_helper.o", 
+            "obj/main/SITL/common/filter.o", 
             "-I./src/main", 
             "-I./src/main/target", 
             "-I./lib/main/dyad", 
@@ -5610,10 +5574,10 @@
             "-flto", 
             "-ffast-math", 
             "-Ofast", 
-            "src/main/target/config_helper.c"
+            "src/main/common/filter.c"
         ], 
         "directory": "/home/rustyflight/rustyflight/cleanflight", 
-        "file": "src/main/target/config_helper.c"
+        "file": "src/main/common/filter.c"
     }, 
     {
         "arguments": [
@@ -5656,7 +5620,43 @@
             "cc", 
             "-c", 
             "-o", 
-            "obj/main/SITL/fc/fc_core.o", 
+            "obj/main/SITL/cms/cms_menu_builtin.o", 
+            "-I./src/main", 
+            "-I./src/main/target", 
+            "-I./lib/main/dyad", 
+            "-I./lib/main/MAVLink", 
+            "-I./src/main/target/SITL", 
+            "-std=gnu99", 
+            "-Wall", 
+            "-Wextra", 
+            "-Wdouble-promotion", 
+            "-ffunction-sections", 
+            "-fdata-sections", 
+            "-pedantic", 
+            "-DFLASH_SIZE=2048", 
+            "-DHSE_VALUE=8000000", 
+            "-D_GNU_SOURCE", 
+            "-DUSE_STDPERIPH_DRIVER", 
+            "-DSITL", 
+            "-DSIMULATOR_BUILD", 
+            "-DSITL", 
+            "-D__FORKNAME__=\"cleanflight\"", 
+            "-D__TARGET__=\"SITL\"", 
+            "-D__REVISION__=\"3b0824b83\"", 
+            "-flto", 
+            "-ffast-math", 
+            "-Os", 
+            "src/main/cms/cms_menu_builtin.c"
+        ], 
+        "directory": "/home/rustyflight/rustyflight/cleanflight", 
+        "file": "src/main/cms/cms_menu_builtin.c"
+    }, 
+    {
+        "arguments": [
+            "cc", 
+            "-c", 
+            "-o", 
+            "obj/main/SITL/drivers/transponder_ir_arcitimer.o", 
             "-I./src/main", 
             "-I./src/main/target", 
             "-I./lib/main/dyad", 
@@ -5682,10 +5682,10 @@
             "-flto", 
             "-ffast-math", 
             "-Ofast", 
-            "src/main/fc/fc_core.c"
+            "src/main/drivers/transponder_ir_arcitimer.c"
         ], 
         "directory": "/home/rustyflight/rustyflight/cleanflight", 
-        "file": "src/main/fc/fc_core.c"
+        "file": "src/main/drivers/transponder_ir_arcitimer.c"
     }, 
     {
         "arguments": [
@@ -5722,6 +5722,42 @@
         ], 
         "directory": "/home/rustyflight/rustyflight/cleanflight", 
         "file": "src/main/cms/cms_menu_vtx_tramp.c"
+    }, 
+    {
+        "arguments": [
+            "cc", 
+            "-c", 
+            "-o", 
+            "obj/main/SITL/drivers/io.o", 
+            "-I./src/main", 
+            "-I./src/main/target", 
+            "-I./lib/main/dyad", 
+            "-I./lib/main/MAVLink", 
+            "-I./src/main/target/SITL", 
+            "-std=gnu99", 
+            "-Wall", 
+            "-Wextra", 
+            "-Wdouble-promotion", 
+            "-ffunction-sections", 
+            "-fdata-sections", 
+            "-pedantic", 
+            "-DFLASH_SIZE=2048", 
+            "-DHSE_VALUE=8000000", 
+            "-D_GNU_SOURCE", 
+            "-DUSE_STDPERIPH_DRIVER", 
+            "-DSITL", 
+            "-DSIMULATOR_BUILD", 
+            "-DSITL", 
+            "-D__FORKNAME__=\"cleanflight\"", 
+            "-D__TARGET__=\"SITL\"", 
+            "-D__REVISION__=\"3b0824b83\"", 
+            "-flto", 
+            "-ffast-math", 
+            "-Ofast", 
+            "src/main/drivers/io.c"
+        ], 
+        "directory": "/home/rustyflight/rustyflight/cleanflight", 
+        "file": "src/main/drivers/io.c"
     }, 
     {
         "arguments": [
@@ -5908,7 +5944,7 @@
             "cc", 
             "-c", 
             "-o", 
-            "obj/main/SITL/blackbox/blackbox_encoding.o", 
+            "obj/main/SITL/telemetry/telemetry.o", 
             "-I./src/main", 
             "-I./src/main/target", 
             "-I./lib/main/dyad", 
@@ -5934,10 +5970,10 @@
             "-flto", 
             "-ffast-math", 
             "-Ofast", 
-            "src/main/blackbox/blackbox_encoding.c"
+            "src/main/telemetry/telemetry.c"
         ], 
         "directory": "/home/rustyflight/rustyflight/cleanflight", 
-        "file": "src/main/blackbox/blackbox_encoding.c"
+        "file": "src/main/telemetry/telemetry.c"
     }, 
     {
         "arguments": [
@@ -6052,7 +6088,7 @@
             "cc", 
             "-c", 
             "-o", 
-            "obj/main/SITL/pg/pg.o", 
+            "obj/main/SITL/interface/settings.o", 
             "-I./src/main", 
             "-I./src/main/target", 
             "-I./lib/main/dyad", 
@@ -6077,11 +6113,11 @@
             "-D__REVISION__=\"3b0824b83\"", 
             "-flto", 
             "-ffast-math", 
-            "-Ofast", 
-            "src/main/pg/pg.c"
+            "-Os", 
+            "src/main/interface/settings.c"
         ], 
         "directory": "/home/rustyflight/rustyflight/cleanflight", 
-        "file": "src/main/pg/pg.c"
+        "file": "src/main/interface/settings.c"
     }, 
     {
         "arguments": [
@@ -6340,7 +6376,7 @@
             "cc", 
             "-c", 
             "-o", 
-            "obj/main/SITL/drivers/transponder_ir_arcitimer.o", 
+            "obj/main/SITL/sensors/initialisation.o", 
             "-I./src/main", 
             "-I./src/main/target", 
             "-I./lib/main/dyad", 
@@ -6366,10 +6402,10 @@
             "-flto", 
             "-ffast-math", 
             "-Ofast", 
-            "src/main/drivers/transponder_ir_arcitimer.c"
+            "src/main/sensors/initialisation.c"
         ], 
         "directory": "/home/rustyflight/rustyflight/cleanflight", 
-        "file": "src/main/drivers/transponder_ir_arcitimer.c"
+        "file": "src/main/sensors/initialisation.c"
     }, 
     {
         "arguments": [
@@ -6484,7 +6520,7 @@
             "cc", 
             "-c", 
             "-o", 
-            "obj/main/SITL/main.o", 
+            "obj/main/SITL/drivers/serial_softserial.o", 
             "-I./src/main", 
             "-I./src/main/target", 
             "-I./lib/main/dyad", 
@@ -6510,17 +6546,17 @@
             "-flto", 
             "-ffast-math", 
             "-Ofast", 
-            "src/main/main.c"
+            "src/main/drivers/serial_softserial.c"
         ], 
         "directory": "/home/rustyflight/rustyflight/cleanflight", 
-        "file": "src/main/main.c"
+        "file": "src/main/drivers/serial_softserial.c"
     }, 
     {
         "arguments": [
             "cc", 
             "-c", 
             "-o", 
-            "obj/main/SITL/common/printf.o", 
+            "obj/main/SITL/pg/rx_pwm.o", 
             "-I./src/main", 
             "-I./src/main/target", 
             "-I./lib/main/dyad", 
@@ -6546,10 +6582,10 @@
             "-flto", 
             "-ffast-math", 
             "-Ofast", 
-            "src/main/common/printf.c"
+            "src/main/pg/rx_pwm.c"
         ], 
         "directory": "/home/rustyflight/rustyflight/cleanflight", 
-        "file": "src/main/common/printf.c"
+        "file": "src/main/pg/rx_pwm.c"
     }, 
     {
         "arguments": [
@@ -6592,7 +6628,7 @@
             "cc", 
             "-c", 
             "-o", 
-            "obj/main/SITL/drivers/bus_i2c_soft.o", 
+            "obj/main/SITL/io/displayport_crsf.o", 
             "-I./src/main", 
             "-I./src/main/target", 
             "-I./lib/main/dyad", 
@@ -6618,10 +6654,46 @@
             "-flto", 
             "-ffast-math", 
             "-Ofast", 
-            "src/main/drivers/bus_i2c_soft.c"
+            "src/main/io/displayport_crsf.c"
         ], 
         "directory": "/home/rustyflight/rustyflight/cleanflight", 
-        "file": "src/main/drivers/bus_i2c_soft.c"
+        "file": "src/main/io/displayport_crsf.c"
+    }, 
+    {
+        "arguments": [
+            "cc", 
+            "-c", 
+            "-o", 
+            "obj/main/SITL/telemetry/ibus_shared.o", 
+            "-I./src/main", 
+            "-I./src/main/target", 
+            "-I./lib/main/dyad", 
+            "-I./lib/main/MAVLink", 
+            "-I./src/main/target/SITL", 
+            "-std=gnu99", 
+            "-Wall", 
+            "-Wextra", 
+            "-Wdouble-promotion", 
+            "-ffunction-sections", 
+            "-fdata-sections", 
+            "-pedantic", 
+            "-DFLASH_SIZE=2048", 
+            "-DHSE_VALUE=8000000", 
+            "-D_GNU_SOURCE", 
+            "-DUSE_STDPERIPH_DRIVER", 
+            "-DSITL", 
+            "-DSIMULATOR_BUILD", 
+            "-DSITL", 
+            "-D__FORKNAME__=\"cleanflight\"", 
+            "-D__TARGET__=\"SITL\"", 
+            "-D__REVISION__=\"3b0824b83\"", 
+            "-flto", 
+            "-ffast-math", 
+            "-Ofast", 
+            "src/main/telemetry/ibus_shared.c"
+        ], 
+        "directory": "/home/rustyflight/rustyflight/cleanflight", 
+        "file": "src/main/telemetry/ibus_shared.c"
     }, 
     {
         "arguments": [
@@ -6700,7 +6772,7 @@
             "cc", 
             "-c", 
             "-o", 
-            "obj/main/SITL/pg/pinio.o", 
+            "obj/main/SITL/rx/fport.o", 
             "-I./src/main", 
             "-I./src/main/target", 
             "-I./lib/main/dyad", 
@@ -6726,82 +6798,10 @@
             "-flto", 
             "-ffast-math", 
             "-Ofast", 
-            "src/main/pg/pinio.c"
+            "src/main/rx/fport.c"
         ], 
         "directory": "/home/rustyflight/rustyflight/cleanflight", 
-        "file": "src/main/pg/pinio.c"
-    }, 
-    {
-        "arguments": [
-            "cc", 
-            "-c", 
-            "-o", 
-            "obj/main/SITL/io/displayport_msp.o", 
-            "-I./src/main", 
-            "-I./src/main/target", 
-            "-I./lib/main/dyad", 
-            "-I./lib/main/MAVLink", 
-            "-I./src/main/target/SITL", 
-            "-std=gnu99", 
-            "-Wall", 
-            "-Wextra", 
-            "-Wdouble-promotion", 
-            "-ffunction-sections", 
-            "-fdata-sections", 
-            "-pedantic", 
-            "-DFLASH_SIZE=2048", 
-            "-DHSE_VALUE=8000000", 
-            "-D_GNU_SOURCE", 
-            "-DUSE_STDPERIPH_DRIVER", 
-            "-DSITL", 
-            "-DSIMULATOR_BUILD", 
-            "-DSITL", 
-            "-D__FORKNAME__=\"cleanflight\"", 
-            "-D__TARGET__=\"SITL\"", 
-            "-D__REVISION__=\"3b0824b83\"", 
-            "-flto", 
-            "-ffast-math", 
-            "-Ofast", 
-            "src/main/io/displayport_msp.c"
-        ], 
-        "directory": "/home/rustyflight/rustyflight/cleanflight", 
-        "file": "src/main/io/displayport_msp.c"
-    }, 
-    {
-        "arguments": [
-            "cc", 
-            "-c", 
-            "-o", 
-            "obj/main/SITL/pg/rcdevice.o", 
-            "-I./src/main", 
-            "-I./src/main/target", 
-            "-I./lib/main/dyad", 
-            "-I./lib/main/MAVLink", 
-            "-I./src/main/target/SITL", 
-            "-std=gnu99", 
-            "-Wall", 
-            "-Wextra", 
-            "-Wdouble-promotion", 
-            "-ffunction-sections", 
-            "-fdata-sections", 
-            "-pedantic", 
-            "-DFLASH_SIZE=2048", 
-            "-DHSE_VALUE=8000000", 
-            "-D_GNU_SOURCE", 
-            "-DUSE_STDPERIPH_DRIVER", 
-            "-DSITL", 
-            "-DSIMULATOR_BUILD", 
-            "-DSITL", 
-            "-D__FORKNAME__=\"cleanflight\"", 
-            "-D__TARGET__=\"SITL\"", 
-            "-D__REVISION__=\"3b0824b83\"", 
-            "-flto", 
-            "-ffast-math", 
-            "-Ofast", 
-            "src/main/pg/rcdevice.c"
-        ], 
-        "directory": "/home/rustyflight/rustyflight/cleanflight", 
-        "file": "src/main/pg/rcdevice.c"
+        "file": "src/main/rx/fport.c"
     }, 
     {
         "arguments": [

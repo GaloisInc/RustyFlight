@@ -1479,6 +1479,7 @@ pub struct acc_s {
     pub isAccelUpdatedAtLeastOnce: bool,
 }
 pub const SENSOR_ACC: C2RustUnnamed_12 = 2;
+pub type serialConsumer = unsafe extern "C" fn(_: uint8_t) -> ();
 pub type rxChannelRangeConfig_t = rxChannelRangeConfig_s;
 #[derive ( Copy, Clone )]
 #[repr(C)]
@@ -1486,7 +1487,6 @@ pub struct rxChannelRangeConfig_s {
     pub min: uint16_t,
     pub max: uint16_t,
 }
-pub type serialConsumer = unsafe extern "C" fn(_: uint8_t) -> ();
 pub const SENSOR_RANGEFINDER: C2RustUnnamed_12 = 16;
 pub const SENSOR_MAG: C2RustUnnamed_12 = 8;
 pub const SENSOR_BARO: C2RustUnnamed_12 = 4;
