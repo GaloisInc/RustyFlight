@@ -93,10 +93,10 @@ sed -i -e '/Wunsafe-loop-optimizations/d' compile_commands.json
 Then, from the root directory of the project, run the following command:
 
 ```
-c2rust transpile --emit-no-std         \
-                 --emit-build-files    \
-                 --binary rustyflight  \
-                 -o transpiled         \
+c2rust transpile --emit-no-std             \
+                 --emit-build-files        \
+                 --binary src/main/main.c  \
+                 -o transpiled             \
                  cleanflight/compile_commands.json
 ```
 
