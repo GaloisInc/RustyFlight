@@ -429,9 +429,9 @@ extern "C" {
     #[no_mangle]
     static mut vtxConfig_Copy: vtxConfig_t;
     #[no_mangle]
-    static mut beeperConfig_System: beeperConfig_t;
-    #[no_mangle]
     static mut beeperConfig_Copy: beeperConfig_t;
+    #[no_mangle]
+    static mut beeperConfig_System: beeperConfig_t;
     #[no_mangle]
     fn pinioSet(index: libc::c_int, on: bool);
     #[no_mangle]
@@ -441,15 +441,15 @@ extern "C" {
     #[no_mangle]
     static rcChannelLetters: [libc::c_char; 0];
     #[no_mangle]
-    static mut rxFailsafeChannelConfigs_CopyArray:
-           [rxFailsafeChannelConfig_t; 18];
-    #[no_mangle]
     static mut rxFailsafeChannelConfigs_SystemArray:
            [rxFailsafeChannelConfig_t; 18];
     #[no_mangle]
-    static mut rxChannelRangeConfigs_SystemArray: [rxChannelRangeConfig_t; 4];
+    static mut rxFailsafeChannelConfigs_CopyArray:
+           [rxFailsafeChannelConfig_t; 18];
     #[no_mangle]
     static mut rxChannelRangeConfigs_CopyArray: [rxChannelRangeConfig_t; 4];
+    #[no_mangle]
+    static mut rxChannelRangeConfigs_SystemArray: [rxChannelRangeConfig_t; 4];
     #[no_mangle]
     fn parseRcChannels(input: *const libc::c_char,
                        rxConfig_0: *mut rxConfig_s);
@@ -1563,7 +1563,6 @@ pub struct vtxConfig_s {
 }
 pub const DO_DIFF: C2RustUnnamed_15 = 16;
 pub type ledConfig_t = uint32_t;
-pub type serialConsumer = unsafe extern "C" fn(_: uint8_t) -> ();
 pub type rxChannelRangeConfig_t = rxChannelRangeConfig_s;
 #[derive ( Copy, Clone )]
 #[repr(C)]
@@ -1571,6 +1570,7 @@ pub struct rxChannelRangeConfig_s {
     pub min: uint16_t,
     pub max: uint16_t,
 }
+pub type serialConsumer = unsafe extern "C" fn(_: uint8_t) -> ();
 pub type ledStripConfig_t = ledStripConfig_s;
 #[derive ( Copy, Clone )]
 #[repr(C)]
@@ -2061,11 +2061,11 @@ unsafe extern "C" fn vtxConfigMutable() -> *mut vtxConfig_t {
     return &mut vtxConfig_System;
 }
 #[inline]
-unsafe extern "C" fn beeperConfig() -> *const beeperConfig_t {
+unsafe extern "C" fn beeperConfigMutable() -> *mut beeperConfig_t {
     return &mut beeperConfig_System;
 }
 #[inline]
-unsafe extern "C" fn beeperConfigMutable() -> *mut beeperConfig_t {
+unsafe extern "C" fn beeperConfig() -> *const beeperConfig_t {
     return &mut beeperConfig_System;
 }
 #[inline]

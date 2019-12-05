@@ -30,4 +30,4 @@ pub static mut buildDate: *const libc::c_char =
     b"Dec  5 2019\x00" as *const u8 as *const libc::c_char;
 #[no_mangle]
 pub static mut buildTime: *const libc::c_char =
-    b"01:41:32\x00" as *const u8 as *const libc::c_char;
+    b"17:39:59\x00" as *const u8 as *const libc::c_char;

@@ -1,5 +1,8 @@
-use core;
-use libc;
+#![allow(dead_code, mutable_transmutes, non_camel_case_types, non_snake_case,
+         non_upper_case_globals, unused_assignments, unused_mut)]
+#![feature(main)]
+#![no_std]
+use spracingf3::*;
 extern "C" {
     #[no_mangle]
     fn init();

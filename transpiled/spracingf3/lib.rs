@@ -266,7 +266,6 @@ pub mod vtx_smartaudio;
 pub mod vtx_string;
 pub mod vtx_tramp;
 } // mod io
-pub mod main;
 pub mod msp {
 pub mod msp_serial;
 } // mod msp

@@ -95,7 +95,7 @@ Then, from the root directory of the project, run the following command:
 ```
 c2rust transpile --emit-no-std             \
                  --emit-build-files        \
-                 --binary src/main/main.c  \
+                 --binary main             \
                  -o transpiled             \
                  cleanflight/compile_commands.json
 ```
