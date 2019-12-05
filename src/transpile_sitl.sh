@@ -1,4 +1,5 @@
 #!/bin/bash
+# Must be run from root of the directory and from inside the docker container
 cd cleanflight
 intercept-build make TARGET=SITL
 sed -i -e '/save-temps=obj/d' compile_commands.json
