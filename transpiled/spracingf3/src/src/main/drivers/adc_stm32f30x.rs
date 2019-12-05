@@ -126,11 +126,10 @@ extern "C" {
     fn RCC_ADCCLKConfig(RCC_PLLCLK: uint32_t);
     #[no_mangle]
     fn IOInit(io: IO_t, owner: resourceOwner_e, index: uint8_t);
-    // unimplemented
-    #[no_mangle]
-    fn IOConfigGPIO(io: IO_t, cfg: ioConfig_t);
     #[no_mangle]
     fn IOGetByTag(tag: ioTag_t) -> IO_t;
+    #[no_mangle]
+    fn IOConfigGPIO(io: IO_t, cfg: ioConfig_t);
     #[no_mangle]
     fn delay(ms: timeMs_t);
     #[no_mangle]
