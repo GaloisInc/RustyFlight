@@ -128,3 +128,22 @@ sed -i -e 's/"-c"/"-c", "-fblocks"/g' compile_commands.json
 
 TBD. The goal, however, is that `src` contains the actual, hand-refactored
 source code.
+
+## Gazebo and SITL target
+Although [here are some basic instructions](https://github.com/cleanflight/cleanflight/tree/master/src/main/target/SITL) there are some extra steps that need to happen. [This video](https://www.youtube.com/watch?v=Qq6D3rDxgnk) might provide some insights as well.
+1. install [Cleanflight configurator](https://chrome.google.com/webstore/detail/cleanflight-configurator/enacoimjcgeinfnnnpajinjgmkahmfgb)
+2. launch gazebo (it should automatically connect to your drone)
+3. launch the configurator and connect to `port: tcp://127.0.0.1:5761` (you should see stats about your virtual drone)
+3. launch controls - `src/run.sh` (you need a joystick for this)
+4. now you can work through all the *Arming Disable Flags* that prevent arming - see [here](https://github.com/betaflight/betaflight/wiki/Arming-Sequence-&-Safety) for a list of codes. Some common ones:
+  * 3: no RX connected
+  * 17: MSP connection active (MSP is the RX over serial you are using)
+  * 12: CLI active (the connection from the Configurator)
+
+To fix all the warnings you need:
+* connect RX
+* go to cleanflight source code, and add `#ifdef(SIMULATOR_BUILD)` and/or `#ifdef(SITL)` around the relevant parts of the safety arming code, so these important checks are disabled in SITL
+* NOTE: asking the cleanflight developers is encouraged, see https://github.com/betaflight/betaflight/issues
+
+
+Once you resolve all arming disable flags, you can arm your quad. After take off, it will probably crash soon because of the lag.

@@ -27,7 +27,9 @@ echo "ConfigSystem $main_file"
 perl -0777 -i -pe 's/#\[inline]\nunsafe extern \"C\" fn serialPinConfig\(\) -> \*const serialPinConfig_t \{\n    return &mut serialPinConfig_System;\n\}//igs' $main_file
 perl -0777 -i -pe 's/uartPinConfigure\(serialPinConfig\(\)\);/\/\/uartPinConfigure\(serialPinConfig\(\)\);/igs' $main_file
 
-# include build config (modify if you are building on OS X or Windows)
+# include build config 
+# modify if you are building on OS X or Windows,
+# check https://forge.rust-lang.org/release/platform-support.html
 mkdir $1/.cargo
 cp _cargo/config $1/.cargo/.
 cp _cargo/pg.ld $1/.
