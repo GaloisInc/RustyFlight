@@ -33,7 +33,7 @@ RUN mkdir /opt/arm
 RUN tar -C /opt/arm --strip-components 1 -xjf arm-utils.tar.bz2
 RUN pip install scan-build
 
-ENV RUST_NIGHTLY_TOOLCHAIN=nightly-2019-10-04
+ENV RUST_NIGHTLY_TOOLCHAIN=nightly-2019-12-05
 
 USER $USERNAME
 WORKDIR /home/$USERNAME
@@ -44,4 +44,4 @@ RUN rustup install ${RUST_NIGHTLY_TOOLCHAIN}
 RUN rustup component add rustfmt
 RUN rustup target install thumbv7m-none-eabi --toolchain stable
 RUN rustup target install thumbv7m-none-eabi --toolchain ${RUST_NIGHTLY_TOOLCHAIN}
-RUN cargo +nightly-2019-10-04 install c2rust
+RUN cargo +${RUST_NIGHTLY_TOOLCHAIN} install c2rust
