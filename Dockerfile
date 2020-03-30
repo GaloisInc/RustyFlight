@@ -27,6 +27,8 @@ RUN dnf install -y            \
        vim                    \
        zsh
 
+RUN dnf -y install python-pip
+
 WORKDIR /tmp
 RUN curl -Lo arm-utils.tar.bz2 ${ARM_SDK_URL_BASE}-linux.tar.bz2
 RUN mkdir /opt/arm
