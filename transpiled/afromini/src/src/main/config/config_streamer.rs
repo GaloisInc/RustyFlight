@@ -1,0 +1,152 @@
+use core;
+use libc;
+extern "C" {
+    #[no_mangle]
+    fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong)
+     -> *mut libc::c_void;
+    /* FLASH Memory Programming functions *****************************************/
+    #[no_mangle]
+    fn FLASH_Unlock();
+    #[no_mangle]
+    fn FLASH_Lock();
+    #[no_mangle]
+    fn FLASH_ErasePage(Page_Address: uint32_t) -> FLASH_Status;
+    #[no_mangle]
+    fn FLASH_ProgramWord(Address: uint32_t, Data: uint32_t) -> FLASH_Status;
+    #[no_mangle]
+    fn FLASH_ClearFlag(FLASH_FLAG: uint32_t);
+}
+pub type __uint8_t = libc::c_uchar;
+pub type __uint32_t = libc::c_uint;
+pub type uint8_t = __uint8_t;
+pub type uint32_t = __uint32_t;
+pub type uintptr_t = libc::c_ulong;
+pub type FLASH_Status = libc::c_uint;
+pub const FLASH_TIMEOUT: FLASH_Status = 5;
+pub const FLASH_COMPLETE: FLASH_Status = 4;
+pub const FLASH_ERROR_PROGRAM: FLASH_Status = 3;
+pub const FLASH_ERROR_WRP: FLASH_Status = 2;
+pub const FLASH_BUSY: FLASH_Status = 1;
+#[derive ( Copy, Clone )]
+#[repr(C)]
+pub struct config_streamer_s {
+    pub address: uintptr_t,
+    pub size: libc::c_int,
+    pub buffer: C2RustUnnamed,
+    pub at: libc::c_int,
+    pub err: libc::c_int,
+    pub unlocked: bool,
+}
+#[derive ( Copy, Clone )]
+#[repr ( C )]
+pub union C2RustUnnamed {
+    pub b: [uint8_t; 4],
+    pub w: uint32_t,
+}
+/*
+ * This file is part of Cleanflight and Betaflight.
+ *
+ * Cleanflight and Betaflight are free software. You can redistribute
+ * this software and/or modify this software under the terms of the
+ * GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * Cleanflight and Betaflight are distributed in the hope that they
+ * will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this software.
+ *
+ * If not, see <http://www.gnu.org/licenses/>.
+ */
+// Streams data out to the EEPROM, padding to the write size as
+// needed, and updating the checksum as it goes.
+pub type config_streamer_t = config_streamer_s;
+// F4
+#[no_mangle]
+pub unsafe extern "C" fn config_streamer_init(mut c: *mut config_streamer_t) {
+    memset(c as *mut libc::c_void, 0i32,
+           ::core::mem::size_of::<config_streamer_t>() as libc::c_ulong);
+}
+#[no_mangle]
+pub unsafe extern "C" fn config_streamer_start(mut c: *mut config_streamer_t,
+                                               mut base: uintptr_t,
+                                               mut size: libc::c_int) {
+    // base must start at FLASH_PAGE_SIZE boundary
+    (*c).address = base;
+    (*c).size = size;
+    if !(*c).unlocked { FLASH_Unlock(); (*c).unlocked = 1i32 != 0 }
+    FLASH_ClearFlag(0x20i32 as uint32_t | 0x4i32 as uint32_t |
+                        0x10i32 as uint32_t);
+    (*c).err = 0i32;
+}
+unsafe extern "C" fn write_word(mut c: *mut config_streamer_t,
+                                mut value: uint32_t) -> libc::c_int {
+    if (*c).err != 0i32 { return (*c).err }
+    if (*c).address.wrapping_rem(0x800i32 as libc::c_ulong) ==
+           0i32 as libc::c_ulong {
+        let status: FLASH_Status = FLASH_ErasePage((*c).address as uint32_t);
+        if status as libc::c_uint !=
+               FLASH_COMPLETE as libc::c_int as libc::c_uint {
+            return -1i32
+        }
+    }
+    let status_0: FLASH_Status =
+        FLASH_ProgramWord((*c).address as uint32_t, value);
+    if status_0 as libc::c_uint !=
+           FLASH_COMPLETE as libc::c_int as libc::c_uint {
+        return -2i32
+    }
+    (*c).address =
+        ((*c).address as
+             libc::c_ulong).wrapping_add(::core::mem::size_of::<uint32_t>() as
+                                             libc::c_ulong) as uintptr_t as
+            uintptr_t;
+    return 0i32;
+}
+#[no_mangle]
+pub unsafe extern "C" fn config_streamer_write(mut c: *mut config_streamer_t,
+                                               mut p: *const uint8_t,
+                                               mut size: uint32_t)
+ -> libc::c_int {
+    let mut pat: *const uint8_t = p;
+    while pat != (p as *mut uint8_t).offset(size as isize) as *const uint8_t {
+        let fresh0 = (*c).at;
+        (*c).at = (*c).at + 1;
+        (*c).buffer.b[fresh0 as usize] = *pat;
+        if (*c).at as libc::c_ulong ==
+               ::core::mem::size_of::<C2RustUnnamed>() as libc::c_ulong {
+            (*c).err = write_word(c, (*c).buffer.w);
+            (*c).at = 0i32
+        }
+        pat = pat.offset(1)
+    }
+    return (*c).err;
+}
+#[no_mangle]
+pub unsafe extern "C" fn config_streamer_status(mut c: *mut config_streamer_t)
+ -> libc::c_int {
+    return (*c).err;
+}
+#[no_mangle]
+pub unsafe extern "C" fn config_streamer_flush(mut c: *mut config_streamer_t)
+ -> libc::c_int {
+    if (*c).at != 0i32 {
+        memset((*c).buffer.b.as_mut_ptr().offset((*c).at as isize) as
+                   *mut libc::c_void, 0i32,
+               (::core::mem::size_of::<C2RustUnnamed>() as
+                    libc::c_ulong).wrapping_sub((*c).at as libc::c_ulong));
+        (*c).err = write_word(c, (*c).buffer.w);
+        (*c).at = 0i32
+    }
+    return (*c).err;
+}
+#[no_mangle]
+pub unsafe extern "C" fn config_streamer_finish(mut c: *mut config_streamer_t)
+ -> libc::c_int {
+    if (*c).unlocked { FLASH_Lock(); (*c).unlocked = 0i32 != 0 }
+    return (*c).err;
+}
