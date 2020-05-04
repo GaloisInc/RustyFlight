@@ -1,0 +1,1018 @@
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling smartport.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling mixer_tricopter.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling runtime_config.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling osd.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling strtol.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling vtx_control.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling compass.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling adcinternal.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling barometer.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling buttons.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling cms_menu_vtx_rtc6705.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling serial_tcp.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling displayport_msp.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling vtx_common.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+In file included from src/main/pg/timerio.c:21:
+src/main/pg/timerio.h:39:7: warning: no newline at end of file [-Wnewline-eof]
+#endif
+      ^
+src/main/pg/timerio.c:27:7: warning: no newline at end of file [-Wnewline-eof]
+#endif
+      ^
+3 warnings generated.
+Transpiling timerio.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling serial_4way_avrootloader.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling time.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling vcd.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling transponder_ir_arcitimer.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling servos_tricopter.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling beeper_dev.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+In file included from src/main/fc/fc_init.c:156:
+In file included from ./src/main/io/rcdevice_cam.h:27:
+./src/main/io/rcdevice.h:158:109: warning: no newline at end of file [-Wnewline-eof]
+void runcamDeviceSimulate5KeyOSDCableButtonRelease(runcamDevice_t *device, rcdeviceRespParseFunc parseFunc);
+                                                                                                            ^
+2 warnings generated.
+Transpiling fc_init.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+In file included from src/main/telemetry/ltm.c:77:
+./src/main/flight/position.h:28:33: warning: no newline at end of file [-Wnewline-eof]
+int16_t getEstimatedVario(void);
+                                ^
+2 warnings generated.
+Transpiling ltm.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling jetiexbus.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+src/main/sensors/voltage.c:132:22: warning: variable 'voltageMeterAdcChannelMap' is not needed and will not be emitted [-Wunneeded-internal-declaration]
+static const uint8_t voltageMeterAdcChannelMap[] = {
+                     ^
+2 warnings generated.
+Transpiling voltage.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling io.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling rx_spi.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling crc.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling sumh.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling smartaudio_protocol.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling pwm_esc_detect.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling debug.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+In file included from src/main/flight/position.c:32:
+./src/main/flight/position.h:28:33: warning: no newline at end of file [-Wnewline-eof]
+int16_t getEstimatedVario(void);
+                                ^
+2 warnings generated.
+Transpiling position.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling msp_serial.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling transponder_ir_erlt.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling mavlink.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling usb_cdc_hid.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+src/main/fc/fc_rc.c:561:32: warning: unknown warning group '-Wunsafe-loop-optimizations', ignored [-Wunknown-warning-option]
+#pragma GCC diagnostic ignored "-Wunsafe-loop-optimizations"
+                               ^
+2 warnings generated.
+Transpiling fc_rc.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+In file included from src/main/pg/rcdevice.c:22:
+./src/main/pg/rcdevice.h:31:46: warning: no newline at end of file [-Wnewline-eof]
+PG_DECLARE(rcdeviceConfig_t, rcdeviceConfig);
+                                             ^
+src/main/pg/rcdevice.c:30:2: warning: no newline at end of file [-Wnewline-eof]
+}
+ ^
+3 warnings generated.
+Transpiling rcdevice.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling rc_adjustments.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling mixer.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling fc_hardfaults.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling config.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling rx.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling rx_spi.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling cms_menu_power.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling current.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+src/main/sensors/gyro.c:928:10: warning: using integer absolute value function 'abs' when argument is of floating point type [-Wabsolute-value]
+    if ((abs(gyro.gyroADCf[X]) < gyroOverflowResetRate)
+         ^
+src/main/sensors/gyro.c:928:10: note: use function 'fabsf' instead
+    if ((abs(gyro.gyroADCf[X]) < gyroOverflowResetRate)
+         ^~~
+         fabsf
+src/main/sensors/gyro.c:929:15: warning: using integer absolute value function 'abs' when argument is of floating point type [-Wabsolute-value]
+          && (abs(gyro.gyroADCf[Y]) < gyroOverflowResetRate)
+              ^
+src/main/sensors/gyro.c:929:15: note: use function 'fabsf' instead
+          && (abs(gyro.gyroADCf[Y]) < gyroOverflowResetRate)
+              ^~~
+              fabsf
+src/main/sensors/gyro.c:930:15: warning: using integer absolute value function 'abs' when argument is of floating point type [-Wabsolute-value]
+          && (abs(gyro.gyroADCf[Z]) < gyroOverflowResetRate)) {
+              ^
+src/main/sensors/gyro.c:930:15: note: use function 'fabsf' instead
+          && (abs(gyro.gyroADCf[Z]) < gyroOverflowResetRate)) {
+              ^~~
+              fabsf
+src/main/sensors/gyro.c:980:9: warning: using integer absolute value function 'abs' when argument is of floating point type [-Wabsolute-value]
+    if (abs(gyro.gyroADCf[Z]) < yawSpinResetRate) {
+        ^
+src/main/sensors/gyro.c:980:9: note: use function 'fabsf' instead
+    if (abs(gyro.gyroADCf[Z]) < yawSpinResetRate) {
+        ^~~
+        fabsf
+5 warnings generated.
+Transpiling gyro.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+In file included from src/main/io/rcdevice.c:33:
+./src/main/pg/rcdevice.h:31:46: warning: no newline at end of file [-Wnewline-eof]
+PG_DECLARE(rcdeviceConfig_t, rcdeviceConfig);
+                                             ^
+In file included from src/main/io/rcdevice.c:35:
+src/main/io/rcdevice.h:158:109: warning: no newline at end of file [-Wnewline-eof]
+void runcamDeviceSimulate5KeyOSDCableButtonRelease(runcamDevice_t *device, rcdeviceRespParseFunc parseFunc);
+                                                                                                            ^
+3 warnings generated.
+Transpiling rcdevice.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling controlrate_profile.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling displayport_max7456.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling cms_menu_builtin.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling fc_dispatch.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling gps.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling main.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling barometer_fake.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling board_info.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling rangefinder_hcsr04.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling pid.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling blackbox.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling timer_common.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling udplink.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling pwm.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling serial.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling config_streamer.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling feature.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+In file included from src/main/fc/fc_core.c:84:
+./src/main/flight/position.h:28:33: warning: no newline at end of file [-Wnewline-eof]
+int16_t getEstimatedVario(void);
+                                ^
+2 warnings generated.
+Transpiling fc_core.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling spektrum.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling cms.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling frsky_hub.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+In file included from src/main/interface/settings.c:53:
+./src/main/flight/position.h:28:33: warning: no newline at end of file [-Wnewline-eof]
+int16_t getEstimatedVario(void);
+                                ^
+In file included from src/main/interface/settings.c:85:
+./src/main/pg/rcdevice.h:31:46: warning: no newline at end of file [-Wnewline-eof]
+PG_DECLARE(rcdeviceConfig_t, rcdeviceConfig);
+                                             ^
+3 warnings generated.
+Transpiling settings.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling ledstrip.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling transponder_ir_ilap.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling gyroanalyse.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling rangefinder.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling cms_menu_osd.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling vtx_string.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+In file included from src/main/fc/fc_tasks.c:54:
+./src/main/flight/position.h:28:33: warning: no newline at end of file [-Wnewline-eof]
+int16_t getEstimatedVario(void);
+                                ^
+In file included from src/main/fc/fc_tasks.c:73:
+In file included from ./src/main/io/rcdevice_cam.h:27:
+./src/main/io/rcdevice.h:158:109: warning: no newline at end of file [-Wnewline-eof]
+void runcamDeviceSimulate5KeyOSDCableButtonRelease(runcamDevice_t *device, rcdeviceRespParseFunc parseFunc);
+                                                                                                            ^
+3 warnings generated.
+Transpiling fc_tasks.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling compass_fake.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling tramp_protocol.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling config_eeprom.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling xbus.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling maths.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling bus_i2c_busdev.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling sdcard.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+src/main/common/typeconversion.c:156:11: warning: initializing 'char *' with an expression of type 'const char [2]' discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers]
+    char *decimalPoint = ".";
+          ^              ~~~
+2 warnings generated.
+Transpiling typeconversion.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling blackbox_encoding.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling sbus.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+In file included from src/main/io/rcdevice_cam.c:37:
+In file included from ./src/main/io/rcdevice_cam.h:27:
+./src/main/io/rcdevice.h:158:109: warning: no newline at end of file [-Wnewline-eof]
+void runcamDeviceSimulate5KeyOSDCableButtonRelease(runcamDevice_t *device, rcdeviceRespParseFunc parseFunc);
+                                                                                                            ^
+2 warnings generated.
+Transpiling rcdevice_cam.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling rx_pwm.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling spektrum_rssi.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling blackbox_io.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling servos.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling build_config.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling bus_i2c_soft.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling piniobox.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling streambuf.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling usb_msc.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling pinio.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+In file included from src/main/telemetry/hott.c:78:
+./src/main/flight/position.h:28:33: warning: no newline at end of file [-Wnewline-eof]
+int16_t getEstimatedVario(void);
+                                ^
+2 warnings generated.
+Transpiling hott.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling accgyro_fake.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling huffman_table.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling displayport_srxl.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling pinio.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling flash.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling gps_conversion.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling pidaudio.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling serial_softserial.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling light_led.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling resource.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling light_ws2811strip.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling max7456.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling sdio.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling cms_menu_vtx_smartaudio.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling piniobox.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling gyro_sync.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling vtx.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling vtx_rtc6705.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling esc_sensor.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling gps_rescue.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling transponder_ir.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling statusindicator.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling displayport_crsf.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling dashboard.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling serial_4way.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling bus_spi.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling string_light.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+lib/main/dyad/dyad.c:1061:17: warning: assigning to 'char *' from 'const char [7]' discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers]
+            str = "(null)";
+                ^ ~~~~~~~~
+lib/main/dyad/dyad.c:1073:32: warning: assigning to 'char *' from 'const char [7]' discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers]
+          if (str == NULL) str = "(null)";
+                               ^ ~~~~~~~~
+3 warnings generated.
+Transpiling dyad.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling cms_menu_ledstrip.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling beeper.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+In file included from src/main/interface/cli.c:101:
+./src/main/flight/position.h:28:33: warning: no newline at end of file [-Wnewline-eof]
+int16_t getEstimatedVario(void);
+                                ^
+In file included from src/main/interface/cli.c:136:
+./src/main/pg/timerio.h:39:7: warning: no newline at end of file [-Wnewline-eof]
+#endif
+      ^
+src/main/interface/cli.c:844:39: warning: passing 'const char [8]' to parameter of type 'char *' discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers]
+            cliShowArgumentRangeError("channel", 0, MAX_SUPPORTED_RC_CHANNEL_COUNT - 1);
+                                      ^~~~~~~~~
+src/main/interface/cli.c:691:45: note: passing argument to parameter 'name' here
+static void cliShowArgumentRangeError(char *name, int min, int max)
+                                            ^
+src/main/interface/cli.c:954:39: warning: passing 'const char [6]' to parameter of type 'char *' discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers]
+            cliShowArgumentRangeError("index", 0, MAX_MODE_ACTIVATION_CONDITION_COUNT - 1);
+                                      ^~~~~~~
+src/main/interface/cli.c:691:45: note: passing argument to parameter 'name' here
+static void cliShowArgumentRangeError(char *name, int min, int max)
+                                            ^
+src/main/interface/cli.c:1330:39: warning: passing 'const char [6]' to parameter of type 'char *' discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers]
+            cliShowArgumentRangeError("index", 0, MAX_ADJUSTMENT_RANGE_COUNT - 1);
+                                      ^~~~~~~
+src/main/interface/cli.c:691:45: note: passing argument to parameter 'name' here
+static void cliShowArgumentRangeError(char *name, int min, int max)
+                                            ^
+src/main/interface/cli.c:1403:33: warning: passing 'const char [1]' to parameter of type 'char *' discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers]
+                    cliMotorMix("");
+                                ^~
+src/main/interface/cli.c:1375:31: note: passing argument to parameter 'cmdline' here
+static void cliMotorMix(char *cmdline)
+                              ^
+src/main/interface/cli.c:1438:39: warning: passing 'const char [6]' to parameter of type 'char *' discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers]
+            cliShowArgumentRangeError("index", 0, MAX_SUPPORTED_MOTORS - 1);
+                                      ^~~~~~~
+src/main/interface/cli.c:691:45: note: passing argument to parameter 'name' here
+static void cliShowArgumentRangeError(char *name, int min, int max)
+                                            ^
+src/main/interface/cli.c:1509:39: warning: passing 'const char [8]' to parameter of type 'char *' discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers]
+            cliShowArgumentRangeError("channel", 0, NON_AUX_CHANNEL_COUNT - 1);
+                                      ^~~~~~~~~
+src/main/interface/cli.c:691:45: note: passing argument to parameter 'name' here
+static void cliShowArgumentRangeError(char *name, int min, int max)
+                                            ^
+src/main/interface/cli.c:1872:33: warning: passing 'const char [1]' to parameter of type 'char *' discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers]
+                    cliServoMix("");
+                                ^~
+src/main/interface/cli.c:1847:31: note: passing argument to parameter 'cmdline' here
+static void cliServoMix(char *cmdline)
+                              ^
+src/main/interface/cli.c:1922:21: warning: passing 'const char [8]' to parameter of type 'char *' discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers]
+        cliServoMix("reverse");
+                    ^~~~~~~~~
+src/main/interface/cli.c:1847:31: note: passing argument to parameter 'cmdline' here
+static void cliServoMix(char *cmdline)
+                              ^
+src/main/interface/cli.c:1953:25: warning: passing 'const char [1]' to parameter of type 'char *' discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers]
+            cliServoMix("");
+                        ^~
+src/main/interface/cli.c:1847:31: note: passing argument to parameter 'cmdline' here
+static void cliServoMix(char *cmdline)
+                              ^
+src/main/interface/cli.c:3068:14: warning: passing 'const char [1]' to parameter of type 'char *' discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers]
+    cliMixer("");
+             ^~
+src/main/interface/cli.c:3037:28: note: passing argument to parameter 'cmdline' here
+static void cliMixer(char *cmdline)
+                           ^
+src/main/interface/cli.c:3106:39: warning: passing 'const char [6]' to parameter of type 'char *' discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers]
+            cliShowArgumentRangeError("value", 1000, 2000);
+                                      ^~~~~~~
+src/main/interface/cli.c:691:45: note: passing argument to parameter 'name' here
+static void cliShowArgumentRangeError(char *name, int min, int max)
+                                            ^
+src/main/interface/cli.c:3171:24: warning: passing 'const char [1]' to parameter of type 'char *' discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers]
+            cliProfile("");
+                       ^~
+src/main/interface/cli.c:3162:30: note: passing argument to parameter 'cmdline' here
+static void cliProfile(char *cmdline)
+                             ^
+src/main/interface/cli.c:3185:28: warning: passing 'const char [1]' to parameter of type 'char *' discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers]
+            cliRateProfile("");
+                           ^~
+src/main/interface/cli.c:3176:34: note: passing argument to parameter 'cmdline' here
+static void cliRateProfile(char *cmdline)
+                                 ^
+src/main/interface/cli.c:3200:16: warning: passing 'const char [1]' to parameter of type 'char *' discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers]
+    cliProfile("");
+               ^~
+src/main/interface/cli.c:3162:30: note: passing argument to parameter 'cmdline' here
+static void cliProfile(char *cmdline)
+                             ^
+src/main/interface/cli.c:3217:20: warning: passing 'const char [1]' to parameter of type 'char *' discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers]
+    cliRateProfile("");
+                   ^~
+src/main/interface/cli.c:3176:34: note: passing argument to parameter 'cmdline' here
+static void cliRateProfile(char *cmdline)
+                                 ^
+src/main/interface/cli.c:3303:28: warning: passing 'const char [1]' to parameter of type 'char *' discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers]
+                cliProfile("");
+                           ^~
+src/main/interface/cli.c:3162:30: note: passing argument to parameter 'cmdline' here
+static void cliProfile(char *cmdline)
+                             ^
+src/main/interface/cli.c:3307:32: warning: passing 'const char [1]' to parameter of type 'char *' discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers]
+                cliRateProfile("");
+                               ^~
+src/main/interface/cli.c:3176:34: note: passing argument to parameter 'cmdline' here
+static void cliRateProfile(char *cmdline)
+                                 ^
+src/main/interface/cli.c:4185:22: warning: passing 'const char [1]' to parameter of type 'char *' discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers]
+        cliBoardName("");
+                     ^~
+src/main/interface/cli.c:2251:32: note: passing argument to parameter 'cmdline' here
+static void cliBoardName(char *cmdline)
+                               ^
+src/main/interface/cli.c:4186:27: warning: passing 'const char [1]' to parameter of type 'char *' discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers]
+        cliManufacturerId("");
+                          ^~
+src/main/interface/cli.c:2265:37: note: passing argument to parameter 'cmdline' here
+static void cliManufacturerId(char *cmdline)
+                                    ^
+src/main/interface/cli.c:4192:22: warning: passing 'const char [1]' to parameter of type 'char *' discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers]
+        cliSignature("");
+                     ^~
+src/main/interface/cli.c:2287:32: note: passing argument to parameter 'cmdline' here
+static void cliSignature(char *cmdline)
+                               ^
+src/main/interface/cli.c:4290:24: warning: passing 'const char [1]' to parameter of type 'char *' discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers]
+            cliProfile("");
+                       ^~
+src/main/interface/cli.c:3162:30: note: passing argument to parameter 'cmdline' here
+static void cliProfile(char *cmdline)
+                             ^
+src/main/interface/cli.c:4301:28: warning: passing 'const char [1]' to parameter of type 'char *' discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers]
+            cliRateProfile("");
+                           ^~
+src/main/interface/cli.c:3176:34: note: passing argument to parameter 'cmdline' here
+static void cliRateProfile(char *cmdline)
+                                 ^
+25 warnings generated.
+Transpiling cli.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling exti.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling board.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling version.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling boardalignment.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling printf.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling cms_menu_vtx_tramp.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling imu.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling initialisation.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling spektrum_vtx_control.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling stack_check.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling encoding.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling sound_beeper.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling rx_spi.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling ibus.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling filter.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling serial_4way_stk500v2.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling config_helper.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling serial.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling vtx_tramp.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling pg.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling sumd.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling rangefinder_lidartf.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling huffman.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling jetiexbus.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling rc_modes.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling rx_pwm.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling crsf.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling msp_shared.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling battery.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling msp.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling adc.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling ibus_shared.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling beeper.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling cms_menu_blackbox.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling bus.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling bitarray.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling cms_menu_imu.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling bus_i2c.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling dashboard.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling fport.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+src/main/target/SITL/target.c:193:26: warning: implicit conversion increases floating-point precision: 'float' to 'double' [-Wdouble-promotion]
+    dyad_setTickInterval(0.2f);
+    ~~~~~~~~~~~~~~~~~~~~ ^~~~
+src/main/target/SITL/target.c:194:27: warning: implicit conversion increases floating-point precision: 'float' to 'double' [-Wdouble-promotion]
+    dyad_setUpdateTimeout(0.5f);
+    ~~~~~~~~~~~~~~~~~~~~~ ^~~~
+3 warnings generated.
+Transpiling target.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling msp_box.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling cms_menu_misc.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling telemetry.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling rc_controls.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling ibus.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling failsafe.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling usb.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling camera_control.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling vtx_smartaudio.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling acceleration.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling explog_approx.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling display.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling buf_writer.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling colorconversion.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+In file included from src/main/interface/msp.c:71:
+./src/main/flight/position.h:28:33: warning: no newline at end of file [-Wnewline-eof]
+int16_t getEstimatedVario(void);
+                                ^
+2 warnings generated.
+Transpiling msp.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling rx.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling scheduler.c
+warning: optimization flag '-fuse-linker-plugin' is not supported [-Wignored-optimization-argument]
+warning: unknown warning option '-Wunsafe-loop-optimizations'; did you mean '-Wunavailable-declarations'? [-Wunknown-warning-option]
+1 warning generated.
+Transpiling sbus_channels.c
