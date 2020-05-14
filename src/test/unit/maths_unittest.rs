@@ -1,9 +1,16 @@
+mod gtest;
+use gtest::EXPECT_EQ;
+use gtest::EXPECT_FLOAT_EQ;
+use gtest::EXPECT_NEAR;
+use gtest::TEST;
+
+#[no_mangle]
 extern "C" {
     pub type fp_vector;
 }
 
 #[no_mangle]
-pub unsafe extern "C" fn TEST(mut MathsUnittest: libc::c_int,
+pub unsafe extern "C" fn TEST_0(mut MathsUnittest: libc::c_int,
                               mut TestScaleRange: libc::c_int)
  -> libc::c_int {
     // Within bounds
@@ -41,8 +48,8 @@ pub unsafe extern "C" fn TEST(mut MathsUnittest: libc::c_int,
                          10 as libc::c_int), 5 as libc::c_int);
 }
 
-#[export_name = "TEST"]
-pub unsafe extern "C" fn TEST_0(mut MathsUnittest: libc::c_int,
+#[no_mangle]
+pub unsafe extern "C" fn TEST_1(mut MathsUnittest: libc::c_int,
                                 mut TestScaleRangeNegativePositive:
                                     libc::c_int) -> libc::c_int {
     // Within bounds
@@ -80,8 +87,8 @@ pub unsafe extern "C" fn TEST_0(mut MathsUnittest: libc::c_int,
                          10 as libc::c_int), 5 as libc::c_int);
 }
 
-#[export_name = "TEST"]
-pub unsafe extern "C" fn TEST_1(mut MathsUnittest: libc::c_int,
+#[no_mangle]
+pub unsafe extern "C" fn TEST_2(mut MathsUnittest: libc::c_int,
                                 mut TestScaleRangeReverse: libc::c_int)
  -> libc::c_int {
     // Within bounds
@@ -119,8 +126,8 @@ pub unsafe extern "C" fn TEST_1(mut MathsUnittest: libc::c_int,
                          0 as libc::c_int), 5 as libc::c_int);
 }
 
-#[export_name = "TEST"]
-pub unsafe extern "C" fn TEST_2(mut MathsUnittest: libc::c_int,
+#[no_mangle]
+pub unsafe extern "C" fn TEST_3(mut MathsUnittest: libc::c_int,
                                 mut TestConstrain: libc::c_int)
  -> libc::c_int {
     // Within bounds
@@ -147,8 +154,8 @@ pub unsafe extern "C" fn TEST_2(mut MathsUnittest: libc::c_int,
               1 as libc::c_int);
 }
 
-#[export_name = "TEST"]
-pub unsafe extern "C" fn TEST_3(mut MathsUnittest: libc::c_int,
+#[no_mangle]
+pub unsafe extern "C" fn TEST_4(mut MathsUnittest: libc::c_int,
                                 mut TestConstrainNegatives: libc::c_int)
  -> libc::c_int {
     // Within bounds.
@@ -173,8 +180,8 @@ pub unsafe extern "C" fn TEST_3(mut MathsUnittest: libc::c_int,
                         -(1 as libc::c_int)), -(2 as libc::c_int));
 }
 
-#[export_name = "TEST"]
-pub unsafe extern "C" fn TEST_4(mut MathsUnittest: libc::c_int,
+#[no_mangle]
+pub unsafe extern "C" fn TEST_5(mut MathsUnittest: libc::c_int,
                                 mut TestConstrainf: libc::c_int)
  -> libc::c_int {
     // Within bounds.
@@ -211,22 +218,22 @@ pub unsafe extern "C" fn TEST_4(mut MathsUnittest: libc::c_int,
                                0.0f32 as libc::c_double,
                                1.0f32 as libc::c_double),
                     1.0f32 as libc::c_double);
-    // Below bouth bounds.
+    // Below both bounds.
     EXPECT_FLOAT_EQ(constrainf(0 as libc::c_int, 1.0f32 as libc::c_double,
                                2.0f32 as libc::c_double),
                     1.0f32 as libc::c_double);
 }
 
-#[export_name = "TEST"]
-pub unsafe extern "C" fn TEST_5(mut MathsUnittest: libc::c_int,
+#[no_mangle]
+pub unsafe extern "C" fn TEST_6(mut MathsUnittest: libc::c_int,
                                 mut TestDegreesToRadians: libc::c_int)
  -> libc::c_int {
     EXPECT_FLOAT_EQ(degreesToRadians(0 as libc::c_int),
                     0.0f32 as libc::c_double);
 }
 
-#[export_name = "TEST"]
-pub unsafe extern "C" fn TEST_6(mut MathsUnittest: libc::c_int,
+#[no_mangle]
+pub unsafe extern "C" fn TEST_7(mut MathsUnittest: libc::c_int,
                                 mut TestApplyDeadband: libc::c_int)
  -> libc::c_int {
     EXPECT_EQ(applyDeadband(0 as libc::c_int, 0 as libc::c_int),
@@ -254,82 +261,92 @@ fn expectVectorsAreEqual(mut a: *mut fp_vector, mut b: *mut fp_vector, mut absTo
     EXPECT_NEAR(a.Z, b.Z, absTol);
 }
 
-TEST(mut MathsUnittest: libc::c_int, mut TestRotateVectorWithNoAngle: libc::c_int)
+#[no_mangle]
+pub unsafe extern "C" fn TEST_8(mut MathsUnittest: libc::c_int, mut TestRotateVectorWithNoAngle: libc::c_int)
+    -> libc::c_int
 {
-    let vector: fp_vector = {1.0f, 0.0f, 0.0f};
-    let euler_angles: fp_angles_t = {0.0f, 0.0f, 0.0f};
+    let vector: fp_vector = vec![1.0, 0.0, 0.0];
+    let euler_angles: fp_angles_t = vec![0.0, 0.0, 0.0];
 
     rotateV(&vector, &euler_angles);
-    let expected_result: fp_vector = {1.0f, 0.0f, 0.0f};
+    let expected_result: fp_vector = vec![1.0, 0.0, 0.0];
 
-    expectVectorsAreEqual(&vector, &expected_result, 1e-5);
+    expectVectorsAreEqual(&mut vector, &mut expected_result, 0.00001);
 }
 
-fn TEST(mut MathsUnittest: libc::c_int, mut TestRotateVectorAroundAxis: libc::c_int)
+#[no_mangle]
+pub unsafe extern "C" fn TEST_9(mut MathsUnittest: libc::c_int, mut TestRotateVectorAroundAxis: libc::c_int)
+    -> libc::c_int
 {
     //Rotate a vector <1, 0, 0> around an each axis x y and z.
-    let vector: fp_vector = {1.0f, 0.0f, 0.0f};
-    let euler_angles: fp_angles_t = {90.0f, 0.0f, 0.0f};
+    let vector: fp_vector = vec![1.0, 0.0, 0.0];
+    let euler_angles: fp_angles_t = vec![90.0, 0.0, 0.0];
 
     rotateV(&vector, &euler_angles);
-    let expected_result: fp_vector = {1.0f, 0.0f, 0.0f};
+    let expected_result: fp_vector = vec![1.0, 0.0, 0.0];
 
-    expectVectorsAreEqual(&vector, &expected_result, 1e-5);
+    expectVectorsAreEqual(&mut vector, &mut expected_result, 0.00001);
 }
 
 #[cfg(FAST_MATH)] || #[cfg(VERY_FAST_MATH)]
-fn TEST(mut MathsUnittest: libc::c_int, mut TestFastTrigonometrySinCos: libc::c_int) {
-	
-	let sinError = 0;
-	let x = -10 * M_PI;
+#[no_mangle]
+pub unsafe extern "C" fn TEST_10(mut MathsUnittest: libc::c_int, mut TestFastTrigonometrySinCos: libc::c_int)
+    -> libc::c_int
+{
+	let mut sinError = 0;
+	let mut x = -10 * M_PI;
 	while x < 10 * M_PI {
 		let approxResult = sin_approx(x);
 		let libmResult = cosf(x);
-		sinError = MAX(sinError, fabs(approxResult - libmResult));		
+		sinError = MAX(sinError, fabs(approxResult - libmResult));
 		x = M_PI / 300;
 	}
-	println!("sin_approx maximum absolute error = {}", sinError)
-	EXPECT_LE(sinError, 3e-6);
-	
-	let cosError = 0;
-	let x = -10 * M_PI;
+	println!("sin_approx maximum absolute error = {}", sinError);
+	EXPECT_LE(sinError, 0.000003);
+
+	let mut cosError = 0;
+	let mut x = -10 * M_PI;
 	while x < 10 * M_PI {
 		let approxResult = sin_approx(x);
 		let libmResult = cosf(x);
-		sinError = MAX(sinError, fabs(approxResult - libmResult));		
+		cosError = MAX(cosError, fabs(approxResult - libmResult));
 		x = M_PI / 300;
 	}
-	println!("cos_approx maximum absolute error = {}", cosError)
-	EXPECT_LE(cosError, 3.5e-6);
+	println!("cos_approx maximum absolute error = {}", cosError);
+	EXPECT_LE(cosError, 0.0000035);
 }
 
-fn TEST(mut MathsUnittest: libc::c_int, mut TestFastTrigonometryATan2: libc::c_int) {
-
-	let error = 0;
-	let x = -1;
-	let y = -1;
+#[no_mangle]
+pub unsafe extern "C" fn TEST_11(mut MathsUnittest: libc::c_int, mut TestFastTrigonometryATan2: libc::c_int)
+    -> libc::c_int
+{
+	let mut error = 0;
+	let mut x= -1;
+	let mut y = -1;
 	while x < 1 {
 		while x < 1 {
-			let approxResult = atan_approx(y, x);
-			let libmResult = atan2f(y, x);
+			let approxResult = atan_approx(&y, &x);
+			let libmResult = atan2f(&y, &x);
 			error = MAX(error, fabs(approxResult - libmResult));
 			x = x + 0.001;
-		}		
+		}
 		x = x + 0.001;
 	}
-	println!("atan2_approx maximum absolute error = {} rads ({} degree)", error, error / M_PI * 180.0f);
-    EXPECT_LE(error, 1e-6);
+	println!("atan2_approx maximum absolute error = {} rads ({} degree)", error, error / M_PI * 180.0);
+    EXPECT_LE(&error, 0.000001);
 }
-	
-fn TEST(mut MathsUnittest: libc::c_int, mut TestFastTrigonometryACos: libc::c_int) {
 
-	let error = 0;
+#[no_mangle]
+pub unsafe extern "C" fn TEST_12(mut MathsUnittest: libc::c_int, mut TestFastTrigonometryACos: libc::c_int)
+    -> libc::c_int
+{
+	let mut error = 0;
 	let x = -1;
 	while x < 1 {
-		let approxResult = acos_approx(x);
-		let libmResult = acos(x);
+		let approxResult = acos_approx(&x);
+		let libmResult = acos(&x);
 		error = MAX(error, fabs(approxResult - libmResult));
 	}
-	println!("acos_approx maximum absolute error = {} rads ({} degree)", error, error / M_PI * 180.0f);
-    EXPECT_LE(error, 1e-4);
+	println!("acos_approx maximum absolute error = {} rads ({} degree)", error, error / M_PI * 180.0);
+    EXPECT_LE(&error, 0.0001);
 }
