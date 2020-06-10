@@ -100,10 +100,30 @@ c2rust transpile --emit-no-std             \
                  cleanflight/compile_commands.json
 ```
 
+
 This should generate all the code you need for the project. It is useful to
 redirect the output of this command to a file, because some of the errors get
-hidden in the long stream of warnings.
+hidden in the long stream of warnings:
 
+```
+c2rust transpile --emit-no-std             \
+                 --emit-build-files        \
+                 --binary main             \
+                 -o transpiled             \
+                 cleanflight/compile_commands.json &> c2rust_log.txt
+```
+
+To compile the unit tests:
+
+In /cleanflight/src/test/
+```
+intercept-build make TARGET=SITL &> unittest_build.txt
+```
+
+This outputs unittest_build.txt with all the C errors or pass/fails
+
+
+(cont. original)
 In our experience, the resulting code is unlikely to compile, for two main
 reasons:
 
