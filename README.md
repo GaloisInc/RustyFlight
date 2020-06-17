@@ -158,7 +158,18 @@ SITL target runs, and can be tested in Gazebo, as described below.
 
 ### SPRACINGF3
 
-TBD
+What I needed to do:
+
+1. comment out [OSD module](https://oscarliang.com/betaflight-osd/) (which included vector tables that c2rust didn't like). More info about the OSD feature [here](https://oscarliang.com/betaflight-f3-fc-quadrant-25a-esc/). Alternatively compiling for a smaller flash size would work too.
+2. Copy the linker script
+3. Modify `Cargo.toml` to compile `libc` and `c2rust-bitfields` as `no_std`
+4. Implement `__set_BASEPRI_MAX()` and `__get_BASEPRI()` - the functions are inline assembly, so this might require new nightly rust and `#![feature(asm)]` enabled
+5. Mark `main.rs` and `lib.rs` as `#![no_std]`
+6. `src/src/main/telemetry/msp_shared.rs` calls for some reason `::std::vec`, change this to `alloc::vec`
+7. Define `#[panic_handler]`
+
+#### Outstanding
+* Lots of `error[E0412]: cannot find type c_int in crate libc`errors
 
 ## Gazebo and SITL target
 Although [here are some basic instructions](https://github.com/cleanflight/cleanflight/tree/master/src/main/target/SITL) there are some extra steps that need to happen. [This video](https://www.youtube.com/watch?v=Qq6D3rDxgnk) might provide some insights as well.
@@ -175,6 +186,6 @@ To fix all the warnings you need:
 * connect RX
 * go to cleanflight source code, and add `#ifdef(SIMULATOR_BUILD)` and/or `#ifdef(SITL)` around the relevant parts of the safety arming code, so these important checks are disabled in SITL
 * NOTE: asking the cleanflight developers is encouraged, see https://github.com/betaflight/betaflight/issues
-
+* NOTE: arming prevention flags are described [here](https://oscarliang.com/quad-arming-issue-fix/)
 
 Once you resolve all arming disable flags, you can arm your quad. After take off, it will probably crash soon because of the lag.

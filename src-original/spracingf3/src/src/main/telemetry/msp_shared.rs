@@ -230,7 +230,7 @@ pub unsafe extern "C" fn handleMspFrame(mut frameStart: *mut uint8_t,
     let frameBytesRemaining: uint8_t =
         sbufBytesRemaining(frameBuf) as uint8_t;
     let vla = frameBytesRemaining as usize;
-    let mut payload: Vec<uint8_t> = ::std::vec::from_elem(0, vla);
+    let mut payload: Vec<uint8_t> = ::alloc::vec::from_elem(0, vla);
     if bufferBytesRemaining as libc::c_int >=
            frameBytesRemaining as libc::c_int {
         sbufReadData(frameBuf, payload.as_mut_ptr() as *mut libc::c_void,
@@ -271,7 +271,7 @@ pub unsafe extern "C" fn sendMspReply(mut payloadSize: uint8_t,
     static mut checksum_0: uint8_t = 0i32 as uint8_t;
     static mut seq: uint8_t = 0i32 as uint8_t;
     let vla = payloadSize as usize;
-    let mut payloadOut: Vec<uint8_t> = ::std::vec::from_elem(0, vla);
+    let mut payloadOut: Vec<uint8_t> = ::alloc::vec::from_elem(0, vla);
     let mut payload: sbuf_t =
         sbuf_t{ptr: 0 as *const uint8_t as *mut uint8_t,
                end: 0 as *const uint8_t as *mut uint8_t,};
@@ -303,7 +303,7 @@ pub unsafe extern "C" fn sendMspReply(mut payloadSize: uint8_t,
     let payloadBytesRemaining: uint8_t =
         sbufBytesRemaining(payloadBuf) as uint8_t;
     let vla_0 = payloadBytesRemaining as usize;
-    let mut frame: Vec<uint8_t> = ::std::vec::from_elem(0, vla_0);
+    let mut frame: Vec<uint8_t> = ::alloc::vec::from_elem(0, vla_0);
     if bufferBytesRemaining as libc::c_int >=
            payloadBytesRemaining as libc::c_int {
         sbufReadData(txBuf, frame.as_mut_ptr() as *mut libc::c_void,

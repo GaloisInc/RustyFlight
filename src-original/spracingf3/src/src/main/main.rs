@@ -1,7 +1,6 @@
 #![allow(dead_code, mutable_transmutes, non_camel_case_types, non_snake_case,
          non_upper_case_globals, unused_assignments, unused_mut)]
 #![feature(main)]
-#![feature(asm)]
 #![no_std]
 use SPRACINGF3::*;
 extern "C" {
@@ -37,6 +36,13 @@ pub unsafe extern "C" fn run() { loop  { scheduler(); processLoopback(); }; }
 #[main]
 pub fn main() { unsafe { ::std::process::exit(main_0() as i32) } }
 
+
+use core::panic::PanicInfo;
+
+#[panic_handler]
+fn panic(_info: &PanicInfo) -> ! {
+    loop {}
+}
 
 /**
  * Manually added functions
