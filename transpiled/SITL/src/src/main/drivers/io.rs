@@ -1,4 +1,5 @@
-use ::libc;
+use core;
+use libc;
 pub type __uint8_t = libc::c_uchar;
 pub type __uint16_t = libc::c_ushort;
 pub type __uint32_t = libc::c_uint;
@@ -7,7 +8,7 @@ pub type uint16_t = __uint16_t;
 pub type uint32_t = __uint32_t;
 pub type intptr_t = libc::c_long;
 pub type size_t = libc::c_ulong;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct GPIO_TypeDef {
     pub IDR: uint32_t,
@@ -116,7 +117,7 @@ pub type ioTag_t = uint8_t;
 // packet tag to specify IO pin
 pub type IO_t = *mut libc::c_void;
 pub type ioRec_t = ioRec_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct ioRec_s {
     pub gpio: *mut GPIO_TypeDef,
@@ -175,11 +176,10 @@ pub unsafe extern "C" fn IO_Pin(mut io: IO_t) -> uint16_t {
 // port index, GPIOA == 0
 #[no_mangle]
 pub unsafe extern "C" fn IO_GPIOPortIdx(mut io: IO_t) -> libc::c_int {
-    if io.is_null() { return -(1 as libc::c_int) }
+    if io.is_null() { return -1i32 }
     return ((IO_GPIO(io) as
-                 size_t).wrapping_sub(0x1 as libc::c_int as intptr_t as
-                                          libc::c_ulong) >> 10 as libc::c_int)
-               as libc::c_int;
+                 size_t).wrapping_sub(0x1i32 as intptr_t as libc::c_ulong) >>
+                10i32) as libc::c_int;
     // ports are 0x400 apart
 }
 #[no_mangle]
@@ -193,9 +193,8 @@ pub unsafe extern "C" fn IO_GPIO_PortSource(mut io: IO_t) -> libc::c_int {
 // zero based pin index
 #[no_mangle]
 pub unsafe extern "C" fn IO_GPIOPinIdx(mut io: IO_t) -> libc::c_int {
-    if io.is_null() { return -(1 as libc::c_int) }
-    return 31 as libc::c_int -
-               (IO_Pin(io) as libc::c_uint).leading_zeros() as i32;
+    if io.is_null() { return -1i32 }
+    return 31i32 - (IO_Pin(io) as libc::c_uint).leading_zeros() as i32;
     // CLZ is a bit faster than FFS
 }
 #[no_mangle]
@@ -209,12 +208,12 @@ pub unsafe extern "C" fn IO_GPIO_PinSource(mut io: IO_t) -> libc::c_int {
 // mask on stm32f103, bit index on stm32f303
 #[no_mangle]
 pub unsafe extern "C" fn IO_EXTI_Line(mut io: IO_t) -> uint32_t {
-    if io.is_null() { return 0 as libc::c_int as uint32_t }
-    return 0 as libc::c_int as uint32_t;
+    if io.is_null() { return 0i32 as uint32_t }
+    return 0i32 as uint32_t;
 }
 #[no_mangle]
 pub unsafe extern "C" fn IORead(mut io: IO_t) -> bool {
-    if io.is_null() { return 0 as libc::c_int != 0 }
+    if io.is_null() { return 0i32 != 0 }
     return (*IO_GPIO(io)).IDR & IO_Pin(io) as libc::c_uint != 0;
 }
 #[no_mangle]
@@ -222,9 +221,7 @@ pub unsafe extern "C" fn IOWrite(mut io: IO_t, mut hi: bool) {
     if io.is_null() { return }
     (*IO_GPIO(io)).BSRR =
         ((IO_Pin(io) as libc::c_int) <<
-             (if hi as libc::c_int != 0 {
-                  0 as libc::c_int
-              } else { 16 as libc::c_int })) as uint32_t;
+             (if hi as libc::c_int != 0 { 0i32 } else { 16i32 })) as uint32_t;
 }
 #[no_mangle]
 pub unsafe extern "C" fn IOHi(mut io: IO_t) {
@@ -244,7 +241,7 @@ pub unsafe extern "C" fn IOToggle(mut io: IO_t) {
     // high in the mask value rather than all pins. XORing ODR directly risks
     // setting other pins incorrectly because it change all pins' state.
     if (*IO_GPIO(io)).ODR & mask != 0 {
-        mask <<= 16 as libc::c_int
+        mask <<= 16i32
     } // bit is set, shift mask to reset half
     (*IO_GPIO(io)).BSRR = mask;
 }
@@ -302,13 +299,13 @@ pub unsafe extern "C" fn IOIsFreeOrPreinit(mut io: IO_t) -> bool {
                OWNER_SPI_PREINIT_IPU as libc::c_int as libc::c_uint ||
            owner as libc::c_uint ==
                OWNER_SPI_PREINIT_OPU as libc::c_int as libc::c_uint {
-        return 1 as libc::c_int != 0
+        return 1i32 != 0
     }
-    return 0 as libc::c_int != 0;
+    return 0i32 != 0;
 }
 // Avoid -Wpedantic warning
-static mut ioDefUsedMask: [uint16_t; 1] = [0 as libc::c_int as uint16_t];
-static mut ioDefUsedOffset: [uint8_t; 1] = [0 as libc::c_int as uint8_t];
+static mut ioDefUsedMask: [uint16_t; 1] = [0i32 as uint16_t];
+static mut ioDefUsedOffset: [uint8_t; 1] = [0i32 as uint8_t];
 // Avoid -Wpedantic warning
 #[no_mangle]
 pub static mut ioRecs: [ioRec_t; 1] =
@@ -322,23 +319,21 @@ pub static mut ioRecs: [ioRec_t; 1] =
 pub unsafe extern "C" fn IOInitGlobal() {
     let mut ioRec: *mut ioRec_t =
         ioRecs.as_mut_ptr(); // ports are 0x400 apart
-    let mut port: libc::c_uint = 0 as libc::c_int as libc::c_uint;
+    let mut port: libc::c_uint = 0i32 as libc::c_uint;
     while (port as libc::c_ulong) <
               (::core::mem::size_of::<[uint16_t; 1]>() as
                    libc::c_ulong).wrapping_div(::core::mem::size_of::<uint16_t>()
                                                    as libc::c_ulong) {
-        let mut pin: libc::c_uint = 0 as libc::c_int as libc::c_uint;
+        let mut pin: libc::c_uint = 0i32 as libc::c_uint;
         while (pin as libc::c_ulong) <
                   (::core::mem::size_of::<uint16_t>() as
-                       libc::c_ulong).wrapping_mul(8 as libc::c_int as
-                                                       libc::c_ulong) {
-            if ioDefUsedMask[port as usize] as libc::c_int &
-                   (1 as libc::c_int) << pin != 0 {
+                       libc::c_ulong).wrapping_mul(8i32 as libc::c_ulong) {
+            if ioDefUsedMask[port as usize] as libc::c_int & 1i32 << pin != 0
+               {
                 (*ioRec).gpio =
-                    (0x1 as libc::c_int as intptr_t +
-                         (port << 10 as libc::c_int) as libc::c_long) as
+                    (0x1i32 as intptr_t + (port << 10i32) as libc::c_long) as
                         *mut GPIO_TypeDef;
-                (*ioRec).pin = ((1 as libc::c_int) << pin) as uint16_t;
+                (*ioRec).pin = (1i32 << pin) as uint16_t;
                 ioRec = ioRec.offset(1)
             }
             pin = pin.wrapping_add(1)
@@ -348,20 +343,16 @@ pub unsafe extern "C" fn IOInitGlobal() {
 }
 #[no_mangle]
 pub unsafe extern "C" fn IOGetByTag(mut tag: ioTag_t) -> IO_t {
-    let portIdx: libc::c_int =
-        (tag as libc::c_int >> 4 as libc::c_int) - 1 as libc::c_int;
-    let pinIdx: libc::c_int = tag as libc::c_int & 0xf as libc::c_int;
-    if portIdx < 0 as libc::c_int || portIdx >= 0 as libc::c_int {
-        return 0 as *mut libc::c_void
-    }
+    let portIdx: libc::c_int = (tag as libc::c_int >> 4i32) - 1i32;
+    let pinIdx: libc::c_int = tag as libc::c_int & 0xfi32;
+    if portIdx < 0i32 || portIdx >= 0i32 { return 0 as *mut libc::c_void }
     // check if pin exists
-    if ioDefUsedMask[portIdx as usize] as libc::c_int &
-           (1 as libc::c_int) << pinIdx == 0 {
+    if ioDefUsedMask[portIdx as usize] as libc::c_int & 1i32 << pinIdx == 0 {
         return 0 as *mut libc::c_void
     }
     // count bits before this pin on single port
     let mut offset: libc::c_int =
-        ((((1 as libc::c_int) << pinIdx) - 1 as libc::c_int &
+        (((1i32 << pinIdx) - 1i32 &
               ioDefUsedMask[portIdx as usize] as libc::c_int) as
              libc::c_uint).count_ones() as i32;
     // and add port offset

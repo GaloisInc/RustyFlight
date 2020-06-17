@@ -1,4 +1,5 @@
-use ::libc;
+use core;
+use libc;
 extern "C" {
     #[no_mangle]
     fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong)
@@ -236,7 +237,10 @@ extern "C" {
     fn serializeBoxPermanentIdFn(dst: *mut sbuf_s, box_0: *const box_t);
     #[no_mangle]
     fn serializeBoxReply(dst: *mut sbuf_s, page: libc::c_int,
-                         serializeBox: Option<serializeBoxFn>);
+                         serializeBox:
+                             Option<unsafe extern "C" fn(_: *mut sbuf_s,
+                                                         _: *const box_t)
+                                        -> ()>);
     #[no_mangle]
     fn initActiveBoxIds();
     #[no_mangle]
@@ -292,55 +296,105 @@ extern "C" {
     static mut averageSystemLoadPercent: uint16_t;
     #[no_mangle]
     fn getTaskDeltaTime(taskId: cfTaskId_e) -> timeDelta_t;
-    //
-// Main API
-//
+    #[no_mangle]
+    static mut voltageSensorADCConfig_SystemArray:
+           [voltageSensorADCConfig_t; 1];
     //
 // API for reading/configuring current meters by id.
 //
+    #[no_mangle]
+    static voltageMeterADCtoIDMap: [uint8_t; 1];
+    #[no_mangle]
+    static supportedVoltageMeterCount: uint8_t;
     #[no_mangle]
     static voltageMeterIds: [uint8_t; 0];
     #[no_mangle]
     fn voltageMeterRead(id: voltageMeterId_e,
                         voltageMeter: *mut voltageMeter_t);
-    #[no_mangle]
-    static supportedVoltageMeterCount: uint8_t;
-    #[no_mangle]
-    fn getBatteryState() -> batteryState_e;
-    #[no_mangle]
-    fn getAmperage() -> int32_t;
-    #[no_mangle]
-    fn getMAhDrawn() -> int32_t;
-    #[no_mangle]
-    fn getBatteryVoltage() -> uint16_t;
-    #[no_mangle]
-    fn getBatteryCellCount() -> uint8_t;
-    #[no_mangle]
-    static voltageMeterADCtoIDMap: [uint8_t; 1];
-    #[no_mangle]
-    static mut voltageSensorADCConfig_SystemArray:
-           [voltageSensorADCConfig_t; 1];
-    #[no_mangle]
-    static mut batteryConfig_System: batteryConfig_t;
-    #[no_mangle]
-    static mut currentSensorVirtualConfig_System:
-           currentSensorVirtualConfig_t;
-    #[no_mangle]
-    static mut currentSensorADCConfig_System: currentSensorADCConfig_t;
+    /*
+ * This file is part of Cleanflight and Betaflight.
+ *
+ * Cleanflight and Betaflight are free software. You can redistribute
+ * this software and/or modify this software under the terms of the
+ * GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * Cleanflight and Betaflight are distributed in the hope that they
+ * will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this software.
+ *
+ * If not, see <http://www.gnu.org/licenses/>.
+ */
+    // current read by current sensor in centiampere (1/100th A)
+    // current read by current sensor in centiampere (1/100th A) (unfiltered)
+    // milliampere hours drawn from the battery since start
+    // WARNING - do not mix usage of CURRENT_SENSOR_* and CURRENT_METER_*, they are separate concerns.
+    // milliampere hours drawn from the battery since start
+    //
+// Sensors
+//
+    //
+// ADC
+//
+    // current read by current sensor in centiampere (1/100th A)
+    // current read by current sensor in centiampere (1/100th A) (unfiltered)
+    // scale the current sensor output voltage to milliamps. Value in mV/10A
+    // offset of the current sensor in mA
+    //
+// Virtual
+//
+    // current read by current sensor in centiampere (1/100th A)
+    // scale the current sensor output voltage to milliamps. Value in 1/10th mV/A
+    // offset of the current sensor in millivolt steps
+    //
+// ESC
+//
+    // milliampere hours drawn from the battery since start
+    // current read by current sensor in centiampere (1/100th A)
+    //
+// MSP
+//
+    // milliampere hours drawn from the battery since start
+    // current read by current sensor in centiampere (1/100th A)
+    //
+// Current Meter API
+//
     //
 // API for reading current meters by id.
 //
     #[no_mangle]
     static supportedCurrentMeterCount: uint8_t;
     #[no_mangle]
+    fn getBatteryState() -> batteryState_e;
+    #[no_mangle]
+    fn getAmperage() -> int32_t;
+    #[no_mangle]
+    fn getBatteryVoltage() -> uint16_t;
+    #[no_mangle]
+    fn getBatteryCellCount() -> uint8_t;
+    #[no_mangle]
     static currentMeterIds: [uint8_t; 0];
     #[no_mangle]
     fn currentMeterRead(id: currentMeterId_e,
                         currentMeter: *mut currentMeter_t);
     #[no_mangle]
-    static mut acc: acc_t;
+    static mut currentSensorADCConfig_System: currentSensorADCConfig_t;
+    #[no_mangle]
+    static mut currentSensorVirtualConfig_System:
+           currentSensorVirtualConfig_t;
+    #[no_mangle]
+    static mut batteryConfig_System: batteryConfig_t;
+    #[no_mangle]
+    fn getMAhDrawn() -> int32_t;
     #[no_mangle]
     static mut accelerometerConfig_System: accelerometerConfig_t;
+    #[no_mangle]
+    static mut acc: acc_t;
     #[no_mangle]
     fn accSetCalibrationCycles(calibrationCyclesRequired: uint16_t);
     #[no_mangle]
@@ -364,14 +418,14 @@ pub type int32_t = __int32_t;
 pub type uint8_t = __uint8_t;
 pub type uint16_t = __uint16_t;
 pub type uint32_t = __uint32_t;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct __pthread_internal_list {
     pub __prev: *mut __pthread_internal_list,
     pub __next: *mut __pthread_internal_list,
 }
 pub type __pthread_list_t = __pthread_internal_list;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct __pthread_mutex_s {
     pub __lock: libc::c_int,
@@ -383,25 +437,25 @@ pub struct __pthread_mutex_s {
     pub __elision: libc::c_short,
     pub __list: __pthread_list_t,
 }
-#[derive(Copy, Clone)]
-#[repr(C)]
+#[derive ( Copy, Clone )]
+#[repr ( C )]
 pub union pthread_mutex_t {
     pub __data: __pthread_mutex_s,
     pub __size: [libc::c_char; 40],
     pub __align: libc::c_long,
 }
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct TIM_TypeDef {
     pub test: *mut libc::c_void,
 }
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct SPI_TypeDef {
     pub test: *mut libc::c_void,
 }
 pub type timeDelta_t = int32_t;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct _dateTime_s {
     pub year: uint16_t,
@@ -413,7 +467,7 @@ pub struct _dateTime_s {
     pub millis: uint16_t,
 }
 pub type dateTime_t = _dateTime_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct blackboxConfig_s {
     pub p_ratio: uint16_t,
@@ -426,7 +480,7 @@ pub type C2RustUnnamed = libc::c_uint;
 pub const FD_YAW: C2RustUnnamed = 2;
 pub const FD_PITCH: C2RustUnnamed = 1;
 pub const FD_ROLL: C2RustUnnamed = 0;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct hsvColor_s {
     pub h: uint16_t,
@@ -434,7 +488,7 @@ pub struct hsvColor_s {
     pub v: uint8_t,
 }
 pub type hsvColor_t = hsvColor_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct sbuf_s {
     pub ptr: *mut uint8_t,
@@ -507,52 +561,32 @@ pub const BUSTYPE_MPU_SLAVE: busType_e = 3;
 pub const BUSTYPE_SPI: busType_e = 2;
 pub const BUSTYPE_I2C: busType_e = 1;
 pub const BUSTYPE_NONE: busType_e = 0;
-/*
- * This file is part of Cleanflight and Betaflight.
- *
- * Cleanflight and Betaflight are free software. You can redistribute
- * this software and/or modify this software under the terms of the
- * GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option)
- * any later version.
- *
- * Cleanflight and Betaflight are distributed in the hope that they
- * will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this software.
- *
- * If not, see <http://www.gnu.org/licenses/>.
- */
-// Slave I2C on SPI master
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct busDevice_s {
     pub bustype: busType_e,
     pub busdev_u: C2RustUnnamed_0,
 }
-#[derive(Copy, Clone)]
-#[repr(C)]
+#[derive ( Copy, Clone )]
+#[repr ( C )]
 pub union C2RustUnnamed_0 {
     pub spi: deviceSpi_s,
     pub i2c: deviceI2C_s,
     pub mpuSlave: deviceMpuSlave_s,
 }
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct deviceMpuSlave_s {
     pub master: *const busDevice_s,
     pub address: uint8_t,
 }
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct deviceI2C_s {
     pub device: I2CDevice,
     pub address: uint8_t,
 }
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct deviceSpi_s {
     pub instance: *mut SPI_TypeDef,
@@ -569,7 +603,7 @@ pub const CW180_DEG: sensor_align_e = 3;
 pub const CW90_DEG: sensor_align_e = 2;
 pub const CW0_DEG: sensor_align_e = 1;
 pub const ALIGN_DEFAULT: sensor_align_e = 0;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct accDev_s {
     pub lock: pthread_mutex_t,
@@ -586,7 +620,7 @@ pub struct accDev_s {
     pub filler: [uint8_t; 2],
 }
 pub type mpuDetectionResult_t = mpuDetectionResult_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct mpuDetectionResult_s {
     pub sensor: mpuSensor_e,
@@ -615,7 +649,7 @@ pub type sensorAccReadFuncPtr
 pub type sensorAccInitFuncPtr
     =
     Option<unsafe extern "C" fn(_: *mut accDev_s) -> ()>;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct gyroConfig_s {
     pub gyro_align: uint8_t,
@@ -652,13 +686,13 @@ pub const PWM_TYPE_MULTISHOT: C2RustUnnamed_1 = 3;
 pub const PWM_TYPE_ONESHOT42: C2RustUnnamed_1 = 2;
 pub const PWM_TYPE_ONESHOT125: C2RustUnnamed_1 = 1;
 pub const PWM_TYPE_STANDARD: C2RustUnnamed_1 = 0;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct timerChannel_t {
     pub ccr: *mut timCCR_t,
     pub tim: *mut TIM_TypeDef,
 }
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct pwmOutputPort_t {
     pub channel: timerChannel_t,
@@ -668,7 +702,8 @@ pub struct pwmOutputPort_t {
     pub enabled: bool,
     pub io: IO_t,
 }
-#[derive(Copy, Clone)]
+//CAVEAT: This is used in the `motorConfig_t` parameter group, so the parameter group constraints apply
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct motorDevConfig_s {
     pub motorPwmRate: uint16_t,
@@ -699,7 +734,7 @@ pub const SERIAL_NOT_INVERTED: portOptions_e = 0;
 pub type serialReceiveCallbackPtr
     =
     Option<unsafe extern "C" fn(_: uint16_t, _: *mut libc::c_void) -> ()>;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct serialPort_s {
     pub vTable: *const serialPortVTable,
@@ -718,7 +753,7 @@ pub struct serialPort_s {
     pub rxCallbackData: *mut libc::c_void,
     pub identifier: uint8_t,
 }
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct serialPortVTable {
     pub serialWrite: Option<unsafe extern "C" fn(_: *mut serialPort_t,
@@ -763,7 +798,7 @@ pub struct serialPortVTable {
 }
 // used by serial drivers to return frames to app
 pub type serialPort_t = serialPort_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct pilotConfig_s {
     pub name: [libc::c_char; 17],
@@ -788,7 +823,7 @@ pub struct pilotConfig_s {
  * If not, see <http://www.gnu.org/licenses/>.
  */
 pub type pilotConfig_t = pilotConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct systemConfig_s {
     pub pidProfileIndex: uint8_t,
@@ -801,7 +836,7 @@ pub struct systemConfig_s {
     pub boardIdentifier: [libc::c_char; 6],
 }
 pub type systemConfig_t = systemConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct pidProfile_s {
     pub yaw_lowpass_hz: uint16_t,
@@ -851,7 +886,7 @@ pub struct pidProfile_s {
     pub abs_control_error_limit: uint8_t,
 }
 pub type pidf_t = pidf_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct pidf_s {
     pub P: uint8_t,
@@ -859,7 +894,7 @@ pub struct pidf_s {
     pub D: uint8_t,
     pub F: uint16_t,
 }
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct controlRateConfig_s {
     pub thrMid8: uint8_t,
@@ -874,14 +909,14 @@ pub struct controlRateConfig_s {
     pub throttle_limit_percent: uint8_t,
 }
 pub type controlRateConfig_t = controlRateConfig_s;
-#[derive(Copy, Clone)]
-#[repr(C)]
+#[derive ( Copy, Clone )]
+#[repr ( C )]
 pub union rollAndPitchTrims_u {
     pub raw: [int16_t; 2],
     pub values: rollAndPitchTrims_t_def,
 }
 pub type rollAndPitchTrims_t_def = rollAndPitchTrims_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct rollAndPitchTrims_s {
     pub roll: int16_t,
@@ -934,20 +969,52 @@ pub const BOXARM: boxId_e = 0;
 pub type modeLogic_e = libc::c_uint;
 pub const MODELOGIC_AND: modeLogic_e = 1;
 pub const MODELOGIC_OR: modeLogic_e = 0;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct boxBitmask_s {
     pub bits: [uint32_t; 2],
 }
 pub type boxBitmask_t = boxBitmask_s;
-#[derive(Copy, Clone)]
+// in seconds
+// Breakpoint where TPA is activated
+// Sets the throttle limiting type - off, scale or clip
+// Sets the maximum pilot commanded throttle limit
+/*
+ * This file is part of Cleanflight and Betaflight.
+ *
+ * Cleanflight and Betaflight are free software. You can redistribute
+ * this software and/or modify this software under the terms of the
+ * GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * Cleanflight and Betaflight are distributed in the hope that they
+ * will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this software.
+ *
+ * If not, see <http://www.gnu.org/licenses/>.
+ */
+// ARM flag
+// FLIGHT_MODE
+// When new flight modes are added, the parameter group version for 'modeActivationConditions' in src/main/fc/rc_modes.c has to be incremented to ensure that the RC modes configuration is reset.
+// RCMODE flags
+// type to hold enough bits for CHECKBOX_ITEM_COUNT. Struct used for value-like behavior
+// steps are 25 apart
+// a value of 0 corresponds to a channel value of 900 or less
+// a value of 48 corresponds to a channel value of 2100 or more
+// 48 steps between 900 and 2100
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct channelRange_s {
     pub startStep: uint8_t,
     pub endStep: uint8_t,
 }
 pub type channelRange_t = channelRange_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct modeActivationCondition_s {
     pub modeId: boxId_e,
@@ -957,7 +1024,7 @@ pub struct modeActivationCondition_s {
     pub linkedTo: boxId_e,
 }
 pub type modeActivationCondition_t = modeActivationCondition_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct adjustmentRange_s {
     pub auxChannelIndex: uint8_t,
@@ -969,7 +1036,7 @@ pub struct adjustmentRange_s {
     pub adjustmentScale: uint16_t,
 }
 pub type adjustmentRange_t = adjustmentRange_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct rcControlsConfig_s {
     pub deadband: uint8_t,
@@ -979,7 +1046,7 @@ pub struct rcControlsConfig_s {
     pub yaw_control_reversed: bool,
 }
 pub type rcControlsConfig_t = rcControlsConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct flight3DConfig_s {
     pub deadband3d_low: uint16_t,
@@ -991,7 +1058,7 @@ pub struct flight3DConfig_s {
     pub switched_mode3d: uint8_t,
 }
 pub type flight3DConfig_t = flight3DConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct armingConfig_s {
     pub gyro_cal_on_first_arm: uint8_t,
@@ -1029,7 +1096,7 @@ pub const SMALL_ANGLE: C2RustUnnamed_3 = 8;
 pub const CALIBRATE_MAG: C2RustUnnamed_3 = 4;
 pub const GPS_FIX: C2RustUnnamed_3 = 2;
 pub const GPS_FIX_HOME: C2RustUnnamed_3 = 1;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct failsafeConfig_s {
     pub failsafe_throttle: uint16_t,
@@ -1039,10 +1106,6 @@ pub struct failsafeConfig_s {
     pub failsafe_switch_mode: uint8_t,
     pub failsafe_procedure: uint8_t,
 }
-// in seconds
-// Breakpoint where TPA is activated
-// Sets the throttle limiting type - off, scale or clip
-// Sets the maximum pilot commanded throttle limit
 // when aux channel is in range...
 // ..then apply the adjustment function to the auxSwitchChannel ...
 // ... via slot
@@ -1082,27 +1145,27 @@ pub struct failsafeConfig_s {
 // millis
 // millis
 pub type failsafeConfig_t = failsafeConfig_s;
-#[derive(Copy, Clone)]
-#[repr(C)]
+#[derive ( Copy, Clone )]
+#[repr ( C )]
 pub union attitudeEulerAngles_t {
     pub raw: [int16_t; 3],
     pub values: C2RustUnnamed_4,
 }
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct C2RustUnnamed_4 {
     pub roll: int16_t,
     pub pitch: int16_t,
     pub yaw: int16_t,
 }
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct accDeadband_s {
     pub xy: uint8_t,
     pub z: uint8_t,
 }
 pub type accDeadband_t = accDeadband_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct imuConfig_s {
     pub dcm_kp: uint16_t,
@@ -1112,7 +1175,7 @@ pub struct imuConfig_s {
     pub accDeadband: accDeadband_t,
 }
 pub type imuConfig_t = imuConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct mixerConfig_s {
     pub mixerMode: uint8_t,
@@ -1120,7 +1183,7 @@ pub struct mixerConfig_s {
     pub crashflip_motor_percent: uint8_t,
 }
 pub type mixerConfig_t = mixerConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct motorConfig_s {
     pub dev: motorDevConfig_t,
@@ -1166,7 +1229,7 @@ pub type motorConfig_t = motorConfig_s;
  *
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct rxConfig_s {
     pub rcmap: [uint8_t; 8],
@@ -1208,7 +1271,7 @@ pub const PID_YAW: C2RustUnnamed_5 = 2;
 pub const PID_PITCH: C2RustUnnamed_5 = 1;
 pub const PID_ROLL: C2RustUnnamed_5 = 0;
 pub type pidProfile_t = pidProfile_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct pidConfig_s {
     pub pid_process_denom: uint8_t,
@@ -1217,47 +1280,6 @@ pub struct pidConfig_s {
     pub runaway_takeoff_deactivate_throttle: uint8_t,
 }
 pub type pidConfig_t = pidConfig_s;
-// Additional yaw filter when yaw axis too noisy
-// Delta Filter in hz
-// Biquad dterm notch hz
-// Biquad dterm notch low cutoff
-// Filter selection for dterm
-// Experimental ITerm windup threshold, percent motor saturation
-// Disable/Enable pids on zero throttle. Normally even without airmode P and D would be active.
-// Max angle in degrees in level mode
-// inclination factor for Horizon mode
-// OFF or ON
-// Betaflight PID controller parameters
-// type of anti gravity method
-// max allowed throttle delta before iterm accelerated in ms
-// Iterm Accelerator Gain when itermThrottlethreshold is hit
-// yaw accel limiter for deg/sec/ms
-// accel limiter roll/pitch deg/sec/ms
-// dterm crash value
-// gyro crash value
-// setpoint must be below this value to detect crash, so flips and rolls are not interpreted as crashes
-// ms
-// ms
-// degrees
-// degree/second
-// Scale PIDsum to battery voltage
-// Feed forward weight transition
-// limits yaw errorRate, so crashes don't cause huge throttle increase
-// Extra PT1 Filter on D in hz
-// off, on, on and beeps when it is in crash recovery mode
-// how much should throttle be boosted during transient changes 0-100, 100 adds 10x hpf filtered throttle
-// Which cutoff frequency to use for throttle boost. higher cutoffs keep the boost on for shorter. Specified in hz.
-// rotates iterm to translate world errors to local coordinate system
-// takes only the larger of P and the D weight feed forward term if they have the same sign.
-// Specifies type of relax algorithm
-// This cutoff frequency specifies a low pass filter which predicts average response of the quad to setpoint
-// Enable iterm suppression during stick input
-// Acro trainer roll/pitch angle limit in degrees
-// The axis for which record debugging values are captured 0=roll, 1=pitch
-// The strength of the limiting. Raising may reduce overshoot but also lead to oscillation around the angle limit
-// The lookahead window in milliseconds used to reduce overshoot
-// How strongly should the absolute accumulated error be corrected for
-// Limit to the correction
 // Limit to the accumulated error
 // Processing denominator for PID controller vs gyro sampling rate
 // off, on - enables pidsum runaway disarm logic
@@ -1299,7 +1321,7 @@ pub const INPUT_STABILIZED_THROTTLE: C2RustUnnamed_6 = 3;
 pub const INPUT_STABILIZED_YAW: C2RustUnnamed_6 = 2;
 pub const INPUT_STABILIZED_PITCH: C2RustUnnamed_6 = 1;
 pub const INPUT_STABILIZED_ROLL: C2RustUnnamed_6 = 0;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct servoMixer_s {
     pub targetChannel: uint8_t,
@@ -1311,7 +1333,7 @@ pub struct servoMixer_s {
     pub box_0: uint8_t,
 }
 pub type servoMixer_t = servoMixer_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct servoParam_s {
     pub reversedSources: uint32_t,
@@ -1327,7 +1349,7 @@ pub const MSP_RESULT_CMD_UNKNOWN: mspResult_e = -2;
 pub const MSP_RESULT_NO_REPLY: mspResult_e = 0;
 pub const MSP_RESULT_ERROR: mspResult_e = -1;
 pub const MSP_RESULT_ACK: mspResult_e = 1;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct mspPacket_s {
     pub buf: sbuf_t,
@@ -1357,7 +1379,7 @@ pub type mspPostProcessFnPtr
 // configuration
 //
 pub type serialPortConfig_t = serialPortConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct serialPortConfig_s {
     pub functionMask: uint16_t,
@@ -1380,52 +1402,15 @@ pub const SERIAL_PORT_USART3: serialPortIdentifier_e = 2;
 pub const SERIAL_PORT_USART2: serialPortIdentifier_e = 1;
 pub const SERIAL_PORT_USART1: serialPortIdentifier_e = 0;
 pub const SERIAL_PORT_NONE: serialPortIdentifier_e = -1;
-// not used for all telemetry systems, e.g. HoTT only works at 19200.
-/*
- * This file is part of Cleanflight and Betaflight.
- *
- * Cleanflight and Betaflight are free software. You can redistribute
- * this software and/or modify this software under the terms of the
- * GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option)
- * any later version.
- *
- * Cleanflight and Betaflight are distributed in the hope that they
- * will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this software.
- *
- * If not, see <http://www.gnu.org/licenses/>.
- */
 pub type rxConfig_t = rxConfig_s;
 pub type rxFailsafeChannelConfig_t = rxFailsafeChannelConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct rxFailsafeChannelConfig_s {
     pub mode: uint8_t,
     pub step: uint8_t,
 }
-// mapping of radio channels to internal RPYTA+ order
-// type of UART-based receiver (0 = spek 10, 1 = spek 11, 2 = sbus). Must be enabled by FEATURE_RX_SERIAL first.
-// invert the serial RX protocol compared to it's default setting
-// allow rx to operate in half duplex mode on F4, ignored for F1 and F3.
-// number of bind pulses for Spektrum satellite receivers
-// whenever we will reset (exit) binding mode after hard reboot
-// Some radios have not a neutral point centered on 1500. can be changed here
-// minimum rc end
-// maximum rc end
-// Camera angle to be scaled into rc commands
-// Throttle setpoint percent where airmode gets activated
-// true to use frame drop flags in the rx protocol
-// offset applied to the RSSI value before it is returned
-// Determines the smoothing algorithm to use: INTERPOLATION or FILTER
-// Filter cutoff frequency for the input filter (0 = auto)
-// Filter cutoff frequency for the setpoint weight derivative filter (0 = auto)
-// Axis to log as debug values when debug_mode = RC_SMOOTHING
-// Input filter type (0 = PT1, 1 = BIQUAD)
+// not used for all telemetry systems, e.g. HoTT only works at 19200.
 // Derivative filter type (0 = OFF, 1 = PT1, 2 = BIQUAD)
 // See rxFailsafeChannelMode_e
 /*
@@ -1448,7 +1433,7 @@ pub struct rxFailsafeChannelConfig_s {
  * If not, see <http://www.gnu.org/licenses/>.
  */
 pub type boardAlignment_t = boardAlignment_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct boardAlignment_s {
     pub rollDegrees: int32_t,
@@ -1456,7 +1441,7 @@ pub struct boardAlignment_s {
     pub yawDegrees: int32_t,
 }
 pub type gpsSolutionData_t = gpsSolutionData_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct gpsSolutionData_s {
     pub llh: gpsLocation_t,
@@ -1470,7 +1455,7 @@ pub struct gpsSolutionData_s {
 // generic HDOP value (*100)
 /* LLH Location in NEU axis system */
 pub type gpsLocation_t = gpsLocation_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct gpsLocation_s {
     pub lat: int32_t,
@@ -1478,7 +1463,7 @@ pub struct gpsLocation_s {
     pub alt: int32_t,
 }
 pub type compassConfig_t = compassConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct compassConfig_s {
     pub mag_declination: int16_t,
@@ -1493,40 +1478,14 @@ pub struct compassConfig_s {
     pub magZero: flightDynamicsTrims_t,
 }
 pub type flightDynamicsTrims_t = flightDynamicsTrims_u;
-#[derive(Copy, Clone)]
-#[repr(C)]
+#[derive ( Copy, Clone )]
+#[repr ( C )]
 pub union flightDynamicsTrims_u {
     pub raw: [int16_t; 3],
     pub values: flightDynamicsTrims_def_t,
 }
-// latitude * 1e+7
-// longitude * 1e+7
-// altitude in 0.01m
-// Get your magnetic decliniation from here : http://magnetic-declination.com/
-                                            // For example, -6deg 37min, = -637 Japan, format is [sign]dddmm (degreesminutes) default is zero.
-// mag alignment
-// Which mag hardware to use on boards with more than one device
-/*
- * This file is part of Cleanflight and Betaflight.
- *
- * Cleanflight and Betaflight are free software. You can redistribute
- * this software and/or modify this software under the terms of the
- * GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option)
- * any later version.
- *
- * Cleanflight and Betaflight are distributed in the hope that they
- * will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this software.
- *
- * If not, see <http://www.gnu.org/licenses/>.
- */
 pub type flightDynamicsTrims_def_t = int16_flightDynamicsTrims_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct int16_flightDynamicsTrims_s {
     pub roll: int16_t,
@@ -1534,7 +1493,7 @@ pub struct int16_flightDynamicsTrims_s {
     pub yaw: int16_t,
 }
 pub type barometerConfig_t = barometerConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct barometerConfig_s {
     pub baro_bustype: uint8_t,
@@ -1549,7 +1508,7 @@ pub struct barometerConfig_s {
     pub baro_cf_alt: uint16_t,
 }
 pub type accelerometerConfig_t = accelerometerConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct accelerometerConfig_s {
     pub acc_lpf_hz: uint16_t,
@@ -1564,7 +1523,7 @@ pub type gpsAutoBaud_e = libc::c_uint;
 pub const GPS_AUTOBAUD_ON: gpsAutoBaud_e = 1;
 pub const GPS_AUTOBAUD_OFF: gpsAutoBaud_e = 0;
 pub type gpsConfig_t = gpsConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct gpsConfig_s {
     pub provider: gpsProvider_e,
@@ -1585,15 +1544,19 @@ pub const SBAS_AUTO: sbasMode_e = 0;
 pub type gpsProvider_e = libc::c_uint;
 pub const GPS_UBLOX: gpsProvider_e = 1;
 pub const GPS_NMEA: gpsProvider_e = 0;
+// latitude * 1e+7
+// longitude * 1e+7
+// altitude in 0.01m
+// Get your magnetic decliniation from here : http://magnetic-declination.com/
+                                            // For example, -6deg 37min, = -637 Japan, format is [sign]dddmm (degreesminutes) default is zero.
+// mag alignment
+// Which mag hardware to use on boards with more than one device
 // Also used as XCLR (positive logic) for BMP085
 // Barometer hardware to use
 // size of baro filter array
 // additional LPF to reduce baro noise
 // apply Complimentary Filter to keep the calculated velocity based on baro velocity (i.e. near real velocity)
 // apply CF to use ACC for height estimation
-// cutoff frequency for the low pass filter used on the acc z-axis for althold in Hz
-// acc alignment
-// Which acc hardware to use on boards with more than one device
 /*
  * This file is part of Cleanflight and Betaflight.
  *
@@ -1614,7 +1577,7 @@ pub const GPS_NMEA: gpsProvider_e = 0;
  * If not, see <http://www.gnu.org/licenses/>.
  */
 pub type box_t = box_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct box_s {
     pub boxId: uint8_t,
@@ -1629,7 +1592,7 @@ pub const CURRENT_METER_VIRTUAL: currentMeterSource_e = 2;
 pub const CURRENT_METER_ADC: currentMeterSource_e = 1;
 pub const CURRENT_METER_NONE: currentMeterSource_e = 0;
 pub type batteryConfig_t = batteryConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct batteryConfig_s {
     pub vbatmaxcellvoltage: uint8_t,
@@ -1652,7 +1615,7 @@ pub const VOLTAGE_METER_ESC: voltageMeterSource_e = 2;
 pub const VOLTAGE_METER_ADC: voltageMeterSource_e = 1;
 pub const VOLTAGE_METER_NONE: voltageMeterSource_e = 0;
 pub type currentSensorVirtualConfig_t = currentSensorVirtualConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct currentSensorVirtualConfig_s {
     pub scale: int16_t,
@@ -1660,15 +1623,19 @@ pub struct currentSensorVirtualConfig_s {
 }
 pub const CURRENT_METER_ID_VIRTUAL_1: currentMeterId_e = 80;
 pub type currentSensorADCConfig_t = currentSensorADCConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct currentSensorADCConfig_s {
     pub scale: int16_t,
     pub offset: int16_t,
 }
 pub const CURRENT_METER_ID_BATTERY_1: currentMeterId_e = 10;
+// see boxId_e
+// GUI-readable box name
+// permanent ID used to identify BOX. This ID is unique for one function, DO NOT REUSE IT
+// see also voltageMeterADCtoIDMap
 pub type voltageSensorADCConfig_t = voltageSensorADCConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct voltageSensorADCConfig_s {
     pub vbatscale: uint8_t,
@@ -1690,7 +1657,7 @@ pub const RSSI_SOURCE_RX_CHANNEL: rssiSource_e = 2;
 pub const RSSI_SOURCE_ADC: rssiSource_e = 1;
 pub const RSSI_SOURCE_NONE: rssiSource_e = 0;
 pub type serialConfig_t = serialConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct serialConfig_s {
     pub portConfigs: [serialPortConfig_t; 8],
@@ -1698,7 +1665,7 @@ pub struct serialConfig_s {
     pub reboot_character: uint8_t,
 }
 pub type rxRuntimeConfig_t = rxRuntimeConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct rxRuntimeConfig_s {
     pub channelCount: uint8_t,
@@ -1712,12 +1679,6 @@ pub struct rxRuntimeConfig_s {
 pub type rcProcessFrameFnPtr
     =
     Option<unsafe extern "C" fn(_: *const rxRuntimeConfig_s) -> bool>;
-// see boxId_e
-// GUI-readable box name
-// permanent ID used to identify BOX. This ID is unique for one function, DO NOT REUSE IT
-// which byte is used to reboot. Default 'R', could be changed carefully to something else.
-// number of RC channels as reported by current input driver
-// used by receiver driver to return channel data
 pub type rcFrameStatusFnPtr
     =
     Option<unsafe extern "C" fn(_: *mut rxRuntimeConfig_s) -> uint8_t>;
@@ -1726,14 +1687,14 @@ pub type rcReadRawDataFnPtr
     Option<unsafe extern "C" fn(_: *const rxRuntimeConfig_s, _: uint8_t)
                -> uint16_t>;
 pub type mag_t = mag_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct mag_s {
     pub magADC: [libc::c_float; 3],
     pub magneticDeclination: libc::c_float,
 }
 pub type acc_t = acc_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct acc_s {
     pub dev: accDev_t,
@@ -1774,42 +1735,17 @@ pub const CURRENT_SENSOR_ADC: C2RustUnnamed_7 = 1;
 pub const VOLTAGE_SENSOR_ADC_VBAT: C2RustUnnamed_9 = 0;
 pub const VOLTAGE_SENSOR_TYPE_ADC_RESISTOR_DIVIDER: C2RustUnnamed_8 = 0;
 pub type currentMeter_t = currentMeter_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct currentMeter_s {
     pub amperage: int32_t,
     pub amperageLatest: int32_t,
     pub mAhDrawn: int32_t,
 }
-/*
- * This file is part of Cleanflight and Betaflight.
- *
- * Cleanflight and Betaflight are free software. You can redistribute
- * this software and/or modify this software under the terms of the
- * GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option)
- * any later version.
- *
- * Cleanflight and Betaflight are distributed in the hope that they
- * will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this software.
- *
- * If not, see <http://www.gnu.org/licenses/>.
- */
-//
-// fixed ids, current can be measured at many different places, these identifiers are the ones we support or would consider supporting.
-//
 pub type currentMeterId_e = libc::c_uint;
-// 90-99 for MSP meters
 pub const CURRENT_METER_ID_MSP_2: currentMeterId_e = 91;
 pub const CURRENT_METER_ID_MSP_1: currentMeterId_e = 90;
-// 80-89 for virtual meters
 pub const CURRENT_METER_ID_VIRTUAL_2: currentMeterId_e = 81;
-//...
 pub const CURRENT_METER_ID_ESC_MOTOR_20: currentMeterId_e = 79;
 pub const CURRENT_METER_ID_ESC_MOTOR_12: currentMeterId_e = 71;
 pub const CURRENT_METER_ID_ESC_MOTOR_11: currentMeterId_e = 70;
@@ -1821,36 +1757,29 @@ pub const CURRENT_METER_ID_ESC_MOTOR_6: currentMeterId_e = 65;
 pub const CURRENT_METER_ID_ESC_MOTOR_5: currentMeterId_e = 64;
 pub const CURRENT_METER_ID_ESC_MOTOR_4: currentMeterId_e = 63;
 pub const CURRENT_METER_ID_ESC_MOTOR_3: currentMeterId_e = 62;
-// 60-79 for ESC motors (20 motors)
 pub const CURRENT_METER_ID_ESC_MOTOR_2: currentMeterId_e = 61;
 pub const CURRENT_METER_ID_ESC_MOTOR_1: currentMeterId_e = 60;
-// 50-59 for ESC combined (it's doubtful an FC would ever expose 51-59 however)
-// ...
 pub const CURRENT_METER_ID_ESC_COMBINED_10: currentMeterId_e = 59;
 pub const CURRENT_METER_ID_ESC_COMBINED_1: currentMeterId_e = 50;
-//..
 pub const CURRENT_METER_ID_12V_10: currentMeterId_e = 49;
-// 40-49 for 12V meters
 pub const CURRENT_METER_ID_12V_2: currentMeterId_e = 41;
 pub const CURRENT_METER_ID_12V_1: currentMeterId_e = 40;
-//..
 pub const CURRENT_METER_ID_9V_10: currentMeterId_e = 39;
-// 30-39 for 9V meters
 pub const CURRENT_METER_ID_9V_2: currentMeterId_e = 31;
 pub const CURRENT_METER_ID_9V_1: currentMeterId_e = 30;
-//..
 pub const CURRENT_METER_ID_5V_10: currentMeterId_e = 29;
-// 20-29 for 5V meters
 pub const CURRENT_METER_ID_5V_2: currentMeterId_e = 21;
 pub const CURRENT_METER_ID_5V_1: currentMeterId_e = 20;
-//..
 pub const CURRENT_METER_ID_BATTERY_10: currentMeterId_e = 19;
-// 10-19 for battery meters
 pub const CURRENT_METER_ID_BATTERY_2: currentMeterId_e = 11;
 pub const CURRENT_METER_ID_NONE: currentMeterId_e = 0;
+// adjust this to match battery voltage to reported value
+// resistor divider R2 (default NAZE 10(K))
+// multiplier for scale (e.g. 2.5:1 ratio with multiplier of 4 can use '100' instead of '25' in ratio) to get better precision
+// which byte is used to reboot. Default 'R', could be changed carefully to something else.
 // WARNING - do not mix usage of VOLTAGE_METER_* and VOLTAGE_SENSOR_*, they are separate concerns.
 pub type voltageMeter_t = voltageMeter_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct voltageMeter_s {
     pub filtered: uint16_t,
@@ -1895,13 +1824,13 @@ pub const BATTERY_NOT_PRESENT: batteryState_e = 3;
 pub const BATTERY_CRITICAL: batteryState_e = 2;
 pub const BATTERY_WARNING: batteryState_e = 1;
 pub const BATTERY_OK: batteryState_e = 0;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct modeColorIndexes_s {
     pub color: [uint8_t; 6],
 }
 pub type modeColorIndexes_t = modeColorIndexes_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct specialColorIndexes_s {
     pub color: [uint8_t; 11],
@@ -1910,17 +1839,8 @@ pub type specialColorIndexes_t = specialColorIndexes_s;
 pub type C2RustUnnamed_7 = libc::c_uint;
 pub const CURRENT_SENSOR_MSP: C2RustUnnamed_7 = 3;
 pub const CURRENT_SENSOR_ESC: C2RustUnnamed_7 = 2;
-// voltage in 0.1V steps
-// voltage in 0.1V steps
-//
-// sensors
-//
 pub type C2RustUnnamed_8 = libc::c_uint;
 pub const VOLTAGE_SENSOR_TYPE_ESC: C2RustUnnamed_8 = 1;
-//
-// adc sensors
-//
-// VBAT - some boards have external, 12V, 9V and 5V meters.
 pub type C2RustUnnamed_9 = libc::c_uint;
 pub const VOLTAGE_SENSOR_ADC_5V: C2RustUnnamed_9 = 3;
 pub const VOLTAGE_SENSOR_ADC_9V: C2RustUnnamed_9 = 2;
@@ -1928,6 +1848,8 @@ pub const VOLTAGE_SENSOR_ADC_12V: C2RustUnnamed_9 = 1;
 pub type C2RustUnnamed_10 = libc::c_uint;
 pub const SENSOR_GPSMAG: C2RustUnnamed_10 = 64;
 pub const SENSOR_SONAR: C2RustUnnamed_10 = 16;
+// voltage in 0.1V steps
+// voltage in 0.1V steps
 // 4 UPPER CASE alpha numeric characters that identify the flight controller.
 pub type C2RustUnnamed_11 = libc::c_uint;
 // I think SITL don't need this
@@ -1985,14 +1907,6 @@ unsafe extern "C" fn adjustmentRangesMutable(mut _index: libc::c_int)
                as *mut adjustmentRange_t;
 }
 #[inline]
-unsafe extern "C" fn modeActivationConditionsMutable(mut _index: libc::c_int)
- -> *mut modeActivationCondition_t {
-    return &mut *modeActivationConditions_SystemArray.as_mut_ptr().offset(_index
-                                                                              as
-                                                                              isize)
-               as *mut modeActivationCondition_t;
-}
-#[inline]
 unsafe extern "C" fn modeActivationConditions(mut _index: libc::c_int)
  -> *const modeActivationCondition_t {
     return &mut *modeActivationConditions_SystemArray.as_mut_ptr().offset(_index
@@ -2001,19 +1915,27 @@ unsafe extern "C" fn modeActivationConditions(mut _index: libc::c_int)
                as *mut modeActivationCondition_t;
 }
 #[inline]
-unsafe extern "C" fn rcControlsConfig() -> *const rcControlsConfig_t {
-    return &mut rcControlsConfig_System;
+unsafe extern "C" fn modeActivationConditionsMutable(mut _index: libc::c_int)
+ -> *mut modeActivationCondition_t {
+    return &mut *modeActivationConditions_SystemArray.as_mut_ptr().offset(_index
+                                                                              as
+                                                                              isize)
+               as *mut modeActivationCondition_t;
 }
 #[inline]
 unsafe extern "C" fn rcControlsConfigMutable() -> *mut rcControlsConfig_t {
     return &mut rcControlsConfig_System;
 }
 #[inline]
-unsafe extern "C" fn flight3DConfigMutable() -> *mut flight3DConfig_t {
-    return &mut flight3DConfig_System;
+unsafe extern "C" fn rcControlsConfig() -> *const rcControlsConfig_t {
+    return &mut rcControlsConfig_System;
 }
 #[inline]
 unsafe extern "C" fn flight3DConfig() -> *const flight3DConfig_t {
+    return &mut flight3DConfig_System;
+}
+#[inline]
+unsafe extern "C" fn flight3DConfigMutable() -> *mut flight3DConfig_t {
     return &mut flight3DConfig_System;
 }
 #[inline]
@@ -2025,11 +1947,11 @@ unsafe extern "C" fn armingConfig() -> *const armingConfig_t {
     return &mut armingConfig_System;
 }
 #[inline]
-unsafe extern "C" fn failsafeConfigMutable() -> *mut failsafeConfig_t {
+unsafe extern "C" fn failsafeConfig() -> *const failsafeConfig_t {
     return &mut failsafeConfig_System;
 }
 #[inline]
-unsafe extern "C" fn failsafeConfig() -> *const failsafeConfig_t {
+unsafe extern "C" fn failsafeConfigMutable() -> *mut failsafeConfig_t {
     return &mut failsafeConfig_System;
 }
 #[inline]
@@ -2041,11 +1963,11 @@ unsafe extern "C" fn imuConfigMutable() -> *mut imuConfig_t {
     return &mut imuConfig_System;
 }
 #[inline]
-unsafe extern "C" fn mixerConfigMutable() -> *mut mixerConfig_t {
+unsafe extern "C" fn mixerConfig() -> *const mixerConfig_t {
     return &mut mixerConfig_System;
 }
 #[inline]
-unsafe extern "C" fn mixerConfig() -> *const mixerConfig_t {
+unsafe extern "C" fn mixerConfigMutable() -> *mut mixerConfig_t {
     return &mut mixerConfig_System;
 }
 #[inline]
@@ -2122,14 +2044,6 @@ unsafe extern "C" fn rxConfigMutable() -> *mut rxConfig_t {
     return &mut rxConfig_System;
 }
 #[inline]
-unsafe extern "C" fn rxFailsafeChannelConfigsMutable(mut _index: libc::c_int)
- -> *mut rxFailsafeChannelConfig_t {
-    return &mut *rxFailsafeChannelConfigs_SystemArray.as_mut_ptr().offset(_index
-                                                                              as
-                                                                              isize)
-               as *mut rxFailsafeChannelConfig_t;
-}
-#[inline]
 unsafe extern "C" fn rxFailsafeChannelConfigs(mut _index: libc::c_int)
  -> *const rxFailsafeChannelConfig_t {
     return &mut *rxFailsafeChannelConfigs_SystemArray.as_mut_ptr().offset(_index
@@ -2138,8 +2052,12 @@ unsafe extern "C" fn rxFailsafeChannelConfigs(mut _index: libc::c_int)
                as *mut rxFailsafeChannelConfig_t;
 }
 #[inline]
-unsafe extern "C" fn batteryConfig() -> *const batteryConfig_t {
-    return &mut batteryConfig_System;
+unsafe extern "C" fn rxFailsafeChannelConfigsMutable(mut _index: libc::c_int)
+ -> *mut rxFailsafeChannelConfig_t {
+    return &mut *rxFailsafeChannelConfigs_SystemArray.as_mut_ptr().offset(_index
+                                                                              as
+                                                                              isize)
+               as *mut rxFailsafeChannelConfig_t;
 }
 #[inline]
 unsafe extern "C" fn voltageSensorADCConfig(mut _index: libc::c_int)
@@ -2158,18 +2076,9 @@ unsafe extern "C" fn voltageSensorADCConfigMutable(mut _index: libc::c_int)
                as *mut voltageSensorADCConfig_t;
 }
 #[inline]
-unsafe extern "C" fn batteryConfigMutable() -> *mut batteryConfig_t {
-    return &mut batteryConfig_System;
-}
-#[inline]
-unsafe extern "C" fn currentSensorVirtualConfigMutable()
- -> *mut currentSensorVirtualConfig_t {
+unsafe extern "C" fn currentSensorVirtualConfig()
+ -> *const currentSensorVirtualConfig_t {
     return &mut currentSensorVirtualConfig_System;
-}
-#[inline]
-unsafe extern "C" fn currentSensorADCConfigMutable()
- -> *mut currentSensorADCConfig_t {
-    return &mut currentSensorADCConfig_System;
 }
 #[inline]
 unsafe extern "C" fn currentSensorADCConfig()
@@ -2177,10 +2086,26 @@ unsafe extern "C" fn currentSensorADCConfig()
     return &mut currentSensorADCConfig_System;
 }
 #[inline]
-unsafe extern "C" fn currentSensorVirtualConfig()
- -> *const currentSensorVirtualConfig_t {
+unsafe extern "C" fn batteryConfig() -> *const batteryConfig_t {
+    return &mut batteryConfig_System;
+}
+#[inline]
+unsafe extern "C" fn currentSensorADCConfigMutable()
+ -> *mut currentSensorADCConfig_t {
+    return &mut currentSensorADCConfig_System;
+}
+#[inline]
+unsafe extern "C" fn currentSensorVirtualConfigMutable()
+ -> *mut currentSensorVirtualConfig_t {
     return &mut currentSensorVirtualConfig_System;
 }
+#[inline]
+unsafe extern "C" fn batteryConfigMutable() -> *mut batteryConfig_t {
+    return &mut batteryConfig_System;
+}
+// cutoff frequency for the low pass filter used on the acc z-axis for althold in Hz
+// acc alignment
+// Which acc hardware to use on boards with more than one device
 #[inline]
 unsafe extern "C" fn accelerometerConfig() -> *const accelerometerConfig_t {
     return &mut accelerometerConfig_System;
@@ -2199,19 +2124,19 @@ unsafe extern "C" fn barometerConfigMutable() -> *mut barometerConfig_t {
     return &mut barometerConfig_System;
 }
 #[inline]
-unsafe extern "C" fn boardAlignmentMutable() -> *mut boardAlignment_t {
-    return &mut boardAlignment_System;
-}
-#[inline]
 unsafe extern "C" fn boardAlignment() -> *const boardAlignment_t {
     return &mut boardAlignment_System;
 }
 #[inline]
-unsafe extern "C" fn compassConfigMutable() -> *mut compassConfig_t {
-    return &mut compassConfig_System;
+unsafe extern "C" fn boardAlignmentMutable() -> *mut boardAlignment_t {
+    return &mut boardAlignment_System;
 }
 #[inline]
 unsafe extern "C" fn compassConfig() -> *const compassConfig_t {
+    return &mut compassConfig_System;
+}
+#[inline]
+unsafe extern "C" fn compassConfigMutable() -> *mut compassConfig_t {
     return &mut compassConfig_System;
 }
 /*
@@ -2251,18 +2176,18 @@ unsafe extern "C" fn mspRebootFn(mut serialPort: *mut serialPort_t) {
     };
 }
 unsafe extern "C" fn serializeSDCardSummaryReply(mut dst: *mut sbuf_t) {
-    sbufWriteU8(dst, 0 as libc::c_int as uint8_t);
-    sbufWriteU8(dst, 0 as libc::c_int as uint8_t);
-    sbufWriteU8(dst, 0 as libc::c_int as uint8_t);
-    sbufWriteU32(dst, 0 as libc::c_int as uint32_t);
-    sbufWriteU32(dst, 0 as libc::c_int as uint32_t);
+    sbufWriteU8(dst, 0i32 as uint8_t);
+    sbufWriteU8(dst, 0i32 as uint8_t);
+    sbufWriteU8(dst, 0i32 as uint8_t);
+    sbufWriteU32(dst, 0i32 as uint32_t);
+    sbufWriteU32(dst, 0i32 as uint32_t);
 }
 unsafe extern "C" fn serializeDataflashSummaryReply(mut dst: *mut sbuf_t) {
     // FlashFS is not configured or valid device is not detected
-    sbufWriteU8(dst, 0 as libc::c_int as uint8_t);
-    sbufWriteU32(dst, 0 as libc::c_int as uint32_t);
-    sbufWriteU32(dst, 0 as libc::c_int as uint32_t);
-    sbufWriteU32(dst, 0 as libc::c_int as uint32_t);
+    sbufWriteU8(dst, 0i32 as uint8_t);
+    sbufWriteU32(dst, 0i32 as uint32_t);
+    sbufWriteU32(dst, 0i32 as uint32_t);
+    sbufWriteU32(dst, 0i32 as uint32_t);
 }
 // USE_FLASHFS
 // USE_OSD_SLAVE
@@ -2278,31 +2203,31 @@ unsafe extern "C" fn mspCommonProcessOutCommand(mut cmdMSP: uint8_t,
     match cmdMSP as libc::c_int {
         1 => {
             sbufWriteU8(dst,
-                        0 as libc::c_int as
+                        0i32 as
                             uint8_t); // No other build targets currently have hardware revision detection.
-            sbufWriteU8(dst, 1 as libc::c_int as uint8_t); // 0 == FC
-            sbufWriteU8(dst, 40 as libc::c_int as uint8_t);
+            sbufWriteU8(dst, 1i32 as uint8_t); // 0 == FC
+            sbufWriteU8(dst, 40i32 as uint8_t);
         }
         2 => {
             sbufWriteData(dst,
                           flightControllerIdentifier as *const libc::c_void,
-                          4 as libc::c_int);
+                          4i32);
         }
         3 => {
-            sbufWriteU8(dst, 2 as libc::c_int as uint8_t);
-            sbufWriteU8(dst, 5 as libc::c_int as uint8_t);
-            sbufWriteU8(dst, 0 as libc::c_int as uint8_t);
+            sbufWriteU8(dst, 2i32 as uint8_t);
+            sbufWriteU8(dst, 5i32 as uint8_t);
+            sbufWriteU8(dst, 0i32 as uint8_t);
         }
         4 => {
             sbufWriteData(dst,
                           (*systemConfig()).boardIdentifier.as_ptr() as
-                              *const libc::c_void, 4 as libc::c_int);
-            sbufWriteU16(dst, 0 as libc::c_int as uint16_t);
-            sbufWriteU8(dst, 0 as libc::c_int as uint8_t);
+                              *const libc::c_void, 4i32);
+            sbufWriteU16(dst, 0i32 as uint16_t);
+            sbufWriteU8(dst, 0i32 as uint8_t);
             // Board communication capabilities (uint8)
         // Bit 0: 1 iff the board has VCP
         // Bit 1: 1 iff the board supports software serial
-            let mut commCapabilities: uint8_t = 0 as libc::c_int as uint8_t;
+            let mut commCapabilities: uint8_t = 0i32 as uint8_t;
             sbufWriteU8(dst, commCapabilities);
             // Target name with explicit length
             sbufWriteU8(dst, strlen(targetName) as uint8_t);
@@ -2318,65 +2243,57 @@ unsafe extern "C" fn mspCommonProcessOutCommand(mut cmdMSP: uint8_t,
             sbufWriteString(dst, value);
             // Signature
             sbufWriteData(dst, getSignature() as *const libc::c_void,
-                          32 as
-                              libc::c_int); // milliamp hours drawn from battery
+                          32i32); // milliamp hours drawn from battery
         }
         5 => {
             sbufWriteData(dst, buildDate as *const libc::c_void,
-                          11 as
-                              libc::c_int); // send current in 0.01 A steps, range is -320A to 320A
-            sbufWriteData(dst, buildTime as *const libc::c_void,
-                          8 as libc::c_int);
-            sbufWriteData(dst, shortGitRevision as *const libc::c_void,
-                          7 as libc::c_int);
+                          11i32); // send current in 0.01 A steps, range is -320A to 320A
+            sbufWriteData(dst, buildTime as *const libc::c_void, 8i32);
+            sbufWriteData(dst, shortGitRevision as *const libc::c_void, 7i32);
         }
         110 => {
             sbufWriteU8(dst,
-                        constrain(getBatteryVoltage() as libc::c_int,
-                                  0 as libc::c_int, 255 as libc::c_int) as
-                            uint8_t);
+                        constrain(getBatteryVoltage() as libc::c_int, 0i32,
+                                  255i32) as uint8_t);
             sbufWriteU16(dst,
-                         constrain(getMAhDrawn(), 0 as libc::c_int,
-                                   0xffff as libc::c_int) as uint16_t);
+                         constrain(getMAhDrawn(), 0i32, 0xffffi32) as
+                             uint16_t);
             sbufWriteU16(dst, getRssi());
             sbufWriteU16(dst,
-                         constrain(getAmperage(), -(0x8000 as libc::c_int),
-                                   0x7fff as libc::c_int) as int16_t as
-                             uint16_t);
+                         constrain(getAmperage(), -0x8000i32, 0x7fffi32) as
+                             int16_t as uint16_t);
         }
         254 => {
-            let mut i: libc::c_int = 0 as libc::c_int;
-            while i < 4 as libc::c_int {
+            let mut i: libc::c_int = 0i32;
+            while i < 4i32 {
                 sbufWriteU16(dst, debug[i as usize] as uint16_t);
                 i += 1
                 // 4 variables are here for general monitoring purpose
             }
         }
         160 => {
-            sbufWriteU32(dst, 0 as libc::c_int as uint32_t);
-            sbufWriteU32(dst, 1 as libc::c_int as uint32_t);
-            sbufWriteU32(dst, 2 as libc::c_int as uint32_t);
+            sbufWriteU32(dst, 0i32 as uint32_t);
+            sbufWriteU32(dst, 1i32 as uint32_t);
+            sbufWriteU32(dst, 2i32 as uint32_t);
         }
         36 => { sbufWriteU32(dst, featureMask()); }
         130 => {
             // battery characteristics
             sbufWriteU8(dst,
-                        constrain(getBatteryCellCount() as libc::c_int,
-                                  0 as libc::c_int, 255 as libc::c_int) as
+                        constrain(getBatteryCellCount() as libc::c_int, 0i32,
+                                  255i32) as
                             uint8_t); // 0 indicates battery not detected.
             sbufWriteU16(dst, (*batteryConfig()).batteryCapacity); // in mAh
             // battery state
             sbufWriteU8(dst,
-                        constrain(getBatteryVoltage() as libc::c_int,
-                                  0 as libc::c_int, 255 as libc::c_int) as
-                            uint8_t); // in 0.1V steps
+                        constrain(getBatteryVoltage() as libc::c_int, 0i32,
+                                  255i32) as uint8_t); // in 0.1V steps
             sbufWriteU16(dst,
-                         constrain(getMAhDrawn(), 0 as libc::c_int,
-                                   0xffff as libc::c_int) as
+                         constrain(getMAhDrawn(), 0i32, 0xffffi32) as
                              uint16_t); // milliamp hours drawn from battery
             sbufWriteU16(dst,
-                         constrain(getAmperage(), -(0x8000 as libc::c_int),
-                                   0x7fff as libc::c_int) as int16_t as
+                         constrain(getAmperage(), -0x8000i32, 0x7fffi32) as
+                             int16_t as
                              uint16_t); // send current in 0.01 A steps, range is -320A to 320A
             // battery alerts
             sbufWriteU8(dst, getBatteryState() as uint8_t);
@@ -2384,7 +2301,7 @@ unsafe extern "C" fn mspCommonProcessOutCommand(mut cmdMSP: uint8_t,
         128 => {
             // write out id and voltage meter values, once for each meter we support
             let mut count: uint8_t = supportedVoltageMeterCount;
-            let mut i_0: libc::c_int = 0 as libc::c_int;
+            let mut i_0: libc::c_int = 0i32;
             while i_0 < count as libc::c_int {
                 let mut meter: voltageMeter_t =
                     voltageMeter_t{filtered: 0,
@@ -2395,16 +2312,15 @@ unsafe extern "C" fn mspCommonProcessOutCommand(mut cmdMSP: uint8_t,
                 voltageMeterRead(id as voltageMeterId_e, &mut meter);
                 sbufWriteU8(dst, id);
                 sbufWriteU8(dst,
-                            constrain(meter.filtered as libc::c_int,
-                                      0 as libc::c_int, 255 as libc::c_int) as
-                                uint8_t);
+                            constrain(meter.filtered as libc::c_int, 0i32,
+                                      255i32) as uint8_t);
                 i_0 += 1
             }
         }
         129 => {
             // write out id and current meter values, once for each meter we support
             let mut count_0: uint8_t = supportedCurrentMeterCount;
-            let mut i_1: libc::c_int = 0 as libc::c_int;
+            let mut i_1: libc::c_int = 0i32;
             while i_1 < count_0 as libc::c_int {
                 let mut meter_0: currentMeter_t =
                     currentMeter_t{amperage: 0,
@@ -2416,13 +2332,11 @@ unsafe extern "C" fn mspCommonProcessOutCommand(mut cmdMSP: uint8_t,
                 sbufWriteU8(dst, id_0);
                 // send amperage in 0.001 A steps (mA). Negative range is truncated to zero
                 sbufWriteU16(dst,
-                             constrain(meter_0.mAhDrawn, 0 as libc::c_int,
-                                       0xffff as libc::c_int) as
+                             constrain(meter_0.mAhDrawn, 0i32, 0xffffi32) as
                                  uint16_t); // milliamp hours drawn from battery
                 sbufWriteU16(dst,
-                             constrain(meter_0.amperage * 10 as libc::c_int,
-                                       0 as libc::c_int,
-                                       0xffff as libc::c_int) as uint16_t);
+                             constrain(meter_0.amperage * 10i32, 0i32,
+                                       0xffffi32) as uint16_t);
                 i_1 += 1
             }
         }
@@ -2430,16 +2344,13 @@ unsafe extern "C" fn mspCommonProcessOutCommand(mut cmdMSP: uint8_t,
             // by using a sensor type and a sub-frame length it's possible to configure any type of voltage meter,
         // e.g. an i2c/spi/can sensor or any sensor not built directly into the FC such as ESC/RX/SPort/SBus that has
         // different configuration requirements.
-            sbufWriteU8(dst,
-                        1 as libc::c_int as
-                            uint8_t); // voltage meters in payload
+            sbufWriteU8(dst, 1i32 as uint8_t); // voltage meters in payload
             let mut i_2: libc::c_int =
                 VOLTAGE_SENSOR_ADC_VBAT as
                     libc::c_int; // length of id, type, vbatscale, vbatresdivval, vbatresdivmultipler, in bytes
-            while i_2 < 1 as libc::c_int {
+            while i_2 < 1i32 {
                 let adcSensorSubframeLength: uint8_t =
-                    (1 as libc::c_int + 1 as libc::c_int + 1 as libc::c_int +
-                         1 as libc::c_int + 1 as libc::c_int) as
+                    (1i32 + 1i32 + 1i32 + 1i32 + 1i32) as
                         uint8_t; // ADC sensor sub-frame length
                 sbufWriteU8(dst, adcSensorSubframeLength); // id of the sensor
                 sbufWriteU8(dst,
@@ -2461,15 +2372,13 @@ unsafe extern "C" fn mspCommonProcessOutCommand(mut cmdMSP: uint8_t,
         // that this situation may change and allows us to support configuration of any current sensor with
         // specialist configuration requirements.
             let mut currentMeterCount: libc::c_int =
-                1 as
-                    libc::c_int; // length of id, type, scale, offset, in bytes
+                1i32; // length of id, type, scale, offset, in bytes
             currentMeterCount += 1; // the id of the meter
             sbufWriteU8(dst,
                         currentMeterCount as
                             uint8_t); // indicate the type of sensor that the next part of the payload is for
             let adcSensorSubframeLength_0: uint8_t =
-                (1 as libc::c_int + 1 as libc::c_int + 2 as libc::c_int +
-                     2 as libc::c_int) as
+                (1i32 + 1i32 + 2i32 + 2i32) as
                     uint8_t; // length of id, type, scale, offset, in bytes
             sbufWriteU8(dst,
                         adcSensorSubframeLength_0); // the id of the meter
@@ -2486,8 +2395,7 @@ unsafe extern "C" fn mspCommonProcessOutCommand(mut cmdMSP: uint8_t,
                          (*currentSensorADCConfig()).offset as
                              uint16_t); // MSP_STATUS
             let virtualSensorSubframeLength: int8_t =
-                (1 as libc::c_int + 1 as libc::c_int + 2 as libc::c_int +
-                     2 as libc::c_int) as int8_t;
+                (1i32 + 1i32 + 2i32 + 2i32) as int8_t;
             sbufWriteU8(dst, virtualSensorSubframeLength as uint8_t);
             sbufWriteU8(dst,
                         CURRENT_METER_ID_VIRTUAL_1 as libc::c_int as uint8_t);
@@ -2507,19 +2415,19 @@ unsafe extern "C" fn mspCommonProcessOutCommand(mut cmdMSP: uint8_t,
             sbufWriteU8(dst,
                         (*batteryConfig()).currentMeterSource as uint8_t);
         }
-        82 => { sbufWriteU8(dst, 0 as libc::c_int as uint8_t); }
+        82 => { sbufWriteU8(dst, 0i32 as uint8_t); }
         84 => {
-            let mut osdFlags: uint8_t = 0 as libc::c_int as uint8_t;
+            let mut osdFlags: uint8_t = 0i32 as uint8_t;
             sbufWriteU8(dst, osdFlags);
-            sbufWriteU8(dst, 0 as libc::c_int as uint8_t);
+            sbufWriteU8(dst, 0i32 as uint8_t);
         }
-        _ => { return 0 as libc::c_int != 0 }
+        _ => { return 0i32 != 0 }
     }
-    return 1 as libc::c_int != 0;
+    return 1i32 != 0;
 }
 unsafe extern "C" fn mspProcessOutCommand(mut cmdMSP: uint8_t,
                                           mut dst: *mut sbuf_t) -> bool {
-    let mut unsupportedCommand: bool = 0 as libc::c_int != 0;
+    let mut unsupportedCommand: bool = 0i32 != 0;
     let mut rtcDateTimeIsSet: uint8_t = 0;
     let mut dt: dateTime_t =
         dateTime_t{year: 0,
@@ -2536,53 +2444,50 @@ unsafe extern "C" fn mspProcessOutCommand(mut cmdMSP: uint8_t,
             let flagBits: libc::c_int =
                 packFlightModeFlags(&mut flightModeFlags);
             sbufWriteU16(dst, getTaskDeltaTime(TASK_GYROPID) as uint16_t);
-            sbufWriteU16(dst, 0 as libc::c_int as uint16_t);
+            sbufWriteU16(dst, 0i32 as uint16_t);
             sbufWriteU16(dst,
                          (sensors(SENSOR_ACC as libc::c_int as uint32_t) as
                               libc::c_int |
                               (sensors(SENSOR_BARO as libc::c_int as uint32_t)
-                                   as libc::c_int) << 1 as libc::c_int |
+                                   as libc::c_int) << 1i32 |
                               (sensors(SENSOR_MAG as libc::c_int as uint32_t)
-                                   as libc::c_int) << 2 as libc::c_int |
+                                   as libc::c_int) << 2i32 |
                               (sensors(SENSOR_GPS as libc::c_int as uint32_t)
-                                   as libc::c_int) << 3 as libc::c_int |
+                                   as libc::c_int) << 3i32 |
                               (sensors(SENSOR_RANGEFINDER as libc::c_int as
-                                           uint32_t) as libc::c_int) <<
-                                  4 as libc::c_int |
+                                           uint32_t) as libc::c_int) << 4i32 |
                               (sensors(SENSOR_GYRO as libc::c_int as uint32_t)
-                                   as libc::c_int) << 5 as libc::c_int) as
-                             uint16_t);
+                                   as libc::c_int) << 5i32) as uint16_t);
             sbufWriteData(dst,
                           &mut flightModeFlags as *mut boxBitmask_t as
-                              *const libc::c_void, 4 as libc::c_int);
+                              *const libc::c_void, 4i32);
             sbufWriteU8(dst, getCurrentPidProfileIndex());
             sbufWriteU16(dst,
                          constrain(averageSystemLoadPercent as libc::c_int,
-                                   0 as libc::c_int, 100 as libc::c_int) as
-                             uint16_t);
-            if cmdMSP as libc::c_int == 150 as libc::c_int {
-                sbufWriteU8(dst, 3 as libc::c_int as uint8_t);
+                                   0i32, 100i32) as uint16_t);
+            if cmdMSP as libc::c_int == 150i32 {
+                sbufWriteU8(dst, 3i32 as uint8_t);
                 sbufWriteU8(dst, getCurrentControlRateProfileIndex());
             } else {
-                sbufWriteU16(dst, 0 as libc::c_int as uint16_t);
+                sbufWriteU16(dst, 0i32 as uint16_t);
                 // gyro cycle time
             }
             // write flightModeFlags header. Lowest 4 bits contain number of bytes that follow
             // header is emited even when all bits fit into 32 bits to allow future extension
             let mut byteCount: libc::c_int =
-                (flagBits - 32 as libc::c_int + 7 as libc::c_int) /
-                    8 as libc::c_int; // 32 already stored, round up
+                (flagBits - 32i32 + 7i32) /
+                    8i32; // 32 already stored, round up
             byteCount =
-                constrain(byteCount, 0 as libc::c_int,
-                          15 as libc::c_int); // limit to 16 bytes (128 bits)
+                constrain(byteCount, 0i32,
+                          15i32); // limit to 16 bytes (128 bits)
             sbufWriteU8(dst, byteCount as uint8_t);
             sbufWriteData(dst,
                           (&mut flightModeFlags as *mut boxBitmask_t as
-                               *mut uint8_t).offset(4 as libc::c_int as isize)
-                              as *const libc::c_void, byteCount);
+                               *mut uint8_t).offset(4) as *const libc::c_void,
+                          byteCount);
             // Write arming disable flags
             // 1 byte, flag count
-            sbufWriteU8(dst, 20 as libc::c_int as uint8_t);
+            sbufWriteU8(dst, 20i32 as uint8_t);
             // 4 bytes, flags
             let armingDisableFlags: uint32_t =
                 getArmingDisableFlags() as uint32_t;
@@ -2591,30 +2496,28 @@ unsafe extern "C" fn mspProcessOutCommand(mut cmdMSP: uint8_t,
         102 => {
             // Hack scale due to choice of units for sensor data in multiwii
             let mut scale: uint8_t = 0;
-            if acc.dev.acc_1G as libc::c_int >
-                   512 as libc::c_int * 4 as libc::c_int {
-                scale = 8 as libc::c_int as uint8_t
-            } else if acc.dev.acc_1G as libc::c_int >
-                          512 as libc::c_int * 2 as libc::c_int {
-                scale = 4 as libc::c_int as uint8_t
-            } else if acc.dev.acc_1G as libc::c_int >= 512 as libc::c_int {
-                scale = 2 as libc::c_int as uint8_t
-            } else { scale = 1 as libc::c_int as uint8_t }
-            let mut i: libc::c_int = 0 as libc::c_int;
-            while i < 3 as libc::c_int {
+            if acc.dev.acc_1G as libc::c_int > 512i32 * 4i32 {
+                scale = 8i32 as uint8_t
+            } else if acc.dev.acc_1G as libc::c_int > 512i32 * 2i32 {
+                scale = 4i32 as uint8_t
+            } else if acc.dev.acc_1G as libc::c_int >= 512i32 {
+                scale = 2i32 as uint8_t
+            } else { scale = 1i32 as uint8_t }
+            let mut i: libc::c_int = 0i32;
+            while i < 3i32 {
                 sbufWriteU16(dst,
                              lrintf(acc.accADC[i as usize] /
                                         scale as libc::c_int as libc::c_float)
                                  as uint16_t);
                 i += 1
             }
-            let mut i_0: libc::c_int = 0 as libc::c_int;
-            while i_0 < 3 as libc::c_int {
+            let mut i_0: libc::c_int = 0i32;
+            while i_0 < 3i32 {
                 sbufWriteU16(dst, gyroRateDps(i_0) as uint16_t);
                 i_0 += 1
             }
-            let mut i_1: libc::c_int = 0 as libc::c_int;
-            while i_1 < 3 as libc::c_int {
+            let mut i_1: libc::c_int = 0i32;
+            while i_1 < 3i32 {
                 sbufWriteU16(dst,
                              lrintf(mag.magADC[i_1 as usize]) as uint16_t);
                 i_1 += 1
@@ -2623,7 +2526,7 @@ unsafe extern "C" fn mspProcessOutCommand(mut cmdMSP: uint8_t,
         10 => {
             let nameLen: libc::c_int =
                 strlen((*pilotConfig()).name.as_ptr()) as libc::c_int;
-            let mut i_2: libc::c_int = 0 as libc::c_int;
+            let mut i_2: libc::c_int = 0i32;
             while i_2 < nameLen {
                 sbufWriteU8(dst,
                             (*pilotConfig()).name[i_2 as usize] as uint8_t);
@@ -2633,12 +2536,11 @@ unsafe extern "C" fn mspProcessOutCommand(mut cmdMSP: uint8_t,
         103 => {
             sbufWriteData(dst,
                           &mut servo as *mut [int16_t; 8] as
-                              *const libc::c_void,
-                          8 as libc::c_int * 2 as libc::c_int);
+                              *const libc::c_void, 8i32 * 2i32);
         }
         120 => {
-            let mut i_3: libc::c_int = 0 as libc::c_int;
-            while i_3 < 8 as libc::c_int {
+            let mut i_3: libc::c_int = 0i32;
+            while i_3 < 8i32 {
                 sbufWriteU16(dst, (*servoParams(i_3)).min as uint16_t);
                 sbufWriteU16(dst, (*servoParams(i_3)).max as uint16_t);
                 sbufWriteU16(dst, (*servoParams(i_3)).middle as uint16_t);
@@ -2651,8 +2553,8 @@ unsafe extern "C" fn mspProcessOutCommand(mut cmdMSP: uint8_t,
             }
         }
         241 => {
-            let mut i_4: libc::c_int = 0 as libc::c_int;
-            while i_4 < 2 as libc::c_int * 8 as libc::c_int {
+            let mut i_4: libc::c_int = 0i32;
+            while i_4 < 2i32 * 8i32 {
                 sbufWriteU8(dst, (*customServoMixers(i_4)).targetChannel);
                 sbufWriteU8(dst, (*customServoMixers(i_4)).inputSource);
                 sbufWriteU8(dst, (*customServoMixers(i_4)).rate as uint8_t);
@@ -2664,11 +2566,11 @@ unsafe extern "C" fn mspProcessOutCommand(mut cmdMSP: uint8_t,
             }
         }
         104 => {
-            let mut i_5: libc::c_uint = 0 as libc::c_int as libc::c_uint;
-            while i_5 < 8 as libc::c_int as libc::c_uint {
-                if i_5 >= 8 as libc::c_int as libc::c_uint ||
+            let mut i_5: libc::c_uint = 0i32 as libc::c_uint;
+            while i_5 < 8i32 as libc::c_uint {
+                if i_5 >= 8i32 as libc::c_uint ||
                        !(*pwmGetMotors().offset(i_5 as isize)).enabled {
-                    sbufWriteU16(dst, 0 as libc::c_int as uint16_t);
+                    sbufWriteU16(dst, 0i32 as uint16_t);
                 } else {
                     sbufWriteU16(dst,
                                  convertMotorToExternal(motor[i_5 as usize]));
@@ -2677,7 +2579,7 @@ unsafe extern "C" fn mspProcessOutCommand(mut cmdMSP: uint8_t,
             }
         }
         105 => {
-            let mut i_6: libc::c_int = 0 as libc::c_int;
+            let mut i_6: libc::c_int = 0i32;
             while i_6 < rxRuntimeConfig.channelCount as libc::c_int {
                 sbufWriteU16(dst, rcData[i_6 as usize] as uint16_t);
                 i_6 += 1
@@ -2687,14 +2589,14 @@ unsafe extern "C" fn mspProcessOutCommand(mut cmdMSP: uint8_t,
             sbufWriteU16(dst, attitude.values.roll as uint16_t);
             sbufWriteU16(dst, attitude.values.pitch as uint16_t);
             sbufWriteU16(dst,
-                         (attitude.values.yaw as libc::c_int /
-                              10 as libc::c_int) as uint16_t);
+                         (attitude.values.yaw as libc::c_int / 10i32) as
+                             uint16_t);
         }
         109 => {
             sbufWriteU32(dst, getEstimatedAltitude() as uint32_t);
             sbufWriteU16(dst, getEstimatedVario() as uint16_t);
         }
-        58 => { sbufWriteU32(dst, 0 as libc::c_int as uint32_t); }
+        58 => { sbufWriteU32(dst, 0i32 as uint32_t); }
         38 => {
             sbufWriteU16(dst, (*boardAlignment()).rollDegrees as uint16_t);
             sbufWriteU16(dst, (*boardAlignment()).pitchDegrees as uint16_t);
@@ -2702,7 +2604,7 @@ unsafe extern "C" fn mspProcessOutCommand(mut cmdMSP: uint8_t,
         }
         61 => {
             sbufWriteU8(dst, (*armingConfig()).auto_disarm_delay);
-            sbufWriteU8(dst, 0 as libc::c_int as uint8_t);
+            sbufWriteU8(dst, 0i32 as uint8_t);
             sbufWriteU8(dst, (*imuConfig()).small_angle);
         }
         111 => {
@@ -2714,8 +2616,8 @@ unsafe extern "C" fn mspProcessOutCommand(mut cmdMSP: uint8_t,
                         (*currentControlRateProfile).rcExpo[FD_ROLL as
                                                                 libc::c_int as
                                                                 usize]);
-            let mut i_7: libc::c_int = 0 as libc::c_int;
-            while i_7 < 3 as libc::c_int {
+            let mut i_7: libc::c_int = 0i32;
+            while i_7 < 3i32 {
                 sbufWriteU8(dst,
                             (*currentControlRateProfile).rates[i_7 as usize]);
                 i_7 += 1
@@ -2750,7 +2652,7 @@ unsafe extern "C" fn mspProcessOutCommand(mut cmdMSP: uint8_t,
         }
         112 => {
             let mut i_8: libc::c_int =
-                0 as libc::c_int; // was pidProfile.levelSensitivity
+                0i32; // was pidProfile.levelSensitivity
             while i_8 < PID_ITEM_COUNT as libc::c_int {
                 sbufWriteU8(dst,
                             (*currentPidProfile).pid[i_8 as
@@ -2764,10 +2666,10 @@ unsafe extern "C" fn mspProcessOutCommand(mut cmdMSP: uint8_t,
             let mut c: *const libc::c_char = pidNames.as_ptr();
             while *c != 0 { sbufWriteU8(dst, *c as uint8_t); c = c.offset(1) }
         }
-        59 => { sbufWriteU8(dst, 1 as libc::c_int as uint8_t); }
+        59 => { sbufWriteU8(dst, 1i32 as uint8_t); }
         34 => {
-            let mut i_9: libc::c_int = 0 as libc::c_int;
-            while i_9 < 20 as libc::c_int {
+            let mut i_9: libc::c_int = 0i32;
+            while i_9 < 20i32 {
                 let mut mac: *const modeActivationCondition_t =
                     modeActivationConditions(i_9);
                 let mut box_0: *const box_t = findBoxByBoxId((*mac).modeId);
@@ -2779,8 +2681,8 @@ unsafe extern "C" fn mspProcessOutCommand(mut cmdMSP: uint8_t,
             }
         }
         52 => {
-            let mut i_10: libc::c_int = 0 as libc::c_int;
-            while i_10 < 15 as libc::c_int {
+            let mut i_10: libc::c_int = 0i32;
+            while i_10 < 15i32 {
                 let mut adjRange: *const adjustmentRange_t =
                     adjustmentRanges(i_10);
                 sbufWriteU8(dst, (*adjRange).adjustmentIndex);
@@ -2800,7 +2702,7 @@ unsafe extern "C" fn mspProcessOutCommand(mut cmdMSP: uint8_t,
         133 => {
             sbufWriteU16(dst,
                          ((*compassConfig()).mag_declination as libc::c_int /
-                              10 as libc::c_int) as uint16_t);
+                              10i32) as uint16_t);
         }
         132 => {
             sbufWriteU8(dst, (*gpsConfig()).provider as uint8_t);
@@ -2816,8 +2718,7 @@ unsafe extern "C" fn mspProcessOutCommand(mut cmdMSP: uint8_t,
             sbufWriteU32(dst, gpsSol.llh.lat as uint32_t);
             sbufWriteU32(dst, gpsSol.llh.lon as uint32_t);
             sbufWriteU16(dst,
-                         constrain(gpsSol.llh.alt / 100 as libc::c_int,
-                                   0 as libc::c_int, 65535 as libc::c_int) as
+                         constrain(gpsSol.llh.alt / 100i32, 0i32, 65535i32) as
                              uint16_t);
             sbufWriteU16(dst, gpsSol.groundSpeed);
             sbufWriteU16(dst, gpsSol.groundCourse);
@@ -2825,13 +2726,11 @@ unsafe extern "C" fn mspProcessOutCommand(mut cmdMSP: uint8_t,
         107 => {
             sbufWriteU16(dst, GPS_distanceToHome);
             sbufWriteU16(dst, GPS_directionToHome as uint16_t);
-            sbufWriteU8(dst,
-                        (GPS_update as libc::c_int & 1 as libc::c_int) as
-                            uint8_t);
+            sbufWriteU8(dst, (GPS_update as libc::c_int & 1i32) as uint8_t);
         }
         164 => {
             sbufWriteU8(dst, GPS_numCh);
-            let mut i_11: libc::c_int = 0 as libc::c_int;
+            let mut i_11: libc::c_int = 0i32;
             while i_11 < GPS_numCh as libc::c_int {
                 sbufWriteU8(dst, GPS_svinfo_chn[i_11 as usize]);
                 sbufWriteU8(dst, GPS_svinfo_svid[i_11 as usize]);
@@ -2864,11 +2763,10 @@ unsafe extern "C" fn mspProcessOutCommand(mut cmdMSP: uint8_t,
             sbufWriteU8(dst, (*rxConfig()).rcInterpolationInterval);
             sbufWriteU16(dst,
                          ((*rxConfig()).airModeActivateThreshold as
-                              libc::c_int * 10 as libc::c_int +
-                              1000 as libc::c_int) as uint16_t);
-            sbufWriteU8(dst, 0 as libc::c_int as uint8_t);
-            sbufWriteU32(dst, 0 as libc::c_int as uint32_t);
-            sbufWriteU8(dst, 0 as libc::c_int as uint8_t);
+                              libc::c_int * 10i32 + 1000i32) as uint16_t);
+            sbufWriteU8(dst, 0i32 as uint8_t);
+            sbufWriteU32(dst, 0i32 as uint32_t);
+            sbufWriteU8(dst, 0i32 as uint8_t);
             sbufWriteU8(dst, (*rxConfig()).fpvCamAngleDegrees);
             sbufWriteU8(dst, (*rxConfig()).rcInterpolationChannels);
             sbufWriteU8(dst, (*rxConfig()).rc_smoothing_type);
@@ -2876,7 +2774,7 @@ unsafe extern "C" fn mspProcessOutCommand(mut cmdMSP: uint8_t,
             sbufWriteU8(dst, (*rxConfig()).rc_smoothing_derivative_cutoff);
             sbufWriteU8(dst, (*rxConfig()).rc_smoothing_input_type);
             sbufWriteU8(dst, (*rxConfig()).rc_smoothing_derivative_type);
-            sbufWriteU8(dst, 0 as libc::c_int as uint8_t);
+            sbufWriteU8(dst, 0i32 as uint8_t);
         }
         75 => {
             sbufWriteU8(dst, (*failsafeConfig()).failsafe_delay);
@@ -2888,12 +2786,12 @@ unsafe extern "C" fn mspProcessOutCommand(mut cmdMSP: uint8_t,
             sbufWriteU8(dst, (*failsafeConfig()).failsafe_procedure);
         }
         77 => {
-            let mut i_12: libc::c_int = 0 as libc::c_int;
+            let mut i_12: libc::c_int = 0i32;
             while i_12 < rxRuntimeConfig.channelCount as libc::c_int {
                 sbufWriteU8(dst, (*rxFailsafeChannelConfigs(i_12)).mode);
                 sbufWriteU16(dst,
-                             (750 as libc::c_int +
-                                  25 as libc::c_int *
+                             (750i32 +
+                                  25i32 *
                                       (*rxFailsafeChannelConfigs(i_12)).step
                                           as libc::c_int) as uint16_t);
                 i_12 += 1
@@ -2903,11 +2801,11 @@ unsafe extern "C" fn mspProcessOutCommand(mut cmdMSP: uint8_t,
         64 => {
             sbufWriteData(dst,
                           (*rxConfig()).rcmap.as_ptr() as *const libc::c_void,
-                          8 as libc::c_int);
+                          8i32);
         }
         54 => {
-            let mut i_13: libc::c_int = 0 as libc::c_int;
-            while i_13 < 8 as libc::c_int {
+            let mut i_13: libc::c_int = 0i32;
+            while i_13 < 8i32 {
                 if serialIsPortAvailable((*serialConfig()).portConfigs[i_13 as
                                                                            usize].identifier)
                    {
@@ -2936,9 +2834,9 @@ unsafe extern "C" fn mspProcessOutCommand(mut cmdMSP: uint8_t,
         }
         70 => { serializeDataflashSummaryReply(dst); }
         80 => {
-            sbufWriteU8(dst, 1 as libc::c_int as uint8_t);
+            sbufWriteU8(dst, 1i32 as uint8_t);
             sbufWriteU8(dst, (*blackboxConfig()).device);
-            sbufWriteU8(dst, 1 as libc::c_int as uint8_t);
+            sbufWriteU8(dst, 1i32 as uint8_t);
             sbufWriteU8(dst, blackboxGetRateDenom());
             sbufWriteU16(dst, (*blackboxConfig()).p_ratio);
         }
@@ -2996,23 +2894,23 @@ unsafe extern "C" fn mspProcessOutCommand(mut cmdMSP: uint8_t,
             sbufWriteU16(dst, (*currentPidProfile).dterm_lowpass2_hz);
         }
         94 => {
-            sbufWriteU16(dst, 0 as libc::c_int as uint16_t);
-            sbufWriteU16(dst, 0 as libc::c_int as uint16_t);
-            sbufWriteU16(dst, 0 as libc::c_int as uint16_t);
-            sbufWriteU8(dst, 0 as libc::c_int as uint8_t);
+            sbufWriteU16(dst, 0i32 as uint16_t);
+            sbufWriteU16(dst, 0i32 as uint16_t);
+            sbufWriteU16(dst, 0i32 as uint16_t);
+            sbufWriteU8(dst, 0i32 as uint8_t);
             sbufWriteU8(dst, (*currentPidProfile).vbatPidCompensation);
             sbufWriteU8(dst, (*currentPidProfile).feedForwardTransition);
-            sbufWriteU8(dst, 0 as libc::c_int as uint8_t);
-            sbufWriteU8(dst, 0 as libc::c_int as uint8_t);
-            sbufWriteU8(dst, 0 as libc::c_int as uint8_t);
-            sbufWriteU8(dst, 0 as libc::c_int as uint8_t);
+            sbufWriteU8(dst, 0i32 as uint8_t);
+            sbufWriteU8(dst, 0i32 as uint8_t);
+            sbufWriteU8(dst, 0i32 as uint8_t);
+            sbufWriteU8(dst, 0i32 as uint8_t);
             sbufWriteU16(dst, (*currentPidProfile).rateAccelLimit);
             sbufWriteU16(dst, (*currentPidProfile).yawRateAccelLimit);
             sbufWriteU8(dst, (*currentPidProfile).levelAngleLimit);
-            sbufWriteU8(dst, 0 as libc::c_int as uint8_t);
+            sbufWriteU8(dst, 0i32 as uint8_t);
             sbufWriteU16(dst, (*currentPidProfile).itermThrottleThreshold);
             sbufWriteU16(dst, (*currentPidProfile).itermAcceleratorGain);
-            sbufWriteU16(dst, 0 as libc::c_int as uint16_t);
+            sbufWriteU16(dst, 0i32 as uint16_t);
             sbufWriteU8(dst, (*currentPidProfile).iterm_rotation);
             sbufWriteU8(dst, (*currentPidProfile).smart_feedforward);
             sbufWriteU8(dst, (*currentPidProfile).iterm_relax);
@@ -3038,7 +2936,7 @@ unsafe extern "C" fn mspProcessOutCommand(mut cmdMSP: uint8_t,
         }
         187 => {
             sbufWriteU8(dst, rssiSource as uint8_t);
-            rtcDateTimeIsSet = 0 as libc::c_int as uint8_t;
+            rtcDateTimeIsSet = 0i32 as uint8_t;
             dt =
                 dateTime_t{year: 0,
                            month: 0,
@@ -3047,9 +2945,7 @@ unsafe extern "C" fn mspProcessOutCommand(mut cmdMSP: uint8_t,
                            minutes: 0,
                            seconds: 0,
                            millis: 0,};
-            if rtcGetDateTime(&mut dt) {
-                rtcDateTimeIsSet = 1 as libc::c_int as uint8_t
-            }
+            if rtcGetDateTime(&mut dt) { rtcDateTimeIsSet = 1i32 as uint8_t }
             sbufWriteU8(dst, rtcDateTimeIsSet);
         }
         247 => {
@@ -3071,7 +2967,7 @@ unsafe extern "C" fn mspProcessOutCommand(mut cmdMSP: uint8_t,
                 sbufWriteU16(dst, dt_0.millis);
             }
         }
-        _ => { unsupportedCommand = 1 as libc::c_int != 0 }
+        _ => { unsupportedCommand = 1i32 != 0 }
     }
     return !unsupportedCommand;
 }
@@ -3087,9 +2983,7 @@ unsafe extern "C" fn mspFcProcessOutCommandWithArg(mut cmdMSP: uint8_t,
             let page: libc::c_int =
                 if sbufBytesRemaining(src) != 0 {
                     sbufReadU8(src) as libc::c_int
-                } else {
-                    0 as libc::c_int
-                }; // 0 = pid profile, 1 = control rate profile
+                } else { 0i32 }; // 0 = pid profile, 1 = control rate profile
             serializeBoxReply(dst, page,
                               Some(serializeBoxNameFn as
                                        unsafe extern "C" fn(_: *mut sbuf_s,
@@ -3100,7 +2994,7 @@ unsafe extern "C" fn mspFcProcessOutCommandWithArg(mut cmdMSP: uint8_t,
             let page_0: libc::c_int =
                 if sbufBytesRemaining(src) != 0 {
                     sbufReadU8(src) as libc::c_int
-                } else { 0 as libc::c_int };
+                } else { 0i32 };
             serializeBoxReply(dst, page_0,
                               Some(serializeBoxPermanentIdFn as
                                        unsafe extern "C" fn(_: *mut sbuf_s,
@@ -3141,22 +3035,16 @@ unsafe extern "C" fn mspProcessInCommand(mut cmdMSP: uint8_t,
     match cmdMSP as libc::c_int {
         210 => {
             value = sbufReadU8(src);
-            if value as libc::c_int & (1 as libc::c_int) << 7 as libc::c_int
-                   == 0 as libc::c_int {
+            if value as libc::c_int & 1i32 << 7i32 == 0i32 {
                 if armingFlags as libc::c_int & ARMED as libc::c_int == 0 {
-                    if value as libc::c_int >= 3 as libc::c_int {
-                        value = 0 as libc::c_int as uint8_t
+                    if value as libc::c_int >= 3i32 {
+                        value = 0i32 as uint8_t
                     }
                     changePidProfile(value);
                 }
             } else {
-                value =
-                    (value as libc::c_int &
-                         !((1 as libc::c_int) << 7 as libc::c_int)) as
-                        uint8_t;
-                if value as libc::c_int >= 6 as libc::c_int {
-                    value = 0 as libc::c_int as uint8_t
-                }
+                value = (value as libc::c_int & !(1i32 << 7i32)) as uint8_t;
+                if value as libc::c_int >= 6i32 { value = 0i32 as uint8_t }
                 changeControlRateProfile(value);
             }
         }
@@ -3164,9 +3052,9 @@ unsafe extern "C" fn mspProcessInCommand(mut cmdMSP: uint8_t,
             value = sbufReadU8(src);
             dstProfileIndex = sbufReadU8(src);
             srcProfileIndex = sbufReadU8(src);
-            if value as libc::c_int == 0 as libc::c_int {
+            if value as libc::c_int == 0i32 {
                 pidCopyProfile(dstProfileIndex, srcProfileIndex);
-            } else if value as libc::c_int == 1 as libc::c_int {
+            } else if value as libc::c_int == 1i32 {
                 copyControlRateProfile(dstProfileIndex, srcProfileIndex);
             }
         }
@@ -3177,11 +3065,11 @@ unsafe extern "C" fn mspProcessInCommand(mut cmdMSP: uint8_t,
                      libc::c_ulong).wrapping_div(::core::mem::size_of::<uint16_t>()
                                                      as libc::c_ulong) as
                     uint8_t;
-            if channelCount as libc::c_int > 18 as libc::c_int {
+            if channelCount as libc::c_int > 18i32 {
                 return MSP_RESULT_ERROR
             } else {
                 let mut frame: [uint16_t; 18] = [0; 18];
-                let mut i_0: libc::c_int = 0 as libc::c_int;
+                let mut i_0: libc::c_int = 0i32;
                 while i_0 < channelCount as libc::c_int {
                     frame[i_0 as usize] = sbufReadU16(src);
                     i_0 += 1
@@ -3205,7 +3093,7 @@ unsafe extern "C" fn mspProcessInCommand(mut cmdMSP: uint8_t,
         }
         60 => { }
         202 => {
-            let mut i_1: libc::c_int = 0 as libc::c_int;
+            let mut i_1: libc::c_int = 0i32;
             while i_1 < PID_ITEM_COUNT as libc::c_int {
                 (*currentPidProfile).pid[i_1 as usize].P = sbufReadU8(src);
                 (*currentPidProfile).pid[i_1 as usize].I = sbufReadU8(src);
@@ -3216,7 +3104,7 @@ unsafe extern "C" fn mspProcessInCommand(mut cmdMSP: uint8_t,
         }
         35 => {
             i = sbufReadU8(src) as uint32_t;
-            if i < 20 as libc::c_int as libc::c_uint {
+            if i < 20i32 as libc::c_uint {
                 let mut mac: *mut modeActivationCondition_t =
                     modeActivationConditionsMutable(i as libc::c_int);
                 i = sbufReadU8(src) as uint32_t;
@@ -3233,11 +3121,11 @@ unsafe extern "C" fn mspProcessInCommand(mut cmdMSP: uint8_t,
         }
         53 => {
             i = sbufReadU8(src) as uint32_t;
-            if i < 15 as libc::c_int as libc::c_uint {
+            if i < 15i32 as libc::c_uint {
                 let mut adjRange: *mut adjustmentRange_t =
                     adjustmentRangesMutable(i as libc::c_int);
                 i = sbufReadU8(src) as uint32_t;
-                if i < 4 as libc::c_int as libc::c_uint {
+                if i < 4i32 as libc::c_uint {
                     (*adjRange).adjustmentIndex = i as uint8_t;
                     (*adjRange).auxChannelIndex = sbufReadU8(src);
                     (*adjRange).range.startStep = sbufReadU8(src);
@@ -3248,7 +3136,7 @@ unsafe extern "C" fn mspProcessInCommand(mut cmdMSP: uint8_t,
             } else { return MSP_RESULT_ERROR }
         }
         204 => {
-            if sbufBytesRemaining(src) >= 10 as libc::c_int {
+            if sbufBytesRemaining(src) >= 10i32 {
                 value = sbufReadU8(src);
                 if (*currentControlRateProfile).rcRates[FD_PITCH as
                                                             libc::c_int as
@@ -3278,8 +3166,8 @@ unsafe extern "C" fn mspProcessInCommand(mut cmdMSP: uint8_t,
                 }
                 (*currentControlRateProfile).rcExpo[FD_ROLL as libc::c_int as
                                                         usize] = value;
-                let mut i_2: libc::c_int = 0 as libc::c_int;
-                while i_2 < 3 as libc::c_int {
+                let mut i_2: libc::c_int = 0i32;
+                while i_2 < 3i32 {
                     (*currentControlRateProfile).rates[i_2 as usize] =
                         sbufReadU8(src);
                     i_2 += 1
@@ -3288,7 +3176,7 @@ unsafe extern "C" fn mspProcessInCommand(mut cmdMSP: uint8_t,
                 (*currentControlRateProfile).dynThrPID =
                     ({
                          let mut _a: uint8_t = value;
-                         let mut _b: libc::c_int = 100 as libc::c_int;
+                         let mut _b: libc::c_int = 100i32;
                          if (_a as libc::c_int) < _b {
                              _a as libc::c_int
                          } else { _b }
@@ -3297,23 +3185,23 @@ unsafe extern "C" fn mspProcessInCommand(mut cmdMSP: uint8_t,
                 (*currentControlRateProfile).thrExpo8 = sbufReadU8(src);
                 (*currentControlRateProfile).tpa_breakpoint =
                     sbufReadU16(src);
-                if sbufBytesRemaining(src) >= 1 as libc::c_int {
+                if sbufBytesRemaining(src) >= 1i32 {
                     (*currentControlRateProfile).rcExpo[FD_YAW as libc::c_int
                                                             as usize] =
                         sbufReadU8(src)
                 }
-                if sbufBytesRemaining(src) >= 1 as libc::c_int {
+                if sbufBytesRemaining(src) >= 1i32 {
                     (*currentControlRateProfile).rcRates[FD_YAW as libc::c_int
                                                              as usize] =
                         sbufReadU8(src)
                 }
-                if sbufBytesRemaining(src) >= 1 as libc::c_int {
+                if sbufBytesRemaining(src) >= 1i32 {
                     (*currentControlRateProfile).rcRates[FD_PITCH as
                                                              libc::c_int as
                                                              usize] =
                         sbufReadU8(src)
                 }
-                if sbufBytesRemaining(src) >= 1 as libc::c_int {
+                if sbufBytesRemaining(src) >= 1i32 {
                     (*currentControlRateProfile).rcExpo[FD_PITCH as
                                                             libc::c_int as
                                                             usize] =
@@ -3336,11 +3224,10 @@ unsafe extern "C" fn mspProcessInCommand(mut cmdMSP: uint8_t,
         }
         224 => {
             (*compassConfigMutable()).mag_declination =
-                (sbufReadU16(src) as libc::c_int * 10 as libc::c_int) as
-                    int16_t
+                (sbufReadU16(src) as libc::c_int * 10i32) as int16_t
         }
         214 => {
-            let mut i_3: libc::c_int = 0 as libc::c_int;
+            let mut i_3: libc::c_int = 0i32;
             while i_3 < getMotorCount() as libc::c_int {
                 motor_disarmed[i_3 as usize] =
                     convertExternalToMotor(sbufReadU16(src));
@@ -3348,12 +3235,11 @@ unsafe extern "C" fn mspProcessInCommand(mut cmdMSP: uint8_t,
             }
         }
         212 => {
-            if dataSize !=
-                   (1 as libc::c_int + 12 as libc::c_int) as libc::c_uint {
+            if dataSize != (1i32 + 12i32) as libc::c_uint {
                 return MSP_RESULT_ERROR
             }
             i = sbufReadU8(src) as uint32_t;
-            if i >= 8 as libc::c_int as libc::c_uint {
+            if i >= 8i32 as libc::c_uint {
                 return MSP_RESULT_ERROR
             } else {
                 (*servoParamsMutable(i as libc::c_int)).min =
@@ -3372,7 +3258,7 @@ unsafe extern "C" fn mspProcessInCommand(mut cmdMSP: uint8_t,
         }
         242 => {
             i = sbufReadU8(src) as uint32_t;
-            if i >= (2 as libc::c_int * 8 as libc::c_int) as libc::c_uint {
+            if i >= (2i32 * 8i32) as libc::c_uint {
                 return MSP_RESULT_ERROR
             } else {
                 (*customServoMixersMutable(i as libc::c_int)).targetChannel =
@@ -3416,10 +3302,10 @@ unsafe extern "C" fn mspProcessInCommand(mut cmdMSP: uint8_t,
             (*pidConfigMutable()).pid_process_denom = sbufReadU8(src);
             (*motorConfigMutable()).dev.useUnsyncedPwm = sbufReadU8(src);
             (*motorConfigMutable()).dev.motorPwmProtocol =
-                constrain(sbufReadU8(src) as libc::c_int, 0 as libc::c_int,
+                constrain(sbufReadU8(src) as libc::c_int, 0i32,
                           PWM_TYPE_BRUSHED as libc::c_int) as uint8_t;
             (*motorConfigMutable()).dev.motorPwmRate = sbufReadU16(src);
-            if sbufBytesRemaining(src) >= 2 as libc::c_int {
+            if sbufBytesRemaining(src) >= 2i32 {
                 (*motorConfigMutable()).digitalIdleOffsetValue =
                     sbufReadU16(src)
             }
@@ -3430,7 +3316,7 @@ unsafe extern "C" fn mspProcessInCommand(mut cmdMSP: uint8_t,
                 (*motorConfigMutable()).dev.motorPwmInversion =
                     sbufReadU8(src)
             }
-            if sbufBytesRemaining(src) >= 8 as libc::c_int {
+            if sbufBytesRemaining(src) >= 8i32 {
                 (*gyroConfigMutable()).gyro_to_use = sbufReadU8(src);
                 (*gyroConfigMutable()).gyro_high_fsr = sbufReadU8(src);
                 (*gyroConfigMutable()).gyroMovementCalibrationThreshold =
@@ -3448,7 +3334,7 @@ unsafe extern "C" fn mspProcessInCommand(mut cmdMSP: uint8_t,
                 sbufReadU8(src) as uint16_t;
             (*currentPidProfile).dterm_lowpass_hz = sbufReadU16(src);
             (*currentPidProfile).yaw_lowpass_hz = sbufReadU16(src);
-            if sbufBytesRemaining(src) >= 8 as libc::c_int {
+            if sbufBytesRemaining(src) >= 8i32 {
                 (*gyroConfigMutable()).gyro_soft_notch_hz_1 =
                     sbufReadU16(src);
                 (*gyroConfigMutable()).gyro_soft_notch_cutoff_1 =
@@ -3456,16 +3342,16 @@ unsafe extern "C" fn mspProcessInCommand(mut cmdMSP: uint8_t,
                 (*currentPidProfile).dterm_notch_hz = sbufReadU16(src);
                 (*currentPidProfile).dterm_notch_cutoff = sbufReadU16(src)
             }
-            if sbufBytesRemaining(src) >= 4 as libc::c_int {
+            if sbufBytesRemaining(src) >= 4i32 {
                 (*gyroConfigMutable()).gyro_soft_notch_hz_2 =
                     sbufReadU16(src);
                 (*gyroConfigMutable()).gyro_soft_notch_cutoff_2 =
                     sbufReadU16(src)
             }
-            if sbufBytesRemaining(src) >= 1 as libc::c_int {
+            if sbufBytesRemaining(src) >= 1i32 {
                 (*currentPidProfile).dterm_filter_type = sbufReadU8(src)
             }
-            if sbufBytesRemaining(src) >= 10 as libc::c_int {
+            if sbufBytesRemaining(src) >= 10i32 {
                 (*gyroConfigMutable()).gyro_hardware_lpf = sbufReadU8(src);
                 (*gyroConfigMutable()).gyro_32khz_hardware_lpf =
                     sbufReadU8(src);
@@ -3495,21 +3381,21 @@ unsafe extern "C" fn mspProcessInCommand(mut cmdMSP: uint8_t,
             sbufReadU8(src);
             (*currentPidProfile).rateAccelLimit = sbufReadU16(src);
             (*currentPidProfile).yawRateAccelLimit = sbufReadU16(src);
-            if sbufBytesRemaining(src) >= 2 as libc::c_int {
+            if sbufBytesRemaining(src) >= 2i32 {
                 (*currentPidProfile).levelAngleLimit = sbufReadU8(src);
                 sbufReadU8(src);
                 // was pidProfile.levelSensitivity
             }
-            if sbufBytesRemaining(src) >= 4 as libc::c_int {
+            if sbufBytesRemaining(src) >= 4i32 {
                 (*currentPidProfile).itermThrottleThreshold =
                     sbufReadU16(src);
                 (*currentPidProfile).itermAcceleratorGain = sbufReadU16(src)
             }
-            if sbufBytesRemaining(src) >= 2 as libc::c_int {
+            if sbufBytesRemaining(src) >= 2i32 {
                 sbufReadU16(src);
                 // was currentPidProfile->dtermSetpointWeight
             }
-            if sbufBytesRemaining(src) >= 14 as libc::c_int {
+            if sbufBytesRemaining(src) >= 14i32 {
                 // Added in MSP API 1.40
                 (*currentPidProfile).iterm_rotation = sbufReadU8(src);
                 (*currentPidProfile).smart_feedforward = sbufReadU8(src);
@@ -3543,7 +3429,7 @@ unsafe extern "C" fn mspProcessInCommand(mut cmdMSP: uint8_t,
         }
         205 => {
             if armingFlags as libc::c_int & ARMED as libc::c_int == 0 {
-                accSetCalibrationCycles(400 as libc::c_int as uint16_t);
+                accSetCalibrationCycles(400i32 as uint16_t);
             }
         }
         206 => {
@@ -3568,7 +3454,7 @@ unsafe extern "C" fn mspProcessInCommand(mut cmdMSP: uint8_t,
                 let rateNum: libc::c_int =
                     sbufReadU8(src) as libc::c_int; // was rate_denom
                 let rateDenom: libc::c_int = sbufReadU8(src) as libc::c_int;
-                if sbufBytesRemaining(src) >= 2 as libc::c_int {
+                if sbufBytesRemaining(src) >= 2i32 {
                     // p_ratio specified, so use it directly
                     (*blackboxConfigMutable()).p_ratio = sbufReadU16(src)
                 } else {
@@ -3583,7 +3469,7 @@ unsafe extern "C" fn mspProcessInCommand(mut cmdMSP: uint8_t,
             let command: uint8_t =
                 sbufReadU8(src); // alt changed from 1m to 0.01m per lsb since MSP API 1.39 by RTH. Received MSP altitudes in 1m per lsb have to upscaled.
             let mut disableRunawayTakeoff: uint8_t =
-                0 as libc::c_int as
+                0i32 as
                     uint8_t; // New data signalisation to GPS functions // FIXME Magic Numbers
             if sbufBytesRemaining(src) != 0 {
                 disableRunawayTakeoff = sbufReadU8(src)
@@ -3593,7 +3479,7 @@ unsafe extern "C" fn mspProcessInCommand(mut cmdMSP: uint8_t,
                 if armingFlags as libc::c_int & ARMED as libc::c_int != 0 {
                     disarm();
                 }
-                runawayTakeoffTemporaryDisable(0 as libc::c_int as uint8_t);
+                runawayTakeoffTemporaryDisable(0i32 as uint8_t);
             } else {
                 unsetArmingDisabled(ARMING_DISABLED_MSP);
                 runawayTakeoffTemporaryDisable(disableRunawayTakeoff);
@@ -3612,11 +3498,9 @@ unsafe extern "C" fn mspProcessInCommand(mut cmdMSP: uint8_t,
             gpsSol.numSat = sbufReadU8(src);
             gpsSol.llh.lat = sbufReadU32(src) as int32_t;
             gpsSol.llh.lon = sbufReadU32(src) as int32_t;
-            gpsSol.llh.alt =
-                sbufReadU16(src) as libc::c_int * 100 as libc::c_int;
+            gpsSol.llh.alt = sbufReadU16(src) as libc::c_int * 100i32;
             gpsSol.groundSpeed = sbufReadU16(src);
-            GPS_update =
-                (GPS_update as libc::c_int | 2 as libc::c_int) as uint8_t
+            GPS_update = (GPS_update as libc::c_int | 2i32) as uint8_t
         }
         37 => {
             // USE_GPS
@@ -3633,7 +3517,7 @@ unsafe extern "C" fn mspProcessInCommand(mut cmdMSP: uint8_t,
         }
         43 => {
             (*mixerConfigMutable()).mixerMode = sbufReadU8(src);
-            if sbufBytesRemaining(src) >= 1 as libc::c_int {
+            if sbufBytesRemaining(src) >= 1i32 {
                 (*mixerConfigMutable()).yaw_motors_reversed =
                     sbufReadU8(src) != 0
             }
@@ -3644,27 +3528,27 @@ unsafe extern "C" fn mspProcessInCommand(mut cmdMSP: uint8_t,
             (*rxConfigMutable()).midrc = sbufReadU16(src);
             (*rxConfigMutable()).mincheck = sbufReadU16(src);
             (*rxConfigMutable()).spektrum_sat_bind = sbufReadU8(src);
-            if sbufBytesRemaining(src) >= 4 as libc::c_int {
+            if sbufBytesRemaining(src) >= 4i32 {
                 (*rxConfigMutable()).rx_min_usec = sbufReadU16(src);
                 (*rxConfigMutable()).rx_max_usec = sbufReadU16(src)
             }
-            if sbufBytesRemaining(src) >= 4 as libc::c_int {
+            if sbufBytesRemaining(src) >= 4i32 {
                 (*rxConfigMutable()).rcInterpolation = sbufReadU8(src);
                 (*rxConfigMutable()).rcInterpolationInterval =
                     sbufReadU8(src);
                 (*rxConfigMutable()).airModeActivateThreshold =
-                    ((sbufReadU16(src) as libc::c_int - 1000 as libc::c_int) /
-                         10 as libc::c_int) as uint8_t
+                    ((sbufReadU16(src) as libc::c_int - 1000i32) / 10i32) as
+                        uint8_t
             }
-            if sbufBytesRemaining(src) >= 6 as libc::c_int {
+            if sbufBytesRemaining(src) >= 6i32 {
                 sbufReadU8(src);
                 sbufReadU32(src);
                 sbufReadU8(src);
             }
-            if sbufBytesRemaining(src) >= 1 as libc::c_int {
+            if sbufBytesRemaining(src) >= 1i32 {
                 (*rxConfigMutable()).fpvCamAngleDegrees = sbufReadU8(src)
             }
-            if sbufBytesRemaining(src) >= 6 as libc::c_int {
+            if sbufBytesRemaining(src) >= 6i32 {
                 // Added in MSP API 1.40
                 (*rxConfigMutable()).rcInterpolationChannels =
                     sbufReadU8(src);
@@ -3691,19 +3575,18 @@ unsafe extern "C" fn mspProcessInCommand(mut cmdMSP: uint8_t,
         }
         78 => {
             i = sbufReadU8(src) as uint32_t;
-            if i < 18 as libc::c_int as libc::c_uint {
+            if i < 18i32 as libc::c_uint {
                 (*rxFailsafeChannelConfigsMutable(i as libc::c_int)).mode =
                     sbufReadU8(src);
                 (*rxFailsafeChannelConfigsMutable(i as libc::c_int)).step =
-                    ((constrain(sbufReadU16(src) as libc::c_int,
-                                750 as libc::c_int, 2250 as libc::c_int) -
-                          750 as libc::c_int) / 25 as libc::c_int) as uint8_t
+                    ((constrain(sbufReadU16(src) as libc::c_int, 750i32,
+                                2250i32) - 750i32) / 25i32) as uint8_t
             } else { return MSP_RESULT_ERROR }
         }
         51 => { (*rxConfigMutable()).rssi_channel = sbufReadU8(src) }
         65 => {
-            let mut i_4: libc::c_int = 0 as libc::c_int;
-            while i_4 < 8 as libc::c_int {
+            let mut i_4: libc::c_int = 0i32;
+            while i_4 < 8i32 {
                 (*rxConfigMutable()).rcmap[i_4 as usize] = sbufReadU8(src);
                 i_4 += 1
             }
@@ -3715,14 +3598,12 @@ unsafe extern "C" fn mspProcessInCommand(mut cmdMSP: uint8_t,
                                                      as
                                                      libc::c_ulong).wrapping_add((::core::mem::size_of::<uint8_t>()
                                                                                       as
-                                                                                      libc::c_ulong).wrapping_mul(4
-                                                                                                                      as
-                                                                                                                      libc::c_int
+                                                                                      libc::c_ulong).wrapping_mul(4i32
                                                                                                                       as
                                                                                                                       libc::c_ulong))
                     as uint8_t;
             if dataSize.wrapping_rem(portConfigSize as libc::c_uint) !=
-                   0 as libc::c_int as libc::c_uint {
+                   0i32 as libc::c_uint {
                 return MSP_RESULT_ERROR
             }
             let mut remainingPortsInPacket: uint8_t =
@@ -3749,14 +3630,14 @@ unsafe extern "C" fn mspProcessInCommand(mut cmdMSP: uint8_t,
         }
         11 => {
             memset((*pilotConfigMutable()).name.as_mut_ptr() as
-                       *mut libc::c_void, 0 as libc::c_int,
+                       *mut libc::c_void, 0i32,
                    (::core::mem::size_of::<[libc::c_char; 17]>() as
                         libc::c_ulong).wrapping_div(::core::mem::size_of::<libc::c_char>()
                                                         as libc::c_ulong));
-            let mut i_5: libc::c_uint = 0 as libc::c_int as libc::c_uint;
+            let mut i_5: libc::c_uint = 0i32 as libc::c_uint;
             while i_5 <
                       ({
-                           let mut _a: libc::c_uint = 16 as libc::c_uint;
+                           let mut _a: libc::c_uint = 16u32;
                            let _b: libc::c_uint = dataSize;
                            (if _a < _b { _a } else { _b })
                        }) {
@@ -3780,7 +3661,7 @@ unsafe extern "C" fn mspProcessInCommand(mut cmdMSP: uint8_t,
             dt.hours = sbufReadU8(src);
             dt.minutes = sbufReadU8(src);
             dt.seconds = sbufReadU8(src);
-            dt.millis = 0 as libc::c_int as uint16_t;
+            dt.millis = 0i32 as uint16_t;
             rtcSetDateTime(&mut dt);
         }
         186 => { setRssiMsp(sbufReadU8(src)); }
@@ -3791,14 +3672,13 @@ unsafe extern "C" fn mspProcessInCommand(mut cmdMSP: uint8_t,
                 sbufReadData(src, boardName.as_mut_ptr() as *mut libc::c_void,
                              ({
                                   let mut _a: uint8_t = length;
-                                  let mut _b: libc::c_int = 20 as libc::c_int;
+                                  let mut _b: libc::c_int = 20i32;
                                   if (_a as libc::c_int) < _b {
                                       _a as libc::c_int
                                   } else { _b }
                               }));
-                if length as libc::c_int > 20 as libc::c_int {
-                    sbufAdvance(src,
-                                length as libc::c_int - 20 as libc::c_int);
+                if length as libc::c_int > 20i32 {
+                    sbufAdvance(src, length as libc::c_int - 20i32);
                 }
                 boardName[length as usize] = '\u{0}' as i32 as libc::c_char;
                 length = sbufReadU8(src);
@@ -3807,14 +3687,13 @@ unsafe extern "C" fn mspProcessInCommand(mut cmdMSP: uint8_t,
                              manufacturerId.as_mut_ptr() as *mut libc::c_void,
                              ({
                                   let mut _a: uint8_t = length;
-                                  let mut _b: libc::c_int = 4 as libc::c_int;
+                                  let mut _b: libc::c_int = 4i32;
                                   if (_a as libc::c_int) < _b {
                                       _a as libc::c_int
                                   } else { _b }
                               }));
-                if length as libc::c_int > 4 as libc::c_int {
-                    sbufAdvance(src,
-                                length as libc::c_int - 4 as libc::c_int);
+                if length as libc::c_int > 4i32 {
+                    sbufAdvance(src, length as libc::c_int - 4i32);
                 }
                 manufacturerId[length as usize] =
                     '\u{0}' as i32 as libc::c_char;
@@ -3827,7 +3706,7 @@ unsafe extern "C" fn mspProcessInCommand(mut cmdMSP: uint8_t,
             if !signatureIsSet() {
                 let mut signature: [uint8_t; 32] = [0; 32];
                 sbufReadData(src, signature.as_mut_ptr() as *mut libc::c_void,
-                             32 as libc::c_int);
+                             32i32);
                 setSignature(signature.as_mut_ptr());
                 persistSignature();
             } else { return MSP_RESULT_ERROR }
@@ -3855,8 +3734,8 @@ unsafe extern "C" fn mspCommonProcessInCommand(mut cmdMSP: uint8_t,
         // find and configure an ADC voltage sensor
         //
             let mut voltageSensorADCIndex: int8_t = 0;
-            voltageSensorADCIndex = 0 as libc::c_int as int8_t;
-            while (voltageSensorADCIndex as libc::c_int) < 1 as libc::c_int {
+            voltageSensorADCIndex = 0i32 as int8_t;
+            while (voltageSensorADCIndex as libc::c_int) < 1i32 {
                 if id as libc::c_int ==
                        voltageMeterADCtoIDMap[voltageSensorADCIndex as usize]
                            as libc::c_int {
@@ -3864,7 +3743,7 @@ unsafe extern "C" fn mspCommonProcessInCommand(mut cmdMSP: uint8_t,
                 }
                 voltageSensorADCIndex += 1
             }
-            if (voltageSensorADCIndex as libc::c_int) < 1 as libc::c_int {
+            if (voltageSensorADCIndex as libc::c_int) < 1i32 {
                 (*voltageSensorADCConfigMutable(voltageSensorADCIndex as
                                                     libc::c_int)).vbatscale =
                     sbufReadU8(src);

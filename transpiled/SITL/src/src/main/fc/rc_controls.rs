@@ -1,4 +1,5 @@
-use ::libc;
+use core;
+use libc;
 extern "C" {
     #[no_mangle]
     fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong)
@@ -104,7 +105,7 @@ pub const PGR_PGN_MASK: C2RustUnnamed = 4095;
 pub type pgResetFunc
     =
     unsafe extern "C" fn(_: *mut libc::c_void, _: libc::c_int) -> ();
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct pgRegistry_s {
     pub pgn: pgn_t,
@@ -114,11 +115,12 @@ pub struct pgRegistry_s {
     pub ptr: *mut *mut uint8_t,
     pub reset: C2RustUnnamed_0,
 }
-#[derive(Copy, Clone)]
-#[repr(C)]
+#[derive ( Copy, Clone )]
+#[repr ( C )]
 pub union C2RustUnnamed_0 {
     pub ptr: *mut libc::c_void,
-    pub fn_0: Option<pgResetFunc>,
+    pub fn_0: Option<unsafe extern "C" fn(_: *mut libc::c_void,
+                                          _: libc::c_int) -> ()>,
 }
 pub type pgRegistry_t = pgRegistry_s;
 /* base */
@@ -198,7 +200,7 @@ pub const FEATURE_RX_PPM: C2RustUnnamed_1 = 1;
 // IO pin identification
 // make sure that ioTag_t can't be assigned into IO_t without warning
 pub type ioTag_t = uint8_t;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct rxConfig_s {
     pub rcmap: [uint8_t; 8],
@@ -252,37 +254,6 @@ pub struct rxConfig_s {
  * If not, see <http://www.gnu.org/licenses/>.
  */
 pub type rxConfig_t = rxConfig_s;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct displayPortVTable_s {
-    pub grab: Option<unsafe extern "C" fn(_: *mut displayPort_t)
-                         -> libc::c_int>,
-    pub release: Option<unsafe extern "C" fn(_: *mut displayPort_t)
-                            -> libc::c_int>,
-    pub clearScreen: Option<unsafe extern "C" fn(_: *mut displayPort_t)
-                                -> libc::c_int>,
-    pub drawScreen: Option<unsafe extern "C" fn(_: *mut displayPort_t)
-                               -> libc::c_int>,
-    pub screenSize: Option<unsafe extern "C" fn(_: *const displayPort_t)
-                               -> libc::c_int>,
-    pub writeString: Option<unsafe extern "C" fn(_: *mut displayPort_t,
-                                                 _: uint8_t, _: uint8_t,
-                                                 _: *const libc::c_char)
-                                -> libc::c_int>,
-    pub writeChar: Option<unsafe extern "C" fn(_: *mut displayPort_t,
-                                               _: uint8_t, _: uint8_t,
-                                               _: uint8_t) -> libc::c_int>,
-    pub isTransferInProgress: Option<unsafe extern "C" fn(_:
-                                                              *const displayPort_t)
-                                         -> bool>,
-    pub heartbeat: Option<unsafe extern "C" fn(_: *mut displayPort_t)
-                              -> libc::c_int>,
-    pub resync: Option<unsafe extern "C" fn(_: *mut displayPort_t) -> ()>,
-    pub isSynced: Option<unsafe extern "C" fn(_: *const displayPort_t)
-                             -> bool>,
-    pub txBytesFree: Option<unsafe extern "C" fn(_: *const displayPort_t)
-                                -> uint32_t>,
-}
 // mapping of radio channels to internal RPYTA+ order
 // type of UART-based receiver (0 = spek 10, 1 = spek 11, 2 = sbus). Must be enabled by FEATURE_RX_SERIAL first.
 // invert the serial RX protocol compared to it's default setting
@@ -321,8 +292,39 @@ pub struct displayPortVTable_s {
  *
  * If not, see <http://www.gnu.org/licenses/>.
  */
+#[derive ( Copy, Clone )]
+#[repr(C)]
+pub struct displayPortVTable_s {
+    pub grab: Option<unsafe extern "C" fn(_: *mut displayPort_t)
+                         -> libc::c_int>,
+    pub release: Option<unsafe extern "C" fn(_: *mut displayPort_t)
+                            -> libc::c_int>,
+    pub clearScreen: Option<unsafe extern "C" fn(_: *mut displayPort_t)
+                                -> libc::c_int>,
+    pub drawScreen: Option<unsafe extern "C" fn(_: *mut displayPort_t)
+                               -> libc::c_int>,
+    pub screenSize: Option<unsafe extern "C" fn(_: *const displayPort_t)
+                               -> libc::c_int>,
+    pub writeString: Option<unsafe extern "C" fn(_: *mut displayPort_t,
+                                                 _: uint8_t, _: uint8_t,
+                                                 _: *const libc::c_char)
+                                -> libc::c_int>,
+    pub writeChar: Option<unsafe extern "C" fn(_: *mut displayPort_t,
+                                               _: uint8_t, _: uint8_t,
+                                               _: uint8_t) -> libc::c_int>,
+    pub isTransferInProgress: Option<unsafe extern "C" fn(_:
+                                                              *const displayPort_t)
+                                         -> bool>,
+    pub heartbeat: Option<unsafe extern "C" fn(_: *mut displayPort_t)
+                              -> libc::c_int>,
+    pub resync: Option<unsafe extern "C" fn(_: *mut displayPort_t) -> ()>,
+    pub isSynced: Option<unsafe extern "C" fn(_: *const displayPort_t)
+                             -> bool>,
+    pub txBytesFree: Option<unsafe extern "C" fn(_: *const displayPort_t)
+                                -> uint32_t>,
+}
 pub type displayPort_t = displayPort_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct displayPort_s {
     pub vTable: *const displayPortVTable_s,
@@ -335,10 +337,7 @@ pub struct displayPort_s {
     pub cursorRow: int8_t,
     pub grabCount: int8_t,
 }
-// CMS state
-// allow disarm/arm on throttle down + roll left/right
-// allow automatically disarming multicopters after auto_disarm_delay seconds of zero throttle. Disabled when 0
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct pidProfile_s {
     pub yaw_lowpass_hz: uint16_t,
@@ -388,7 +387,7 @@ pub struct pidProfile_s {
     pub abs_control_error_limit: uint8_t,
 }
 pub type pidf_t = pidf_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct pidf_s {
     pub P: uint8_t,
@@ -396,34 +395,14 @@ pub struct pidf_s {
     pub D: uint8_t,
     pub F: uint16_t,
 }
-/*
- * This file is part of Cleanflight and Betaflight.
- *
- * Cleanflight and Betaflight are free software. You can redistribute
- * this software and/or modify this software under the terms of the
- * GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option)
- * any later version.
- *
- * Cleanflight and Betaflight are distributed in the hope that they
- * will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this software.
- *
- * If not, see <http://www.gnu.org/licenses/>.
- */
-// Type of accelerometer used/detected
-#[derive(Copy, Clone)]
-#[repr(C)]
+#[derive ( Copy, Clone )]
+#[repr ( C )]
 pub union rollAndPitchTrims_u {
     pub raw: [int16_t; 2],
     pub values: rollAndPitchTrims_t_def,
 }
 pub type rollAndPitchTrims_t_def = rollAndPitchTrims_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct rollAndPitchTrims_s {
     pub roll: int16_t,
@@ -445,7 +424,7 @@ pub const ROLL: rc_alias = 0;
 pub type throttleStatus_e = libc::c_uint;
 pub const THROTTLE_HIGH: throttleStatus_e = 1;
 pub const THROTTLE_LOW: throttleStatus_e = 0;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct rcControlsConfig_s {
     pub deadband: uint8_t,
@@ -455,7 +434,7 @@ pub struct rcControlsConfig_s {
     pub yaw_control_reversed: bool,
 }
 pub type rcControlsConfig_t = rcControlsConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct flight3DConfig_s {
     pub deadband3d_low: uint16_t,
@@ -467,7 +446,7 @@ pub struct flight3DConfig_s {
     pub switched_mode3d: uint8_t,
 }
 pub type flight3DConfig_t = flight3DConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct armingConfig_s {
     pub gyro_cal_on_first_arm: uint8_t,
@@ -631,47 +610,8 @@ pub const SENSOR_GYRO: C2RustUnnamed_5 = 1;
 // pwm output value for max negative thrust
 // pwm output value for max positive thrust
 // enable '3D Switched Mode'
-// Additional yaw filter when yaw axis too noisy
-// Delta Filter in hz
-// Biquad dterm notch hz
-// Biquad dterm notch low cutoff
-// Filter selection for dterm
-// Experimental ITerm windup threshold, percent motor saturation
-// Disable/Enable pids on zero throttle. Normally even without airmode P and D would be active.
-// Max angle in degrees in level mode
-// inclination factor for Horizon mode
-// OFF or ON
-// Betaflight PID controller parameters
-// type of anti gravity method
-// max allowed throttle delta before iterm accelerated in ms
-// Iterm Accelerator Gain when itermThrottlethreshold is hit
-// yaw accel limiter for deg/sec/ms
-// accel limiter roll/pitch deg/sec/ms
-// dterm crash value
-// gyro crash value
-// setpoint must be below this value to detect crash, so flips and rolls are not interpreted as crashes
-// ms
-// ms
-// degrees
-// degree/second
-// Scale PIDsum to battery voltage
-// Feed forward weight transition
-// limits yaw errorRate, so crashes don't cause huge throttle increase
-// Extra PT1 Filter on D in hz
-// off, on, on and beeps when it is in crash recovery mode
-// how much should throttle be boosted during transient changes 0-100, 100 adds 10x hpf filtered throttle
-// Which cutoff frequency to use for throttle boost. higher cutoffs keep the boost on for shorter. Specified in hz.
-// rotates iterm to translate world errors to local coordinate system
-// takes only the larger of P and the D weight feed forward term if they have the same sign.
-// Specifies type of relax algorithm
-// This cutoff frequency specifies a low pass filter which predicts average response of the quad to setpoint
-// Enable iterm suppression during stick input
-// Acro trainer roll/pitch angle limit in degrees
-// The axis for which record debugging values are captured 0=roll, 1=pitch
-// The strength of the limiting. Raising may reduce overshoot but also lead to oscillation around the angle limit
-// The lookahead window in milliseconds used to reduce overshoot
-// How strongly should the absolute accumulated error be corrected for
-// Limit to the correction
+// allow disarm/arm on throttle down + roll left/right
+// allow automatically disarming multicopters after auto_disarm_delay seconds of zero throttle. Disabled when 0
 // Limit to the accumulated error
 /*
  * This file is part of Cleanflight and Betaflight.
@@ -711,6 +651,26 @@ pub static mut SystemCoreClock: uint32_t = 0;
 unsafe extern "C" fn rxConfig() -> *const rxConfig_t {
     return &mut rxConfig_System;
 }
+/*
+ * This file is part of Cleanflight and Betaflight.
+ *
+ * Cleanflight and Betaflight are free software. You can redistribute
+ * this software and/or modify this software under the terms of the
+ * GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * Cleanflight and Betaflight are distributed in the hope that they
+ * will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this software.
+ *
+ * If not, see <http://www.gnu.org/licenses/>.
+ */
+// Device management
 #[no_mangle]
 pub static mut pCurrentDisplay: *mut displayPort_t =
     0 as *const displayPort_t as *mut displayPort_t;
@@ -740,10 +700,24 @@ unsafe extern "C" fn flight3DConfig() -> *const flight3DConfig_t {
 static mut pidProfile: *mut pidProfile_t =
     0 as *const pidProfile_t as *mut pidProfile_t;
 // true if arming is done via the sticks (as opposed to a switch)
-static mut isUsingSticksToArm: bool = 1 as libc::c_int != 0;
+static mut isUsingSticksToArm: bool = 1i32 != 0;
 #[no_mangle]
 pub static mut rcCommand: [libc::c_float; 4] = [0.; 4];
 // interval [1000;2000] for THROTTLE and [-500;+500] for ROLL/PITCH/YAW
+#[no_mangle]
+pub static mut rcControlsConfig_Copy: rcControlsConfig_t =
+    rcControlsConfig_t{deadband: 0,
+                       yaw_deadband: 0,
+                       alt_hold_deadband: 0,
+                       alt_hold_fast_change: 0,
+                       yaw_control_reversed: false,};
+#[no_mangle]
+pub static mut rcControlsConfig_System: rcControlsConfig_t =
+    rcControlsConfig_t{deadband: 0,
+                       yaw_deadband: 0,
+                       alt_hold_deadband: 0,
+                       alt_hold_fast_change: 0,
+                       yaw_control_reversed: false,};
 #[no_mangle]
 #[link_section = ".pg_registry"]
 #[used]
@@ -751,10 +725,7 @@ pub static mut rcControlsConfig_Registry: pgRegistry_t =
     unsafe {
         {
             let mut init =
-                pgRegistry_s{pgn:
-                                 (25 as libc::c_int |
-                                      (0 as libc::c_int) << 12 as libc::c_int)
-                                     as pgn_t,
+                pgRegistry_s{pgn: (25i32 | 0i32 << 12i32) as pgn_t,
                              size:
                                  (::core::mem::size_of::<rcControlsConfig_t>()
                                       as libc::c_ulong |
@@ -782,39 +753,20 @@ pub static mut rcControlsConfig_Registry: pgRegistry_t =
         }
     };
 #[no_mangle]
-pub static mut rcControlsConfig_Copy: rcControlsConfig_t =
-    rcControlsConfig_t{deadband: 0,
-                       yaw_deadband: 0,
-                       alt_hold_deadband: 0,
-                       alt_hold_fast_change: 0,
-                       yaw_control_reversed: false,};
-#[no_mangle]
-pub static mut rcControlsConfig_System: rcControlsConfig_t =
-    rcControlsConfig_t{deadband: 0,
-                       yaw_deadband: 0,
-                       alt_hold_deadband: 0,
-                       alt_hold_fast_change: 0,
-                       yaw_control_reversed: false,};
-#[no_mangle]
 #[link_section = ".pg_resetdata"]
 #[used]
 pub static mut pgResetTemplate_rcControlsConfig: rcControlsConfig_t =
     {
         let mut init =
-            rcControlsConfig_s{deadband: 0 as libc::c_int as uint8_t,
-                               yaw_deadband: 0 as libc::c_int as uint8_t,
-                               alt_hold_deadband:
-                                   40 as libc::c_int as uint8_t,
-                               alt_hold_fast_change:
-                                   1 as libc::c_int as uint8_t,
-                               yaw_control_reversed: 0 as libc::c_int != 0,};
+            rcControlsConfig_s{deadband: 0i32 as uint8_t,
+                               yaw_deadband: 0i32 as uint8_t,
+                               alt_hold_deadband: 40i32 as uint8_t,
+                               alt_hold_fast_change: 1i32 as uint8_t,
+                               yaw_control_reversed: 0i32 != 0,};
         init
     };
 #[no_mangle]
 pub static mut armingConfig_System: armingConfig_t =
-    armingConfig_t{gyro_cal_on_first_arm: 0, auto_disarm_delay: 0,};
-#[no_mangle]
-pub static mut armingConfig_Copy: armingConfig_t =
     armingConfig_t{gyro_cal_on_first_arm: 0, auto_disarm_delay: 0,};
 #[no_mangle]
 #[link_section = ".pg_registry"]
@@ -823,10 +775,7 @@ pub static mut armingConfig_Registry: pgRegistry_t =
     unsafe {
         {
             let mut init =
-                pgRegistry_s{pgn:
-                                 (16 as libc::c_int |
-                                      (1 as libc::c_int) << 12 as libc::c_int)
-                                     as pgn_t,
+                pgRegistry_s{pgn: (16i32 | 1i32 << 12i32) as pgn_t,
                              size:
                                  (::core::mem::size_of::<armingConfig_t>() as
                                       libc::c_ulong |
@@ -852,33 +801,18 @@ pub static mut armingConfig_Registry: pgRegistry_t =
         }
     };
 #[no_mangle]
+pub static mut armingConfig_Copy: armingConfig_t =
+    armingConfig_t{gyro_cal_on_first_arm: 0, auto_disarm_delay: 0,};
+#[no_mangle]
 #[link_section = ".pg_resetdata"]
 #[used]
 pub static mut pgResetTemplate_armingConfig: armingConfig_t =
     {
         let mut init =
-            armingConfig_s{gyro_cal_on_first_arm: 0 as libc::c_int as uint8_t,
-                           auto_disarm_delay: 5 as libc::c_int as uint8_t,};
+            armingConfig_s{gyro_cal_on_first_arm: 0i32 as uint8_t,
+                           auto_disarm_delay: 5i32 as uint8_t,};
         init
     };
-#[no_mangle]
-pub static mut flight3DConfig_System: flight3DConfig_t =
-    flight3DConfig_t{deadband3d_low: 0,
-                     deadband3d_high: 0,
-                     neutral3d: 0,
-                     deadband3d_throttle: 0,
-                     limit3d_low: 0,
-                     limit3d_high: 0,
-                     switched_mode3d: 0,};
-#[no_mangle]
-pub static mut flight3DConfig_Copy: flight3DConfig_t =
-    flight3DConfig_t{deadband3d_low: 0,
-                     deadband3d_high: 0,
-                     neutral3d: 0,
-                     deadband3d_throttle: 0,
-                     limit3d_low: 0,
-                     limit3d_high: 0,
-                     switched_mode3d: 0,};
 #[no_mangle]
 #[link_section = ".pg_registry"]
 #[used]
@@ -886,10 +820,7 @@ pub static mut flight3DConfig_Registry: pgRegistry_t =
     unsafe {
         {
             let mut init =
-                pgRegistry_s{pgn:
-                                 (26 as libc::c_int |
-                                      (0 as libc::c_int) << 12 as libc::c_int)
-                                     as pgn_t,
+                pgRegistry_s{pgn: (26i32 | 0i32 << 12i32) as pgn_t,
                              size:
                                  (::core::mem::size_of::<flight3DConfig_t>()
                                       as libc::c_ulong |
@@ -917,19 +848,36 @@ pub static mut flight3DConfig_Registry: pgRegistry_t =
         }
     };
 #[no_mangle]
+pub static mut flight3DConfig_Copy: flight3DConfig_t =
+    flight3DConfig_t{deadband3d_low: 0,
+                     deadband3d_high: 0,
+                     neutral3d: 0,
+                     deadband3d_throttle: 0,
+                     limit3d_low: 0,
+                     limit3d_high: 0,
+                     switched_mode3d: 0,};
+#[no_mangle]
+pub static mut flight3DConfig_System: flight3DConfig_t =
+    flight3DConfig_t{deadband3d_low: 0,
+                     deadband3d_high: 0,
+                     neutral3d: 0,
+                     deadband3d_throttle: 0,
+                     limit3d_low: 0,
+                     limit3d_high: 0,
+                     switched_mode3d: 0,};
+#[no_mangle]
 #[link_section = ".pg_resetdata"]
 #[used]
 pub static mut pgResetTemplate_flight3DConfig: flight3DConfig_t =
     {
         let mut init =
-            flight3DConfig_s{deadband3d_low: 1406 as libc::c_int as uint16_t,
-                             deadband3d_high: 1514 as libc::c_int as uint16_t,
-                             neutral3d: 1460 as libc::c_int as uint16_t,
-                             deadband3d_throttle:
-                                 50 as libc::c_int as uint16_t,
-                             limit3d_low: 1000 as libc::c_int as uint16_t,
-                             limit3d_high: 2000 as libc::c_int as uint16_t,
-                             switched_mode3d: 0 as libc::c_int as uint8_t,};
+            flight3DConfig_s{deadband3d_low: 1406i32 as uint16_t,
+                             deadband3d_high: 1514i32 as uint16_t,
+                             neutral3d: 1460i32 as uint16_t,
+                             deadband3d_throttle: 50i32 as uint16_t,
+                             limit3d_low: 1000i32 as uint16_t,
+                             limit3d_high: 2000i32 as uint16_t,
+                             switched_mode3d: 0i32 as uint8_t,};
         init
     };
 #[no_mangle]
@@ -942,16 +890,12 @@ pub unsafe extern "C" fn areSticksInApModePosition(mut ap_mode: uint16_t)
     return ({
                 let mut _x: libc::c_float =
                     rcCommand[ROLL as libc::c_int as usize];
-                (if _x > 0 as libc::c_int as libc::c_float {
-                     _x
-                 } else { -_x })
+                (if _x > 0i32 as libc::c_float { _x } else { -_x })
             }) < ap_mode as libc::c_int as libc::c_float &&
                ({
                     let mut _x: libc::c_float =
                         rcCommand[PITCH as libc::c_int as usize];
-                    (if _x > 0 as libc::c_int as libc::c_float {
-                         _x
-                     } else { -_x })
+                    (if _x > 0i32 as libc::c_float { _x } else { -_x })
                 }) < ap_mode as libc::c_int as libc::c_float;
 }
 #[no_mangle]
@@ -990,40 +934,35 @@ pub unsafe extern "C" fn processRcStickPositions() {
     static mut rcDisarmTicks: uint8_t = 0;
     static mut doNotRepeat: bool = false;
     // checking sticks positions
-    let mut stTmp: uint8_t = 0 as libc::c_int as uint8_t;
-    let mut i: libc::c_int = 0 as libc::c_int;
-    while i < 4 as libc::c_int {
-        stTmp = (stTmp as libc::c_int >> 2 as libc::c_int) as uint8_t;
+    let mut stTmp: uint8_t = 0i32 as uint8_t;
+    let mut i: libc::c_int = 0i32;
+    while i < 4i32 {
+        stTmp = (stTmp as libc::c_int >> 2i32) as uint8_t;
         if rcData[i as usize] as libc::c_int >
                (*rxConfig()).mincheck as libc::c_int {
-            stTmp = (stTmp as libc::c_int | 0x80 as libc::c_int) as uint8_t
+            stTmp = (stTmp as libc::c_int | 0x80i32) as uint8_t
             // check for MIN
         }
         if (rcData[i as usize] as libc::c_int) <
                (*rxConfig()).maxcheck as libc::c_int {
-            stTmp = (stTmp as libc::c_int | 0x40 as libc::c_int) as uint8_t
+            stTmp = (stTmp as libc::c_int | 0x40i32) as uint8_t
             // check for MAX
         }
         i += 1
     }
     if stTmp as libc::c_int == rcSticks as libc::c_int {
         if rcDelayMs as libc::c_int <=
-               32767 as libc::c_int -
-                   getTaskDeltaTime(TASK_SELF) / 1000 as libc::c_int {
+               32767i32 - getTaskDeltaTime(TASK_SELF) / 1000i32 {
             rcDelayMs =
                 (rcDelayMs as libc::c_int +
-                     getTaskDeltaTime(TASK_SELF) / 1000 as libc::c_int) as
-                    int16_t
+                     getTaskDeltaTime(TASK_SELF) / 1000i32) as int16_t
         }
-    } else {
-        rcDelayMs = 0 as libc::c_int as int16_t;
-        doNotRepeat = 0 as libc::c_int != 0
-    }
+    } else { rcDelayMs = 0i32 as int16_t; doNotRepeat = 0i32 != 0 }
     rcSticks = stTmp;
     // perform actions
     if !isUsingSticksToArm {
         if IS_RC_MODE_ACTIVE(BOXARM) {
-            rcDisarmTicks = 0 as libc::c_int as uint8_t;
+            rcDisarmTicks = 0i32 as uint8_t;
             // Arming via ARM BOX
             tryArm();
         } else {
@@ -1034,32 +973,24 @@ pub unsafe extern "C" fn processRcStickPositions() {
                    rxIsReceivingSignal() as libc::c_int != 0 &&
                    !failsafeIsActive() {
                 rcDisarmTicks = rcDisarmTicks.wrapping_add(1);
-                if rcDisarmTicks as libc::c_int > 3 as libc::c_int {
-                    disarm();
-                }
+                if rcDisarmTicks as libc::c_int > 3i32 { disarm(); }
             }
         }
     } else if rcSticks as libc::c_int ==
-                  ((1 as libc::c_int) <<
-                       2 as libc::c_int * THROTTLE as libc::c_int) +
-                      ((1 as libc::c_int) <<
-                           2 as libc::c_int * YAW as libc::c_int) +
-                      ((3 as libc::c_int) <<
-                           2 as libc::c_int * PITCH as libc::c_int) +
-                      ((3 as libc::c_int) <<
-                           2 as libc::c_int * ROLL as libc::c_int) {
-        if rcDelayMs as libc::c_int >= 500 as libc::c_int && !doNotRepeat {
-            doNotRepeat = 1 as libc::c_int != 0;
+                  (1i32 << 2i32 * THROTTLE as libc::c_int) +
+                      (1i32 << 2i32 * YAW as libc::c_int) +
+                      (3i32 << 2i32 * PITCH as libc::c_int) +
+                      (3i32 << 2i32 * ROLL as libc::c_int) {
+        if rcDelayMs as libc::c_int >= 500i32 && !doNotRepeat {
+            doNotRepeat = 1i32 != 0;
             // Disarm on throttle down + yaw
             resetTryingToArm(); // sound tone while stick held
             if armingFlags as libc::c_int & ARMED as libc::c_int != 0 {
                 disarm();
             } else {
                 beeper(BEEPER_DISARM_REPEAT);
-                rcDelayMs =
-                    (rcDelayMs as libc::c_int - 250 as libc::c_int) as
-                        int16_t;
-                doNotRepeat = 0 as libc::c_int != 0;
+                rcDelayMs = (rcDelayMs as libc::c_int - 250i32) as int16_t;
+                doNotRepeat = 0i32 != 0;
                 // disarm tone will repeat
                 // Unset the ARMING_DISABLED_RUNAWAY_TAKEOFF arming disabled flag that might have been set
                 // by a runaway pidSum detection auto-disarm.
@@ -1071,21 +1002,16 @@ pub unsafe extern "C" fn processRcStickPositions() {
         return
     } else {
         if rcSticks as libc::c_int ==
-               ((1 as libc::c_int) <<
-                    2 as libc::c_int * THROTTLE as libc::c_int) +
-                   ((2 as libc::c_int) <<
-                        2 as libc::c_int * YAW as libc::c_int) +
-                   ((3 as libc::c_int) <<
-                        2 as libc::c_int * PITCH as libc::c_int) +
-                   ((3 as libc::c_int) <<
-                        2 as libc::c_int * ROLL as libc::c_int) {
-            if rcDelayMs as libc::c_int >= 500 as libc::c_int && !doNotRepeat
-               {
-                doNotRepeat = 1 as libc::c_int != 0;
+               (1i32 << 2i32 * THROTTLE as libc::c_int) +
+                   (2i32 << 2i32 * YAW as libc::c_int) +
+                   (3i32 << 2i32 * PITCH as libc::c_int) +
+                   (3i32 << 2i32 * ROLL as libc::c_int) {
+            if rcDelayMs as libc::c_int >= 500i32 && !doNotRepeat {
+                doNotRepeat = 1i32 != 0;
                 if armingFlags as libc::c_int & ARMED as libc::c_int == 0 {
                     // Arm via YAW
                     tryArm();
-                    if isTryingToArm() { doNotRepeat = 0 as libc::c_int != 0 }
+                    if isTryingToArm() { doNotRepeat = 0i32 != 0 }
                 } else { resetArmingDisabled(); }
             }
             return
@@ -1093,44 +1019,37 @@ pub unsafe extern "C" fn processRcStickPositions() {
     }
     if armingFlags as libc::c_int & ARMED as libc::c_int != 0 ||
            doNotRepeat as libc::c_int != 0 ||
-           rcDelayMs as libc::c_int <= 50 as libc::c_int ||
+           rcDelayMs as libc::c_int <= 50i32 ||
            getArmingDisableFlags() as libc::c_uint &
                ARMING_DISABLED_RUNAWAY_TAKEOFF as libc::c_int as libc::c_uint
                != 0 {
         return
     }
-    doNotRepeat = 1 as libc::c_int != 0;
+    doNotRepeat = 1i32 != 0;
     // actions during not armed
     if rcSticks as libc::c_int ==
-           ((1 as libc::c_int) << 2 as libc::c_int * THROTTLE as libc::c_int)
-               + ((1 as libc::c_int) << 2 as libc::c_int * YAW as libc::c_int)
-               +
-               ((1 as libc::c_int) << 2 as libc::c_int * PITCH as libc::c_int)
-               +
-               ((3 as libc::c_int) << 2 as libc::c_int * ROLL as libc::c_int)
-       {
+           (1i32 << 2i32 * THROTTLE as libc::c_int) +
+               (1i32 << 2i32 * YAW as libc::c_int) +
+               (1i32 << 2i32 * PITCH as libc::c_int) +
+               (3i32 << 2i32 * ROLL as libc::c_int) {
         // GYRO calibration
-        gyroStartCalibration(0 as libc::c_int !=
+        gyroStartCalibration(0i32 !=
                                  0); // calibrate baro to new ground level (10 * 25 ms = ~250 ms non blocking)
         if feature(FEATURE_GPS as libc::c_int as uint32_t) {
             GPS_reset_home_position();
         }
         if sensors(SENSOR_BARO as libc::c_int as uint32_t) {
-            baroSetCalibrationCycles(10 as libc::c_int as uint16_t);
+            baroSetCalibrationCycles(10i32 as uint16_t);
         }
         return
     }
     if feature(FEATURE_INFLIGHT_ACC_CAL as libc::c_int as uint32_t) as
            libc::c_int != 0 &&
            rcSticks as libc::c_int ==
-               ((1 as libc::c_int) <<
-                    2 as libc::c_int * THROTTLE as libc::c_int) +
-                   ((1 as libc::c_int) <<
-                        2 as libc::c_int * YAW as libc::c_int) +
-                   ((2 as libc::c_int) <<
-                        2 as libc::c_int * PITCH as libc::c_int) +
-                   ((2 as libc::c_int) <<
-                        2 as libc::c_int * ROLL as libc::c_int) {
+               (1i32 << 2i32 * THROTTLE as libc::c_int) +
+                   (1i32 << 2i32 * YAW as libc::c_int) +
+                   (2i32 << 2i32 * PITCH as libc::c_int) +
+                   (2i32 << 2i32 * ROLL as libc::c_int) {
         // Inflight ACC Calibration
         handleInflightCalibrationStickPosition();
         return
@@ -1139,51 +1058,42 @@ pub unsafe extern "C" fn processRcStickPositions() {
     match rcSticks as libc::c_int {
         93 => {
             // ROLL left -> PID profile 1
-            changePidProfile(0 as libc::c_int as uint8_t);
+            changePidProfile(0i32 as uint8_t);
             return
         }
         91 => {
             // PITCH up -> PID profile 2
-            changePidProfile(1 as libc::c_int as uint8_t);
+            changePidProfile(1i32 as uint8_t);
             return
         }
         94 => {
             // ROLL right -> PID profile 3
-            changePidProfile(2 as libc::c_int as uint8_t);
+            changePidProfile(2i32 as uint8_t);
             return
         }
         _ => { }
     }
     if rcSticks as libc::c_int ==
-           ((1 as libc::c_int) << 2 as libc::c_int * THROTTLE as libc::c_int)
-               + ((1 as libc::c_int) << 2 as libc::c_int * YAW as libc::c_int)
-               +
-               ((1 as libc::c_int) << 2 as libc::c_int * PITCH as libc::c_int)
-               +
-               ((2 as libc::c_int) << 2 as libc::c_int * ROLL as libc::c_int)
-       {
+           (1i32 << 2i32 * THROTTLE as libc::c_int) +
+               (1i32 << 2i32 * YAW as libc::c_int) +
+               (1i32 << 2i32 * PITCH as libc::c_int) +
+               (2i32 << 2i32 * ROLL as libc::c_int) {
         saveConfigAndNotify();
     }
     if rcSticks as libc::c_int ==
-           ((2 as libc::c_int) << 2 as libc::c_int * THROTTLE as libc::c_int)
-               + ((1 as libc::c_int) << 2 as libc::c_int * YAW as libc::c_int)
-               +
-               ((1 as libc::c_int) << 2 as libc::c_int * PITCH as libc::c_int)
-               +
-               ((3 as libc::c_int) << 2 as libc::c_int * ROLL as libc::c_int)
-       {
+           (2i32 << 2i32 * THROTTLE as libc::c_int) +
+               (1i32 << 2i32 * YAW as libc::c_int) +
+               (1i32 << 2i32 * PITCH as libc::c_int) +
+               (3i32 << 2i32 * ROLL as libc::c_int) {
         // Calibrating Acc
-        accSetCalibrationCycles(400 as libc::c_int as uint16_t);
+        accSetCalibrationCycles(400i32 as uint16_t);
         return
     }
     if rcSticks as libc::c_int ==
-           ((2 as libc::c_int) << 2 as libc::c_int * THROTTLE as libc::c_int)
-               + ((2 as libc::c_int) << 2 as libc::c_int * YAW as libc::c_int)
-               +
-               ((1 as libc::c_int) << 2 as libc::c_int * PITCH as libc::c_int)
-               +
-               ((3 as libc::c_int) << 2 as libc::c_int * ROLL as libc::c_int)
-       {
+           (2i32 << 2i32 * THROTTLE as libc::c_int) +
+               (2i32 << 2i32 * YAW as libc::c_int) +
+               (1i32 << 2i32 * PITCH as libc::c_int) +
+               (3i32 << 2i32 * ROLL as libc::c_int) {
         // Calibrating Mag
         stateFlags =
             (stateFlags as libc::c_int | CALIBRATE_MAG as libc::c_int) as
@@ -1196,60 +1106,42 @@ pub unsafe extern "C" fn processRcStickPositions() {
         let mut accelerometerTrimsDelta: rollAndPitchTrims_t =
             rollAndPitchTrims_u{raw: [0; 2],};
         memset(&mut accelerometerTrimsDelta as *mut rollAndPitchTrims_t as
-                   *mut libc::c_void, 0 as libc::c_int,
+                   *mut libc::c_void, 0i32,
                ::core::mem::size_of::<rollAndPitchTrims_t>() as
                    libc::c_ulong);
-        let mut shouldApplyRollAndPitchTrimDelta: bool =
-            0 as libc::c_int != 0;
+        let mut shouldApplyRollAndPitchTrimDelta: bool = 0i32 != 0;
         match rcSticks as libc::c_int {
             187 => {
-                accelerometerTrimsDelta.values.pitch =
-                    2 as libc::c_int as int16_t;
-                shouldApplyRollAndPitchTrimDelta = 1 as libc::c_int != 0
+                accelerometerTrimsDelta.values.pitch = 2i32 as int16_t;
+                shouldApplyRollAndPitchTrimDelta = 1i32 != 0
             }
             183 => {
-                accelerometerTrimsDelta.values.pitch =
-                    -(2 as libc::c_int) as int16_t;
-                shouldApplyRollAndPitchTrimDelta = 1 as libc::c_int != 0
+                accelerometerTrimsDelta.values.pitch = -2i32 as int16_t;
+                shouldApplyRollAndPitchTrimDelta = 1i32 != 0
             }
             190 => {
-                accelerometerTrimsDelta.values.roll =
-                    2 as libc::c_int as int16_t;
-                shouldApplyRollAndPitchTrimDelta = 1 as libc::c_int != 0
+                accelerometerTrimsDelta.values.roll = 2i32 as int16_t;
+                shouldApplyRollAndPitchTrimDelta = 1i32 != 0
             }
             189 => {
-                accelerometerTrimsDelta.values.roll =
-                    -(2 as libc::c_int) as int16_t;
-                shouldApplyRollAndPitchTrimDelta = 1 as libc::c_int != 0
+                accelerometerTrimsDelta.values.roll = -2i32 as int16_t;
+                shouldApplyRollAndPitchTrimDelta = 1i32 != 0
             }
             _ => { }
         }
         if shouldApplyRollAndPitchTrimDelta {
             applyAndSaveAccelerometerTrimsDelta(&mut accelerometerTrimsDelta);
-            rcDelayMs =
-                (rcDelayMs as libc::c_int - 250 as libc::c_int) as int16_t;
-            doNotRepeat = 0 as libc::c_int != 0;
+            rcDelayMs = (rcDelayMs as libc::c_int - 250i32) as int16_t;
+            doNotRepeat = 0i32 != 0;
             return
         }
     } else {
         // in ACRO mode, so use sticks to change RATE profile
         match rcSticks as libc::c_int {
-            187 => {
-                changeControlRateProfile(0 as libc::c_int as uint8_t);
-                return
-            }
-            183 => {
-                changeControlRateProfile(1 as libc::c_int as uint8_t);
-                return
-            }
-            190 => {
-                changeControlRateProfile(2 as libc::c_int as uint8_t);
-                return
-            }
-            189 => {
-                changeControlRateProfile(3 as libc::c_int as uint8_t);
-                return
-            }
+            187 => { changeControlRateProfile(0i32 as uint8_t); return }
+            183 => { changeControlRateProfile(1i32 as uint8_t); return }
+            190 => { changeControlRateProfile(2i32 as uint8_t); return }
+            189 => { changeControlRateProfile(3i32 as uint8_t); return }
             _ => { }
         }
     };
@@ -1264,9 +1156,9 @@ pub unsafe extern "C" fn getRcStickDeflection(mut axis: int32_t,
                          let mut _x: libc::c_int =
                              rcData[axis as usize] as libc::c_int -
                                  midrc as libc::c_int;
-                         if _x > 0 as libc::c_int { _x } else { -_x }
+                         if _x > 0i32 { _x } else { -_x }
                      });
-                let mut _b: libc::c_int = 500 as libc::c_int;
+                let mut _b: libc::c_int = 500i32;
                 if _a < _b { _a } else { _b }
             });
 }

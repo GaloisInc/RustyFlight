@@ -1,4 +1,5 @@
-use ::libc;
+use core;
+use libc;
 pub type __uint8_t = libc::c_uchar;
 pub type uint8_t = __uint8_t;
 /*
@@ -25,7 +26,7 @@ pub type bufWrite_t
     =
     Option<unsafe extern "C" fn(_: *mut libc::c_void, _: *mut libc::c_void,
                                 _: libc::c_int) -> ()>;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct bufWriter_s {
     pub writer: bufWrite_t,
@@ -68,7 +69,7 @@ pub unsafe extern "C" fn bufWriterInit(mut b: *mut uint8_t,
     let mut buf: *mut bufWriter_t = b as *mut bufWriter_t;
     (*buf).writer = writer;
     (*buf).arg = arg;
-    (*buf).at = 0 as libc::c_int as uint8_t;
+    (*buf).at = 0i32 as uint8_t;
     (*buf).capacity =
         (total_size as
              libc::c_ulong).wrapping_sub(::core::mem::size_of::<bufWriter_t>()
@@ -87,13 +88,13 @@ pub unsafe extern "C" fn bufWriterAppend(mut b: *mut bufWriter_t,
 }
 #[no_mangle]
 pub unsafe extern "C" fn bufWriterFlush(mut b: *mut bufWriter_t) {
-    if (*b).at as libc::c_int != 0 as libc::c_int {
+    if (*b).at as libc::c_int != 0i32 {
         (*b).writer.expect("non-null function pointer")((*b).arg,
                                                         (*b).data.as_mut_ptr()
                                                             as
                                                             *mut libc::c_void,
                                                         (*b).at as
                                                             libc::c_int);
-        (*b).at = 0 as libc::c_int as uint8_t
+        (*b).at = 0i32 as uint8_t
     };
 }

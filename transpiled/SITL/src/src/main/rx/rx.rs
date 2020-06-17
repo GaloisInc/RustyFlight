@@ -1,4 +1,5 @@
-use ::libc;
+use core;
+use libc;
 extern "C" {
     #[no_mangle]
     fn strchr(_: *const libc::c_char, _: libc::c_int) -> *mut libc::c_char;
@@ -120,7 +121,7 @@ pub const PGR_PGN_MASK: C2RustUnnamed_0 = 4095;
 pub type pgResetFunc
     =
     unsafe extern "C" fn(_: *mut libc::c_void, _: libc::c_int) -> ();
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct pgRegistry_s {
     pub pgn: pgn_t,
@@ -130,11 +131,12 @@ pub struct pgRegistry_s {
     pub ptr: *mut *mut uint8_t,
     pub reset: C2RustUnnamed_1,
 }
-#[derive(Copy, Clone)]
-#[repr(C)]
+#[derive ( Copy, Clone )]
+#[repr ( C )]
 pub union C2RustUnnamed_1 {
     pub ptr: *mut libc::c_void,
-    pub fn_0: Option<pgResetFunc>,
+    pub fn_0: Option<unsafe extern "C" fn(_: *mut libc::c_void,
+                                          _: libc::c_int) -> ()>,
 }
 pub type pgRegistry_t = pgRegistry_s;
 pub type C2RustUnnamed_2 = libc::c_uint;
@@ -200,7 +202,7 @@ pub const THROTTLE: rc_alias = 3;
 pub const YAW: rc_alias = 2;
 pub const PITCH: rc_alias = 1;
 pub const ROLL: rc_alias = 0;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct modeActivationCondition_s {
     pub modeId: boxId_e,
@@ -256,12 +258,8 @@ pub const BOXARM: boxId_e = 0;
 pub type modeLogic_e = libc::c_uint;
 pub const MODELOGIC_AND: modeLogic_e = 1;
 pub const MODELOGIC_OR: modeLogic_e = 0;
-// steps are 25 apart
-// a value of 0 corresponds to a channel value of 900 or less
-// a value of 48 corresponds to a channel value of 2100 or more
-// 48 steps between 900 and 2100
 pub type channelRange_t = channelRange_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct channelRange_s {
     pub startStep: uint8_t,
@@ -287,7 +285,7 @@ pub type modeActivationCondition_t = modeActivationCondition_s;
  *
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct rxConfig_s {
     pub rcmap: [uint8_t; 8],
@@ -352,21 +350,21 @@ pub const RX_FAILSAFE_MODE_INVALID: C2RustUnnamed_4 = 3;
 pub const RX_FAILSAFE_MODE_SET: C2RustUnnamed_4 = 2;
 pub const RX_FAILSAFE_MODE_HOLD: C2RustUnnamed_4 = 1;
 pub const RX_FAILSAFE_MODE_AUTO: C2RustUnnamed_4 = 0;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct rxFailsafeChannelConfig_s {
     pub mode: uint8_t,
     pub step: uint8_t,
 }
 pub type rxFailsafeChannelConfig_t = rxFailsafeChannelConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct rxChannelRangeConfig_s {
     pub min: uint16_t,
     pub max: uint16_t,
 }
 pub type rxChannelRangeConfig_t = rxChannelRangeConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct rxRuntimeConfig_s {
     pub channelCount: uint8_t,
@@ -380,6 +378,21 @@ pub struct rxRuntimeConfig_s {
 pub type rcProcessFrameFnPtr
     =
     Option<unsafe extern "C" fn(_: *const rxRuntimeConfig_s) -> bool>;
+pub type rcFrameStatusFnPtr
+    =
+    Option<unsafe extern "C" fn(_: *mut rxRuntimeConfig_s) -> uint8_t>;
+pub type rcReadRawDataFnPtr
+    =
+    Option<unsafe extern "C" fn(_: *const rxRuntimeConfig_s, _: uint8_t)
+               -> uint16_t>;
+pub type rxRuntimeConfig_t = rxRuntimeConfig_s;
+pub type rssiSource_e = libc::c_uint;
+pub const RSSI_SOURCE_FRAME_ERRORS: rssiSource_e = 5;
+pub const RSSI_SOURCE_MSP: rssiSource_e = 4;
+pub const RSSI_SOURCE_RX_PROTOCOL: rssiSource_e = 3;
+pub const RSSI_SOURCE_RX_CHANNEL: rssiSource_e = 2;
+pub const RSSI_SOURCE_ADC: rssiSource_e = 1;
+pub const RSSI_SOURCE_NONE: rssiSource_e = 0;
 // mapping of radio channels to internal RPYTA+ order
 // type of UART-based receiver (0 = spek 10, 1 = spek 11, 2 = sbus). Must be enabled by FEATURE_RX_SERIAL first.
 // invert the serial RX protocol compared to it's default setting
@@ -400,23 +413,6 @@ pub type rcProcessFrameFnPtr
 // Input filter type (0 = PT1, 1 = BIQUAD)
 // Derivative filter type (0 = OFF, 1 = PT1, 2 = BIQUAD)
 // See rxFailsafeChannelMode_e
-// used by receiver driver to return channel data
-pub type rcFrameStatusFnPtr
-    =
-    Option<unsafe extern "C" fn(_: *mut rxRuntimeConfig_s) -> uint8_t>;
-pub type rcReadRawDataFnPtr
-    =
-    Option<unsafe extern "C" fn(_: *const rxRuntimeConfig_s, _: uint8_t)
-               -> uint16_t>;
-pub type rxRuntimeConfig_t = rxRuntimeConfig_s;
-pub type rssiSource_e = libc::c_uint;
-pub const RSSI_SOURCE_FRAME_ERRORS: rssiSource_e = 5;
-pub const RSSI_SOURCE_MSP: rssiSource_e = 4;
-pub const RSSI_SOURCE_RX_PROTOCOL: rssiSource_e = 3;
-pub const RSSI_SOURCE_RX_CHANNEL: rssiSource_e = 2;
-pub const RSSI_SOURCE_ADC: rssiSource_e = 1;
-pub const RSSI_SOURCE_NONE: rssiSource_e = 0;
-// number of RC channels as reported by current input driver
 /*
  * This file is part of Cleanflight and Betaflight.
  *
@@ -518,22 +514,22 @@ unsafe extern "C" fn rxChannelRangeConfigs(mut _index: libc::c_int)
 pub static mut rcChannelLetters: [libc::c_char; 21] =
     [65, 69, 82, 84, 49, 50, 51, 52, 53, 54, 55, 56, 97, 98, 99, 100, 101,
      102, 103, 104, 0];
-static mut rssi: uint16_t = 0 as libc::c_int as uint16_t;
+static mut rssi: uint16_t = 0i32 as uint16_t;
 // range: [0;1023]
-static mut lastMspRssiUpdateUs: timeUs_t = 0 as libc::c_int as timeUs_t;
+static mut lastMspRssiUpdateUs: timeUs_t = 0i32 as timeUs_t;
 #[no_mangle]
 pub static mut rssiSource: rssiSource_e = RSSI_SOURCE_NONE;
-static mut rxDataProcessingRequired: bool = 0 as libc::c_int != 0;
-static mut auxiliaryProcessingRequired: bool = 0 as libc::c_int != 0;
-static mut rxSignalReceived: bool = 0 as libc::c_int != 0;
-static mut rxFlightChannelsValid: bool = 0 as libc::c_int != 0;
-static mut rxIsInFailsafeMode: bool = 1 as libc::c_int != 0;
+static mut rxDataProcessingRequired: bool = 0i32 != 0;
+static mut auxiliaryProcessingRequired: bool = 0i32 != 0;
+static mut rxSignalReceived: bool = 0i32 != 0;
+static mut rxFlightChannelsValid: bool = 0i32 != 0;
+static mut rxIsInFailsafeMode: bool = 1i32 != 0;
 static mut rxChannelCount: uint8_t = 0;
-static mut rxNextUpdateAtUs: timeUs_t = 0 as libc::c_int as timeUs_t;
-static mut needRxSignalBefore: uint32_t = 0 as libc::c_int as uint32_t;
+static mut rxNextUpdateAtUs: timeUs_t = 0i32 as timeUs_t;
+static mut needRxSignalBefore: uint32_t = 0i32 as uint32_t;
 static mut needRxSignalMaxDelayUs: uint32_t = 0;
-static mut suspendRxSignalUntil: uint32_t = 0 as libc::c_int as uint32_t;
-static mut skipRxSamples: uint8_t = 0 as libc::c_int as uint8_t;
+static mut suspendRxSignalUntil: uint32_t = 0i32 as uint32_t;
+static mut skipRxSamples: uint8_t = 0i32 as uint8_t;
 static mut rcRaw: [int16_t; 18] = [0; 18];
 // interval [1000;2000]
 #[no_mangle]
@@ -552,13 +548,13 @@ pub static mut rxRuntimeConfig: rxRuntimeConfig_t =
                       channelData: 0 as *const uint16_t as *mut uint16_t,
                       frameData:
                           0 as *const libc::c_void as *mut libc::c_void,};
-static mut rcSampleIndex: uint8_t = 0 as libc::c_int as uint8_t;
+static mut rcSampleIndex: uint8_t = 0i32 as uint8_t;
+#[no_mangle]
+pub static mut rxChannelRangeConfigs_CopyArray: [rxChannelRangeConfig_t; 4] =
+    [rxChannelRangeConfig_t{min: 0, max: 0,}; 4];
 #[no_mangle]
 pub static mut rxChannelRangeConfigs_SystemArray: [rxChannelRangeConfig_t; 4]
            =
-    [rxChannelRangeConfig_t{min: 0, max: 0,}; 4];
-#[no_mangle]
-pub static mut rxChannelRangeConfigs_CopyArray: [rxChannelRangeConfig_t; 4] =
     [rxChannelRangeConfig_t{min: 0, max: 0,}; 4];
 // Initialized in run_static_initializers
 #[no_mangle]
@@ -578,23 +574,15 @@ pub static mut rxChannelRangeConfigs_Registry: pgRegistry_t =
 pub unsafe extern "C" fn pgResetFn_rxChannelRangeConfigs(mut rxChannelRangeConfigs_0:
                                                              *mut rxChannelRangeConfig_t) {
     // set default calibration to full range and 1:1 mapping
-    let mut i: libc::c_int = 0 as libc::c_int;
-    while i < 4 as libc::c_int {
+    let mut i: libc::c_int = 0i32;
+    while i < 4i32 {
         (*rxChannelRangeConfigs_0.offset(i as isize)).min =
-            1000 as libc::c_int as uint16_t;
+            1000i32 as uint16_t;
         (*rxChannelRangeConfigs_0.offset(i as isize)).max =
-            2000 as libc::c_int as uint16_t;
+            2000i32 as uint16_t;
         i += 1
     };
 }
-#[no_mangle]
-pub static mut rxFailsafeChannelConfigs_CopyArray:
-           [rxFailsafeChannelConfig_t; 18] =
-    [rxFailsafeChannelConfig_t{mode: 0, step: 0,}; 18];
-#[no_mangle]
-pub static mut rxFailsafeChannelConfigs_SystemArray:
-           [rxFailsafeChannelConfig_t; 18] =
-    [rxFailsafeChannelConfig_t{mode: 0, step: 0,}; 18];
 // Initialized in run_static_initializers
 #[no_mangle]
 #[link_section = ".pg_registry"]
@@ -610,24 +598,27 @@ pub static mut rxFailsafeChannelConfigs_Registry: pgRegistry_t =
                                          0 as *const libc::c_void as
                                              *mut libc::c_void,},};
 #[no_mangle]
+pub static mut rxFailsafeChannelConfigs_CopyArray:
+           [rxFailsafeChannelConfig_t; 18] =
+    [rxFailsafeChannelConfig_t{mode: 0, step: 0,}; 18];
+#[no_mangle]
+pub static mut rxFailsafeChannelConfigs_SystemArray:
+           [rxFailsafeChannelConfig_t; 18] =
+    [rxFailsafeChannelConfig_t{mode: 0, step: 0,}; 18];
+#[no_mangle]
 pub unsafe extern "C" fn pgResetFn_rxFailsafeChannelConfigs(mut rxFailsafeChannelConfigs_0:
                                                                 *mut rxFailsafeChannelConfig_t) {
-    let mut i: libc::c_int = 0 as libc::c_int;
-    while i < 18 as libc::c_int {
+    let mut i: libc::c_int = 0i32;
+    while i < 18i32 {
         (*rxFailsafeChannelConfigs_0.offset(i as isize)).mode =
-            if i < 4 as libc::c_int {
+            if i < 4i32 {
                 RX_FAILSAFE_MODE_AUTO as libc::c_int
             } else { RX_FAILSAFE_MODE_HOLD as libc::c_int } as uint8_t;
         (*rxFailsafeChannelConfigs_0.offset(i as isize)).step =
             if i == THROTTLE as libc::c_int {
-                (constrain(885 as libc::c_int, 750 as libc::c_int,
-                           2250 as libc::c_int) - 750 as libc::c_int) /
-                    25 as libc::c_int
-            } else {
-                (constrain(1500 as libc::c_int, 750 as libc::c_int,
-                           2250 as libc::c_int) - 750 as libc::c_int) /
-                    25 as libc::c_int
-            } as uint8_t;
+                (constrain(885i32, 750i32, 2250i32) - 750i32) / 25i32
+            } else { (constrain(1500i32, 750i32, 2250i32) - 750i32) / 25i32 }
+                as uint8_t;
         i += 1
     };
 }
@@ -635,10 +626,10 @@ pub unsafe extern "C" fn pgResetFn_rxFailsafeChannelConfigs(mut rxFailsafeChanne
 pub unsafe extern "C" fn resetAllRxChannelRangeConfigurations(mut rxChannelRangeConfig:
                                                                   *mut rxChannelRangeConfig_t) {
     // set default calibration to full range and 1:1 mapping
-    let mut i: libc::c_int = 0 as libc::c_int;
-    while i < 4 as libc::c_int {
-        (*rxChannelRangeConfig).min = 1000 as libc::c_int as uint16_t;
-        (*rxChannelRangeConfig).max = 2000 as libc::c_int as uint16_t;
+    let mut i: libc::c_int = 0i32;
+    while i < 4i32 {
+        (*rxChannelRangeConfig).min = 1000i32 as uint16_t;
+        (*rxChannelRangeConfig).max = 2000i32 as uint16_t;
         rxChannelRangeConfig = rxChannelRangeConfig.offset(1);
         i += 1
     };
@@ -646,7 +637,7 @@ pub unsafe extern "C" fn resetAllRxChannelRangeConfigurations(mut rxChannelRange
 unsafe extern "C" fn nullReadRawRC(mut rxRuntimeConfig_0:
                                        *const rxRuntimeConfig_t,
                                    mut channel: uint8_t) -> uint16_t {
-    return 0 as libc::c_int as uint16_t;
+    return 0i32 as uint16_t;
 }
 unsafe extern "C" fn nullFrameStatus(mut rxRuntimeConfig_0:
                                          *mut rxRuntimeConfig_t) -> uint8_t {
@@ -654,7 +645,7 @@ unsafe extern "C" fn nullFrameStatus(mut rxRuntimeConfig_0:
 }
 unsafe extern "C" fn nullProcessFrame(mut rxRuntimeConfig_0:
                                           *const rxRuntimeConfig_t) -> bool {
-    return 1 as libc::c_int != 0;
+    return 1i32 != 0;
 }
 unsafe extern "C" fn isPulseValid(mut pulseDuration: uint16_t) -> bool {
     return pulseDuration as libc::c_int >=
@@ -675,14 +666,13 @@ pub unsafe extern "C" fn rxInit() {
     rxRuntimeConfig.rcProcessFrameFn =
         Some(nullProcessFrame as
                  unsafe extern "C" fn(_: *const rxRuntimeConfig_t) -> bool);
-    rcSampleIndex = 0 as libc::c_int as uint8_t;
-    needRxSignalMaxDelayUs =
-        (1000000 as libc::c_int / 10 as libc::c_int) as uint32_t;
-    let mut i: libc::c_int = 0 as libc::c_int;
-    while i < 18 as libc::c_int {
+    rcSampleIndex = 0i32 as uint8_t;
+    needRxSignalMaxDelayUs = (1000000i32 / 10i32) as uint32_t;
+    let mut i: libc::c_int = 0i32;
+    while i < 18i32 {
         rcData[i as usize] = (*rxConfig()).midrc as int16_t;
         rcInvalidPulsPeriod[i as usize] =
-            millis().wrapping_add(300 as libc::c_int as libc::c_uint);
+            millis().wrapping_add(300i32 as libc::c_uint);
         i += 1
     }
     rcData[THROTTLE as libc::c_int as usize] =
@@ -692,8 +682,8 @@ pub unsafe extern "C" fn rxInit() {
         } else { (*rxConfig()).rx_min_usec as libc::c_int } as int16_t;
     // Initialize ARM switch to OFF position when arming via switch is defined
     // TODO - move to rc_mode.c
-    let mut i_0: libc::c_int = 0 as libc::c_int;
-    while i_0 < 20 as libc::c_int {
+    let mut i_0: libc::c_int = 0i32;
+    while i_0 < 20i32 {
         let mut modeActivationCondition: *const modeActivationCondition_t =
             modeActivationConditions(i_0);
         if (*modeActivationCondition).modeId as libc::c_uint ==
@@ -703,38 +693,36 @@ pub unsafe extern "C" fn rxInit() {
             // ARM switch is defined, determine an OFF value
             let mut value: uint16_t = 0;
             if (*modeActivationCondition).range.startStep as libc::c_int >
-                   0 as libc::c_int {
+                   0i32 {
                 value =
-                    (900 as libc::c_int +
-                         25 as libc::c_int *
+                    (900i32 +
+                         25i32 *
                              ((*modeActivationCondition).range.startStep as
-                                  libc::c_int - 1 as libc::c_int)) as uint16_t
+                                  libc::c_int - 1i32)) as uint16_t
             } else {
                 value =
-                    (900 as libc::c_int +
-                         25 as libc::c_int *
+                    (900i32 +
+                         25i32 *
                              ((*modeActivationCondition).range.endStep as
-                                  libc::c_int + 1 as libc::c_int)) as uint16_t
+                                  libc::c_int + 1i32)) as uint16_t
             }
             // Initialize ARM AUX channel to OFF value
             rcData[((*modeActivationCondition).auxChannelIndex as libc::c_int
-                        + 4 as libc::c_int) as usize] = value as int16_t
+                        + 4i32) as usize] = value as int16_t
         }
         i_0 += 1
     }
     if feature(FEATURE_RX_MSP as libc::c_int as uint32_t) {
         rxMspInit(rxConfig(), &mut rxRuntimeConfig);
-        needRxSignalMaxDelayUs =
-            (1000000 as libc::c_int / 5 as libc::c_int) as uint32_t
+        needRxSignalMaxDelayUs = (1000000i32 / 5i32) as uint32_t
     }
-    if (*rxConfig()).rssi_channel as libc::c_int > 0 as libc::c_int {
+    if (*rxConfig()).rssi_channel as libc::c_int > 0i32 {
         rssiSource = RSSI_SOURCE_RX_CHANNEL
     }
     rxChannelCount =
         ({
              let mut _a: libc::c_int =
-                 (*rxConfig()).max_aux_channel as libc::c_int +
-                     4 as libc::c_int;
+                 (*rxConfig()).max_aux_channel as libc::c_int + 4i32;
              let mut _b: uint8_t = rxRuntimeConfig.channelCount;
              if _a < _b as libc::c_int { _a } else { _b as libc::c_int }
          }) as uint8_t;
@@ -749,32 +737,31 @@ pub unsafe extern "C" fn rxAreFlightChannelsValid() -> bool {
 }
 #[no_mangle]
 pub unsafe extern "C" fn suspendRxSignal() {
-    suspendRxSignalUntil =
-        micros().wrapping_add(1500000 as libc::c_int as libc::c_uint);
-    skipRxSamples = 2 as libc::c_int as uint8_t;
-    failsafeOnRxSuspend(1500000 as libc::c_int as uint32_t);
+    suspendRxSignalUntil = micros().wrapping_add(1500000i32 as libc::c_uint);
+    skipRxSamples = 2i32 as uint8_t;
+    failsafeOnRxSuspend(1500000i32 as uint32_t);
 }
 #[no_mangle]
 pub unsafe extern "C" fn resumeRxSignal() {
     suspendRxSignalUntil = micros();
-    skipRxSamples = 2 as libc::c_int as uint8_t;
+    skipRxSamples = 2i32 as uint8_t;
     failsafeOnRxResume();
 }
 #[no_mangle]
 pub unsafe extern "C" fn rxUpdateCheck(mut currentTimeUs: timeUs_t,
                                        mut currentDeltaTime: timeDelta_t)
  -> bool {
-    let mut signalReceived: bool = 0 as libc::c_int != 0;
-    let mut useDataDrivenProcessing: bool = 1 as libc::c_int != 0;
+    let mut signalReceived: bool = 0i32 != 0;
+    let mut useDataDrivenProcessing: bool = 1i32 != 0;
     let frameStatus: uint8_t =
         rxRuntimeConfig.rcFrameStatusFn.expect("non-null function pointer")(&mut rxRuntimeConfig);
     if frameStatus as libc::c_int & RX_FRAME_COMPLETE as libc::c_int != 0 {
         rxIsInFailsafeMode =
             frameStatus as libc::c_int & RX_FRAME_FAILSAFE as libc::c_int !=
-                0 as libc::c_int;
+                0i32;
         let mut rxFrameDropped: bool =
             frameStatus as libc::c_int & RX_FRAME_DROPPED as libc::c_int !=
-                0 as libc::c_int;
+                0i32;
         signalReceived =
             !(rxIsInFailsafeMode as libc::c_int != 0 ||
                   rxFrameDropped as libc::c_int != 0);
@@ -786,26 +773,25 @@ pub unsafe extern "C" fn rxUpdateCheck(mut currentTimeUs: timeUs_t,
                (RX_FRAME_FAILSAFE as libc::c_int |
                     RX_FRAME_DROPPED as libc::c_int) != 0 {
             // No (0%) signal
-            setRssi(0 as libc::c_int as uint16_t, RSSI_SOURCE_FRAME_ERRORS);
+            setRssi(0i32 as uint16_t, RSSI_SOURCE_FRAME_ERRORS);
         } else {
             // Valid (100%) signal
-            setRssi(1023 as libc::c_int as uint16_t,
-                    RSSI_SOURCE_FRAME_ERRORS);
+            setRssi(1023i32 as uint16_t, RSSI_SOURCE_FRAME_ERRORS);
         }
     }
     if frameStatus as libc::c_int &
            RX_FRAME_PROCESSING_REQUIRED as libc::c_int != 0 {
-        auxiliaryProcessingRequired = 1 as libc::c_int != 0
+        auxiliaryProcessingRequired = 1i32 != 0
     }
     if signalReceived {
-        rxSignalReceived = 1 as libc::c_int != 0
+        rxSignalReceived = 1i32 != 0
     } else if currentTimeUs >= needRxSignalBefore {
-        rxSignalReceived = 0 as libc::c_int != 0
+        rxSignalReceived = 0i32 != 0
     }
     if signalReceived as libc::c_int != 0 &&
            useDataDrivenProcessing as libc::c_int != 0 ||
-           cmpTimeUs(currentTimeUs, rxNextUpdateAtUs) > 0 as libc::c_int {
-        rxDataProcessingRequired = 1 as libc::c_int != 0
+           cmpTimeUs(currentTimeUs, rxNextUpdateAtUs) > 0i32 {
+        rxDataProcessingRequired = 1i32 != 0
     }
     return rxDataProcessingRequired as libc::c_int != 0 ||
                auxiliaryProcessingRequired as libc::c_int != 0;
@@ -816,27 +802,26 @@ unsafe extern "C" fn calculateChannelMovingAverage(mut chan: uint8_t,
  -> uint16_t {
     static mut rcSamples: [[int16_t; 3]; 12] = [[0; 3]; 12];
     static mut rcDataMean: [int16_t; 12] = [0; 12];
-    static mut rxSamplesCollected: bool = 0 as libc::c_int != 0;
+    static mut rxSamplesCollected: bool = 0i32 != 0;
     let currentSampleIndex: uint8_t =
-        (rcSampleIndex as libc::c_int % 3 as libc::c_int) as uint8_t;
+        (rcSampleIndex as libc::c_int % 3i32) as uint8_t;
     // update the recent samples and compute the average of them
     rcSamples[chan as usize][currentSampleIndex as usize] = sample as int16_t;
     // avoid returning an incorrect average which would otherwise occur before enough samples
     if !rxSamplesCollected {
-        if (rcSampleIndex as libc::c_int) < 3 as libc::c_int { return sample }
-        rxSamplesCollected = 1 as libc::c_int != 0
+        if (rcSampleIndex as libc::c_int) < 3i32 { return sample }
+        rxSamplesCollected = 1i32 != 0
     }
-    rcDataMean[chan as usize] = 0 as libc::c_int as int16_t;
-    let mut sampleIndex: libc::c_int = 0 as libc::c_int;
-    while sampleIndex < 3 as libc::c_int {
+    rcDataMean[chan as usize] = 0i32 as int16_t;
+    let mut sampleIndex: libc::c_int = 0i32;
+    while sampleIndex < 3i32 {
         rcDataMean[chan as usize] =
             (rcDataMean[chan as usize] as libc::c_int +
                  rcSamples[chan as usize][sampleIndex as usize] as
                      libc::c_int) as int16_t;
         sampleIndex += 1
     }
-    return (rcDataMean[chan as usize] as libc::c_int / 3 as libc::c_int) as
-               uint16_t;
+    return (rcDataMean[chan as usize] as libc::c_int / 3i32) as uint16_t;
 }
 unsafe extern "C" fn getRxfailValue(mut channel: uint8_t) -> uint16_t {
     let mut channelFailsafeConfig: *const rxFailsafeChannelConfig_t =
@@ -854,10 +839,9 @@ unsafe extern "C" fn getRxfailValue(mut channel: uint8_t) -> uint16_t {
             }
         }
         2 => {
-            return (750 as libc::c_int +
-                        25 as libc::c_int *
-                            (*channelFailsafeConfig).step as libc::c_int) as
-                       uint16_t
+            return (750i32 +
+                        25i32 * (*channelFailsafeConfig).step as libc::c_int)
+                       as uint16_t
         }
         3 | 1 | _ => { }
     }
@@ -869,19 +853,18 @@ unsafe extern "C" fn applyRxChannelRangeConfiguraton(mut sample: libc::c_int,
                                                          *const rxChannelRangeConfig_t)
  -> uint16_t {
     // Avoid corruption of channel with a value of PPM_RCVR_TIMEOUT
-    if sample == 0 as libc::c_int { return 0 as libc::c_int as uint16_t }
+    if sample == 0i32 { return 0i32 as uint16_t }
     sample =
         scaleRange(sample, (*range).min as libc::c_int,
-                   (*range).max as libc::c_int, 1000 as libc::c_int,
-                   2000 as libc::c_int);
-    sample = constrain(sample, 750 as libc::c_int, 2250 as libc::c_int);
+                   (*range).max as libc::c_int, 1000i32, 2000i32);
+    sample = constrain(sample, 750i32, 2250i32);
     return sample as uint16_t;
 }
 unsafe extern "C" fn readRxChannelsApplyRanges() {
-    let mut channel: libc::c_int = 0 as libc::c_int;
+    let mut channel: libc::c_int = 0i32;
     while channel < rxChannelCount as libc::c_int {
         let rawChannel: uint8_t =
-            if channel < 8 as libc::c_int {
+            if channel < 8i32 {
                 (*rxConfig()).rcmap[channel as usize] as libc::c_int
             } else { channel } as uint8_t;
         // sample the channel
@@ -889,7 +872,7 @@ unsafe extern "C" fn readRxChannelsApplyRanges() {
             rxRuntimeConfig.rcReadRawFn.expect("non-null function pointer")(&mut rxRuntimeConfig,
                                                                             rawChannel);
         // apply the rx calibration
-        if channel < 4 as libc::c_int {
+        if channel < 4i32 {
             sample =
                 applyRxChannelRangeConfiguraton(sample as libc::c_int,
                                                 rxChannelRangeConfigs(channel))
@@ -903,14 +886,14 @@ unsafe extern "C" fn detectAndApplySignalLossBehaviour() {
     let useValueFromRx: bool =
         rxSignalReceived as libc::c_int != 0 && !rxIsInFailsafeMode;
     if debugMode as libc::c_int == DEBUG_RX_SIGNAL_LOSS as libc::c_int {
-        debug[0 as libc::c_int as usize] = rxSignalReceived as int16_t
+        debug[0] = rxSignalReceived as int16_t
     }
     if debugMode as libc::c_int == DEBUG_RX_SIGNAL_LOSS as libc::c_int {
-        debug[1 as libc::c_int as usize] = rxIsInFailsafeMode as int16_t
+        debug[1] = rxIsInFailsafeMode as int16_t
     }
-    rxFlightChannelsValid = 1 as libc::c_int != 0;
+    rxFlightChannelsValid = 1i32 != 0;
     let mut current_block_22: u64;
-    let mut channel: libc::c_int = 0 as libc::c_int;
+    let mut channel: libc::c_int = 0i32;
     while channel < rxChannelCount as libc::c_int {
         let mut sample: uint16_t = rcRaw[channel as usize] as uint16_t;
         let validPulse: bool =
@@ -918,17 +901,14 @@ unsafe extern "C" fn detectAndApplySignalLossBehaviour() {
                 isPulseValid(sample) as libc::c_int != 0;
         if validPulse {
             rcInvalidPulsPeriod[channel as usize] =
-                currentTimeMs.wrapping_add(300 as libc::c_int as
-                                               libc::c_uint);
+                currentTimeMs.wrapping_add(300i32 as libc::c_uint);
             current_block_22 = 10652014663920648156;
         } else if cmp32(currentTimeMs, rcInvalidPulsPeriod[channel as usize])
-                      < 0 as libc::c_int {
+                      < 0i32 {
             current_block_22 = 7651349459974463963;
         } else {
             sample = getRxfailValue(channel as uint8_t);
-            if channel < 4 as libc::c_int {
-                rxFlightChannelsValid = 0 as libc::c_int != 0
-            }
+            if channel < 4i32 { rxFlightChannelsValid = 0i32 != 0 }
             current_block_22 = 10652014663920648156;
         }
         match current_block_22 {
@@ -950,9 +930,9 @@ unsafe extern "C" fn detectAndApplySignalLossBehaviour() {
            !IS_RC_MODE_ACTIVE(BOXFAILSAFE) {
         failsafeOnValidDataReceived();
     } else {
-        rxIsInFailsafeMode = 1 as libc::c_int != 0;
+        rxIsInFailsafeMode = 1i32 != 0;
         failsafeOnValidDataFailed();
-        let mut channel_0: libc::c_int = 0 as libc::c_int;
+        let mut channel_0: libc::c_int = 0i32;
         while channel_0 < rxChannelCount as libc::c_int {
             rcData[channel_0 as usize] =
                 getRxfailValue(channel_0 as uint8_t) as int16_t;
@@ -960,8 +940,7 @@ unsafe extern "C" fn detectAndApplySignalLossBehaviour() {
         }
     }
     if debugMode as libc::c_int == DEBUG_RX_SIGNAL_LOSS as libc::c_int {
-        debug[3 as libc::c_int as usize] =
-            rcData[THROTTLE as libc::c_int as usize]
+        debug[3] = rcData[THROTTLE as libc::c_int as usize]
     };
 }
 #[no_mangle]
@@ -972,22 +951,21 @@ pub unsafe extern "C" fn calculateRxChannelsAndUpdateFailsafe(mut currentTimeUs:
         auxiliaryProcessingRequired =
             !rxRuntimeConfig.rcProcessFrameFn.expect("non-null function pointer")(&mut rxRuntimeConfig)
     }
-    if !rxDataProcessingRequired { return 0 as libc::c_int != 0 }
-    rxDataProcessingRequired = 0 as libc::c_int != 0;
+    if !rxDataProcessingRequired { return 0i32 != 0 }
+    rxDataProcessingRequired = 0i32 != 0;
     rxNextUpdateAtUs =
-        currentTimeUs.wrapping_add((1000000 as libc::c_int /
-                                        33 as libc::c_int) as libc::c_uint);
+        currentTimeUs.wrapping_add((1000000i32 / 33i32) as libc::c_uint);
     // only proceed when no more samples to skip and suspend period is over
     if skipRxSamples != 0 {
         if currentTimeUs > suspendRxSignalUntil {
             skipRxSamples = skipRxSamples.wrapping_sub(1)
         }
-        return 1 as libc::c_int != 0
+        return 1i32 != 0
     }
     readRxChannelsApplyRanges();
     detectAndApplySignalLossBehaviour();
     rcSampleIndex = rcSampleIndex.wrapping_add(1);
-    return 1 as libc::c_int != 0;
+    return 1i32 != 0;
 }
 #[no_mangle]
 pub unsafe extern "C" fn parseRcChannels(mut input: *const libc::c_char,
@@ -996,9 +974,7 @@ pub unsafe extern "C" fn parseRcChannels(mut input: *const libc::c_char,
     while *c != 0 {
         let mut s: *const libc::c_char =
             strchr(rcChannelLetters.as_ptr(), *c as libc::c_int);
-        if !s.is_null() &&
-               s < rcChannelLetters.as_ptr().offset(8 as libc::c_int as isize)
-           {
+        if !s.is_null() && s < rcChannelLetters.as_ptr().offset(8) {
             (*rxConfig_0).rcmap[s.wrapping_offset_from(rcChannelLetters.as_ptr())
                                     as libc::c_long as usize] =
                 c.wrapping_offset_from(input) as libc::c_long as uint8_t
@@ -1017,18 +993,17 @@ pub unsafe extern "C" fn setRssi(mut rssiValue: uint16_t,
                                  mut source: rssiSource_e) {
     if source as libc::c_uint != rssiSource as libc::c_uint { return }
     static mut rssiSamples: [uint16_t; 16] = [0; 16];
-    static mut rssiSampleIndex: uint8_t = 0 as libc::c_int as uint8_t;
-    static mut sum: libc::c_uint = 0 as libc::c_int as libc::c_uint;
+    static mut rssiSampleIndex: uint8_t = 0i32 as uint8_t;
+    static mut sum: libc::c_uint = 0i32 as libc::c_uint;
     sum = sum.wrapping_add(rssiValue as libc::c_uint);
     sum =
         sum.wrapping_sub(rssiSamples[rssiSampleIndex as usize] as
                              libc::c_uint);
     rssiSamples[rssiSampleIndex as usize] = rssiValue;
     rssiSampleIndex =
-        ((rssiSampleIndex as libc::c_int + 1 as libc::c_int) %
-             16 as libc::c_int) as uint8_t;
+        ((rssiSampleIndex as libc::c_int + 1i32) % 16i32) as uint8_t;
     let mut rssiMean: int16_t =
-        sum.wrapping_div(16 as libc::c_int as libc::c_uint) as int16_t;
+        sum.wrapping_div(16i32 as libc::c_uint) as int16_t;
     rssi = rssiMean as uint16_t;
 }
 #[no_mangle]
@@ -1039,29 +1014,23 @@ pub unsafe extern "C" fn setRssiMsp(mut newMspRssi: uint8_t) {
     }
     if rssiSource as libc::c_uint ==
            RSSI_SOURCE_MSP as libc::c_int as libc::c_uint {
-        rssi =
-            ((newMspRssi as uint16_t as libc::c_int) << 2 as libc::c_int) as
-                uint16_t;
+        rssi = ((newMspRssi as uint16_t as libc::c_int) << 2i32) as uint16_t;
         lastMspRssiUpdateUs = micros()
     };
 }
 unsafe extern "C" fn updateRSSIPWM() {
     // Read value of AUX channel as rssi
     let mut pwmRssi: int16_t =
-        rcData[((*rxConfig()).rssi_channel as libc::c_int - 1 as libc::c_int)
-                   as usize];
+        rcData[((*rxConfig()).rssi_channel as libc::c_int - 1i32) as usize];
     // RSSI_Invert option
     if (*rxConfig()).rssi_invert != 0 {
-        pwmRssi =
-            (2000 as libc::c_int - pwmRssi as libc::c_int +
-                 1000 as libc::c_int) as int16_t
+        pwmRssi = (2000i32 - pwmRssi as libc::c_int + 1000i32) as int16_t
     }
     // Range of rawPwmRssi is [1000;2000]. rssi should be in [0;1023];
-    setRssiDirect(constrain(((pwmRssi as libc::c_int - 1000 as libc::c_int) as
+    setRssiDirect(constrain(((pwmRssi as libc::c_int - 1000i32) as
                                  libc::c_float / 1000.0f32 *
-                                 1023 as libc::c_int as libc::c_float) as
-                                libc::c_int, 0 as libc::c_int,
-                            1023 as libc::c_int) as uint16_t,
+                                 1023i32 as libc::c_float) as libc::c_int,
+                            0i32, 1023i32) as uint16_t,
                   RSSI_SOURCE_RX_CHANNEL);
 }
 unsafe extern "C" fn updateRSSIADC(mut currentTimeUs: timeUs_t) { }
@@ -1071,9 +1040,8 @@ pub unsafe extern "C" fn updateRSSI(mut currentTimeUs: timeUs_t) {
         2 => { updateRSSIPWM(); }
         1 => { updateRSSIADC(currentTimeUs); }
         4 => {
-            if cmpTimeUs(micros(), lastMspRssiUpdateUs) >
-                   1500000 as libc::c_int {
-                rssi = 0 as libc::c_int as uint16_t
+            if cmpTimeUs(micros(), lastMspRssiUpdateUs) > 1500000i32 {
+                rssi = 0i32 as uint16_t
             }
         }
         _ => { }
@@ -1084,14 +1052,12 @@ pub unsafe extern "C" fn getRssi() -> uint16_t {
     return ((*rxConfig()).rssi_scale as libc::c_int as libc::c_float /
                 100.0f32 * rssi as libc::c_int as libc::c_float +
                 (*rxConfig()).rssi_offset as libc::c_int as libc::c_float *
-                    (1024 as libc::c_int as libc::c_float / 100.0f32)) as
-               uint16_t;
+                    (1024i32 as libc::c_float / 100.0f32)) as uint16_t;
 }
 #[no_mangle]
 pub unsafe extern "C" fn getRssiPercent() -> uint8_t {
-    return scaleRange(getRssi() as libc::c_int, 0 as libc::c_int,
-                      1023 as libc::c_int, 0 as libc::c_int,
-                      100 as libc::c_int) as uint8_t;
+    return scaleRange(getRssi() as libc::c_int, 0i32, 1023i32, 0i32, 100i32)
+               as uint8_t;
 }
 #[no_mangle]
 pub unsafe extern "C" fn rxGetRefreshRate() -> uint16_t {
@@ -1101,16 +1067,11 @@ unsafe extern "C" fn run_static_initializers() {
     rxChannelRangeConfigs_Registry =
         {
             let mut init =
-                pgRegistry_s{pgn:
-                                 (44 as libc::c_int |
-                                      (0 as libc::c_int) << 12 as libc::c_int)
-                                     as pgn_t,
+                pgRegistry_s{pgn: (44i32 | 0i32 << 12i32) as pgn_t,
                              size:
                                  ((::core::mem::size_of::<rxChannelRangeConfig_t>()
                                        as
-                                       libc::c_ulong).wrapping_mul(4 as
-                                                                       libc::c_int
-                                                                       as
+                                       libc::c_ulong).wrapping_mul(4i32 as
                                                                        libc::c_ulong)
                                       |
                                       PGR_SIZE_SYSTEM_FLAG as libc::c_int as
@@ -1130,27 +1091,27 @@ unsafe extern "C" fn run_static_initializers() {
                                                                                                               *mut rxChannelRangeConfig_t)
                                                                                          ->
                                                                                              ()>,
-                                                                              Option<pgResetFunc>>(Some(pgResetFn_rxChannelRangeConfigs
-                                                                                                            as
-                                                                                                            unsafe extern "C" fn(_:
-                                                                                                                                     *mut rxChannelRangeConfig_t)
-                                                                                                                ->
-                                                                                                                    ())),},};
+                                                                              Option<unsafe extern "C" fn(_:
+                                                                                                              *mut libc::c_void,
+                                                                                                          _:
+                                                                                                              libc::c_int)
+                                                                                         ->
+                                                                                             ()>>(Some(pgResetFn_rxChannelRangeConfigs
+                                                                                                           as
+                                                                                                           unsafe extern "C" fn(_:
+                                                                                                                                    *mut rxChannelRangeConfig_t)
+                                                                                                               ->
+                                                                                                                   ())),},};
             init
         };
     rxFailsafeChannelConfigs_Registry =
         {
             let mut init =
-                pgRegistry_s{pgn:
-                                 (43 as libc::c_int |
-                                      (0 as libc::c_int) << 12 as libc::c_int)
-                                     as pgn_t,
+                pgRegistry_s{pgn: (43i32 | 0i32 << 12i32) as pgn_t,
                              size:
                                  ((::core::mem::size_of::<rxFailsafeChannelConfig_t>()
                                        as
-                                       libc::c_ulong).wrapping_mul(18 as
-                                                                       libc::c_int
-                                                                       as
+                                       libc::c_ulong).wrapping_mul(18i32 as
                                                                        libc::c_ulong)
                                       |
                                       PGR_SIZE_SYSTEM_FLAG as libc::c_int as
@@ -1170,17 +1131,22 @@ unsafe extern "C" fn run_static_initializers() {
                                                                                                               *mut rxFailsafeChannelConfig_t)
                                                                                          ->
                                                                                              ()>,
-                                                                              Option<pgResetFunc>>(Some(pgResetFn_rxFailsafeChannelConfigs
-                                                                                                            as
-                                                                                                            unsafe extern "C" fn(_:
-                                                                                                                                     *mut rxFailsafeChannelConfig_t)
-                                                                                                                ->
-                                                                                                                    ())),},};
+                                                                              Option<unsafe extern "C" fn(_:
+                                                                                                              *mut libc::c_void,
+                                                                                                          _:
+                                                                                                              libc::c_int)
+                                                                                         ->
+                                                                                             ()>>(Some(pgResetFn_rxFailsafeChannelConfigs
+                                                                                                           as
+                                                                                                           unsafe extern "C" fn(_:
+                                                                                                                                    *mut rxFailsafeChannelConfig_t)
+                                                                                                               ->
+                                                                                                                   ())),},};
             init
         }
 }
 #[used]
-#[cfg_attr(target_os = "linux", link_section = ".init_array")]
-#[cfg_attr(target_os = "windows", link_section = ".CRT$XIB")]
-#[cfg_attr(target_os = "macos", link_section = "__DATA,__mod_init_func")]
+#[cfg_attr ( target_os = "linux", link_section = ".init_array" )]
+#[cfg_attr ( target_os = "windows", link_section = ".CRT$XIB" )]
+#[cfg_attr ( target_os = "macos", link_section = "__DATA,__mod_init_func" )]
 static INIT_ARRAY: [unsafe extern "C" fn(); 1] = [run_static_initializers];

@@ -1,4 +1,5 @@
-use ::libc;
+use core;
+use libc;
 extern "C" {
     pub type _IO_wide_data;
     pub type _IO_codecvt;
@@ -45,7 +46,7 @@ pub type uint8_t = __uint8_t;
 pub type uint16_t = __uint16_t;
 pub type uint32_t = __uint32_t;
 pub type size_t = libc::c_ulong;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct _IO_FILE {
     pub _flags: libc::c_int,
@@ -80,14 +81,14 @@ pub struct _IO_FILE {
 }
 pub type _IO_lock_t = ();
 pub type FILE = _IO_FILE;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct __pthread_internal_list {
     pub __prev: *mut __pthread_internal_list,
     pub __next: *mut __pthread_internal_list,
 }
 pub type __pthread_list_t = __pthread_internal_list;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct __pthread_mutex_s {
     pub __lock: libc::c_int,
@@ -99,14 +100,14 @@ pub struct __pthread_mutex_s {
     pub __elision: libc::c_short,
     pub __list: __pthread_list_t,
 }
-#[derive(Copy, Clone)]
-#[repr(C)]
+#[derive ( Copy, Clone )]
+#[repr ( C )]
 pub union pthread_mutexattr_t {
     pub __size: [libc::c_char; 4],
     pub __align: libc::c_int,
 }
-#[derive(Copy, Clone)]
-#[repr(C)]
+#[derive ( Copy, Clone )]
+#[repr ( C )]
 pub union pthread_mutex_t {
     pub __data: __pthread_mutex_s,
     pub __size: [libc::c_char; 40],
@@ -132,7 +133,7 @@ pub const SERIAL_NOT_INVERTED: portOptions_e = 0;
 pub type serialReceiveCallbackPtr
     =
     Option<unsafe extern "C" fn(_: uint16_t, _: *mut libc::c_void) -> ()>;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct serialPort_s {
     pub vTable: *const serialPortVTable,
@@ -151,7 +152,7 @@ pub struct serialPort_s {
     pub rxCallbackData: *mut libc::c_void,
     pub identifier: uint8_t,
 }
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct serialPortVTable {
     pub serialWrite: Option<unsafe extern "C" fn(_: *mut serialPort_t,
@@ -196,7 +197,7 @@ pub struct serialPortVTable {
 }
 // used by serial drivers to return frames to app
 pub type serialPort_t = serialPort_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct dyad_Event {
     pub type_0: libc::c_int,
@@ -223,7 +224,7 @@ pub const DYAD_EVENT_LISTEN: C2RustUnnamed = 3;
 pub const DYAD_EVENT_ACCEPT: C2RustUnnamed = 2;
 pub const DYAD_EVENT_DESTROY: C2RustUnnamed = 1;
 pub const DYAD_EVENT_NULL: C2RustUnnamed = 0;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct tcpPort_t {
     pub port: serialPort_t,
@@ -311,7 +312,7 @@ static mut tcpSerialPorts: [tcpPort_t; 8] =
                clientCount: 0,
                id: 0,}; 8];
 static mut tcpPortInitialized: [bool; 8] = [false; 8];
-static mut tcpStart: bool = 0 as libc::c_int != 0;
+static mut tcpStart: bool = 0i32 != 0;
 #[no_mangle]
 pub unsafe extern "C" fn tcpIsStart() -> bool { return tcpStart; }
 unsafe extern "C" fn onData(mut e: *mut dyad_Event) {
@@ -324,32 +325,29 @@ unsafe extern "C" fn onClose(mut e: *mut dyad_Event) {
     (*s).conn = 0 as *mut dyad_Stream;
     fprintf(stderr,
             b"[CLS]UART%u: %d,%d\n\x00" as *const u8 as *const libc::c_char,
-            (*s).id as libc::c_int + 1 as libc::c_int,
-            (*s).connected as libc::c_int, (*s).clientCount as libc::c_int);
-    if (*s).clientCount as libc::c_int == 0 as libc::c_int {
-        (*s).connected = 0 as libc::c_int != 0
-    };
+            (*s).id as libc::c_int + 1i32, (*s).connected as libc::c_int,
+            (*s).clientCount as libc::c_int);
+    if (*s).clientCount as libc::c_int == 0i32 { (*s).connected = 0i32 != 0 };
 }
 unsafe extern "C" fn onAccept(mut e: *mut dyad_Event) {
     let mut s: *mut tcpPort_t = (*e).udata as *mut tcpPort_t;
     fprintf(stderr,
             b"New connection on UART%u, %d\n\x00" as *const u8 as
-                *const libc::c_char,
-            (*s).id as libc::c_int + 1 as libc::c_int,
+                *const libc::c_char, (*s).id as libc::c_int + 1i32,
             (*s).clientCount as libc::c_int);
-    (*s).connected = 1 as libc::c_int != 0;
-    if (*s).clientCount as libc::c_int > 0 as libc::c_int {
+    (*s).connected = 1i32 != 0;
+    if (*s).clientCount as libc::c_int > 0i32 {
         dyad_close((*e).remote);
         return
     }
     (*s).clientCount = (*s).clientCount.wrapping_add(1);
     fprintf(stderr,
             b"[NEW]UART%u: %d,%d\n\x00" as *const u8 as *const libc::c_char,
-            (*s).id as libc::c_int + 1 as libc::c_int,
-            (*s).connected as libc::c_int, (*s).clientCount as libc::c_int);
+            (*s).id as libc::c_int + 1i32, (*s).connected as libc::c_int,
+            (*s).clientCount as libc::c_int);
     (*s).conn = (*e).remote;
-    dyad_setNoDelay((*e).remote, 1 as libc::c_int);
-    dyad_setTimeout((*e).remote, 120 as libc::c_int as libc::c_double);
+    dyad_setNoDelay((*e).remote, 1i32);
+    dyad_setTimeout((*e).remote, 120i32 as libc::c_double);
     dyad_addListener((*e).remote, DYAD_EVENT_DATA as libc::c_int,
                      Some(onData as
                               unsafe extern "C" fn(_: *mut dyad_Event) -> ()),
@@ -368,7 +366,7 @@ unsafe extern "C" fn tcpReconfigure(mut s: *mut tcpPort_t,
         return s
     }
     if pthread_mutex_init(&mut (*s).txLock, 0 as *const pthread_mutexattr_t)
-           != 0 as libc::c_int {
+           != 0i32 {
         fprintf(stderr,
                 b"TX mutex init failed - %d\n\x00" as *const u8 as
                     *const libc::c_char, *__errno_location());
@@ -376,55 +374,46 @@ unsafe extern "C" fn tcpReconfigure(mut s: *mut tcpPort_t,
         return 0 as *mut tcpPort_t
     }
     if pthread_mutex_init(&mut (*s).rxLock, 0 as *const pthread_mutexattr_t)
-           != 0 as libc::c_int {
+           != 0i32 {
         fprintf(stderr,
                 b"RX mutex init failed - %d\n\x00" as *const u8 as
                     *const libc::c_char, *__errno_location());
         // TODO: clean up & re-init
         return 0 as *mut tcpPort_t
     }
-    tcpStart = 1 as libc::c_int != 0;
-    tcpPortInitialized[id as usize] = 1 as libc::c_int != 0;
-    (*s).connected = 0 as libc::c_int != 0;
-    (*s).clientCount = 0 as libc::c_int as uint16_t;
+    tcpStart = 1i32 != 0;
+    tcpPortInitialized[id as usize] = 1i32 != 0;
+    (*s).connected = 0i32 != 0;
+    (*s).clientCount = 0i32 as uint16_t;
     (*s).id = id as uint8_t;
     (*s).conn = 0 as *mut dyad_Stream;
     (*s).serv = dyad_newStream();
-    dyad_setNoDelay((*s).serv, 1 as libc::c_int);
+    dyad_setNoDelay((*s).serv, 1i32);
     dyad_addListener((*s).serv, DYAD_EVENT_ACCEPT as libc::c_int,
                      Some(onAccept as
                               unsafe extern "C" fn(_: *mut dyad_Event) -> ()),
                      s as *mut libc::c_void);
-    if dyad_listenEx((*s).serv, 0 as *const libc::c_char,
-                     5760 as libc::c_int + id + 1 as libc::c_int,
-                     10 as libc::c_int) == 0 as libc::c_int {
+    if dyad_listenEx((*s).serv, 0 as *const libc::c_char, 5760i32 + id + 1i32,
+                     10i32) == 0i32 {
         fprintf(stderr,
                 b"bind port %u for UART%u\n\x00" as *const u8 as
                     *const libc::c_char,
-                (5760 as libc::c_int as
+                (5760i32 as
                      libc::c_uint).wrapping_add(id as
-                                                    libc::c_uint).wrapping_add(1
-                                                                                   as
-                                                                                   libc::c_int
+                                                    libc::c_uint).wrapping_add(1i32
                                                                                    as
                                                                                    libc::c_uint),
-                (id as
-                     libc::c_uint).wrapping_add(1 as libc::c_int as
-                                                    libc::c_uint));
+                (id as libc::c_uint).wrapping_add(1i32 as libc::c_uint));
     } else {
         fprintf(stderr,
                 b"bind port %u for UART%u failed!!\n\x00" as *const u8 as
                     *const libc::c_char,
-                (5760 as libc::c_int as
+                (5760i32 as
                      libc::c_uint).wrapping_add(id as
-                                                    libc::c_uint).wrapping_add(1
-                                                                                   as
-                                                                                   libc::c_int
+                                                    libc::c_uint).wrapping_add(1i32
                                                                                    as
                                                                                    libc::c_uint),
-                (id as
-                     libc::c_uint).wrapping_add(1 as libc::c_int as
-                                                    libc::c_uint));
+                (id as libc::c_uint).wrapping_add(1i32 as libc::c_uint));
     }
     return s;
 }
@@ -437,7 +426,7 @@ pub unsafe extern "C" fn serTcpOpen(mut id: libc::c_int,
                                     mut options: portOptions_e)
  -> *mut serialPort_t {
     let mut s: *mut tcpPort_t = 0 as *mut tcpPort_t;
-    if id >= 0 as libc::c_int && id < 8 as libc::c_int {
+    if id >= 0i32 && id < 8i32 {
         s =
             tcpReconfigure(&mut *tcpSerialPorts.as_mut_ptr().offset(id as
                                                                         isize),
@@ -446,12 +435,12 @@ pub unsafe extern "C" fn serTcpOpen(mut id: libc::c_int,
     if s.is_null() { return 0 as *mut serialPort_t }
     (*s).port.vTable = &tcpVTable;
     // common serial initialisation code should move to serialPort::init()
-    (*s).port.rxBufferTail = 0 as libc::c_int as uint32_t;
+    (*s).port.rxBufferTail = 0i32 as uint32_t;
     (*s).port.rxBufferHead = (*s).port.rxBufferTail;
-    (*s).port.txBufferTail = 0 as libc::c_int as uint32_t;
+    (*s).port.txBufferTail = 0i32 as uint32_t;
     (*s).port.txBufferHead = (*s).port.txBufferTail;
-    (*s).port.rxBufferSize = 1400 as libc::c_int as uint32_t;
-    (*s).port.txBufferSize = 1400 as libc::c_int as uint32_t;
+    (*s).port.rxBufferSize = 1400i32 as uint32_t;
+    (*s).port.txBufferSize = 1400i32 as uint32_t;
     (*s).port.rxBuffer = (*s).rxBuffer.as_mut_ptr() as *mut uint8_t;
     (*s).port.txBuffer = (*s).txBuffer.as_mut_ptr() as *mut uint8_t;
     // callback works for IRQ-based RX ONLY
@@ -493,7 +482,7 @@ pub unsafe extern "C" fn tcpTotalTxBytesFree(mut instance:
             (*s).port.txBufferSize.wrapping_add((*s).port.txBufferHead).wrapping_sub((*s).port.txBufferTail)
     }
     let mut bytesFree: uint32_t =
-        (*s).port.txBufferSize.wrapping_sub(1 as libc::c_int as
+        (*s).port.txBufferSize.wrapping_sub(1i32 as
                                                 libc::c_uint).wrapping_sub(bytesUsed);
     pthread_mutex_unlock(&mut (*s).txLock);
     return bytesFree;
@@ -514,9 +503,9 @@ pub unsafe extern "C" fn tcpRead(mut instance: *mut serialPort_t) -> uint8_t {
     let mut s: *mut tcpPort_t = instance as *mut tcpPort_t;
     pthread_mutex_lock(&mut (*s).rxLock);
     ch = *(*s).port.rxBuffer.offset((*s).port.rxBufferTail as isize);
-    if (*s).port.rxBufferTail.wrapping_add(1 as libc::c_int as libc::c_uint)
-           >= (*s).port.rxBufferSize {
-        (*s).port.rxBufferTail = 0 as libc::c_int as uint32_t
+    if (*s).port.rxBufferTail.wrapping_add(1i32 as libc::c_uint) >=
+           (*s).port.rxBufferSize {
+        (*s).port.rxBufferTail = 0i32 as uint32_t
     } else { (*s).port.rxBufferTail = (*s).port.rxBufferTail.wrapping_add(1) }
     pthread_mutex_unlock(&mut (*s).rxLock);
     return ch;
@@ -528,9 +517,9 @@ pub unsafe extern "C" fn tcpWrite(mut instance: *mut serialPort_t,
     pthread_mutex_lock(&mut (*s).txLock);
     ::core::ptr::write_volatile((*s).port.txBuffer.offset((*s).port.txBufferHead
                                                               as isize), ch);
-    if (*s).port.txBufferHead.wrapping_add(1 as libc::c_int as libc::c_uint)
-           >= (*s).port.txBufferSize {
-        (*s).port.txBufferHead = 0 as libc::c_int as uint32_t
+    if (*s).port.txBufferHead.wrapping_add(1i32 as libc::c_uint) >=
+           (*s).port.txBufferSize {
+        (*s).port.txBufferHead = 0i32 as uint32_t
     } else { (*s).port.txBufferHead = (*s).port.txBufferHead.wrapping_add(1) }
     pthread_mutex_unlock(&mut (*s).txLock);
     tcpDataOut(s);
@@ -549,7 +538,7 @@ pub unsafe extern "C" fn tcpDataOut(mut instance: *mut tcpPort_t) {
                    &mut *(*s).port.txBuffer.offset((*s).port.txBufferTail as
                                                        isize) as *mut uint8_t
                        as *const libc::c_void, chunk);
-        (*s).port.txBufferTail = 0 as libc::c_int as uint32_t
+        (*s).port.txBufferTail = 0i32 as uint32_t
     }
     let mut chunk_0: libc::c_int =
         (*s).port.txBufferHead.wrapping_sub((*s).port.txBufferTail) as
@@ -599,10 +588,9 @@ pub unsafe extern "C" fn tcpDataIn(mut instance: *mut tcpPort_t,
         ::core::ptr::write_volatile((*s).port.rxBuffer.offset((*s).port.rxBufferHead
                                                                   as isize),
                                     *fresh1);
-        if (*s).port.rxBufferHead.wrapping_add(1 as libc::c_int as
-                                                   libc::c_uint) >=
+        if (*s).port.rxBufferHead.wrapping_add(1i32 as libc::c_uint) >=
                (*s).port.rxBufferSize {
-            (*s).port.rxBufferHead = 0 as libc::c_int as uint32_t
+            (*s).port.rxBufferHead = 0i32 as uint32_t
         } else {
             (*s).port.rxBufferHead = (*s).port.rxBufferHead.wrapping_add(1)
         }

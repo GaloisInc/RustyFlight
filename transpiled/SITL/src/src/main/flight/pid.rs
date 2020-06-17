@@ -1,4 +1,5 @@
-use ::libc;
+use core;
+use libc;
 extern "C" {
     /*
  * This file is part of Cleanflight and Betaflight.
@@ -103,11 +104,6 @@ extern "C" {
     fn sensors(mask: uint32_t) -> bool;
     #[no_mangle]
     static mut attitude: attitudeEulerAngles_t;
-    // Idle value for DShot protocol, full motor output = 10000
-    // Set the minimum throttle command sent to the ESC (Electronic Speed Controller). This is the minimum value that allow motors to run at a idle speed.
-    // This is the maximum value for the ESCs at full power this value can be increased up to 2000
-    // This is the value for the ESCs when they are not armed. In some cases, this value must be lowered down to 900 for some specific ESCs
-    // Magnetic poles in the motors for calculating actual RPM from eRPM provided by ESC telemetry
     #[no_mangle]
     fn mixerIsOutputSaturated(axis: libc::c_int, errorRate: libc::c_float)
      -> bool;
@@ -184,14 +180,14 @@ pub type angle_index_t = libc::c_uint;
 pub const AI_PITCH: angle_index_t = 1;
 pub const AI_ROLL: angle_index_t = 0;
 pub type filter_t = filter_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct pt1Filter_s {
     pub state: libc::c_float,
     pub k: libc::c_float,
 }
 pub type pt1Filter_t = pt1Filter_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct biquadFilter_s {
     pub b0: libc::c_float,
@@ -246,7 +242,7 @@ pub const PGR_PGN_MASK: C2RustUnnamed_2 = 4095;
 pub type pgResetFunc
     =
     unsafe extern "C" fn(_: *mut libc::c_void, _: libc::c_int) -> ();
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct pgRegistry_s {
     pub pgn: pgn_t,
@@ -256,11 +252,12 @@ pub struct pgRegistry_s {
     pub ptr: *mut *mut uint8_t,
     pub reset: C2RustUnnamed_3,
 }
-#[derive(Copy, Clone)]
-#[repr(C)]
+#[derive ( Copy, Clone )]
+#[repr ( C )]
 pub union C2RustUnnamed_3 {
     pub ptr: *mut libc::c_void,
-    pub fn_0: Option<pgResetFunc>,
+    pub fn_0: Option<unsafe extern "C" fn(_: *mut libc::c_void,
+                                          _: libc::c_int) -> ()>,
 }
 pub type pgRegistry_t = pgRegistry_s;
 /* base */
@@ -295,34 +292,14 @@ pub type pgRegistry_t = pgRegistry_s;
 pub type timeDelta_t = int32_t;
 // microsecond time
 pub type timeUs_t = uint32_t;
-#[derive(Copy, Clone)]
-#[repr(C)]
+#[derive ( Copy, Clone )]
+#[repr ( C )]
 pub union rollAndPitchTrims_u {
     pub raw: [int16_t; 2],
     pub values: rollAndPitchTrims_t_def,
 }
-/*
- * This file is part of Cleanflight and Betaflight.
- *
- * Cleanflight and Betaflight are free software. You can redistribute
- * this software and/or modify this software under the terms of the
- * GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option)
- * any later version.
- *
- * Cleanflight and Betaflight are distributed in the hope that they
- * will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this software.
- *
- * If not, see <http://www.gnu.org/licenses/>.
- */
-// Type of accelerometer used/detected
 pub type rollAndPitchTrims_t_def = rollAndPitchTrims_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct rollAndPitchTrims_s {
     pub roll: int16_t,
@@ -332,7 +309,7 @@ pub type C2RustUnnamed_4 = libc::c_uint;
 pub const RC_SMOOTHING_DERIVATIVE_BIQUAD: C2RustUnnamed_4 = 2;
 pub const RC_SMOOTHING_DERIVATIVE_PT1: C2RustUnnamed_4 = 1;
 pub const RC_SMOOTHING_DERIVATIVE_OFF: C2RustUnnamed_4 = 0;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct pidProfile_s {
     pub yaw_lowpass_hz: uint16_t,
@@ -382,7 +359,7 @@ pub struct pidProfile_s {
     pub abs_control_error_limit: uint8_t,
 }
 pub type pidf_t = pidf_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct pidf_s {
     pub P: uint8_t,
@@ -432,7 +409,7 @@ pub type C2RustUnnamed_10 = libc::c_uint;
 pub const ITERM_RELAX_SETPOINT: C2RustUnnamed_10 = 1;
 pub const ITERM_RELAX_GYRO: C2RustUnnamed_10 = 0;
 pub type pidProfile_t = pidProfile_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct pidConfig_s {
     pub pid_process_denom: uint8_t,
@@ -443,7 +420,7 @@ pub struct pidConfig_s {
 pub type pidConfig_t = pidConfig_s;
 pub type rollAndPitchTrims_t = rollAndPitchTrims_u;
 pub type pidAxisData_t = pidAxisData_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct pidAxisData_s {
     pub P: libc::c_float,
@@ -452,47 +429,6 @@ pub struct pidAxisData_s {
     pub F: libc::c_float,
     pub Sum: libc::c_float,
 }
-// Additional yaw filter when yaw axis too noisy
-// Delta Filter in hz
-// Biquad dterm notch hz
-// Biquad dterm notch low cutoff
-// Filter selection for dterm
-// Experimental ITerm windup threshold, percent motor saturation
-// Disable/Enable pids on zero throttle. Normally even without airmode P and D would be active.
-// Max angle in degrees in level mode
-// inclination factor for Horizon mode
-// OFF or ON
-// Betaflight PID controller parameters
-// type of anti gravity method
-// max allowed throttle delta before iterm accelerated in ms
-// Iterm Accelerator Gain when itermThrottlethreshold is hit
-// yaw accel limiter for deg/sec/ms
-// accel limiter roll/pitch deg/sec/ms
-// dterm crash value
-// gyro crash value
-// setpoint must be below this value to detect crash, so flips and rolls are not interpreted as crashes
-// ms
-// ms
-// degrees
-// degree/second
-// Scale PIDsum to battery voltage
-// Feed forward weight transition
-// limits yaw errorRate, so crashes don't cause huge throttle increase
-// Extra PT1 Filter on D in hz
-// off, on, on and beeps when it is in crash recovery mode
-// how much should throttle be boosted during transient changes 0-100, 100 adds 10x hpf filtered throttle
-// Which cutoff frequency to use for throttle boost. higher cutoffs keep the boost on for shorter. Specified in hz.
-// rotates iterm to translate world errors to local coordinate system
-// takes only the larger of P and the D weight feed forward term if they have the same sign.
-// Specifies type of relax algorithm
-// This cutoff frequency specifies a low pass filter which predicts average response of the quad to setpoint
-// Enable iterm suppression during stick input
-// Acro trainer roll/pitch angle limit in degrees
-// The axis for which record debugging values are captured 0=roll, 1=pitch
-// The strength of the limiting. Raising may reduce overshoot but also lead to oscillation around the angle limit
-// The lookahead window in milliseconds used to reduce overshoot
-// How strongly should the absolute accumulated error be corrected for
-// Limit to the correction
 // Limit to the accumulated error
 // Processing denominator for PID controller vs gyro sampling rate
 // off, on - enables pidsum runaway disarm logic
@@ -500,7 +436,7 @@ pub struct pidAxisData_s {
 // minimum throttle percent required during deactivation phase
 // USE_RC_SMOOTHING_FILTER
 pub type pidCoefficient_t = pidCoefficient_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct pidCoefficient_s {
     pub Kp: libc::c_float,
@@ -509,19 +445,19 @@ pub struct pidCoefficient_s {
     pub Kf: libc::c_float,
 }
 pub type gyro_t = gyro_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct gyro_s {
     pub targetLooptime: uint32_t,
     pub gyroADCf: [libc::c_float; 3],
 }
-#[derive(Copy, Clone)]
-#[repr(C)]
+#[derive ( Copy, Clone )]
+#[repr ( C )]
 pub union attitudeEulerAngles_t {
     pub raw: [int16_t; 3],
     pub values: C2RustUnnamed_11,
 }
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct C2RustUnnamed_11 {
     pub roll: int16_t,
@@ -530,8 +466,8 @@ pub struct C2RustUnnamed_11 {
 }
 pub const SENSOR_ACC: C2RustUnnamed_12 = 2;
 pub type dtermLowpass_t = dtermLowpass_u;
-#[derive(Copy, Clone)]
-#[repr(C)]
+#[derive ( Copy, Clone )]
+#[repr ( C )]
 pub union dtermLowpass_u {
     pub pt1Filter: pt1Filter_t,
     pub biquadFilter: biquadFilter_t,
@@ -611,7 +547,7 @@ pub static mut targetPidLooptime: uint32_t = 0;
 pub static mut pidData: [pidAxisData_t; 3] =
     [pidAxisData_t{P: 0., I: 0., D: 0., F: 0., Sum: 0.,}; 3];
 static mut pidStabilisationEnabled: bool = false;
-static mut inCrashRecoveryMode: bool = 0 as libc::c_int != 0;
+static mut inCrashRecoveryMode: bool = 0i32 != 0;
 static mut dT: libc::c_float = 0.;
 static mut pidFrequency: libc::c_float = 0.;
 static mut antiGravityMode: uint8_t = 0;
@@ -620,28 +556,13 @@ static mut itermAcceleratorGain: uint16_t = 0;
 static mut antiGravityOsdCutoff: libc::c_float = 1.0f32;
 static mut antiGravityEnabled: bool = false;
 #[no_mangle]
-pub static mut pidConfig_System: pidConfig_t =
-    pidConfig_t{pid_process_denom: 0,
-                runaway_takeoff_prevention: 0,
-                runaway_takeoff_deactivate_delay: 0,
-                runaway_takeoff_deactivate_throttle: 0,};
-#[no_mangle]
-pub static mut pidConfig_Copy: pidConfig_t =
-    pidConfig_t{pid_process_denom: 0,
-                runaway_takeoff_prevention: 0,
-                runaway_takeoff_deactivate_delay: 0,
-                runaway_takeoff_deactivate_throttle: 0,};
-#[no_mangle]
 #[link_section = ".pg_registry"]
 #[used]
 pub static mut pidConfig_Registry: pgRegistry_t =
     unsafe {
         {
             let mut init =
-                pgRegistry_s{pgn:
-                                 (504 as libc::c_int |
-                                      (2 as libc::c_int) << 12 as libc::c_int)
-                                     as pgn_t,
+                pgRegistry_s{pgn: (504i32 | 2i32 << 12i32) as pgn_t,
                              size:
                                  (::core::mem::size_of::<pidConfig_t>() as
                                       libc::c_ulong |
@@ -666,82 +587,31 @@ pub static mut pidConfig_Registry: pgRegistry_t =
         }
     };
 #[no_mangle]
+pub static mut pidConfig_System: pidConfig_t =
+    pidConfig_t{pid_process_denom: 0,
+                runaway_takeoff_prevention: 0,
+                runaway_takeoff_deactivate_delay: 0,
+                runaway_takeoff_deactivate_throttle: 0,};
+#[no_mangle]
+pub static mut pidConfig_Copy: pidConfig_t =
+    pidConfig_t{pid_process_denom: 0,
+                runaway_takeoff_prevention: 0,
+                runaway_takeoff_deactivate_delay: 0,
+                runaway_takeoff_deactivate_throttle: 0,};
+#[no_mangle]
 #[link_section = ".pg_resetdata"]
 #[used]
 pub static mut pgResetTemplate_pidConfig: pidConfig_t =
     {
         let mut init =
-            pidConfig_s{pid_process_denom: 2 as libc::c_int as uint8_t,
-                        runaway_takeoff_prevention:
-                            1 as libc::c_int as uint8_t,
-                        runaway_takeoff_deactivate_delay:
-                            500 as libc::c_int as uint16_t,
+            pidConfig_s{pid_process_denom: 2i32 as uint8_t,
+                        runaway_takeoff_prevention: 1i32 as uint8_t,
+                        runaway_takeoff_deactivate_delay: 500i32 as uint16_t,
                         runaway_takeoff_deactivate_throttle:
-                            25 as libc::c_int as uint8_t,};
+                            25i32 as uint8_t,};
         init
     };
 // The anti gravity throttle highpass filter cutoff
-// Initialized in run_static_initializers
-#[no_mangle]
-#[link_section = ".pg_registry"]
-#[used]
-pub static mut pidProfiles_Registry: pgRegistry_t =
-    pgRegistry_t{pgn: 0,
-                 size: 0,
-                 address: 0 as *const uint8_t as *mut uint8_t,
-                 copy: 0 as *const uint8_t as *mut uint8_t,
-                 ptr: 0 as *const *mut uint8_t as *mut *mut uint8_t,
-                 reset:
-                     C2RustUnnamed_3{ptr:
-                                         0 as *const libc::c_void as
-                                             *mut libc::c_void,},};
-#[no_mangle]
-pub static mut pidProfiles_CopyArray: [pidProfile_t; 3] =
-    [pidProfile_t{yaw_lowpass_hz: 0,
-                  dterm_lowpass_hz: 0,
-                  dterm_notch_hz: 0,
-                  dterm_notch_cutoff: 0,
-                  pid: [pidf_t{P: 0, I: 0, D: 0, F: 0,}; 5],
-                  dterm_filter_type: 0,
-                  itermWindupPointPercent: 0,
-                  pidSumLimit: 0,
-                  pidSumLimitYaw: 0,
-                  pidAtMinThrottle: 0,
-                  levelAngleLimit: 0,
-                  horizon_tilt_effect: 0,
-                  horizon_tilt_expert_mode: 0,
-                  antiGravityMode: 0,
-                  itermThrottleThreshold: 0,
-                  itermAcceleratorGain: 0,
-                  yawRateAccelLimit: 0,
-                  rateAccelLimit: 0,
-                  crash_dthreshold: 0,
-                  crash_gthreshold: 0,
-                  crash_setpoint_threshold: 0,
-                  crash_time: 0,
-                  crash_delay: 0,
-                  crash_recovery_angle: 0,
-                  crash_recovery_rate: 0,
-                  vbatPidCompensation: 0,
-                  feedForwardTransition: 0,
-                  crash_limit_yaw: 0,
-                  itermLimit: 0,
-                  dterm_lowpass2_hz: 0,
-                  crash_recovery: 0,
-                  throttle_boost: 0,
-                  throttle_boost_cutoff: 0,
-                  iterm_rotation: 0,
-                  smart_feedforward: 0,
-                  iterm_relax_type: 0,
-                  iterm_relax_cutoff: 0,
-                  iterm_relax: 0,
-                  acro_trainer_angle_limit: 0,
-                  acro_trainer_debug_axis: 0,
-                  acro_trainer_gain: 0,
-                  acro_trainer_lookahead_ms: 0,
-                  abs_control_gain: 0,
-                  abs_control_limit: 0,
-                  abs_control_error_limit: 0,}; 3];
 #[no_mangle]
 pub static mut pidProfiles_SystemArray: [pidProfile_t; 3] =
     [pidProfile_t{yaw_lowpass_hz: 0,
@@ -790,161 +660,166 @@ pub static mut pidProfiles_SystemArray: [pidProfile_t; 3] =
                   abs_control_limit: 0,
                   abs_control_error_limit: 0,}; 3];
 #[no_mangle]
+pub static mut pidProfiles_CopyArray: [pidProfile_t; 3] =
+    [pidProfile_t{yaw_lowpass_hz: 0,
+                  dterm_lowpass_hz: 0,
+                  dterm_notch_hz: 0,
+                  dterm_notch_cutoff: 0,
+                  pid: [pidf_t{P: 0, I: 0, D: 0, F: 0,}; 5],
+                  dterm_filter_type: 0,
+                  itermWindupPointPercent: 0,
+                  pidSumLimit: 0,
+                  pidSumLimitYaw: 0,
+                  pidAtMinThrottle: 0,
+                  levelAngleLimit: 0,
+                  horizon_tilt_effect: 0,
+                  horizon_tilt_expert_mode: 0,
+                  antiGravityMode: 0,
+                  itermThrottleThreshold: 0,
+                  itermAcceleratorGain: 0,
+                  yawRateAccelLimit: 0,
+                  rateAccelLimit: 0,
+                  crash_dthreshold: 0,
+                  crash_gthreshold: 0,
+                  crash_setpoint_threshold: 0,
+                  crash_time: 0,
+                  crash_delay: 0,
+                  crash_recovery_angle: 0,
+                  crash_recovery_rate: 0,
+                  vbatPidCompensation: 0,
+                  feedForwardTransition: 0,
+                  crash_limit_yaw: 0,
+                  itermLimit: 0,
+                  dterm_lowpass2_hz: 0,
+                  crash_recovery: 0,
+                  throttle_boost: 0,
+                  throttle_boost_cutoff: 0,
+                  iterm_rotation: 0,
+                  smart_feedforward: 0,
+                  iterm_relax_type: 0,
+                  iterm_relax_cutoff: 0,
+                  iterm_relax: 0,
+                  acro_trainer_angle_limit: 0,
+                  acro_trainer_debug_axis: 0,
+                  acro_trainer_gain: 0,
+                  acro_trainer_lookahead_ms: 0,
+                  abs_control_gain: 0,
+                  abs_control_limit: 0,
+                  abs_control_error_limit: 0,}; 3];
+// Initialized in run_static_initializers
+#[no_mangle]
+#[link_section = ".pg_registry"]
+#[used]
+pub static mut pidProfiles_Registry: pgRegistry_t =
+    pgRegistry_t{pgn: 0,
+                 size: 0,
+                 address: 0 as *const uint8_t as *mut uint8_t,
+                 copy: 0 as *const uint8_t as *mut uint8_t,
+                 ptr: 0 as *const *mut uint8_t as *mut *mut uint8_t,
+                 reset:
+                     C2RustUnnamed_3{ptr:
+                                         0 as *const libc::c_void as
+                                             *mut libc::c_void,},};
+#[no_mangle]
 pub unsafe extern "C" fn resetPidProfile(mut pidProfile: *mut pidProfile_t) {
     static mut _reset_template_171: pidProfile_t =
         {
             let mut init =
-                pidProfile_s{yaw_lowpass_hz: 0 as libc::c_int as uint16_t,
-                             dterm_lowpass_hz: 100 as libc::c_int as uint16_t,
-                             dterm_notch_hz: 0 as libc::c_int as uint16_t,
-                             dterm_notch_cutoff:
-                                 160 as libc::c_int as uint16_t,
+                pidProfile_s{yaw_lowpass_hz: 0i32 as uint16_t,
+                             dterm_lowpass_hz: 100i32 as uint16_t,
+                             dterm_notch_hz: 0i32 as uint16_t,
+                             dterm_notch_cutoff: 160i32 as uint16_t,
                              pid:
                                  [{
                                       let mut init =
-                                          pidf_s{P:
-                                                     46 as libc::c_int as
-                                                         uint8_t,
-                                                 I:
-                                                     45 as libc::c_int as
-                                                         uint8_t,
-                                                 D:
-                                                     25 as libc::c_int as
-                                                         uint8_t,
-                                                 F:
-                                                     60 as libc::c_int as
-                                                         uint16_t,};
+                                          pidf_s{P: 46i32 as uint8_t,
+                                                 I: 45i32 as uint8_t,
+                                                 D: 25i32 as uint8_t,
+                                                 F: 60i32 as uint16_t,};
                                       init
                                   },
                                   {
                                       let mut init =
-                                          pidf_s{P:
-                                                     50 as libc::c_int as
-                                                         uint8_t,
-                                                 I:
-                                                     50 as libc::c_int as
-                                                         uint8_t,
-                                                 D:
-                                                     27 as libc::c_int as
-                                                         uint8_t,
-                                                 F:
-                                                     60 as libc::c_int as
-                                                         uint16_t,};
+                                          pidf_s{P: 50i32 as uint8_t,
+                                                 I: 50i32 as uint8_t,
+                                                 D: 27i32 as uint8_t,
+                                                 F: 60i32 as uint16_t,};
                                       init
                                   },
                                   {
                                       let mut init =
-                                          pidf_s{P:
-                                                     65 as libc::c_int as
-                                                         uint8_t,
-                                                 I:
-                                                     45 as libc::c_int as
-                                                         uint8_t,
-                                                 D:
-                                                     0 as libc::c_int as
-                                                         uint8_t,
-                                                 F:
-                                                     60 as libc::c_int as
-                                                         uint16_t,};
+                                          pidf_s{P: 65i32 as uint8_t,
+                                                 I: 45i32 as uint8_t,
+                                                 D: 0i32 as uint8_t,
+                                                 F: 60i32 as uint16_t,};
                                       init
                                   },
                                   {
                                       let mut init =
-                                          pidf_s{P:
-                                                     50 as libc::c_int as
-                                                         uint8_t,
-                                                 I:
-                                                     50 as libc::c_int as
-                                                         uint8_t,
-                                                 D:
-                                                     75 as libc::c_int as
-                                                         uint8_t,
-                                                 F:
-                                                     0 as libc::c_int as
-                                                         uint16_t,};
+                                          pidf_s{P: 50i32 as uint8_t,
+                                                 I: 50i32 as uint8_t,
+                                                 D: 75i32 as uint8_t,
+                                                 F: 0i32 as uint16_t,};
                                       init
                                   },
                                   {
                                       let mut init =
-                                          pidf_s{P:
-                                                     40 as libc::c_int as
-                                                         uint8_t,
-                                                 I:
-                                                     0 as libc::c_int as
-                                                         uint8_t,
-                                                 D:
-                                                     0 as libc::c_int as
-                                                         uint8_t,
-                                                 F:
-                                                     0 as libc::c_int as
-                                                         uint16_t,};
+                                          pidf_s{P: 40i32 as uint8_t,
+                                                 I: 0i32 as uint8_t,
+                                                 D: 0i32 as uint8_t,
+                                                 F: 0i32 as uint16_t,};
                                       init
                                   }],
                              dterm_filter_type:
                                  FILTER_PT1 as libc::c_int as uint8_t,
-                             itermWindupPointPercent:
-                                 40 as libc::c_int as uint8_t,
-                             pidSumLimit: 500 as libc::c_int as uint16_t,
-                             pidSumLimitYaw: 400 as libc::c_int as uint16_t,
+                             itermWindupPointPercent: 40i32 as uint8_t,
+                             pidSumLimit: 500i32 as uint16_t,
+                             pidSumLimitYaw: 400i32 as uint16_t,
                              pidAtMinThrottle:
                                  PID_STABILISATION_ON as libc::c_int as
                                      uint8_t,
-                             levelAngleLimit: 55 as libc::c_int as uint8_t,
-                             horizon_tilt_effect:
-                                 75 as libc::c_int as uint8_t,
-                             horizon_tilt_expert_mode:
-                                 0 as libc::c_int as uint8_t,
+                             levelAngleLimit: 55i32 as uint8_t,
+                             horizon_tilt_effect: 75i32 as uint8_t,
+                             horizon_tilt_expert_mode: 0i32 as uint8_t,
                              antiGravityMode:
                                  ANTI_GRAVITY_SMOOTH as libc::c_int as
                                      uint8_t,
-                             itermThrottleThreshold:
-                                 250 as libc::c_int as uint16_t,
-                             itermAcceleratorGain:
-                                 5000 as libc::c_int as uint16_t,
-                             yawRateAccelLimit:
-                                 100 as libc::c_int as uint16_t,
-                             rateAccelLimit: 0 as libc::c_int as uint16_t,
-                             crash_dthreshold: 50 as libc::c_int as uint16_t,
-                             crash_gthreshold: 400 as libc::c_int as uint16_t,
-                             crash_setpoint_threshold:
-                                 350 as libc::c_int as uint16_t,
-                             crash_time: 500 as libc::c_int as uint16_t,
-                             crash_delay: 0 as libc::c_int as uint16_t,
-                             crash_recovery_angle:
-                                 10 as libc::c_int as uint8_t,
-                             crash_recovery_rate:
-                                 100 as libc::c_int as uint8_t,
-                             vbatPidCompensation: 0 as libc::c_int as uint8_t,
-                             feedForwardTransition:
-                                 0 as libc::c_int as uint8_t,
-                             crash_limit_yaw: 200 as libc::c_int as uint16_t,
-                             itermLimit: 150 as libc::c_int as uint16_t,
-                             dterm_lowpass2_hz:
-                                 200 as libc::c_int as uint16_t,
+                             itermThrottleThreshold: 250i32 as uint16_t,
+                             itermAcceleratorGain: 5000i32 as uint16_t,
+                             yawRateAccelLimit: 100i32 as uint16_t,
+                             rateAccelLimit: 0i32 as uint16_t,
+                             crash_dthreshold: 50i32 as uint16_t,
+                             crash_gthreshold: 400i32 as uint16_t,
+                             crash_setpoint_threshold: 350i32 as uint16_t,
+                             crash_time: 500i32 as uint16_t,
+                             crash_delay: 0i32 as uint16_t,
+                             crash_recovery_angle: 10i32 as uint8_t,
+                             crash_recovery_rate: 100i32 as uint8_t,
+                             vbatPidCompensation: 0i32 as uint8_t,
+                             feedForwardTransition: 0i32 as uint8_t,
+                             crash_limit_yaw: 200i32 as uint16_t,
+                             itermLimit: 150i32 as uint16_t,
+                             dterm_lowpass2_hz: 200i32 as uint16_t,
                              crash_recovery:
                                  PID_CRASH_RECOVERY_OFF as libc::c_int as
                                      uint8_t,
-                             throttle_boost: 5 as libc::c_int as uint8_t,
-                             throttle_boost_cutoff:
-                                 15 as libc::c_int as uint8_t,
-                             iterm_rotation: 1 as libc::c_int as uint8_t,
-                             smart_feedforward: 0 as libc::c_int as uint8_t,
+                             throttle_boost: 5i32 as uint8_t,
+                             throttle_boost_cutoff: 15i32 as uint8_t,
+                             iterm_rotation: 1i32 as uint8_t,
+                             smart_feedforward: 0i32 as uint8_t,
                              iterm_relax_type:
                                  ITERM_RELAX_GYRO as libc::c_int as uint8_t,
-                             iterm_relax_cutoff: 11 as libc::c_int as uint8_t,
+                             iterm_relax_cutoff: 11i32 as uint8_t,
                              iterm_relax:
                                  ITERM_RELAX_OFF as libc::c_int as uint8_t,
-                             acro_trainer_angle_limit:
-                                 20 as libc::c_int as uint8_t,
+                             acro_trainer_angle_limit: 20i32 as uint8_t,
                              acro_trainer_debug_axis:
                                  FD_ROLL as libc::c_int as uint8_t,
-                             acro_trainer_gain: 75 as libc::c_int as uint8_t,
-                             acro_trainer_lookahead_ms:
-                                 50 as libc::c_int as uint16_t,
-                             abs_control_gain: 0 as libc::c_int as uint8_t,
-                             abs_control_limit: 90 as libc::c_int as uint8_t,
-                             abs_control_error_limit:
-                                 20 as libc::c_int as uint8_t,};
+                             acro_trainer_gain: 75i32 as uint8_t,
+                             acro_trainer_lookahead_ms: 50i32 as uint16_t,
+                             abs_control_gain: 0i32 as uint8_t,
+                             abs_control_limit: 90i32 as uint8_t,
+                             abs_control_error_limit: 20i32 as uint8_t,};
             init
         };
     memcpy(pidProfile as *mut libc::c_void,
@@ -954,8 +829,8 @@ pub unsafe extern "C" fn resetPidProfile(mut pidProfile: *mut pidProfile_t) {
 #[no_mangle]
 pub unsafe extern "C" fn pgResetFn_pidProfiles(mut pidProfiles:
                                                    *mut pidProfile_t) {
-    let mut i: libc::c_int = 0 as libc::c_int;
-    while i < 3 as libc::c_int {
+    let mut i: libc::c_int = 0i32;
+    while i < 3i32 {
         resetPidProfile(&mut *pidProfiles.offset(i as isize));
         i += 1
     };
@@ -981,8 +856,8 @@ pub unsafe extern "C" fn pidStabilisationState(mut pidControllerState:
     pidStabilisationEnabled =
         if pidControllerState as libc::c_uint ==
                PID_STABILISATION_ON as libc::c_int as libc::c_uint {
-            1 as libc::c_int
-        } else { 0 as libc::c_int } != 0;
+            1i32
+        } else { 0i32 } != 0;
 }
 #[no_mangle]
 pub static mut rcAliasToAngleIndexMap: [angle_index_t; 2] =
@@ -1031,7 +906,7 @@ static mut antiGravityThrottleLpf: pt1Filter_t =
 #[no_mangle]
 pub unsafe extern "C" fn pidInitFilters(mut pidProfile: *const pidProfile_t) {
     // ensure yaw axis is 2
-    if targetPidLooptime == 0 as libc::c_int as libc::c_uint {
+    if targetPidLooptime == 0i32 as libc::c_uint {
         // no looptime set, so set all the filters to null
         dtermNotchApplyFn =
             Some(nullFilterApply as
@@ -1048,17 +923,16 @@ pub unsafe extern "C" fn pidInitFilters(mut pidProfile: *const pidProfile_t) {
         return
     }
     let pidFrequencyNyquist: uint32_t =
-        (pidFrequency / 2 as libc::c_int as libc::c_float) as uint32_t;
+        (pidFrequency / 2i32 as libc::c_float) as uint32_t;
     let mut dTermNotchHz: uint16_t = 0;
     if (*pidProfile).dterm_notch_hz as libc::c_uint <= pidFrequencyNyquist {
         dTermNotchHz = (*pidProfile).dterm_notch_hz
     } else if ((*pidProfile).dterm_notch_cutoff as libc::c_uint) <
                   pidFrequencyNyquist {
         dTermNotchHz = pidFrequencyNyquist as uint16_t
-    } else { dTermNotchHz = 0 as libc::c_int as uint16_t }
-    if dTermNotchHz as libc::c_int != 0 as libc::c_int &&
-           (*pidProfile).dterm_notch_cutoff as libc::c_int != 0 as libc::c_int
-       {
+    } else { dTermNotchHz = 0i32 as uint16_t }
+    if dTermNotchHz as libc::c_int != 0i32 &&
+           (*pidProfile).dterm_notch_cutoff as libc::c_int != 0i32 {
         dtermNotchApplyFn =
             ::core::mem::transmute::<Option<unsafe extern "C" fn(_:
                                                                      *mut biquadFilter_t,
@@ -1092,7 +966,7 @@ pub unsafe extern "C" fn pidInitFilters(mut pidProfile: *const pidProfile_t) {
                          -> libc::c_float)
     }
     //2nd Dterm Lowpass Filter
-    if (*pidProfile).dterm_lowpass2_hz as libc::c_int == 0 as libc::c_int ||
+    if (*pidProfile).dterm_lowpass2_hz as libc::c_int == 0i32 ||
            (*pidProfile).dterm_lowpass2_hz as libc::c_uint >
                pidFrequencyNyquist {
         dtermLowpass2ApplyFn =
@@ -1121,7 +995,7 @@ pub unsafe extern "C" fn pidInitFilters(mut pidProfile: *const pidProfile_t) {
             axis_0 += 1
         }
     }
-    if (*pidProfile).dterm_lowpass_hz as libc::c_int == 0 as libc::c_int ||
+    if (*pidProfile).dterm_lowpass_hz as libc::c_int == 0i32 ||
            (*pidProfile).dterm_lowpass_hz as libc::c_uint >
                pidFrequencyNyquist {
         dtermLowpassApplyFn =
@@ -1189,7 +1063,7 @@ pub unsafe extern "C" fn pidInitFilters(mut pidProfile: *const pidProfile_t) {
             }
         }
     }
-    if (*pidProfile).yaw_lowpass_hz as libc::c_int == 0 as libc::c_int ||
+    if (*pidProfile).yaw_lowpass_hz as libc::c_int == 0i32 ||
            (*pidProfile).yaw_lowpass_hz as libc::c_uint > pidFrequencyNyquist
        {
         ptermYawLowpassApplyFn =
@@ -1217,15 +1091,15 @@ pub unsafe extern "C" fn pidInitFilters(mut pidProfile: *const pidProfile_t) {
                   pt1FilterGain((*pidProfile).throttle_boost_cutoff as
                                     uint16_t, dT));
     if itermRelax != 0 {
-        let mut i: libc::c_int = 0 as libc::c_int;
-        while i < 3 as libc::c_int {
+        let mut i: libc::c_int = 0i32;
+        while i < 3i32 {
             pt1FilterInit(&mut *windupLpf.as_mut_ptr().offset(i as isize),
                           pt1FilterGain(itermRelaxCutoff as uint16_t, dT));
             i += 1
         }
     }
     pt1FilterInit(&mut antiGravityThrottleLpf,
-                  pt1FilterGain(15 as libc::c_int as uint16_t, dT));
+                  pt1FilterGain(15i32 as uint16_t, dT));
 }
 #[no_mangle]
 pub unsafe extern "C" fn pidInitSetpointDerivativeLpf(mut filterCutoff:
@@ -1235,10 +1109,10 @@ pub unsafe extern "C" fn pidInitSetpointDerivativeLpf(mut filterCutoff:
                                                           uint8_t) {
     rcSmoothingDebugAxis = debugAxis;
     rcSmoothingFilterType = filterType;
-    if filterCutoff as libc::c_int > 0 as libc::c_int &&
+    if filterCutoff as libc::c_int > 0i32 &&
            rcSmoothingFilterType as libc::c_int !=
                RC_SMOOTHING_DERIVATIVE_OFF as libc::c_int {
-        setpointDerivativeLpfInitialized = 1 as libc::c_int != 0;
+        setpointDerivativeLpfInitialized = 1i32 != 0;
         let mut axis: libc::c_int = FD_ROLL as libc::c_int;
         while axis <= FD_YAW as libc::c_int {
             match rcSmoothingFilterType as libc::c_int {
@@ -1264,7 +1138,7 @@ pub unsafe extern "C" fn pidInitSetpointDerivativeLpf(mut filterCutoff:
 #[no_mangle]
 pub unsafe extern "C" fn pidUpdateSetpointDerivativeLpf(mut filterCutoff:
                                                             uint16_t) {
-    if filterCutoff as libc::c_int > 0 as libc::c_int &&
+    if filterCutoff as libc::c_int > 0i32 &&
            rcSmoothingFilterType as libc::c_int !=
                RC_SMOOTHING_DERIVATIVE_OFF as libc::c_int {
         let mut axis: libc::c_int = FD_ROLL as libc::c_int;
@@ -1321,8 +1195,8 @@ static mut acLimit: libc::c_float = 0.;
 static mut acErrorLimit: libc::c_float = 0.;
 #[no_mangle]
 pub unsafe extern "C" fn pidResetITerm() {
-    let mut axis: libc::c_int = 0 as libc::c_int;
-    while axis < 3 as libc::c_int {
+    let mut axis: libc::c_int = 0i32;
+    while axis < 3i32 {
         pidData[axis as usize].I = 0.0f32;
         axisError[axis as usize] = 0.0f32;
         axis += 1
@@ -1346,9 +1220,8 @@ pub unsafe extern "C" fn pidUpdateAntiGravityThrottleFilter(mut throttle:
 }
 #[no_mangle]
 pub unsafe extern "C" fn pidInitConfig(mut pidProfile: *const pidProfile_t) {
-    if (*pidProfile).feedForwardTransition as libc::c_int == 0 as libc::c_int
-       {
-        feedForwardTransition = 0 as libc::c_int as libc::c_float
+    if (*pidProfile).feedForwardTransition as libc::c_int == 0i32 {
+        feedForwardTransition = 0i32 as libc::c_float
     } else {
         feedForwardTransition =
             100.0f32 /
@@ -1386,31 +1259,27 @@ pub unsafe extern "C" fn pidInitConfig(mut pidProfile: *const pidProfile_t) {
             libc::c_float;
     horizonTiltExpertMode = (*pidProfile).horizon_tilt_expert_mode;
     horizonCutoffDegrees =
-        (175 as libc::c_int -
-             (*pidProfile).horizon_tilt_effect as libc::c_int) as
+        (175i32 - (*pidProfile).horizon_tilt_effect as libc::c_int) as
             libc::c_float * 1.8f32;
     horizonFactorRatio =
-        (100 as libc::c_int -
-             (*pidProfile).horizon_tilt_effect as libc::c_int) as
+        (100i32 - (*pidProfile).horizon_tilt_effect as libc::c_int) as
             libc::c_float * 0.01f32;
     maxVelocity[FD_PITCH as libc::c_int as usize] =
-        ((*pidProfile).rateAccelLimit as libc::c_int * 100 as libc::c_int) as
+        ((*pidProfile).rateAccelLimit as libc::c_int * 100i32) as
             libc::c_float * dT;
     maxVelocity[FD_ROLL as libc::c_int as usize] =
         maxVelocity[FD_PITCH as libc::c_int as usize];
     maxVelocity[FD_YAW as libc::c_int as usize] =
-        ((*pidProfile).yawRateAccelLimit as libc::c_int * 100 as libc::c_int)
-            as libc::c_float * dT;
+        ((*pidProfile).yawRateAccelLimit as libc::c_int * 100i32) as
+            libc::c_float * dT;
     let ITermWindupPoint: libc::c_float =
         (*pidProfile).itermWindupPointPercent as libc::c_float / 100.0f32;
     ITermWindupPointInv = 1.0f32 / (1.0f32 - ITermWindupPoint);
     itermAcceleratorGain = (*pidProfile).itermAcceleratorGain;
-    crashTimeLimitUs =
-        (*pidProfile).crash_time as libc::c_int * 1000 as libc::c_int;
-    crashTimeDelayUs =
-        (*pidProfile).crash_delay as libc::c_int * 1000 as libc::c_int;
+    crashTimeLimitUs = (*pidProfile).crash_time as libc::c_int * 1000i32;
+    crashTimeDelayUs = (*pidProfile).crash_delay as libc::c_int * 1000i32;
     crashRecoveryAngleDeciDegrees =
-        (*pidProfile).crash_recovery_angle as libc::c_int * 10 as libc::c_int;
+        (*pidProfile).crash_recovery_angle as libc::c_int * 10i32;
     crashRecoveryRate = (*pidProfile).crash_recovery_rate as libc::c_float;
     crashGyroThreshold = (*pidProfile).crash_gthreshold as libc::c_float;
     crashDtermThreshold = (*pidProfile).crash_dthreshold as libc::c_float;
@@ -1430,8 +1299,8 @@ pub unsafe extern "C" fn pidInitConfig(mut pidProfile: *const pidProfile_t) {
     antiGravityOsdCutoff = 1.0f32;
     if antiGravityMode as libc::c_int == ANTI_GRAVITY_SMOOTH as libc::c_int {
         antiGravityOsdCutoff +=
-            (itermAcceleratorGain as libc::c_int - 1000 as libc::c_int) as
-                libc::c_float / 1000.0f32 * 0.25f32
+            (itermAcceleratorGain as libc::c_int - 1000i32) as libc::c_float /
+                1000.0f32 * 0.25f32
     }
     smartFeedforward = (*pidProfile).smart_feedforward != 0;
     itermRelax = (*pidProfile).iterm_relax;
@@ -1461,17 +1330,15 @@ pub unsafe extern "C" fn pidInit(mut pidProfile: *const pidProfile_t) {
 }
 #[no_mangle]
 pub unsafe extern "C" fn pidAcroTrainerInit() {
-    acroTrainerAxisState[FD_ROLL as libc::c_int as usize] = 0 as libc::c_int;
-    acroTrainerAxisState[FD_PITCH as libc::c_int as usize] = 0 as libc::c_int;
+    acroTrainerAxisState[FD_ROLL as libc::c_int as usize] = 0i32;
+    acroTrainerAxisState[FD_PITCH as libc::c_int as usize] = 0i32;
 }
 // USE_ACRO_TRAINER
 #[no_mangle]
 pub unsafe extern "C" fn pidCopyProfile(mut dstPidProfileIndex: uint8_t,
                                         mut srcPidProfileIndex: uint8_t) {
-    if (dstPidProfileIndex as libc::c_int) <
-           3 as libc::c_int - 1 as libc::c_int &&
-           (srcPidProfileIndex as libc::c_int) <
-               3 as libc::c_int - 1 as libc::c_int &&
+    if (dstPidProfileIndex as libc::c_int) < 3i32 - 1i32 &&
+           (srcPidProfileIndex as libc::c_int) < 3i32 - 1i32 &&
            dstPidProfileIndex as libc::c_int !=
                srcPidProfileIndex as libc::c_int {
         memcpy(pidProfilesMutable(dstPidProfileIndex as libc::c_int) as
@@ -1499,14 +1366,14 @@ unsafe extern "C" fn calcHorizonLevelStrength() -> libc::c_float {
              let mut _a: libc::c_int =
                  ({
                       let mut _x: int16_t = attitude.values.roll;
-                      (if _x as libc::c_int > 0 as libc::c_int {
+                      (if _x as libc::c_int > 0i32 {
                            _x as libc::c_int
                        } else { -(_x as libc::c_int) })
                   });
              let mut _b: libc::c_int =
                  ({
                       let mut _x: int16_t = attitude.values.pitch;
-                      (if _x as libc::c_int > 0 as libc::c_int {
+                      (if _x as libc::c_int > 0i32 {
                            _x as libc::c_int
                        } else { -(_x as libc::c_int) })
                   });
@@ -1515,28 +1382,27 @@ unsafe extern "C" fn calcHorizonLevelStrength() -> libc::c_float {
     // horizonTiltExpertMode:  0 = leveling always active when sticks centered,
     //                         1 = leveling can be totally off when inverted
     if horizonTiltExpertMode != 0 {
-        if horizonTransition > 0 as libc::c_int as libc::c_float &&
-               horizonCutoffDegrees > 0 as libc::c_int as libc::c_float {
+        if horizonTransition > 0i32 as libc::c_float &&
+               horizonCutoffDegrees > 0i32 as libc::c_float {
             let inclinationLevelRatio: libc::c_float =
                 constrainf((horizonCutoffDegrees - currentInclination) /
-                               horizonCutoffDegrees,
-                           0 as libc::c_int as libc::c_float,
-                           1 as libc::c_int as
+                               horizonCutoffDegrees, 0i32 as libc::c_float,
+                           1i32 as
                                libc::c_float); // horizon_tilt_expert_mode = 0 (leveling always active when sticks centered)
             horizonLevelStrength =
-                (horizonLevelStrength - 1 as libc::c_int as libc::c_float) *
-                    100 as libc::c_int as libc::c_float / horizonTransition +
-                    1 as libc::c_int as libc::c_float;
+                (horizonLevelStrength - 1i32 as libc::c_float) *
+                    100i32 as libc::c_float / horizonTransition +
+                    1i32 as libc::c_float;
             horizonLevelStrength *= inclinationLevelRatio
-        } else { horizonLevelStrength = 0 as libc::c_int as libc::c_float }
+        } else { horizonLevelStrength = 0i32 as libc::c_float }
     } else {
         let mut sensitFact: libc::c_float =
             0.; // d_level=0 or horizon_tilt_effect>=175 means no leveling
         if horizonFactorRatio < 1.01f32 {
             let inclinationLevelRatio_0: libc::c_float =
-                (180 as libc::c_int as libc::c_float - currentInclination) /
-                    180 as libc::c_int as libc::c_float *
-                    (1.0f32 - horizonFactorRatio) + horizonFactorRatio;
+                (180i32 as libc::c_float - currentInclination) /
+                    180i32 as libc::c_float * (1.0f32 - horizonFactorRatio) +
+                    horizonFactorRatio;
             // if d_level > 0 and horizonTiltEffect < 175
             // horizonCutoffDegrees: 0 to 125 => 270 to 90 (represents where leveling goes to zero)
             // inclinationLevelRatio (0.0 to 1.0) is smaller (less leveling)
@@ -1552,27 +1418,27 @@ unsafe extern "C" fn calcHorizonLevelStrength() -> libc::c_float {
         } else {
             sensitFact = horizonTransition
         } // horizonTiltEffect=0 for "old" functionality
-        if sensitFact <= 0 as libc::c_int as libc::c_float {
+        if sensitFact <= 0i32 as libc::c_float {
             // if horizonTiltEffect > 0
             // horizonFactorRatio: 1.0 to 0.0 (larger means more leveling)
             // inclinationLevelRatio (0.0 to 1.0) is smaller (less leveling)
             //  for larger inclinations, goes to 1.0 at inclination==level:
             // apply ratio to configured horizon sensitivity:
             // zero means no leveling
-            horizonLevelStrength = 0 as libc::c_int as libc::c_float
+            horizonLevelStrength = 0i32 as libc::c_float
         } else {
             // when stick is near center (horizonLevelStrength ~= 1.0)
             //  sensitFact value has little effect,
             // when stick is deflected (horizonLevelStrength near 0.0)
             //  sensitFact value has more effect:
             horizonLevelStrength =
-                (horizonLevelStrength - 1 as libc::c_int as libc::c_float) *
-                    (100 as libc::c_int as libc::c_float / sensitFact) +
-                    1 as libc::c_int as libc::c_float
+                (horizonLevelStrength - 1i32 as libc::c_float) *
+                    (100i32 as libc::c_float / sensitFact) +
+                    1i32 as libc::c_float
         }
     }
-    return constrainf(horizonLevelStrength, 0 as libc::c_int as libc::c_float,
-                      1 as libc::c_int as libc::c_float);
+    return constrainf(horizonLevelStrength, 0i32 as libc::c_float,
+                      1i32 as libc::c_float);
 }
 unsafe extern "C" fn pidLevel(mut axis: libc::c_int,
                               mut pidProfile: *const pidProfile_t,
@@ -1617,10 +1483,10 @@ unsafe extern "C" fn accelerationLimit(mut axis: libc::c_int,
         currentPidSetpoint - previousSetpoint[axis as usize];
     if ({
             let _x: libc::c_float = currentVelocity;
-            (if _x > 0 as libc::c_int as libc::c_float { _x } else { -_x })
+            (if _x > 0i32 as libc::c_float { _x } else { -_x })
         }) > maxVelocity[axis as usize] {
         currentPidSetpoint =
-            if currentVelocity > 0 as libc::c_int as libc::c_float {
+            if currentVelocity > 0i32 as libc::c_float {
                 (previousSetpoint[axis as usize]) + maxVelocity[axis as usize]
             } else {
                 (previousSetpoint[axis as usize]) - maxVelocity[axis as usize]
@@ -1663,23 +1529,17 @@ unsafe extern "C" fn handleCrashRecovery(crash_recovery: pidCrashRecovery_e,
                    ({
                         let mut _x: libc::c_float =
                             gyro.gyroADCf[FD_ROLL as libc::c_int as usize];
-                        (if _x > 0 as libc::c_int as libc::c_float {
-                             _x
-                         } else { -_x })
+                        (if _x > 0i32 as libc::c_float { _x } else { -_x })
                     }) < crashRecoveryRate &&
                    ({
                         let mut _x: libc::c_float =
                             gyro.gyroADCf[FD_PITCH as libc::c_int as usize];
-                        (if _x > 0 as libc::c_int as libc::c_float {
-                             _x
-                         } else { -_x })
+                        (if _x > 0i32 as libc::c_float { _x } else { -_x })
                     }) < crashRecoveryRate &&
                    ({
                         let mut _x: libc::c_float =
                             gyro.gyroADCf[FD_YAW as libc::c_int as usize];
-                        (if _x > 0 as libc::c_int as libc::c_float {
-                             _x
-                         } else { -_x })
+                        (if _x > 0i32 as libc::c_float { _x } else { -_x })
                     }) < crashRecoveryRate {
             if sensors(SENSOR_ACC as libc::c_int as uint32_t) {
                 // check aircraft nearly level
@@ -1689,7 +1549,7 @@ unsafe extern "C" fn handleCrashRecovery(crash_recovery: pidCrashRecovery_e,
                                 libc::c_int -
                                 (*angleTrim).raw[FD_ROLL as libc::c_int as
                                                      usize] as libc::c_int;
-                        (if _x > 0 as libc::c_int { _x } else { -_x })
+                        (if _x > 0i32 { _x } else { -_x })
                     }) < crashRecoveryAngleDeciDegrees &&
                        ({
                             let mut _x: libc::c_int =
@@ -1698,11 +1558,11 @@ unsafe extern "C" fn handleCrashRecovery(crash_recovery: pidCrashRecovery_e,
                                     (*angleTrim).raw[FD_PITCH as libc::c_int
                                                          as usize] as
                                         libc::c_int;
-                            (if _x > 0 as libc::c_int { _x } else { -_x })
+                            (if _x > 0i32 { _x } else { -_x })
                         }) < crashRecoveryAngleDeciDegrees {
-                    inCrashRecoveryMode = 0 as libc::c_int != 0
+                    inCrashRecoveryMode = 0i32 != 0
                 }
-            } else { inCrashRecoveryMode = 0 as libc::c_int != 0 }
+            } else { inCrashRecoveryMode = 0i32 != 0 }
         }
     };
 }
@@ -1721,23 +1581,17 @@ unsafe extern "C" fn detectAndSetCrashRecovery(crash_recovery:
             if getMotorMixRange() >= 1.0f32 && !inCrashRecoveryMode &&
                    ({
                         let _x: libc::c_float = delta;
-                        (if _x > 0 as libc::c_int as libc::c_float {
-                             _x
-                         } else { -_x })
+                        (if _x > 0i32 as libc::c_float { _x } else { -_x })
                     }) > crashDtermThreshold &&
                    ({
                         let _x: libc::c_float = errorRate;
-                        (if _x > 0 as libc::c_int as libc::c_float {
-                             _x
-                         } else { -_x })
+                        (if _x > 0i32 as libc::c_float { _x } else { -_x })
                     }) > crashGyroThreshold &&
                    ({
                         let mut _x: libc::c_float = getSetpointRate(axis);
-                        (if _x > 0 as libc::c_int as libc::c_float {
-                             _x
-                         } else { -_x })
+                        (if _x > 0i32 as libc::c_float { _x } else { -_x })
                     }) < crashSetpointThreshold {
-                inCrashRecoveryMode = 1 as libc::c_int != 0;
+                inCrashRecoveryMode = 1i32 != 0;
                 crashDetectedAtUs = currentTimeUs
             }
             if inCrashRecoveryMode as libc::c_int != 0 &&
@@ -1745,32 +1599,28 @@ unsafe extern "C" fn detectAndSetCrashRecovery(crash_recovery:
                        crashTimeDelayUs &&
                    (({
                          let _x: libc::c_float = errorRate;
-                         (if _x > 0 as libc::c_int as libc::c_float {
-                              _x
-                          } else { -_x })
+                         (if _x > 0i32 as libc::c_float { _x } else { -_x })
                      }) < crashGyroThreshold ||
                         ({
                              let mut _x: libc::c_float =
                                  getSetpointRate(axis);
-                             (if _x > 0 as libc::c_int as libc::c_float {
+                             (if _x > 0i32 as libc::c_float {
                                   _x
                               } else { -_x })
                          }) > crashSetpointThreshold) {
-                inCrashRecoveryMode = 0 as libc::c_int != 0
+                inCrashRecoveryMode = 0i32 != 0
             }
-        } else if inCrashRecoveryMode {
-            inCrashRecoveryMode = 0 as libc::c_int != 0
-        }
+        } else if inCrashRecoveryMode { inCrashRecoveryMode = 0i32 != 0 }
     };
 }
 unsafe extern "C" fn rotateVector(mut v: *mut libc::c_float,
                                   mut rotation: *mut libc::c_float) {
     // rotate v around rotation vector rotation
     // rotation in radians, all elements must be small
-    let mut i: libc::c_int = 0 as libc::c_int;
-    while i < 3 as libc::c_int {
-        let mut i_1: libc::c_int = (i + 1 as libc::c_int) % 3 as libc::c_int;
-        let mut i_2: libc::c_int = (i + 2 as libc::c_int) % 3 as libc::c_int;
+    let mut i: libc::c_int = 0i32;
+    while i < 3i32 {
+        let mut i_1: libc::c_int = (i + 1i32) % 3i32;
+        let mut i_2: libc::c_int = (i + 2i32) % 3i32;
         let mut newV: libc::c_float =
             *v.offset(i_1 as isize) +
                 *v.offset(i_2 as isize) * *rotation.offset(i as isize);
@@ -1781,8 +1631,7 @@ unsafe extern "C" fn rotateVector(mut v: *mut libc::c_float,
     };
 }
 unsafe extern "C" fn rotateITermAndAxisError() {
-    if itermRotation as libc::c_int != 0 ||
-           acGain > 0 as libc::c_int as libc::c_float {
+    if itermRotation as libc::c_int != 0 || acGain > 0i32 as libc::c_float {
         let gyroToAngle: libc::c_float =
             dT * (3.14159265358979323846f32 / 180.0f32);
         let mut rotationRads: [libc::c_float; 3] = [0.; 3];
@@ -1792,19 +1641,19 @@ unsafe extern "C" fn rotateITermAndAxisError() {
                 gyro.gyroADCf[i as usize] * gyroToAngle;
             i += 1
         }
-        if acGain > 0 as libc::c_int as libc::c_float {
+        if acGain > 0i32 as libc::c_float {
             rotateVector(axisError.as_mut_ptr(), rotationRads.as_mut_ptr());
         }
         if itermRotation {
             let mut v: [libc::c_float; 3] = [0.; 3];
-            let mut i_0: libc::c_int = 0 as libc::c_int;
-            while i_0 < 3 as libc::c_int {
+            let mut i_0: libc::c_int = 0i32;
+            while i_0 < 3i32 {
                 v[i_0 as usize] = pidData[i_0 as usize].I;
                 i_0 += 1
             }
             rotateVector(v.as_mut_ptr(), rotationRads.as_mut_ptr());
-            let mut i_1: libc::c_int = 0 as libc::c_int;
-            while i_1 < 3 as libc::c_int {
+            let mut i_1: libc::c_int = 0i32;
+            while i_1 < 3i32 {
                 pidData[i_1 as usize].I = v[i_1 as usize];
                 i_1 += 1
             }
@@ -1814,9 +1663,7 @@ unsafe extern "C" fn rotateITermAndAxisError() {
 #[no_mangle]
 pub unsafe extern "C" fn acroTrainerSign(mut x: libc::c_float)
  -> libc::c_int {
-    return if x > 0 as libc::c_int as libc::c_float {
-               1 as libc::c_int
-           } else { -(1 as libc::c_int) };
+    return if x > 0i32 as libc::c_float { 1i32 } else { -1i32 };
 }
 // Acro Trainer - Manipulate the setPoint to limit axis angle while in acro mode
 // There are three states:
@@ -1839,29 +1686,28 @@ unsafe extern "C" fn applyAcroTrainer(mut axis: libc::c_int,
            &&
            flightModeFlags as libc::c_int & GPS_RESCUE_MODE as libc::c_int ==
                0 {
-        let mut resetIterm: bool = 0 as libc::c_int != 0;
-        let mut projectedAngle: libc::c_float =
-            0 as libc::c_int as libc::c_float;
+        let mut resetIterm: bool = 0i32 != 0;
+        let mut projectedAngle: libc::c_float = 0i32 as libc::c_float;
         let setpointSign: libc::c_int = acroTrainerSign(setPoint);
         let currentAngle: libc::c_float =
             (attitude.raw[axis as usize] as libc::c_int -
                  (*angleTrim).raw[axis as usize] as libc::c_int) as
                 libc::c_float / 10.0f32;
         let angleSign: libc::c_int = acroTrainerSign(currentAngle);
-        if acroTrainerAxisState[axis as usize] != 0 as libc::c_int &&
+        if acroTrainerAxisState[axis as usize] != 0i32 &&
                acroTrainerAxisState[axis as usize] != setpointSign {
             // stick has reversed - stop limiting
-            acroTrainerAxisState[axis as usize] = 0 as libc::c_int
+            acroTrainerAxisState[axis as usize] = 0i32
         }
         // Limit and correct the angle when it exceeds the limit
         if fabsf(currentAngle) > acroTrainerAngleLimit &&
-               acroTrainerAxisState[axis as usize] == 0 as libc::c_int {
+               acroTrainerAxisState[axis as usize] == 0i32 {
             if angleSign == setpointSign {
                 acroTrainerAxisState[axis as usize] = angleSign;
-                resetIterm = 1 as libc::c_int != 0
+                resetIterm = 1i32 != 0
             }
         }
-        if acroTrainerAxisState[axis as usize] != 0 as libc::c_int {
+        if acroTrainerAxisState[axis as usize] != 0i32 {
             ret =
                 constrainf((acroTrainerAngleLimit * angleSign as libc::c_float
                                 - currentAngle) * acroTrainerGain, -1000.0f32,
@@ -1884,27 +1730,22 @@ unsafe extern "C" fn applyAcroTrainer(mut axis: libc::c_int,
                     (acroTrainerAngleLimit *
                          projectedAngleSign as libc::c_float - projectedAngle)
                         * acroTrainerGain;
-                resetIterm = 1 as libc::c_int != 0
+                resetIterm = 1i32 != 0
             }
         }
-        if resetIterm {
-            pidData[axis as usize].I = 0 as libc::c_int as libc::c_float
-        }
+        if resetIterm { pidData[axis as usize].I = 0i32 as libc::c_float }
         if axis == acroTrainerDebugAxis as libc::c_int {
             if debugMode as libc::c_int == DEBUG_ACRO_TRAINER as libc::c_int {
-                debug[0 as libc::c_int as usize] =
-                    lrintf(currentAngle * 10.0f32) as int16_t
+                debug[0] = lrintf(currentAngle * 10.0f32) as int16_t
             }
             if debugMode as libc::c_int == DEBUG_ACRO_TRAINER as libc::c_int {
-                debug[1 as libc::c_int as usize] =
-                    acroTrainerAxisState[axis as usize] as int16_t
+                debug[1] = acroTrainerAxisState[axis as usize] as int16_t
             }
             if debugMode as libc::c_int == DEBUG_ACRO_TRAINER as libc::c_int {
-                debug[2 as libc::c_int as usize] = lrintf(ret) as int16_t
+                debug[2] = lrintf(ret) as int16_t
             }
             if debugMode as libc::c_int == DEBUG_ACRO_TRAINER as libc::c_int {
-                debug[3 as libc::c_int as usize] =
-                    lrintf(projectedAngle * 10.0f32) as int16_t
+                debug[3] = lrintf(projectedAngle * 10.0f32) as int16_t
             }
         }
     }
@@ -1920,8 +1761,7 @@ pub unsafe extern "C" fn applyRcSmoothingDerivativeFilter(mut axis:
     let mut ret: libc::c_float = pidSetpointDelta;
     if axis == rcSmoothingDebugAxis as libc::c_int {
         if debugMode as libc::c_int == DEBUG_RC_SMOOTHING as libc::c_int {
-            debug[1 as libc::c_int as usize] =
-                lrintf(pidSetpointDelta * 100.0f32) as int16_t
+            debug[1] = lrintf(pidSetpointDelta * 100.0f32) as int16_t
         }
     }
     if setpointDerivativeLpfInitialized {
@@ -1944,8 +1784,7 @@ pub unsafe extern "C" fn applyRcSmoothingDerivativeFilter(mut axis:
         }
         if axis == rcSmoothingDebugAxis as libc::c_int {
             if debugMode as libc::c_int == DEBUG_RC_SMOOTHING as libc::c_int {
-                debug[2 as libc::c_int as usize] =
-                    lrintf(ret * 100.0f32) as int16_t
+                debug[2] = lrintf(ret * 100.0f32) as int16_t
             }
         }
     }
@@ -1956,23 +1795,17 @@ pub unsafe extern "C" fn applyRcSmoothingDerivativeFilter(mut axis:
 pub unsafe extern "C" fn applySmartFeedforward(mut axis: libc::c_int) {
     if smartFeedforward {
         if pidData[axis as usize].P * pidData[axis as usize].F >
-               0 as libc::c_int as libc::c_float {
+               0i32 as libc::c_float {
             if ({
                     let mut _x: libc::c_float = pidData[axis as usize].F;
-                    (if _x > 0 as libc::c_int as libc::c_float {
-                         _x
-                     } else { -_x })
+                    (if _x > 0i32 as libc::c_float { _x } else { -_x })
                 }) >
                    ({
                         let mut _x: libc::c_float = pidData[axis as usize].P;
-                        (if _x > 0 as libc::c_int as libc::c_float {
-                             _x
-                         } else { -_x })
+                        (if _x > 0i32 as libc::c_float { _x } else { -_x })
                     }) {
-                pidData[axis as usize].P = 0 as libc::c_int as libc::c_float
-            } else {
-                pidData[axis as usize].F = 0 as libc::c_int as libc::c_float
-            }
+                pidData[axis as usize].P = 0i32 as libc::c_float
+            } else { pidData[axis as usize].F = 0i32 as libc::c_float }
         }
     };
 }
@@ -1993,20 +1826,19 @@ pub unsafe extern "C" fn pidController(mut pidProfile: *const pidProfile_t,
     if antiGravityMode as libc::c_int == ANTI_GRAVITY_SMOOTH as libc::c_int &&
            antiGravityEnabled as libc::c_int != 0 {
         itermAccelerator =
-            1 as libc::c_int as libc::c_float +
+            1i32 as libc::c_float +
                 fabsf(antiGravityThrottleHpf) * 0.01f32 *
-                    (itermAcceleratorGain as libc::c_int -
-                         1000 as libc::c_int) as libc::c_float;
+                    (itermAcceleratorGain as libc::c_int - 1000i32) as
+                        libc::c_float;
         if debugMode as libc::c_int == DEBUG_ANTI_GRAVITY as libc::c_int {
-            debug[1 as libc::c_int as usize] =
-                lrintf(antiGravityThrottleHpf *
-                           1000 as libc::c_int as libc::c_float) as int16_t
+            debug[1] =
+                lrintf(antiGravityThrottleHpf * 1000i32 as libc::c_float) as
+                    int16_t
         }
     }
     if debugMode as libc::c_int == DEBUG_ANTI_GRAVITY as libc::c_int {
-        debug[0 as libc::c_int as usize] =
-            lrintf(itermAccelerator * 1000 as libc::c_int as libc::c_float) as
-                int16_t
+        debug[0] =
+            lrintf(itermAccelerator * 1000i32 as libc::c_float) as int16_t
     }
     // gradually scale back integration when above windup point
     let dynCi: libc::c_float =
@@ -2090,8 +1922,7 @@ pub unsafe extern "C" fn pidController(mut pidProfile: *const pidProfile_t,
         let gyroRate: libc::c_float =
             gyro.gyroADCf[axis_0 as
                               usize]; // Process variable from gyro output in deg/sec
-        let mut acCorrection: libc::c_float =
-            0 as libc::c_int as libc::c_float;
+        let mut acCorrection: libc::c_float = 0i32 as libc::c_float;
         let mut acErrorRate: libc::c_float = 0.;
         let ITerm: libc::c_float = pidData[axis_0 as usize].I;
         let mut itermErrorRate: libc::c_float = currentPidSetpoint - gyroRate;
@@ -2108,18 +1939,18 @@ pub unsafe extern "C" fn pidController(mut pidProfile: *const pidProfile_t,
             let setpointHpf: libc::c_float =
                 fabsf(currentPidSetpoint - setpointLpf);
             let itermRelaxFactor: libc::c_float =
-                1 as libc::c_int as libc::c_float - setpointHpf / 30.0f32;
+                1i32 as libc::c_float - setpointHpf / 30.0f32;
             let isDecreasingI: bool =
-                ITerm > 0 as libc::c_int as libc::c_float &&
-                    itermErrorRate < 0 as libc::c_int as libc::c_float ||
-                    ITerm < 0 as libc::c_int as libc::c_float &&
-                        itermErrorRate > 0 as libc::c_int as libc::c_float;
+                ITerm > 0i32 as libc::c_float &&
+                    itermErrorRate < 0i32 as libc::c_float ||
+                    ITerm < 0i32 as libc::c_float &&
+                        itermErrorRate > 0i32 as libc::c_float;
             if !(itermRelax as libc::c_int >=
                      ITERM_RELAX_RP_INC as libc::c_int &&
                      isDecreasingI as libc::c_int != 0) {
                 if itermRelaxType as libc::c_int ==
                        ITERM_RELAX_SETPOINT as libc::c_int &&
-                       setpointHpf < 30 as libc::c_int as libc::c_float {
+                       setpointHpf < 30i32 as libc::c_float {
                     itermErrorRate *= itermRelaxFactor
                 } else if itermRelaxType as libc::c_int ==
                               ITERM_RELAX_GYRO as libc::c_int {
@@ -2130,29 +1961,26 @@ pub unsafe extern "C" fn pidController(mut pidProfile: *const pidProfile_t,
             if axis_0 == FD_ROLL as libc::c_int {
                 if debugMode as libc::c_int ==
                        DEBUG_ITERM_RELAX as libc::c_int {
-                    debug[0 as libc::c_int as usize] =
-                        lrintf(setpointHpf) as int16_t
+                    debug[0] = lrintf(setpointHpf) as int16_t
                 }
                 if debugMode as libc::c_int ==
                        DEBUG_ITERM_RELAX as libc::c_int {
-                    debug[1 as libc::c_int as usize] =
-                        lrintf(itermRelaxFactor * 100.0f32) as int16_t
+                    debug[1] = lrintf(itermRelaxFactor * 100.0f32) as int16_t
                 }
                 if debugMode as libc::c_int ==
                        DEBUG_ITERM_RELAX as libc::c_int {
-                    debug[2 as libc::c_int as usize] =
-                        lrintf(itermErrorRate) as int16_t
+                    debug[2] = lrintf(itermErrorRate) as int16_t
                 }
             }
             let gmaxac: libc::c_float =
-                setpointLpf + 2 as libc::c_int as libc::c_float * setpointHpf;
+                setpointLpf + 2i32 as libc::c_float * setpointHpf;
             let gminac: libc::c_float =
-                setpointLpf - 2 as libc::c_int as libc::c_float * setpointHpf;
+                setpointLpf - 2i32 as libc::c_float * setpointHpf;
             if gyroRate >= gminac && gyroRate <= gmaxac {
                 let mut acErrorRate1: libc::c_float = gmaxac - gyroRate;
                 let mut acErrorRate2: libc::c_float = gminac - gyroRate;
                 if acErrorRate1 * axisError[axis_0 as usize] <
-                       0 as libc::c_int as libc::c_float {
+                       0i32 as libc::c_float {
                     acErrorRate = acErrorRate1
                 } else { acErrorRate = acErrorRate2 }
                 if fabsf(acErrorRate * dT) > fabsf(axisError[axis_0 as usize])
@@ -2170,7 +1998,7 @@ pub unsafe extern "C" fn pidController(mut pidProfile: *const pidProfile_t,
             acErrorRate = itermErrorRate
             // USE_ABSOLUTE_CONTROL
         } // r - y
-        if acGain > 0 as libc::c_int as libc::c_float &&
+        if acGain > 0i32 as libc::c_float &&
                isAirmodeActivated() as libc::c_int != 0 {
             axisError[axis_0 as usize] =
                 constrainf(axisError[axis_0 as usize] + acErrorRate * dT,
@@ -2183,10 +2011,9 @@ pub unsafe extern "C" fn pidController(mut pidProfile: *const pidProfile_t,
             if axis_0 == FD_ROLL as libc::c_int {
                 if debugMode as libc::c_int ==
                        DEBUG_ITERM_RELAX as libc::c_int {
-                    debug[3 as libc::c_int as usize] =
+                    debug[3] =
                         lrintf(axisError[axis_0 as usize] *
-                                   10 as libc::c_int as libc::c_float) as
-                            int16_t
+                                   10i32 as libc::c_float) as int16_t
                 }
             }
         }
@@ -2218,25 +2045,20 @@ pub unsafe extern "C" fn pidController(mut pidProfile: *const pidProfile_t,
                            pidCoefficient[axis_0 as usize].Ki * itermErrorRate
                                * dynCi, -itermLimit, itermLimit);
         let outputSaturated: bool = mixerIsOutputSaturated(axis_0, errorRate);
-        if outputSaturated as libc::c_int == 0 as libc::c_int ||
+        if outputSaturated as libc::c_int == 0i32 ||
                ({
                     let _x: libc::c_float = ITermNew;
-                    (if _x > 0 as libc::c_int as libc::c_float {
-                         _x
-                     } else { -_x })
+                    (if _x > 0i32 as libc::c_float { _x } else { -_x })
                 }) <
                    ({
                         let _x: libc::c_float = ITerm;
-                        (if _x > 0 as libc::c_int as libc::c_float {
-                             _x
-                         } else { -_x })
+                        (if _x > 0i32 as libc::c_float { _x } else { -_x })
                     }) {
             // Only increase ITerm if output is not saturated
             pidData[axis_0 as usize].I = ITermNew
         }
         // -----calculate D component
-        if pidCoefficient[axis_0 as usize].Kd >
-               0 as libc::c_int as libc::c_float {
+        if pidCoefficient[axis_0 as usize].Kd > 0i32 as libc::c_float {
             // Divide rate change by dT to get differential (ie dr/dt).
             // dT is fixed and calculated from the target PID loop time
             // This is done to avoid DTerm spikes that occur with dynamically
@@ -2250,9 +2072,7 @@ pub unsafe extern "C" fn pidController(mut pidProfile: *const pidProfile_t,
                                       currentTimeUs, delta, errorRate);
             pidData[axis_0 as usize].D =
                 pidCoefficient[axis_0 as usize].Kd * delta * tpaFactor
-        } else {
-            pidData[axis_0 as usize].D = 0 as libc::c_int as libc::c_float
-        }
+        } else { pidData[axis_0 as usize].D = 0i32 as libc::c_float }
         previousGyroRateDterm[axis_0 as usize] =
             gyroRateDterm[axis_0 as usize];
         // -----calculate feedforward component
@@ -2261,10 +2081,10 @@ pub unsafe extern "C" fn pidController(mut pidProfile: *const pidProfile_t,
             if flightModeFlags as libc::c_int != 0 {
                 0.0f32
             } else { pidCoefficient[axis_0 as usize].Kf };
-        if feedforwardGain > 0 as libc::c_int as libc::c_float {
+        if feedforwardGain > 0i32 as libc::c_float {
             // no transition if feedForwardTransition == 0
             let mut transition: libc::c_float =
-                if feedForwardTransition > 0 as libc::c_int as libc::c_float {
+                if feedForwardTransition > 0i32 as libc::c_float {
                     ({
                          let mut _a: libc::c_float = 1.0f32;
                          let mut _b: libc::c_float =
@@ -2272,7 +2092,7 @@ pub unsafe extern "C" fn pidController(mut pidProfile: *const pidProfile_t,
                                  feedForwardTransition;
                          if _a < _b { _a } else { _b }
                      })
-                } else { 1 as libc::c_int as libc::c_float };
+                } else { 1i32 as libc::c_float };
             let mut pidSetpointDelta: libc::c_float =
                 currentPidSetpoint - previousPidSetpoint[axis_0 as usize];
             pidSetpointDelta =
@@ -2282,19 +2102,15 @@ pub unsafe extern "C" fn pidController(mut pidProfile: *const pidProfile_t,
                 feedforwardGain * transition * pidSetpointDelta *
                     pidFrequency; // in yaw spin always disable I
             applySmartFeedforward(axis_0);
-        } else {
-            pidData[axis_0 as usize].F = 0 as libc::c_int as libc::c_float
-        }
+        } else { pidData[axis_0 as usize].F = 0i32 as libc::c_float }
         previousPidSetpoint[axis_0 as usize] = currentPidSetpoint;
         if yawSpinActive {
-            pidData[axis_0 as usize].I = 0 as libc::c_int as libc::c_float;
+            pidData[axis_0 as usize].I = 0i32 as libc::c_float;
             if axis_0 <= FD_PITCH as libc::c_int {
                 // zero PIDs on pitch and roll leaving yaw P to correct spin 
-                pidData[axis_0 as usize].P =
-                    0 as libc::c_int as libc::c_float;
-                pidData[axis_0 as usize].D =
-                    0 as libc::c_int as libc::c_float;
-                pidData[axis_0 as usize].F = 0 as libc::c_int as libc::c_float
+                pidData[axis_0 as usize].P = 0i32 as libc::c_float;
+                pidData[axis_0 as usize].D = 0i32 as libc::c_float;
+                pidData[axis_0 as usize].F = 0i32 as libc::c_float
             }
         }
         // USE_YAW_SPIN_RECOVERY
@@ -2310,11 +2126,11 @@ pub unsafe extern "C" fn pidController(mut pidProfile: *const pidProfile_t,
        {
         let mut axis_1: libc::c_int = FD_ROLL as libc::c_int;
         while axis_1 <= FD_YAW as libc::c_int {
-            pidData[axis_1 as usize].P = 0 as libc::c_int as libc::c_float;
-            pidData[axis_1 as usize].I = 0 as libc::c_int as libc::c_float;
-            pidData[axis_1 as usize].D = 0 as libc::c_int as libc::c_float;
-            pidData[axis_1 as usize].F = 0 as libc::c_int as libc::c_float;
-            pidData[axis_1 as usize].Sum = 0 as libc::c_int as libc::c_float;
+            pidData[axis_1 as usize].P = 0i32 as libc::c_float;
+            pidData[axis_1 as usize].I = 0i32 as libc::c_float;
+            pidData[axis_1 as usize].D = 0i32 as libc::c_float;
+            pidData[axis_1 as usize].F = 0i32 as libc::c_float;
+            pidData[axis_1 as usize].Sum = 0i32 as libc::c_float;
             axis_1 += 1
         }
     };
@@ -2347,15 +2163,10 @@ unsafe extern "C" fn run_static_initializers() {
     pidProfiles_Registry =
         {
             let mut init =
-                pgRegistry_s{pgn:
-                                 (14 as libc::c_int |
-                                      (5 as libc::c_int) << 12 as libc::c_int)
-                                     as pgn_t,
+                pgRegistry_s{pgn: (14i32 | 5i32 << 12i32) as pgn_t,
                              size:
                                  ((::core::mem::size_of::<pidProfile_t>() as
-                                       libc::c_ulong).wrapping_mul(3 as
-                                                                       libc::c_int
-                                                                       as
+                                       libc::c_ulong).wrapping_mul(3i32 as
                                                                        libc::c_ulong)
                                       |
                                       PGR_SIZE_SYSTEM_FLAG as libc::c_int as
@@ -2373,17 +2184,22 @@ unsafe extern "C" fn run_static_initializers() {
                                                                                                               *mut pidProfile_t)
                                                                                          ->
                                                                                              ()>,
-                                                                              Option<pgResetFunc>>(Some(pgResetFn_pidProfiles
-                                                                                                            as
-                                                                                                            unsafe extern "C" fn(_:
-                                                                                                                                     *mut pidProfile_t)
-                                                                                                                ->
-                                                                                                                    ())),},};
+                                                                              Option<unsafe extern "C" fn(_:
+                                                                                                              *mut libc::c_void,
+                                                                                                          _:
+                                                                                                              libc::c_int)
+                                                                                         ->
+                                                                                             ()>>(Some(pgResetFn_pidProfiles
+                                                                                                           as
+                                                                                                           unsafe extern "C" fn(_:
+                                                                                                                                    *mut pidProfile_t)
+                                                                                                               ->
+                                                                                                                   ())),},};
             init
         }
 }
 #[used]
-#[cfg_attr(target_os = "linux", link_section = ".init_array")]
-#[cfg_attr(target_os = "windows", link_section = ".CRT$XIB")]
-#[cfg_attr(target_os = "macos", link_section = "__DATA,__mod_init_func")]
+#[cfg_attr ( target_os = "linux", link_section = ".init_array" )]
+#[cfg_attr ( target_os = "windows", link_section = ".CRT$XIB" )]
+#[cfg_attr ( target_os = "macos", link_section = "__DATA,__mod_init_func" )]
 static INIT_ARRAY: [unsafe extern "C" fn(); 1] = [run_static_initializers];

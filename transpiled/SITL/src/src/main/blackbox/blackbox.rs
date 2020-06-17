@@ -1,4 +1,5 @@
-use ::libc;
+use core;
+use libc;
 extern "C" {
     #[no_mangle]
     fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong)
@@ -36,15 +37,15 @@ extern "C" {
     // increment when a minor release is made (small new feature, change etc)
     // increment when a bug is fixed
     // lower case hexadecimal digits.
-    #[no_mangle]
-    static shortGitRevision: *const libc::c_char;
-    #[no_mangle]
-    static targetName: *const libc::c_char;
-    #[no_mangle]
-    static buildDate: *const libc::c_char;
     // "MMM DD YYYY" MMM = Jan/Feb/...
     #[no_mangle]
     static buildTime: *const libc::c_char;
+    #[no_mangle]
+    static targetName: *const libc::c_char;
+    #[no_mangle]
+    static shortGitRevision: *const libc::c_char;
+    #[no_mangle]
+    static buildDate: *const libc::c_char;
     #[no_mangle]
     fn dateTimeFormatLocal(buf: *mut libc::c_char, dt: *mut dateTime_t)
      -> bool;
@@ -184,17 +185,17 @@ extern "C" {
     #[no_mangle]
     static mut motorConfig_System: motorConfig_t;
     #[no_mangle]
-    static mut motorOutputLow: libc::c_float;
-    #[no_mangle]
     static mut mixerConfig_System: mixerConfig_t;
-    #[no_mangle]
-    fn getMotorCount() -> uint8_t;
-    #[no_mangle]
-    static mut motorOutputHigh: libc::c_float;
     #[no_mangle]
     static mut motor: [libc::c_float; 8];
     #[no_mangle]
+    static mut motorOutputHigh: libc::c_float;
+    #[no_mangle]
+    static mut motorOutputLow: libc::c_float;
+    #[no_mangle]
     fn areMotorsRunning() -> bool;
+    #[no_mangle]
+    fn getMotorCount() -> uint8_t;
     #[no_mangle]
     static mut pidConfig_System: pidConfig_t;
     #[no_mangle]
@@ -219,6 +220,14 @@ extern "C" {
     fn rxAreFlightChannelsValid() -> bool;
     #[no_mangle]
     fn getRssi() -> uint16_t;
+    // gyro alignment
+    // people keep forgetting that moving model while init results in wrong gyro offsets. and then they never reset gyro. so this is now on by default.
+    // Gyro sample divider
+    // gyro DLPF setting
+    // gyro 32khz DLPF setting
+    // Lowpass primary/secondary
+    // Gyro calibration duration in 1/100 second
+    // bandpass quality factor, 100 for steep sided bandpass
     #[no_mangle]
     static mut gyroConfig_System: gyroConfig_t;
     #[no_mangle]
@@ -264,7 +273,7 @@ pub type uint8_t = __uint8_t;
 pub type uint16_t = __uint16_t;
 pub type uint32_t = __uint32_t;
 pub type size_t = libc::c_ulong;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct SPI_TypeDef {
     pub test: *mut libc::c_void,
@@ -278,7 +287,7 @@ pub const PGR_PGN_MASK: C2RustUnnamed = 4095;
 pub type pgResetFunc
     =
     unsafe extern "C" fn(_: *mut libc::c_void, _: libc::c_int) -> ();
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct pgRegistry_s {
     pub pgn: pgn_t,
@@ -288,16 +297,17 @@ pub struct pgRegistry_s {
     pub ptr: *mut *mut uint8_t,
     pub reset: C2RustUnnamed_0,
 }
-#[derive(Copy, Clone)]
-#[repr(C)]
+#[derive ( Copy, Clone )]
+#[repr ( C )]
 pub union C2RustUnnamed_0 {
     pub ptr: *mut libc::c_void,
-    pub fn_0: Option<pgResetFunc>,
+    pub fn_0: Option<unsafe extern "C" fn(_: *mut libc::c_void,
+                                          _: libc::c_int) -> ()>,
 }
 pub type pgRegistry_t = pgRegistry_s;
 pub type timeMs_t = uint32_t;
 pub type timeUs_t = uint32_t;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct _dateTime_s {
     pub year: uint16_t,
@@ -322,7 +332,7 @@ pub const FLIGHT_LOG_EVENT_FLIGHTMODE: FlightLogEvent = 30;
 pub const FLIGHT_LOG_EVENT_LOGGING_RESUME: FlightLogEvent = 14;
 pub const FLIGHT_LOG_EVENT_INFLIGHT_ADJUSTMENT: FlightLogEvent = 13;
 pub const FLIGHT_LOG_EVENT_SYNC_BEEP: FlightLogEvent = 0;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct blackboxConfig_s {
     pub p_ratio: uint16_t,
@@ -331,8 +341,8 @@ pub struct blackboxConfig_s {
     pub mode: uint8_t,
 }
 pub type blackboxConfig_t = blackboxConfig_s;
-#[derive(Copy, Clone)]
-#[repr(C)]
+#[derive ( Copy, Clone )]
+#[repr ( C )]
 pub union flightLogEventData_u {
     pub syncBeep: flightLogEvent_syncBeep_t,
     pub flightMode: flightLogEvent_flightMode_t,
@@ -340,7 +350,7 @@ pub union flightLogEventData_u {
     pub loggingResume: flightLogEvent_loggingResume_t,
 }
 pub type flightLogEvent_loggingResume_t = flightLogEvent_loggingResume_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct flightLogEvent_loggingResume_s {
     pub logIteration: uint32_t,
@@ -349,7 +359,7 @@ pub struct flightLogEvent_loggingResume_s {
 pub type flightLogEvent_inflightAdjustment_t
     =
     flightLogEvent_inflightAdjustment_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct flightLogEvent_inflightAdjustment_s {
     pub newValue: int32_t,
@@ -358,14 +368,14 @@ pub struct flightLogEvent_inflightAdjustment_s {
     pub floatFlag: bool,
 }
 pub type flightLogEvent_flightMode_t = flightLogEvent_flightMode_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct flightLogEvent_flightMode_s {
     pub flags: uint32_t,
     pub lastFlags: uint32_t,
 }
 pub type flightLogEvent_syncBeep_t = flightLogEvent_syncBeep_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct flightLogEvent_syncBeep_s {
     pub time: uint32_t,
@@ -387,25 +397,22 @@ pub const BLACKBOX_STATE_SEND_HEADER: BlackboxState = 3;
 pub const BLACKBOX_STATE_PREPARE_LOG_FILE: BlackboxState = 2;
 pub const BLACKBOX_STATE_STOPPED: BlackboxState = 1;
 pub const BLACKBOX_STATE_DISABLED: BlackboxState = 0;
-#[derive(Copy, Clone)]
-#[repr(C)]
+#[derive ( Copy, Clone )]
+#[repr ( C )]
 pub union C2RustUnnamed_1 {
     pub fieldIndex: libc::c_int,
     pub startTime: uint32_t,
 }
 // I-frame interval / P-frame interval
-// New Event Data type
-// New event data
 // New event tracking of flight modes
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct C2RustUnnamed_2 {
     pub headerIndex: uint32_t,
     pub u: C2RustUnnamed_1,
 }
-// type to hold enough bits for CHECKBOX_ITEM_COUNT. Struct used for value-like behavior
 pub type boxBitmask_t = boxBitmask_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct boxBitmask_s {
     pub bits: [uint32_t; 2],
@@ -509,7 +516,6 @@ pub const FLIGHT_LOG_FIELD_CONDITION_ALWAYS: FlightLogFieldCondition = 0;
 pub const DEBUG_NONE: C2RustUnnamed_4 = 0;
 pub const SENSOR_ACC: C2RustUnnamed_10 = 2;
 pub const FEATURE_RSSI_ADC: C2RustUnnamed_5 = 32768;
-pub type rxConfig_t = rxConfig_s;
 /*
  * This file is part of Cleanflight and Betaflight.
  *
@@ -529,7 +535,8 @@ pub type rxConfig_t = rxConfig_s;
  *
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#[derive(Copy, Clone)]
+pub type rxConfig_t = rxConfig_s;
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct rxConfig_s {
     pub rcmap: [uint8_t; 8],
@@ -563,6 +570,25 @@ pub struct rxConfig_s {
     pub rc_smoothing_input_type: uint8_t,
     pub rc_smoothing_derivative_type: uint8_t,
 }
+// mapping of radio channels to internal RPYTA+ order
+// type of UART-based receiver (0 = spek 10, 1 = spek 11, 2 = sbus). Must be enabled by FEATURE_RX_SERIAL first.
+// invert the serial RX protocol compared to it's default setting
+// allow rx to operate in half duplex mode on F4, ignored for F1 and F3.
+// number of bind pulses for Spektrum satellite receivers
+// whenever we will reset (exit) binding mode after hard reboot
+// Some radios have not a neutral point centered on 1500. can be changed here
+// minimum rc end
+// maximum rc end
+// Camera angle to be scaled into rc commands
+// Throttle setpoint percent where airmode gets activated
+// true to use frame drop flags in the rx protocol
+// offset applied to the RSSI value before it is returned
+// Determines the smoothing algorithm to use: INTERPOLATION or FILTER
+// Filter cutoff frequency for the input filter (0 = auto)
+// Filter cutoff frequency for the setpoint weight derivative filter (0 = auto)
+// Axis to log as debug values when debug_mode = RC_SMOOTHING
+// Input filter type (0 = PT1, 1 = BIQUAD)
+// Derivative filter type (0 = OFF, 1 = PT1, 2 = BIQUAD)
 /*
  * This file is part of Cleanflight and Betaflight.
  *
@@ -612,7 +638,7 @@ pub const CURRENT_METER_NONE: currentMeterSource_e = 0;
  * If not, see <http://www.gnu.org/licenses/>.
  */
 pub type batteryConfig_t = batteryConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct batteryConfig_s {
     pub vbatmaxcellvoltage: uint8_t,
@@ -637,7 +663,7 @@ pub const VOLTAGE_METER_NONE: voltageMeterSource_e = 0;
 pub const SENSOR_BARO: C2RustUnnamed_10 = 4;
 pub const SENSOR_MAG: C2RustUnnamed_10 = 8;
 pub type pidf_t = pidf_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct pidf_s {
     pub P: uint8_t,
@@ -645,7 +671,7 @@ pub struct pidf_s {
     pub D: uint8_t,
     pub F: uint16_t,
 }
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct pidProfile_s {
     pub yaw_lowpass_hz: uint16_t,
@@ -696,7 +722,7 @@ pub struct pidProfile_s {
 }
 pub const MIXER_CUSTOM_TRI: mixerMode = 25;
 pub type mixerConfig_t = mixerConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct mixerConfig_s {
     pub mixerMode: uint8_t,
@@ -705,7 +731,7 @@ pub struct mixerConfig_s {
 }
 pub const MIXER_TRI: mixerMode = 1;
 pub type blackboxMainState_t = blackboxMainState_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct blackboxMainState_s {
     pub time: uint32_t,
@@ -726,7 +752,7 @@ pub struct blackboxMainState_s {
     pub rssi: uint16_t,
 }
 pub type blackboxGpsState_t = blackboxGpsState_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct blackboxGpsState_s {
     pub GPS_home: [int32_t; 2],
@@ -734,7 +760,7 @@ pub struct blackboxGpsState_s {
     pub GPS_numSat: uint8_t,
 }
 pub type serialPort_t = serialPort_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct serialPort_s {
     pub vTable: *const serialPortVTable,
@@ -772,7 +798,7 @@ pub type portMode_e = libc::c_uint;
 pub const MODE_RXTX: portMode_e = 3;
 pub const MODE_TX: portMode_e = 2;
 pub const MODE_RX: portMode_e = 1;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct serialPortVTable {
     pub serialWrite: Option<unsafe extern "C" fn(_: *mut serialPort_t,
@@ -851,7 +877,7 @@ pub const ARMED: C2RustUnnamed_7 = 1;
 // Cell voltage at which the battery is deemed to be "full" 0.1V units, default is 41 (4.1V)
 /* LLH Location in NEU axis system */
 pub type gpsLocation_t = gpsLocation_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct gpsLocation_s {
     pub lat: int32_t,
@@ -859,7 +885,7 @@ pub struct gpsLocation_s {
     pub alt: int32_t,
 }
 pub type gpsSolutionData_t = gpsSolutionData_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct gpsSolutionData_s {
     pub llh: gpsLocation_t,
@@ -870,7 +896,7 @@ pub struct gpsSolutionData_s {
 }
 pub const FEATURE_GPS: C2RustUnnamed_5 = 128;
 pub type baro_t = baro_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct baro_s {
     pub dev: baroDev_t,
@@ -878,6 +904,7 @@ pub struct baro_s {
     pub baroTemperature: int32_t,
     pub baroPressure: int32_t,
 }
+pub type baroDev_t = baroDev_s;
 // latitude * 1e+7
 // longitude * 1e+7
 // altitude in 0.01m
@@ -886,24 +913,6 @@ pub struct baro_s {
 // generic HDOP value (*100)
 // Use temperature for telemetry
 // Use pressure for telemetry
-// baro calculation (filled params are pressure and temperature)
-pub type baroDev_t = baroDev_s;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct baroDev_s {
-    pub busdev: busDevice_t,
-    pub ut_delay: uint16_t,
-    pub up_delay: uint16_t,
-    pub start_ut: baroOpFuncPtr,
-    pub get_ut: baroOpFuncPtr,
-    pub start_up: baroOpFuncPtr,
-    pub get_up: baroOpFuncPtr,
-    pub calculate: baroCalculateFuncPtr,
-}
-// baro start operation
-pub type baroCalculateFuncPtr
-    =
-    Option<unsafe extern "C" fn(_: *mut int32_t, _: *mut int32_t) -> ()>;
 /*
  * This file is part of Cleanflight and Betaflight.
  *
@@ -924,30 +933,45 @@ pub type baroCalculateFuncPtr
  * If not, see <http://www.gnu.org/licenses/>.
  */
 // XXX
+#[derive ( Copy, Clone )]
+#[repr(C)]
+pub struct baroDev_s {
+    pub busdev: busDevice_t,
+    pub ut_delay: uint16_t,
+    pub up_delay: uint16_t,
+    pub start_ut: baroOpFuncPtr,
+    pub get_ut: baroOpFuncPtr,
+    pub start_up: baroOpFuncPtr,
+    pub get_up: baroOpFuncPtr,
+    pub calculate: baroCalculateFuncPtr,
+}
+pub type baroCalculateFuncPtr
+    =
+    Option<unsafe extern "C" fn(_: *mut int32_t, _: *mut int32_t) -> ()>;
 pub type baroOpFuncPtr
     =
     Option<unsafe extern "C" fn(_: *mut baroDev_s) -> ()>;
 pub type busDevice_t = busDevice_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct busDevice_s {
     pub bustype: busType_e,
     pub busdev_u: C2RustUnnamed_3,
 }
-#[derive(Copy, Clone)]
-#[repr(C)]
+#[derive ( Copy, Clone )]
+#[repr ( C )]
 pub union C2RustUnnamed_3 {
     pub spi: deviceSpi_s,
     pub i2c: deviceI2C_s,
     pub mpuSlave: deviceMpuSlave_s,
 }
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct deviceMpuSlave_s {
     pub master: *const busDevice_s,
     pub address: uint8_t,
 }
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct deviceI2C_s {
     pub device: I2CDevice,
@@ -959,47 +983,27 @@ pub const I2CDEV_3: I2CDevice = 2;
 pub const I2CDEV_2: I2CDevice = 1;
 pub const I2CDEV_1: I2CDevice = 0;
 pub const I2CINVALID: I2CDevice = -1;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct deviceSpi_s {
     pub instance: *mut SPI_TypeDef,
     pub csnPin: IO_t,
 }
-// packet tag to specify IO pin
 pub type IO_t = *mut libc::c_void;
-/*
- * This file is part of Cleanflight and Betaflight.
- *
- * Cleanflight and Betaflight are free software. You can redistribute
- * this software and/or modify this software under the terms of the
- * GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option)
- * any later version.
- *
- * Cleanflight and Betaflight are distributed in the hope that they
- * will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this software.
- *
- * If not, see <http://www.gnu.org/licenses/>.
- */
 pub type busType_e = libc::c_uint;
 pub const BUSTYPE_MPU_SLAVE: busType_e = 3;
 pub const BUSTYPE_SPI: busType_e = 2;
 pub const BUSTYPE_I2C: busType_e = 1;
 pub const BUSTYPE_NONE: busType_e = 0;
 pub type mag_t = mag_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct mag_s {
     pub magADC: [libc::c_float; 3],
     pub magneticDeclination: libc::c_float,
 }
 pub type acc_t = acc_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct acc_s {
     pub dev: accDev_t,
@@ -1008,7 +1012,7 @@ pub struct acc_s {
     pub isAccelUpdatedAtLeastOnce: bool,
 }
 pub type accDev_t = accDev_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct accDev_s {
     pub lock: pthread_mutex_t,
@@ -1035,7 +1039,7 @@ pub const CW90_DEG: sensor_align_e = 2;
 pub const CW0_DEG: sensor_align_e = 1;
 pub const ALIGN_DEFAULT: sensor_align_e = 0;
 pub type mpuDetectionResult_t = mpuDetectionResult_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct mpuDetectionResult_s {
     pub sensor: mpuSensor_e,
@@ -1058,20 +1062,40 @@ pub const MPU_60x0_SPI: mpuSensor_e = 3;
 pub const MPU_60x0: mpuSensor_e = 2;
 pub const MPU_3050: mpuSensor_e = 1;
 pub const MPU_NONE: mpuSensor_e = 0;
+/*
+ * This file is part of Cleanflight and Betaflight.
+ *
+ * Cleanflight and Betaflight are free software. You can redistribute
+ * this software and/or modify this software under the terms of the
+ * GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * Cleanflight and Betaflight are distributed in the hope that they
+ * will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this software.
+ *
+ * If not, see <http://www.gnu.org/licenses/>.
+ */
+// driver-provided alignment
 pub type sensorAccReadFuncPtr
     =
     Option<unsafe extern "C" fn(_: *mut accDev_s) -> bool>;
 pub type sensorAccInitFuncPtr
     =
     Option<unsafe extern "C" fn(_: *mut accDev_s) -> ()>;
-#[derive(Copy, Clone)]
-#[repr(C)]
+#[derive ( Copy, Clone )]
+#[repr ( C )]
 pub union pthread_mutex_t {
     pub __data: __pthread_mutex_s,
     pub __size: [libc::c_char; 40],
     pub __align: libc::c_long,
 }
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct __pthread_mutex_s {
     pub __lock: libc::c_int,
@@ -1084,21 +1108,21 @@ pub struct __pthread_mutex_s {
     pub __list: __pthread_list_t,
 }
 pub type __pthread_list_t = __pthread_internal_list;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct __pthread_internal_list {
     pub __prev: *mut __pthread_internal_list,
     pub __next: *mut __pthread_internal_list,
 }
 pub type gyro_t = gyro_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct gyro_s {
     pub targetLooptime: uint32_t,
     pub gyroADCf: [libc::c_float; 3],
 }
 pub type pidAxisData_t = pidAxisData_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct pidAxisData_s {
     pub P: libc::c_float,
@@ -1107,10 +1131,9 @@ pub struct pidAxisData_s {
     pub F: libc::c_float,
     pub Sum: libc::c_float,
 }
-// Slave I2C on SPI master
 // This data is updated really infrequently:
 pub type blackboxSlowState_t = blackboxSlowState_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C, packed)]
 pub struct blackboxSlowState_s {
     pub flightModeFlags: uint32_t,
@@ -1128,7 +1151,7 @@ pub const FAILSAFE_LANDING: failsafePhase_e = 2;
 pub const FAILSAFE_RX_LOSS_DETECTED: failsafePhase_e = 1;
 pub const FAILSAFE_IDLE: failsafePhase_e = 0;
 pub type motorConfig_t = motorConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct motorConfig_s {
     pub dev: motorDevConfig_t,
@@ -1139,7 +1162,7 @@ pub struct motorConfig_s {
     pub motorPoleCount: uint8_t,
 }
 pub type motorDevConfig_t = motorDevConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct motorDevConfig_s {
     pub motorPwmRate: uint16_t,
@@ -1154,13 +1177,13 @@ pub const RC_SMOOTHING_VALUE_AVERAGE_FRAME: C2RustUnnamed_6 = 2;
 pub const RC_SMOOTHING_VALUE_DERIVATIVE_ACTIVE: C2RustUnnamed_6 = 1;
 pub const RC_SMOOTHING_VALUE_INPUT_ACTIVE: C2RustUnnamed_6 = 0;
 pub type featureConfig_t = featureConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct featureConfig_s {
     pub enabledFeatures: uint32_t,
 }
 pub type systemConfig_t = systemConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct systemConfig_s {
     pub pidProfileIndex: uint8_t,
@@ -1173,14 +1196,14 @@ pub struct systemConfig_s {
     pub boardIdentifier: [libc::c_char; 6],
 }
 pub type armingConfig_t = armingConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct armingConfig_s {
     pub gyro_cal_on_first_arm: uint8_t,
     pub auto_disarm_delay: uint8_t,
 }
 pub type compassConfig_t = compassConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct compassConfig_s {
     pub mag_declination: int16_t,
@@ -1195,14 +1218,14 @@ pub struct compassConfig_s {
     pub magZero: flightDynamicsTrims_t,
 }
 pub type flightDynamicsTrims_t = flightDynamicsTrims_u;
-#[derive(Copy, Clone)]
-#[repr(C)]
+#[derive ( Copy, Clone )]
+#[repr ( C )]
 pub union flightDynamicsTrims_u {
     pub raw: [int16_t; 3],
     pub values: flightDynamicsTrims_def_t,
 }
 pub type flightDynamicsTrims_def_t = int16_flightDynamicsTrims_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct int16_flightDynamicsTrims_s {
     pub roll: int16_t,
@@ -1210,7 +1233,7 @@ pub struct int16_flightDynamicsTrims_s {
     pub yaw: int16_t,
 }
 pub type barometerConfig_t = barometerConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct barometerConfig_s {
     pub baro_bustype: uint8_t,
@@ -1225,7 +1248,7 @@ pub struct barometerConfig_s {
     pub baro_cf_alt: uint16_t,
 }
 pub type accelerometerConfig_t = accelerometerConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct accelerometerConfig_s {
     pub acc_lpf_hz: uint16_t,
@@ -1236,21 +1259,21 @@ pub struct accelerometerConfig_s {
     pub accelerometerTrims: rollAndPitchTrims_t,
 }
 pub type rollAndPitchTrims_t = rollAndPitchTrims_u;
-#[derive(Copy, Clone)]
-#[repr(C)]
+#[derive ( Copy, Clone )]
+#[repr ( C )]
 pub union rollAndPitchTrims_u {
     pub raw: [int16_t; 2],
     pub values: rollAndPitchTrims_t_def,
 }
 pub type rollAndPitchTrims_t_def = rollAndPitchTrims_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct rollAndPitchTrims_s {
     pub roll: int16_t,
     pub pitch: int16_t,
 }
 pub type gyroConfig_t = gyroConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct gyroConfig_s {
     pub gyro_align: uint8_t,
@@ -1278,7 +1301,7 @@ pub struct gyroConfig_s {
     pub dyn_notch_width_percent: uint8_t,
 }
 pub type rcControlsConfig_t = rcControlsConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct rcControlsConfig_s {
     pub deadband: uint8_t,
@@ -1294,7 +1317,7 @@ pub const PID_MAG: C2RustUnnamed_8 = 4;
 pub const PID_LEVEL: C2RustUnnamed_8 = 3;
 pub const YAW: rc_alias = 2;
 pub type controlRateConfig_t = controlRateConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct controlRateConfig_s {
     pub thrMid8: uint8_t,
@@ -1311,7 +1334,7 @@ pub struct controlRateConfig_s {
 pub const PITCH: rc_alias = 1;
 pub const ROLL: rc_alias = 0;
 pub type pidConfig_t = pidConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct pidConfig_s {
     pub pid_process_denom: uint8_t,
@@ -1320,14 +1343,14 @@ pub struct pidConfig_s {
     pub runaway_takeoff_deactivate_throttle: uint8_t,
 }
 pub type currentSensorADCConfig_t = currentSensorADCConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct currentSensorADCConfig_s {
     pub scale: int16_t,
     pub offset: int16_t,
 }
 pub type voltageSensorADCConfig_t = voltageSensorADCConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct voltageSensorADCConfig_s {
     pub vbatscale: uint8_t,
@@ -1374,7 +1397,7 @@ pub const VOLTAGE_SENSOR_ADC_VBAT: C2RustUnnamed_11 = 0;
  * If not, see <http://www.gnu.org/licenses/>.
  */
 pub type pilotConfig_t = pilotConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct pilotConfig_s {
     pub name: [libc::c_char; 17],
@@ -1386,7 +1409,7 @@ pub const BLACKBOX_RESERVE_PERMANENT_FAILURE: blackboxBufferReserveStatus_e =
 pub const BLACKBOX_RESERVE_TEMPORARY_FAILURE: blackboxBufferReserveStatus_e =
     1;
 pub type blackboxSimpleFieldDefinition_t = blackboxSimpleFieldDefinition_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct blackboxSimpleFieldDefinition_s {
     pub name: *const libc::c_char,
@@ -1401,7 +1424,7 @@ pub const FLIGHT_LOG_FIELD_UNSIGNED: FlightLogFieldSign = 0;
 pub const FLIGHT_LOG_FIELD_ENCODING_UNSIGNED_VB: FlightLogFieldEncoding = 1;
 /* All field definition structs should look like this (but with longer arrs): */
 pub type blackboxFieldDefinition_t = blackboxFieldDefinition_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct blackboxFieldDefinition_s {
     pub name: *const libc::c_char,
@@ -1411,7 +1434,7 @@ pub struct blackboxFieldDefinition_s {
 pub type blackboxConditionalFieldDefinition_t
     =
     blackboxConditionalFieldDefinition_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct blackboxConditionalFieldDefinition_s {
     pub name: *const libc::c_char,
@@ -1428,7 +1451,7 @@ pub const FLIGHT_LOG_FIELD_PREDICTOR_LAST_MAIN_FRAME_TIME:
           FlightLogFieldPredictor =
     10;
 pub type blackboxDeltaFieldDefinition_t = blackboxDeltaFieldDefinition_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct blackboxDeltaFieldDefinition_s {
     pub name: *const libc::c_char,
@@ -1652,11 +1675,11 @@ pub const VOLTAGE_SENSOR_ADC_12V: C2RustUnnamed_11 = 1;
 #[no_mangle]
 pub static mut SystemCoreClock: uint32_t = 0;
 #[inline]
-unsafe extern "C" fn blackboxConfigMutable() -> *mut blackboxConfig_t {
+unsafe extern "C" fn blackboxConfig() -> *const blackboxConfig_t {
     return &mut blackboxConfig_System;
 }
 #[inline]
-unsafe extern "C" fn blackboxConfig() -> *const blackboxConfig_t {
+unsafe extern "C" fn blackboxConfigMutable() -> *mut blackboxConfig_t {
     return &mut blackboxConfig_System;
 }
 #[inline]
@@ -1757,9 +1780,6 @@ unsafe extern "C" fn compassConfig() -> *const compassConfig_t {
  * If not, see <http://www.gnu.org/licenses/>.
  */
 #[no_mangle]
-pub static mut blackboxConfig_Copy: blackboxConfig_t =
-    blackboxConfig_t{p_ratio: 0, device: 0, record_acc: 0, mode: 0,};
-#[no_mangle]
 pub static mut blackboxConfig_System: blackboxConfig_t =
     blackboxConfig_t{p_ratio: 0, device: 0, record_acc: 0, mode: 0,};
 #[no_mangle]
@@ -1769,10 +1789,7 @@ pub static mut blackboxConfig_Registry: pgRegistry_t =
     unsafe {
         {
             let mut init =
-                pgRegistry_s{pgn:
-                                 (5 as libc::c_int |
-                                      (1 as libc::c_int) << 12 as libc::c_int)
-                                     as pgn_t,
+                pgRegistry_s{pgn: (5i32 | 1i32 << 12i32) as pgn_t,
                              size:
                                  (::core::mem::size_of::<blackboxConfig_t>()
                                       as libc::c_ulong |
@@ -1800,16 +1817,19 @@ pub static mut blackboxConfig_Registry: pgRegistry_t =
         }
     };
 #[no_mangle]
+pub static mut blackboxConfig_Copy: blackboxConfig_t =
+    blackboxConfig_t{p_ratio: 0, device: 0, record_acc: 0, mode: 0,};
+#[no_mangle]
 #[link_section = ".pg_resetdata"]
 #[used]
 pub static mut pgResetTemplate_blackboxConfig: blackboxConfig_t =
     {
         let mut init =
-            blackboxConfig_s{p_ratio: 32 as libc::c_int as uint16_t,
+            blackboxConfig_s{p_ratio: 32i32 as uint16_t,
                              device:
                                  BLACKBOX_DEVICE_SERIAL as libc::c_int as
                                      uint8_t,
-                             record_acc: 1 as libc::c_int as uint8_t,
+                             record_acc: 1i32 as uint8_t,
                              mode:
                                  BLACKBOX_MODE_NORMAL as libc::c_int as
                                      uint8_t,};
@@ -1841,8 +1861,7 @@ static mut blackboxMainFields: [blackboxDeltaFieldDefinition_t; 44] =
                                                 b"loopIteration\x00" as
                                                     *const u8 as
                                                     *const libc::c_char,
-                                            fieldNameIndex:
-                                                -(1 as libc::c_int) as int8_t,
+                                            fieldNameIndex: -1i32 as int8_t,
                                             isSigned:
                                                 FLIGHT_LOG_FIELD_UNSIGNED as
                                                     libc::c_int as uint8_t,
@@ -1869,8 +1888,7 @@ static mut blackboxMainFields: [blackboxDeltaFieldDefinition_t; 44] =
              blackboxDeltaFieldDefinition_s{name:
                                                 b"time\x00" as *const u8 as
                                                     *const libc::c_char,
-                                            fieldNameIndex:
-                                                -(1 as libc::c_int) as int8_t,
+                                            fieldNameIndex: -1i32 as int8_t,
                                             isSigned:
                                                 FLIGHT_LOG_FIELD_UNSIGNED as
                                                     libc::c_int as uint8_t,
@@ -1897,8 +1915,7 @@ static mut blackboxMainFields: [blackboxDeltaFieldDefinition_t; 44] =
              blackboxDeltaFieldDefinition_s{name:
                                                 b"axisP\x00" as *const u8 as
                                                     *const libc::c_char,
-                                            fieldNameIndex:
-                                                0 as libc::c_int as int8_t,
+                                            fieldNameIndex: 0i32 as int8_t,
                                             isSigned:
                                                 FLIGHT_LOG_FIELD_SIGNED as
                                                     libc::c_int as uint8_t,
@@ -1925,8 +1942,7 @@ static mut blackboxMainFields: [blackboxDeltaFieldDefinition_t; 44] =
              blackboxDeltaFieldDefinition_s{name:
                                                 b"axisP\x00" as *const u8 as
                                                     *const libc::c_char,
-                                            fieldNameIndex:
-                                                1 as libc::c_int as int8_t,
+                                            fieldNameIndex: 1i32 as int8_t,
                                             isSigned:
                                                 FLIGHT_LOG_FIELD_SIGNED as
                                                     libc::c_int as uint8_t,
@@ -1953,8 +1969,7 @@ static mut blackboxMainFields: [blackboxDeltaFieldDefinition_t; 44] =
              blackboxDeltaFieldDefinition_s{name:
                                                 b"axisP\x00" as *const u8 as
                                                     *const libc::c_char,
-                                            fieldNameIndex:
-                                                2 as libc::c_int as int8_t,
+                                            fieldNameIndex: 2i32 as int8_t,
                                             isSigned:
                                                 FLIGHT_LOG_FIELD_SIGNED as
                                                     libc::c_int as uint8_t,
@@ -1981,36 +1996,7 @@ static mut blackboxMainFields: [blackboxDeltaFieldDefinition_t; 44] =
              blackboxDeltaFieldDefinition_s{name:
                                                 b"axisI\x00" as *const u8 as
                                                     *const libc::c_char,
-                                            fieldNameIndex:
-                                                0 as libc::c_int as int8_t,
-                                            isSigned:
-                                                FLIGHT_LOG_FIELD_SIGNED as
-                                                    libc::c_int as uint8_t,
-                                            Ipredict:
-                                                FLIGHT_LOG_FIELD_PREDICTOR_0
-                                                    as libc::c_int as uint8_t,
-                                            Iencode:
-                                                FLIGHT_LOG_FIELD_ENCODING_SIGNED_VB
-                                                    as libc::c_int as uint8_t,
-                                            Ppredict:
-                                                FLIGHT_LOG_FIELD_PREDICTOR_PREVIOUS
-                                                    as libc::c_int as uint8_t,
-                                            Pencode:
-                                                FLIGHT_LOG_FIELD_ENCODING_TAG2_3S32
-                                                    as libc::c_int as uint8_t,
-                                            condition:
-                                                FLIGHT_LOG_FIELD_CONDITION_ALWAYS
-                                                    as libc::c_int as
-                                                    uint8_t,};
-         init
-     },
-     {
-         let mut init =
-             blackboxDeltaFieldDefinition_s{name:
-                                                b"axisI\x00" as *const u8 as
-                                                    *const libc::c_char,
-                                            fieldNameIndex:
-                                                1 as libc::c_int as int8_t,
+                                            fieldNameIndex: 0i32 as int8_t,
                                             isSigned:
                                                 FLIGHT_LOG_FIELD_SIGNED as
                                                     libc::c_int as uint8_t,
@@ -2037,8 +2023,34 @@ static mut blackboxMainFields: [blackboxDeltaFieldDefinition_t; 44] =
              blackboxDeltaFieldDefinition_s{name:
                                                 b"axisI\x00" as *const u8 as
                                                     *const libc::c_char,
-                                            fieldNameIndex:
-                                                2 as libc::c_int as int8_t,
+                                            fieldNameIndex: 1i32 as int8_t,
+                                            isSigned:
+                                                FLIGHT_LOG_FIELD_SIGNED as
+                                                    libc::c_int as uint8_t,
+                                            Ipredict:
+                                                FLIGHT_LOG_FIELD_PREDICTOR_0
+                                                    as libc::c_int as uint8_t,
+                                            Iencode:
+                                                FLIGHT_LOG_FIELD_ENCODING_SIGNED_VB
+                                                    as libc::c_int as uint8_t,
+                                            Ppredict:
+                                                FLIGHT_LOG_FIELD_PREDICTOR_PREVIOUS
+                                                    as libc::c_int as uint8_t,
+                                            Pencode:
+                                                FLIGHT_LOG_FIELD_ENCODING_TAG2_3S32
+                                                    as libc::c_int as uint8_t,
+                                            condition:
+                                                FLIGHT_LOG_FIELD_CONDITION_ALWAYS
+                                                    as libc::c_int as
+                                                    uint8_t,};
+         init
+     },
+     {
+         let mut init =
+             blackboxDeltaFieldDefinition_s{name:
+                                                b"axisI\x00" as *const u8 as
+                                                    *const libc::c_char,
+                                            fieldNameIndex: 2i32 as int8_t,
                                             isSigned:
                                                 FLIGHT_LOG_FIELD_SIGNED as
                                                     libc::c_int as uint8_t,
@@ -2065,8 +2077,7 @@ static mut blackboxMainFields: [blackboxDeltaFieldDefinition_t; 44] =
              blackboxDeltaFieldDefinition_s{name:
                                                 b"axisD\x00" as *const u8 as
                                                     *const libc::c_char,
-                                            fieldNameIndex:
-                                                0 as libc::c_int as int8_t,
+                                            fieldNameIndex: 0i32 as int8_t,
                                             isSigned:
                                                 FLIGHT_LOG_FIELD_SIGNED as
                                                     libc::c_int as uint8_t,
@@ -2093,8 +2104,7 @@ static mut blackboxMainFields: [blackboxDeltaFieldDefinition_t; 44] =
              blackboxDeltaFieldDefinition_s{name:
                                                 b"axisD\x00" as *const u8 as
                                                     *const libc::c_char,
-                                            fieldNameIndex:
-                                                1 as libc::c_int as int8_t,
+                                            fieldNameIndex: 1i32 as int8_t,
                                             isSigned:
                                                 FLIGHT_LOG_FIELD_SIGNED as
                                                     libc::c_int as uint8_t,
@@ -2121,8 +2131,7 @@ static mut blackboxMainFields: [blackboxDeltaFieldDefinition_t; 44] =
              blackboxDeltaFieldDefinition_s{name:
                                                 b"axisD\x00" as *const u8 as
                                                     *const libc::c_char,
-                                            fieldNameIndex:
-                                                2 as libc::c_int as int8_t,
+                                            fieldNameIndex: 2i32 as int8_t,
                                             isSigned:
                                                 FLIGHT_LOG_FIELD_SIGNED as
                                                     libc::c_int as uint8_t,
@@ -2149,8 +2158,7 @@ static mut blackboxMainFields: [blackboxDeltaFieldDefinition_t; 44] =
              blackboxDeltaFieldDefinition_s{name:
                                                 b"axisF\x00" as *const u8 as
                                                     *const libc::c_char,
-                                            fieldNameIndex:
-                                                0 as libc::c_int as int8_t,
+                                            fieldNameIndex: 0i32 as int8_t,
                                             isSigned:
                                                 FLIGHT_LOG_FIELD_SIGNED as
                                                     libc::c_int as uint8_t,
@@ -2177,8 +2185,7 @@ static mut blackboxMainFields: [blackboxDeltaFieldDefinition_t; 44] =
              blackboxDeltaFieldDefinition_s{name:
                                                 b"axisF\x00" as *const u8 as
                                                     *const libc::c_char,
-                                            fieldNameIndex:
-                                                1 as libc::c_int as int8_t,
+                                            fieldNameIndex: 1i32 as int8_t,
                                             isSigned:
                                                 FLIGHT_LOG_FIELD_SIGNED as
                                                     libc::c_int as uint8_t,
@@ -2205,8 +2212,7 @@ static mut blackboxMainFields: [blackboxDeltaFieldDefinition_t; 44] =
              blackboxDeltaFieldDefinition_s{name:
                                                 b"axisF\x00" as *const u8 as
                                                     *const libc::c_char,
-                                            fieldNameIndex:
-                                                2 as libc::c_int as int8_t,
+                                            fieldNameIndex: 2i32 as int8_t,
                                             isSigned:
                                                 FLIGHT_LOG_FIELD_SIGNED as
                                                     libc::c_int as uint8_t,
@@ -2233,36 +2239,7 @@ static mut blackboxMainFields: [blackboxDeltaFieldDefinition_t; 44] =
              blackboxDeltaFieldDefinition_s{name:
                                                 b"rcCommand\x00" as *const u8
                                                     as *const libc::c_char,
-                                            fieldNameIndex:
-                                                0 as libc::c_int as int8_t,
-                                            isSigned:
-                                                FLIGHT_LOG_FIELD_SIGNED as
-                                                    libc::c_int as uint8_t,
-                                            Ipredict:
-                                                FLIGHT_LOG_FIELD_PREDICTOR_0
-                                                    as libc::c_int as uint8_t,
-                                            Iencode:
-                                                FLIGHT_LOG_FIELD_ENCODING_SIGNED_VB
-                                                    as libc::c_int as uint8_t,
-                                            Ppredict:
-                                                FLIGHT_LOG_FIELD_PREDICTOR_PREVIOUS
-                                                    as libc::c_int as uint8_t,
-                                            Pencode:
-                                                FLIGHT_LOG_FIELD_ENCODING_TAG8_4S16
-                                                    as libc::c_int as uint8_t,
-                                            condition:
-                                                FLIGHT_LOG_FIELD_CONDITION_ALWAYS
-                                                    as libc::c_int as
-                                                    uint8_t,};
-         init
-     },
-     {
-         let mut init =
-             blackboxDeltaFieldDefinition_s{name:
-                                                b"rcCommand\x00" as *const u8
-                                                    as *const libc::c_char,
-                                            fieldNameIndex:
-                                                1 as libc::c_int as int8_t,
+                                            fieldNameIndex: 0i32 as int8_t,
                                             isSigned:
                                                 FLIGHT_LOG_FIELD_SIGNED as
                                                     libc::c_int as uint8_t,
@@ -2289,8 +2266,7 @@ static mut blackboxMainFields: [blackboxDeltaFieldDefinition_t; 44] =
              blackboxDeltaFieldDefinition_s{name:
                                                 b"rcCommand\x00" as *const u8
                                                     as *const libc::c_char,
-                                            fieldNameIndex:
-                                                2 as libc::c_int as int8_t,
+                                            fieldNameIndex: 1i32 as int8_t,
                                             isSigned:
                                                 FLIGHT_LOG_FIELD_SIGNED as
                                                     libc::c_int as uint8_t,
@@ -2317,8 +2293,34 @@ static mut blackboxMainFields: [blackboxDeltaFieldDefinition_t; 44] =
              blackboxDeltaFieldDefinition_s{name:
                                                 b"rcCommand\x00" as *const u8
                                                     as *const libc::c_char,
-                                            fieldNameIndex:
-                                                3 as libc::c_int as int8_t,
+                                            fieldNameIndex: 2i32 as int8_t,
+                                            isSigned:
+                                                FLIGHT_LOG_FIELD_SIGNED as
+                                                    libc::c_int as uint8_t,
+                                            Ipredict:
+                                                FLIGHT_LOG_FIELD_PREDICTOR_0
+                                                    as libc::c_int as uint8_t,
+                                            Iencode:
+                                                FLIGHT_LOG_FIELD_ENCODING_SIGNED_VB
+                                                    as libc::c_int as uint8_t,
+                                            Ppredict:
+                                                FLIGHT_LOG_FIELD_PREDICTOR_PREVIOUS
+                                                    as libc::c_int as uint8_t,
+                                            Pencode:
+                                                FLIGHT_LOG_FIELD_ENCODING_TAG8_4S16
+                                                    as libc::c_int as uint8_t,
+                                            condition:
+                                                FLIGHT_LOG_FIELD_CONDITION_ALWAYS
+                                                    as libc::c_int as
+                                                    uint8_t,};
+         init
+     },
+     {
+         let mut init =
+             blackboxDeltaFieldDefinition_s{name:
+                                                b"rcCommand\x00" as *const u8
+                                                    as *const libc::c_char,
+                                            fieldNameIndex: 3i32 as int8_t,
                                             isSigned:
                                                 FLIGHT_LOG_FIELD_UNSIGNED as
                                                     libc::c_int as uint8_t,
@@ -2345,8 +2347,7 @@ static mut blackboxMainFields: [blackboxDeltaFieldDefinition_t; 44] =
              blackboxDeltaFieldDefinition_s{name:
                                                 b"vbatLatest\x00" as *const u8
                                                     as *const libc::c_char,
-                                            fieldNameIndex:
-                                                -(1 as libc::c_int) as int8_t,
+                                            fieldNameIndex: -1i32 as int8_t,
                                             isSigned:
                                                 FLIGHT_LOG_FIELD_UNSIGNED as
                                                     libc::c_int as uint8_t,
@@ -2374,8 +2375,7 @@ static mut blackboxMainFields: [blackboxDeltaFieldDefinition_t; 44] =
                                                 b"amperageLatest\x00" as
                                                     *const u8 as
                                                     *const libc::c_char,
-                                            fieldNameIndex:
-                                                -(1 as libc::c_int) as int8_t,
+                                            fieldNameIndex: -1i32 as int8_t,
                                             isSigned:
                                                 FLIGHT_LOG_FIELD_SIGNED as
                                                     libc::c_int as uint8_t,
@@ -2402,8 +2402,7 @@ static mut blackboxMainFields: [blackboxDeltaFieldDefinition_t; 44] =
              blackboxDeltaFieldDefinition_s{name:
                                                 b"magADC\x00" as *const u8 as
                                                     *const libc::c_char,
-                                            fieldNameIndex:
-                                                0 as libc::c_int as int8_t,
+                                            fieldNameIndex: 0i32 as int8_t,
                                             isSigned:
                                                 FLIGHT_LOG_FIELD_SIGNED as
                                                     libc::c_int as uint8_t,
@@ -2430,8 +2429,7 @@ static mut blackboxMainFields: [blackboxDeltaFieldDefinition_t; 44] =
              blackboxDeltaFieldDefinition_s{name:
                                                 b"magADC\x00" as *const u8 as
                                                     *const libc::c_char,
-                                            fieldNameIndex:
-                                                1 as libc::c_int as int8_t,
+                                            fieldNameIndex: 1i32 as int8_t,
                                             isSigned:
                                                 FLIGHT_LOG_FIELD_SIGNED as
                                                     libc::c_int as uint8_t,
@@ -2458,8 +2456,7 @@ static mut blackboxMainFields: [blackboxDeltaFieldDefinition_t; 44] =
              blackboxDeltaFieldDefinition_s{name:
                                                 b"magADC\x00" as *const u8 as
                                                     *const libc::c_char,
-                                            fieldNameIndex:
-                                                2 as libc::c_int as int8_t,
+                                            fieldNameIndex: 2i32 as int8_t,
                                             isSigned:
                                                 FLIGHT_LOG_FIELD_SIGNED as
                                                     libc::c_int as uint8_t,
@@ -2486,8 +2483,7 @@ static mut blackboxMainFields: [blackboxDeltaFieldDefinition_t; 44] =
              blackboxDeltaFieldDefinition_s{name:
                                                 b"BaroAlt\x00" as *const u8 as
                                                     *const libc::c_char,
-                                            fieldNameIndex:
-                                                -(1 as libc::c_int) as int8_t,
+                                            fieldNameIndex: -1i32 as int8_t,
                                             isSigned:
                                                 FLIGHT_LOG_FIELD_SIGNED as
                                                     libc::c_int as uint8_t,
@@ -2514,8 +2510,7 @@ static mut blackboxMainFields: [blackboxDeltaFieldDefinition_t; 44] =
              blackboxDeltaFieldDefinition_s{name:
                                                 b"rssi\x00" as *const u8 as
                                                     *const libc::c_char,
-                                            fieldNameIndex:
-                                                -(1 as libc::c_int) as int8_t,
+                                            fieldNameIndex: -1i32 as int8_t,
                                             isSigned:
                                                 FLIGHT_LOG_FIELD_UNSIGNED as
                                                     libc::c_int as uint8_t,
@@ -2542,8 +2537,7 @@ static mut blackboxMainFields: [blackboxDeltaFieldDefinition_t; 44] =
              blackboxDeltaFieldDefinition_s{name:
                                                 b"gyroADC\x00" as *const u8 as
                                                     *const libc::c_char,
-                                            fieldNameIndex:
-                                                0 as libc::c_int as int8_t,
+                                            fieldNameIndex: 0i32 as int8_t,
                                             isSigned:
                                                 FLIGHT_LOG_FIELD_SIGNED as
                                                     libc::c_int as uint8_t,
@@ -2570,8 +2564,7 @@ static mut blackboxMainFields: [blackboxDeltaFieldDefinition_t; 44] =
              blackboxDeltaFieldDefinition_s{name:
                                                 b"gyroADC\x00" as *const u8 as
                                                     *const libc::c_char,
-                                            fieldNameIndex:
-                                                1 as libc::c_int as int8_t,
+                                            fieldNameIndex: 1i32 as int8_t,
                                             isSigned:
                                                 FLIGHT_LOG_FIELD_SIGNED as
                                                     libc::c_int as uint8_t,
@@ -2598,8 +2591,7 @@ static mut blackboxMainFields: [blackboxDeltaFieldDefinition_t; 44] =
              blackboxDeltaFieldDefinition_s{name:
                                                 b"gyroADC\x00" as *const u8 as
                                                     *const libc::c_char,
-                                            fieldNameIndex:
-                                                2 as libc::c_int as int8_t,
+                                            fieldNameIndex: 2i32 as int8_t,
                                             isSigned:
                                                 FLIGHT_LOG_FIELD_SIGNED as
                                                     libc::c_int as uint8_t,
@@ -2626,8 +2618,7 @@ static mut blackboxMainFields: [blackboxDeltaFieldDefinition_t; 44] =
              blackboxDeltaFieldDefinition_s{name:
                                                 b"accSmooth\x00" as *const u8
                                                     as *const libc::c_char,
-                                            fieldNameIndex:
-                                                0 as libc::c_int as int8_t,
+                                            fieldNameIndex: 0i32 as int8_t,
                                             isSigned:
                                                 FLIGHT_LOG_FIELD_SIGNED as
                                                     libc::c_int as uint8_t,
@@ -2654,8 +2645,7 @@ static mut blackboxMainFields: [blackboxDeltaFieldDefinition_t; 44] =
              blackboxDeltaFieldDefinition_s{name:
                                                 b"accSmooth\x00" as *const u8
                                                     as *const libc::c_char,
-                                            fieldNameIndex:
-                                                1 as libc::c_int as int8_t,
+                                            fieldNameIndex: 1i32 as int8_t,
                                             isSigned:
                                                 FLIGHT_LOG_FIELD_SIGNED as
                                                     libc::c_int as uint8_t,
@@ -2682,8 +2672,7 @@ static mut blackboxMainFields: [blackboxDeltaFieldDefinition_t; 44] =
              blackboxDeltaFieldDefinition_s{name:
                                                 b"accSmooth\x00" as *const u8
                                                     as *const libc::c_char,
-                                            fieldNameIndex:
-                                                2 as libc::c_int as int8_t,
+                                            fieldNameIndex: 2i32 as int8_t,
                                             isSigned:
                                                 FLIGHT_LOG_FIELD_SIGNED as
                                                     libc::c_int as uint8_t,
@@ -2710,8 +2699,7 @@ static mut blackboxMainFields: [blackboxDeltaFieldDefinition_t; 44] =
              blackboxDeltaFieldDefinition_s{name:
                                                 b"debug\x00" as *const u8 as
                                                     *const libc::c_char,
-                                            fieldNameIndex:
-                                                0 as libc::c_int as int8_t,
+                                            fieldNameIndex: 0i32 as int8_t,
                                             isSigned:
                                                 FLIGHT_LOG_FIELD_SIGNED as
                                                     libc::c_int as uint8_t,
@@ -2738,8 +2726,7 @@ static mut blackboxMainFields: [blackboxDeltaFieldDefinition_t; 44] =
              blackboxDeltaFieldDefinition_s{name:
                                                 b"debug\x00" as *const u8 as
                                                     *const libc::c_char,
-                                            fieldNameIndex:
-                                                1 as libc::c_int as int8_t,
+                                            fieldNameIndex: 1i32 as int8_t,
                                             isSigned:
                                                 FLIGHT_LOG_FIELD_SIGNED as
                                                     libc::c_int as uint8_t,
@@ -2766,8 +2753,7 @@ static mut blackboxMainFields: [blackboxDeltaFieldDefinition_t; 44] =
              blackboxDeltaFieldDefinition_s{name:
                                                 b"debug\x00" as *const u8 as
                                                     *const libc::c_char,
-                                            fieldNameIndex:
-                                                2 as libc::c_int as int8_t,
+                                            fieldNameIndex: 2i32 as int8_t,
                                             isSigned:
                                                 FLIGHT_LOG_FIELD_SIGNED as
                                                     libc::c_int as uint8_t,
@@ -2794,8 +2780,7 @@ static mut blackboxMainFields: [blackboxDeltaFieldDefinition_t; 44] =
              blackboxDeltaFieldDefinition_s{name:
                                                 b"debug\x00" as *const u8 as
                                                     *const libc::c_char,
-                                            fieldNameIndex:
-                                                3 as libc::c_int as int8_t,
+                                            fieldNameIndex: 3i32 as int8_t,
                                             isSigned:
                                                 FLIGHT_LOG_FIELD_SIGNED as
                                                     libc::c_int as uint8_t,
@@ -2822,8 +2807,7 @@ static mut blackboxMainFields: [blackboxDeltaFieldDefinition_t; 44] =
              blackboxDeltaFieldDefinition_s{name:
                                                 b"motor\x00" as *const u8 as
                                                     *const libc::c_char,
-                                            fieldNameIndex:
-                                                0 as libc::c_int as int8_t,
+                                            fieldNameIndex: 0i32 as int8_t,
                                             isSigned:
                                                 FLIGHT_LOG_FIELD_UNSIGNED as
                                                     libc::c_int as uint8_t,
@@ -2850,8 +2834,7 @@ static mut blackboxMainFields: [blackboxDeltaFieldDefinition_t; 44] =
              blackboxDeltaFieldDefinition_s{name:
                                                 b"motor\x00" as *const u8 as
                                                     *const libc::c_char,
-                                            fieldNameIndex:
-                                                1 as libc::c_int as int8_t,
+                                            fieldNameIndex: 1i32 as int8_t,
                                             isSigned:
                                                 FLIGHT_LOG_FIELD_UNSIGNED as
                                                     libc::c_int as uint8_t,
@@ -2878,8 +2861,7 @@ static mut blackboxMainFields: [blackboxDeltaFieldDefinition_t; 44] =
              blackboxDeltaFieldDefinition_s{name:
                                                 b"motor\x00" as *const u8 as
                                                     *const libc::c_char,
-                                            fieldNameIndex:
-                                                2 as libc::c_int as int8_t,
+                                            fieldNameIndex: 2i32 as int8_t,
                                             isSigned:
                                                 FLIGHT_LOG_FIELD_UNSIGNED as
                                                     libc::c_int as uint8_t,
@@ -2906,8 +2888,7 @@ static mut blackboxMainFields: [blackboxDeltaFieldDefinition_t; 44] =
              blackboxDeltaFieldDefinition_s{name:
                                                 b"motor\x00" as *const u8 as
                                                     *const libc::c_char,
-                                            fieldNameIndex:
-                                                3 as libc::c_int as int8_t,
+                                            fieldNameIndex: 3i32 as int8_t,
                                             isSigned:
                                                 FLIGHT_LOG_FIELD_UNSIGNED as
                                                     libc::c_int as uint8_t,
@@ -2934,8 +2915,7 @@ static mut blackboxMainFields: [blackboxDeltaFieldDefinition_t; 44] =
              blackboxDeltaFieldDefinition_s{name:
                                                 b"motor\x00" as *const u8 as
                                                     *const libc::c_char,
-                                            fieldNameIndex:
-                                                4 as libc::c_int as int8_t,
+                                            fieldNameIndex: 4i32 as int8_t,
                                             isSigned:
                                                 FLIGHT_LOG_FIELD_UNSIGNED as
                                                     libc::c_int as uint8_t,
@@ -2962,8 +2942,7 @@ static mut blackboxMainFields: [blackboxDeltaFieldDefinition_t; 44] =
              blackboxDeltaFieldDefinition_s{name:
                                                 b"motor\x00" as *const u8 as
                                                     *const libc::c_char,
-                                            fieldNameIndex:
-                                                5 as libc::c_int as int8_t,
+                                            fieldNameIndex: 5i32 as int8_t,
                                             isSigned:
                                                 FLIGHT_LOG_FIELD_UNSIGNED as
                                                     libc::c_int as uint8_t,
@@ -2990,8 +2969,7 @@ static mut blackboxMainFields: [blackboxDeltaFieldDefinition_t; 44] =
              blackboxDeltaFieldDefinition_s{name:
                                                 b"motor\x00" as *const u8 as
                                                     *const libc::c_char,
-                                            fieldNameIndex:
-                                                6 as libc::c_int as int8_t,
+                                            fieldNameIndex: 6i32 as int8_t,
                                             isSigned:
                                                 FLIGHT_LOG_FIELD_UNSIGNED as
                                                     libc::c_int as uint8_t,
@@ -3018,8 +2996,7 @@ static mut blackboxMainFields: [blackboxDeltaFieldDefinition_t; 44] =
              blackboxDeltaFieldDefinition_s{name:
                                                 b"motor\x00" as *const u8 as
                                                     *const libc::c_char,
-                                            fieldNameIndex:
-                                                7 as libc::c_int as int8_t,
+                                            fieldNameIndex: 7i32 as int8_t,
                                             isSigned:
                                                 FLIGHT_LOG_FIELD_UNSIGNED as
                                                     libc::c_int as uint8_t,
@@ -3046,8 +3023,7 @@ static mut blackboxMainFields: [blackboxDeltaFieldDefinition_t; 44] =
              blackboxDeltaFieldDefinition_s{name:
                                                 b"servo\x00" as *const u8 as
                                                     *const libc::c_char,
-                                            fieldNameIndex:
-                                                5 as libc::c_int as int8_t,
+                                            fieldNameIndex: 5i32 as int8_t,
                                             isSigned:
                                                 FLIGHT_LOG_FIELD_UNSIGNED as
                                                     libc::c_int as uint8_t,
@@ -3078,8 +3054,7 @@ static mut blackboxGpsGFields: [blackboxConditionalFieldDefinition_t; 7] =
                                                           as
                                                           *const libc::c_char,
                                                   fieldNameIndex:
-                                                      -(1 as libc::c_int) as
-                                                          int8_t,
+                                                      -1i32 as int8_t,
                                                   isSigned:
                                                       FLIGHT_LOG_FIELD_UNSIGNED
                                                           as libc::c_int as
@@ -3105,8 +3080,7 @@ static mut blackboxGpsGFields: [blackboxConditionalFieldDefinition_t; 7] =
                                                           *const u8 as
                                                           *const libc::c_char,
                                                   fieldNameIndex:
-                                                      -(1 as libc::c_int) as
-                                                          int8_t,
+                                                      -1i32 as int8_t,
                                                   isSigned:
                                                       FLIGHT_LOG_FIELD_UNSIGNED
                                                           as libc::c_int as
@@ -3132,8 +3106,7 @@ static mut blackboxGpsGFields: [blackboxConditionalFieldDefinition_t; 7] =
                                                           *const u8 as
                                                           *const libc::c_char,
                                                   fieldNameIndex:
-                                                      0 as libc::c_int as
-                                                          int8_t,
+                                                      0i32 as int8_t,
                                                   isSigned:
                                                       FLIGHT_LOG_FIELD_SIGNED
                                                           as libc::c_int as
@@ -3159,8 +3132,7 @@ static mut blackboxGpsGFields: [blackboxConditionalFieldDefinition_t; 7] =
                                                           *const u8 as
                                                           *const libc::c_char,
                                                   fieldNameIndex:
-                                                      1 as libc::c_int as
-                                                          int8_t,
+                                                      1i32 as int8_t,
                                                   isSigned:
                                                       FLIGHT_LOG_FIELD_SIGNED
                                                           as libc::c_int as
@@ -3186,8 +3158,7 @@ static mut blackboxGpsGFields: [blackboxConditionalFieldDefinition_t; 7] =
                                                           *const u8 as
                                                           *const libc::c_char,
                                                   fieldNameIndex:
-                                                      -(1 as libc::c_int) as
-                                                          int8_t,
+                                                      -1i32 as int8_t,
                                                   isSigned:
                                                       FLIGHT_LOG_FIELD_UNSIGNED
                                                           as libc::c_int as
@@ -3213,8 +3184,7 @@ static mut blackboxGpsGFields: [blackboxConditionalFieldDefinition_t; 7] =
                                                           *const u8 as
                                                           *const libc::c_char,
                                                   fieldNameIndex:
-                                                      -(1 as libc::c_int) as
-                                                          int8_t,
+                                                      -1i32 as int8_t,
                                                   isSigned:
                                                       FLIGHT_LOG_FIELD_UNSIGNED
                                                           as libc::c_int as
@@ -3240,8 +3210,7 @@ static mut blackboxGpsGFields: [blackboxConditionalFieldDefinition_t; 7] =
                                                           as *const u8 as
                                                           *const libc::c_char,
                                                   fieldNameIndex:
-                                                      -(1 as libc::c_int) as
-                                                          int8_t,
+                                                      -1i32 as int8_t,
                                                   isSigned:
                                                       FLIGHT_LOG_FIELD_UNSIGNED
                                                           as libc::c_int as
@@ -3267,8 +3236,7 @@ static mut blackboxGpsHFields: [blackboxSimpleFieldDefinition_t; 2] =
              blackboxSimpleFieldDefinition_s{name:
                                                  b"GPS_home\x00" as *const u8
                                                      as *const libc::c_char,
-                                             fieldNameIndex:
-                                                 0 as libc::c_int as int8_t,
+                                             fieldNameIndex: 0i32 as int8_t,
                                              isSigned:
                                                  FLIGHT_LOG_FIELD_SIGNED as
                                                      libc::c_int as uint8_t,
@@ -3287,8 +3255,7 @@ static mut blackboxGpsHFields: [blackboxSimpleFieldDefinition_t; 2] =
              blackboxSimpleFieldDefinition_s{name:
                                                  b"GPS_home\x00" as *const u8
                                                      as *const libc::c_char,
-                                             fieldNameIndex:
-                                                 1 as libc::c_int as int8_t,
+                                             fieldNameIndex: 1i32 as int8_t,
                                              isSigned:
                                                  FLIGHT_LOG_FIELD_SIGNED as
                                                      libc::c_int as uint8_t,
@@ -3310,9 +3277,7 @@ static mut blackboxSlowFields: [blackboxSimpleFieldDefinition_t; 5] =
                                                  b"flightModeFlags\x00" as
                                                      *const u8 as
                                                      *const libc::c_char,
-                                             fieldNameIndex:
-                                                 -(1 as libc::c_int) as
-                                                     int8_t,
+                                             fieldNameIndex: -1i32 as int8_t,
                                              isSigned:
                                                  FLIGHT_LOG_FIELD_UNSIGNED as
                                                      libc::c_int as uint8_t,
@@ -3332,9 +3297,7 @@ static mut blackboxSlowFields: [blackboxSimpleFieldDefinition_t; 5] =
                                                  b"stateFlags\x00" as
                                                      *const u8 as
                                                      *const libc::c_char,
-                                             fieldNameIndex:
-                                                 -(1 as libc::c_int) as
-                                                     int8_t,
+                                             fieldNameIndex: -1i32 as int8_t,
                                              isSigned:
                                                  FLIGHT_LOG_FIELD_UNSIGNED as
                                                      libc::c_int as uint8_t,
@@ -3354,9 +3317,7 @@ static mut blackboxSlowFields: [blackboxSimpleFieldDefinition_t; 5] =
                                                  b"failsafePhase\x00" as
                                                      *const u8 as
                                                      *const libc::c_char,
-                                             fieldNameIndex:
-                                                 -(1 as libc::c_int) as
-                                                     int8_t,
+                                             fieldNameIndex: -1i32 as int8_t,
                                              isSigned:
                                                  FLIGHT_LOG_FIELD_UNSIGNED as
                                                      libc::c_int as uint8_t,
@@ -3376,9 +3337,7 @@ static mut blackboxSlowFields: [blackboxSimpleFieldDefinition_t; 5] =
                                                  b"rxSignalReceived\x00" as
                                                      *const u8 as
                                                      *const libc::c_char,
-                                             fieldNameIndex:
-                                                 -(1 as libc::c_int) as
-                                                     int8_t,
+                                             fieldNameIndex: -1i32 as int8_t,
                                              isSigned:
                                                  FLIGHT_LOG_FIELD_UNSIGNED as
                                                      libc::c_int as uint8_t,
@@ -3398,9 +3357,7 @@ static mut blackboxSlowFields: [blackboxSimpleFieldDefinition_t; 5] =
                                                  b"rxFlightChannelsValid\x00"
                                                      as *const u8 as
                                                      *const libc::c_char,
-                                             fieldNameIndex:
-                                                 -(1 as libc::c_int) as
-                                                     int8_t,
+                                             fieldNameIndex: -1i32 as int8_t,
                                              isSigned:
                                                  FLIGHT_LOG_FIELD_UNSIGNED as
                                                      libc::c_int as uint8_t,
@@ -3415,9 +3372,8 @@ static mut blackboxSlowFields: [blackboxSimpleFieldDefinition_t; 5] =
          init
      }];
 static mut blackboxState: BlackboxState = BLACKBOX_STATE_DISABLED;
-static mut blackboxLastArmingBeep: uint32_t = 0 as libc::c_int as uint32_t;
-static mut blackboxLastFlightModeFlags: uint32_t =
-    0 as libc::c_int as uint32_t;
+static mut blackboxLastArmingBeep: uint32_t = 0i32 as uint32_t;
+static mut blackboxLastFlightModeFlags: uint32_t = 0i32 as uint32_t;
 static mut xmitState: C2RustUnnamed_2 =
     C2RustUnnamed_2{headerIndex: 0, u: C2RustUnnamed_1{fieldIndex: 0,},};
 // Cache for FLIGHT_LOG_FIELD_CONDITION_* test results:
@@ -3428,10 +3384,10 @@ static mut blackboxPFrameIndex: uint16_t = 0;
 static mut blackboxIFrameIndex: uint16_t = 0;
 // number of flight loop iterations before logging I-frame
 // typically 32 for 1kHz loop, 64 for 2kHz loop etc
-static mut blackboxIInterval: int16_t = 0 as libc::c_int as int16_t;
+static mut blackboxIInterval: int16_t = 0i32 as int16_t;
 // number of flight loop iterations before logging P-frame
-static mut blackboxPInterval: int16_t = 0 as libc::c_int as int16_t;
-static mut blackboxSInterval: int32_t = 0 as libc::c_int;
+static mut blackboxPInterval: int16_t = 0i32 as int16_t;
+static mut blackboxSInterval: int32_t = 0i32;
 static mut blackboxSlowFrameIterationTimer: int32_t = 0;
 static mut blackboxLoggedAnyFrames: bool = false;
 /*
@@ -3469,8 +3425,7 @@ static mut blackboxHistoryRing: [blackboxMainState_t; 3] =
 // These point into blackboxHistoryRing, use them to know where to store history of a given age (0, 1 or 2 generations old)
 static mut blackboxHistory: [*mut blackboxMainState_t; 3] =
     [0 as *const blackboxMainState_t as *mut blackboxMainState_t; 3];
-static mut blackboxModeActivationConditionPresent: bool =
-    0 as libc::c_int != 0;
+static mut blackboxModeActivationConditionPresent: bool = 0i32 != 0;
 /* *
  * Return true if it is safe to edit the Blackbox configuration.
  */
@@ -3480,21 +3435,19 @@ pub unsafe extern "C" fn blackboxMayEditConfig() -> bool {
                BLACKBOX_STATE_STOPPED as libc::c_int as libc::c_uint;
 }
 unsafe extern "C" fn blackboxIsOnlyLoggingIntraframes() -> bool {
-    return (*blackboxConfig()).p_ratio as libc::c_int == 0 as libc::c_int;
+    return (*blackboxConfig()).p_ratio as libc::c_int == 0i32;
 }
 unsafe extern "C" fn testBlackboxConditionUncached(mut condition:
                                                        FlightLogFieldCondition)
  -> bool {
     match condition as libc::c_uint {
-        0 => { return 1 as libc::c_int != 0 }
+        0 => { return 1i32 != 0 }
         1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 => {
             return getMotorCount() as libc::c_uint >=
                        (condition as
                             libc::c_uint).wrapping_sub(FLIGHT_LOG_FIELD_CONDITION_AT_LEAST_MOTORS_1
                                                            as libc::c_int as
-                                                           libc::c_uint).wrapping_add(1
-                                                                                          as
-                                                                                          libc::c_int
+                                                           libc::c_uint).wrapping_add(1i32
                                                                                           as
                                                                                           libc::c_uint)
         }
@@ -3512,7 +3465,7 @@ unsafe extern "C" fn testBlackboxConditionUncached(mut condition:
                                                                                 as
                                                                                 libc::c_uint)
                                                 as usize].D as libc::c_int !=
-                       0 as libc::c_int
+                       0i32
         }
         10 => { return sensors(SENSOR_MAG as libc::c_int as uint32_t) }
         11 => { return sensors(SENSOR_BARO as libc::c_int as uint32_t) }
@@ -3528,35 +3481,31 @@ unsafe extern "C" fn testBlackboxConditionUncached(mut condition:
                            CURRENT_METER_VIRTUAL as libc::c_int as
                                libc::c_uint
         }
-        14 => { return 0 as libc::c_int != 0 }
+        14 => { return 0i32 != 0 }
         15 => {
-            return (*rxConfig()).rssi_channel as libc::c_int >
-                       0 as libc::c_int ||
+            return (*rxConfig()).rssi_channel as libc::c_int > 0i32 ||
                        feature(FEATURE_RSSI_ADC as libc::c_int as uint32_t) as
                            libc::c_int != 0
         }
-        19 => {
-            return (*blackboxConfig()).p_ratio as libc::c_int !=
-                       1 as libc::c_int
-        }
+        19 => { return (*blackboxConfig()).p_ratio as libc::c_int != 1i32 }
         20 => {
             return sensors(SENSOR_ACC as libc::c_int as uint32_t) as
                        libc::c_int != 0 &&
                        (*blackboxConfig()).record_acc as libc::c_int != 0
         }
         21 => { return debugMode as libc::c_int != DEBUG_NONE as libc::c_int }
-        22 => { return 0 as libc::c_int != 0 }
-        _ => { return 0 as libc::c_int != 0 }
+        22 => { return 0i32 != 0 }
+        _ => { return 0i32 != 0 }
     };
 }
 unsafe extern "C" fn blackboxBuildConditionCache() {
-    blackboxConditionCache = 0 as libc::c_int as uint32_t;
+    blackboxConditionCache = 0i32 as uint32_t;
     let mut cond: FlightLogFieldCondition = FLIGHT_LOG_FIELD_CONDITION_FIRST;
     while cond as libc::c_uint <=
               FLIGHT_LOG_FIELD_CONDITION_LAST as libc::c_int as libc::c_uint {
         if testBlackboxConditionUncached(cond) {
             blackboxConditionCache |=
-                ((1 as libc::c_int) << cond as libc::c_uint) as libc::c_uint
+                (1i32 << cond as libc::c_uint) as libc::c_uint
         }
         cond += 1
     };
@@ -3565,25 +3514,24 @@ unsafe extern "C" fn testBlackboxCondition(mut condition:
                                                FlightLogFieldCondition)
  -> bool {
     return blackboxConditionCache &
-               ((1 as libc::c_int) << condition as libc::c_uint) as
-                   libc::c_uint != 0 as libc::c_int as libc::c_uint;
+               (1i32 << condition as libc::c_uint) as libc::c_uint !=
+               0i32 as libc::c_uint;
 }
 unsafe extern "C" fn blackboxSetState(mut newState: BlackboxState) {
     //Perform initial setup required for the new state
     match newState as libc::c_uint {
-        2 => { blackboxLoggedAnyFrames = 0 as libc::c_int != 0 }
+        2 => { blackboxLoggedAnyFrames = 0i32 != 0 }
         3 => {
             blackboxHeaderBudget =
-                0 as
-                    libc::c_int; //Force a slow frame to be written on the first iteration
-            xmitState.headerIndex = 0 as libc::c_int as uint32_t;
+                0i32; //Force a slow frame to be written on the first iteration
+            xmitState.headerIndex = 0i32 as uint32_t;
             xmitState.u.startTime = millis()
         }
         4 | 6 | 5 | 7 => {
-            xmitState.headerIndex = 0 as libc::c_int as uint32_t;
-            xmitState.u.fieldIndex = -(1 as libc::c_int)
+            xmitState.headerIndex = 0i32 as uint32_t;
+            xmitState.u.fieldIndex = -1i32
         }
-        8 => { xmitState.headerIndex = 0 as libc::c_int as uint32_t }
+        8 => { xmitState.headerIndex = 0i32 as uint32_t }
         10 => { blackboxSlowFrameIterationTimer = blackboxSInterval }
         11 => { xmitState.u.startTime = millis() }
         _ => { }
@@ -3591,18 +3539,17 @@ unsafe extern "C" fn blackboxSetState(mut newState: BlackboxState) {
     blackboxState = newState;
 }
 unsafe extern "C" fn writeIntraframe() {
-    let mut blackboxCurrent: *mut blackboxMainState_t =
-        blackboxHistory[0 as libc::c_int as usize];
+    let mut blackboxCurrent: *mut blackboxMainState_t = blackboxHistory[0];
     blackboxWrite('I' as i32 as uint8_t);
     blackboxWriteUnsignedVB(blackboxIteration);
     blackboxWriteUnsignedVB((*blackboxCurrent).time);
     blackboxWriteSignedVBArray((*blackboxCurrent).axisPID_P.as_mut_ptr(),
-                               3 as libc::c_int);
+                               3i32);
     blackboxWriteSignedVBArray((*blackboxCurrent).axisPID_I.as_mut_ptr(),
-                               3 as libc::c_int);
+                               3i32);
     // Don't bother writing the current D term if the corresponding PID setting is zero
-    let mut x: libc::c_int = 0 as libc::c_int;
-    while x < 3 as libc::c_int {
+    let mut x: libc::c_int = 0i32;
+    while x < 3i32 {
         if testBlackboxCondition((FLIGHT_LOG_FIELD_CONDITION_NONZERO_PID_D_0
                                       as libc::c_int + x) as
                                      FlightLogFieldCondition) {
@@ -3611,10 +3558,10 @@ unsafe extern "C" fn writeIntraframe() {
         x += 1
     }
     blackboxWriteSignedVBArray((*blackboxCurrent).axisPID_F.as_mut_ptr(),
-                               3 as libc::c_int);
+                               3i32);
     // Write roll, pitch and yaw first:
     blackboxWriteSigned16VBArray((*blackboxCurrent).rcCommand.as_mut_ptr(),
-                                 3 as libc::c_int);
+                                 3i32);
     /*
      * Write the throttle separately from the rest of the RC data so we can apply a predictor to it.
      * Throttle lies in range [minthrottle..maxthrottle]:
@@ -3634,8 +3581,8 @@ unsafe extern "C" fn writeIntraframe() {
          */
         blackboxWriteUnsignedVB((vbatReference as libc::c_int -
                                      (*blackboxCurrent).vbatLatest as
-                                         libc::c_int & 0x3fff as libc::c_int)
-                                    as uint32_t);
+                                         libc::c_int & 0x3fffi32) as
+                                    uint32_t);
     }
     if testBlackboxCondition(FLIGHT_LOG_FIELD_CONDITION_AMPERAGE_ADC) {
         // 12bit value directly from ADC
@@ -3643,7 +3590,7 @@ unsafe extern "C" fn writeIntraframe() {
     }
     if testBlackboxCondition(FLIGHT_LOG_FIELD_CONDITION_MAG) {
         blackboxWriteSigned16VBArray((*blackboxCurrent).magADC.as_mut_ptr(),
-                                     3 as libc::c_int);
+                                     3i32);
     }
     if testBlackboxCondition(FLIGHT_LOG_FIELD_CONDITION_BARO) {
         blackboxWriteSignedVB((*blackboxCurrent).BaroAlt);
@@ -3652,130 +3599,104 @@ unsafe extern "C" fn writeIntraframe() {
         blackboxWriteUnsignedVB((*blackboxCurrent).rssi as uint32_t);
     }
     blackboxWriteSigned16VBArray((*blackboxCurrent).gyroADC.as_mut_ptr(),
-                                 3 as libc::c_int);
+                                 3i32);
     if testBlackboxCondition(FLIGHT_LOG_FIELD_CONDITION_ACC) {
         blackboxWriteSigned16VBArray((*blackboxCurrent).accADC.as_mut_ptr(),
-                                     3 as libc::c_int);
+                                     3i32);
     }
     if testBlackboxCondition(FLIGHT_LOG_FIELD_CONDITION_DEBUG) {
         blackboxWriteSigned16VBArray((*blackboxCurrent).debug.as_mut_ptr(),
-                                     4 as libc::c_int);
+                                     4i32);
     }
     //Motors can be below minimum output when disarmed, but that doesn't happen much
-    blackboxWriteUnsignedVB(((*blackboxCurrent).motor[0 as libc::c_int as
-                                                          usize] as
-                                 libc::c_int as libc::c_float -
-                                 motorOutputLow) as uint32_t);
+    blackboxWriteUnsignedVB(((*blackboxCurrent).motor[0] as libc::c_int as
+                                 libc::c_float - motorOutputLow) as uint32_t);
     //Motors tend to be similar to each other so use the first motor's value as a predictor of the others
     let motorCount: libc::c_int = getMotorCount() as libc::c_int;
-    let mut x_0: libc::c_int = 1 as libc::c_int;
+    let mut x_0: libc::c_int = 1i32;
     while x_0 < motorCount {
         blackboxWriteSignedVB((*blackboxCurrent).motor[x_0 as usize] as
                                   libc::c_int -
-                                  (*blackboxCurrent).motor[0 as libc::c_int as
-                                                               usize] as
-                                      libc::c_int);
+                                  (*blackboxCurrent).motor[0] as libc::c_int);
         x_0 += 1
     }
     if testBlackboxCondition(FLIGHT_LOG_FIELD_CONDITION_TRICOPTER) {
         //Assume the tail spends most of its time around the center
-        blackboxWriteSignedVB((*blackboxCurrent).servo[5 as libc::c_int as
-                                                           usize] as
-                                  libc::c_int - 1500 as libc::c_int);
+        blackboxWriteSignedVB((*blackboxCurrent).servo[5] as libc::c_int -
+                                  1500i32);
     }
     //Rotate our history buffers:
     //The current state becomes the new "before" state
-    blackboxHistory[1 as libc::c_int as usize] =
-        blackboxHistory[0 as libc::c_int as usize];
+    blackboxHistory[1] = blackboxHistory[0];
     //And since we have no other history, we also use it for the "before, before" state
-    blackboxHistory[2 as libc::c_int as usize] =
-        blackboxHistory[0 as libc::c_int as usize];
+    blackboxHistory[2] = blackboxHistory[0];
     //And advance the current state over to a blank space ready to be filled
-    blackboxHistory[0 as libc::c_int as usize] =
-        blackboxHistoryRing.as_mut_ptr().offset(((blackboxHistory[0 as
-                                                                      libc::c_int
-                                                                      as
-                                                                      usize].wrapping_offset_from(blackboxHistoryRing.as_mut_ptr())
+    blackboxHistory[0] =
+        blackboxHistoryRing.as_mut_ptr().offset(((blackboxHistory[0].wrapping_offset_from(blackboxHistoryRing.as_mut_ptr())
                                                       as libc::c_long +
-                                                      1 as libc::c_int as
-                                                          libc::c_long) %
-                                                     3 as libc::c_int as
-                                                         libc::c_long) as
+                                                      1i32 as libc::c_long) %
+                                                     3i32 as libc::c_long) as
                                                     isize);
-    blackboxLoggedAnyFrames = 1 as libc::c_int != 0;
+    blackboxLoggedAnyFrames = 1i32 != 0;
 }
 unsafe extern "C" fn blackboxWriteMainStateArrayUsingAveragePredictor(mut arrOffsetInHistory:
                                                                           libc::c_int,
                                                                       mut count:
                                                                           libc::c_int) {
     let mut curr: *mut int16_t =
-        (blackboxHistory[0 as libc::c_int as usize] as
+        (blackboxHistory[0] as
              *mut libc::c_char).offset(arrOffsetInHistory as isize) as
             *mut int16_t;
     let mut prev1: *mut int16_t =
-        (blackboxHistory[1 as libc::c_int as usize] as
+        (blackboxHistory[1] as
              *mut libc::c_char).offset(arrOffsetInHistory as isize) as
             *mut int16_t;
     let mut prev2: *mut int16_t =
-        (blackboxHistory[2 as libc::c_int as usize] as
+        (blackboxHistory[2] as
              *mut libc::c_char).offset(arrOffsetInHistory as isize) as
             *mut int16_t;
-    let mut i: libc::c_int = 0 as libc::c_int;
+    let mut i: libc::c_int = 0i32;
     while i < count {
         // Predictor is the average of the previous two history states
         let mut predictor: int32_t =
             (*prev1.offset(i as isize) as libc::c_int +
-                 *prev2.offset(i as isize) as libc::c_int) / 2 as libc::c_int;
+                 *prev2.offset(i as isize) as libc::c_int) / 2i32;
         blackboxWriteSignedVB(*curr.offset(i as isize) as libc::c_int -
                                   predictor);
         i += 1
     };
 }
 unsafe extern "C" fn writeInterframe() {
-    let mut blackboxCurrent: *mut blackboxMainState_t =
-        blackboxHistory[0 as libc::c_int as usize];
-    let mut blackboxLast: *mut blackboxMainState_t =
-        blackboxHistory[1 as libc::c_int as usize];
+    let mut blackboxCurrent: *mut blackboxMainState_t = blackboxHistory[0];
+    let mut blackboxLast: *mut blackboxMainState_t = blackboxHistory[1];
     blackboxWrite('P' as i32 as uint8_t);
     //No need to store iteration count since its delta is always 1
     /*
      * Since the difference between the difference between successive times will be nearly zero (due to consistent
      * looptime spacing), use second-order differences.
      */
-    blackboxWriteSignedVB((*blackboxHistory[0 as libc::c_int as
-                                                usize]).time.wrapping_sub((2
-                                                                               as
-                                                                               libc::c_int
-                                                                               as
-                                                                               libc::c_uint).wrapping_mul((*blackboxHistory[1
-                                                                                                                                as
-                                                                                                                                libc::c_int
-                                                                                                                                as
-                                                                                                                                usize]).time)).wrapping_add((*blackboxHistory[2
-                                                                                                                                                                                  as
-                                                                                                                                                                                  libc::c_int
-                                                                                                                                                                                  as
-                                                                                                                                                                                  usize]).time)
+    blackboxWriteSignedVB((*blackboxHistory[0]).time.wrapping_sub((2i32 as
+                                                                       libc::c_uint).wrapping_mul((*blackboxHistory[1]).time)).wrapping_add((*blackboxHistory[2]).time)
                               as int32_t);
     let mut deltas: [int32_t; 8] = [0; 8];
     arraySubInt32(deltas.as_mut_ptr(),
                   (*blackboxCurrent).axisPID_P.as_mut_ptr(),
-                  (*blackboxLast).axisPID_P.as_mut_ptr(), 3 as libc::c_int);
-    blackboxWriteSignedVBArray(deltas.as_mut_ptr(), 3 as libc::c_int);
+                  (*blackboxLast).axisPID_P.as_mut_ptr(), 3i32);
+    blackboxWriteSignedVBArray(deltas.as_mut_ptr(), 3i32);
     /*
      * The PID I field changes very slowly, most of the time +-2, so use an encoding
      * that can pack all three fields into one byte in that situation.
      */
     arraySubInt32(deltas.as_mut_ptr(),
                   (*blackboxCurrent).axisPID_I.as_mut_ptr(),
-                  (*blackboxLast).axisPID_I.as_mut_ptr(), 3 as libc::c_int);
+                  (*blackboxLast).axisPID_I.as_mut_ptr(), 3i32);
     blackboxWriteTag2_3S32(deltas.as_mut_ptr());
     /*
      * The PID D term is frequently set to zero for yaw, which makes the result from the calculation
      * always zero. So don't bother recording D results when PID D terms are zero.
      */
-    let mut x: libc::c_int = 0 as libc::c_int;
-    while x < 3 as libc::c_int {
+    let mut x: libc::c_int = 0i32;
+    while x < 3i32 {
         if testBlackboxCondition((FLIGHT_LOG_FIELD_CONDITION_NONZERO_PID_D_0
                                       as libc::c_int + x) as
                                      FlightLogFieldCondition) {
@@ -3786,14 +3707,14 @@ unsafe extern "C" fn writeInterframe() {
     }
     arraySubInt32(deltas.as_mut_ptr(),
                   (*blackboxCurrent).axisPID_F.as_mut_ptr(),
-                  (*blackboxLast).axisPID_F.as_mut_ptr(), 3 as libc::c_int);
-    blackboxWriteSignedVBArray(deltas.as_mut_ptr(), 3 as libc::c_int);
+                  (*blackboxLast).axisPID_F.as_mut_ptr(), 3i32);
+    blackboxWriteSignedVBArray(deltas.as_mut_ptr(), 3i32);
     /*
      * RC tends to stay the same or fairly small for many frames at a time, so use an encoding that
      * can pack multiple values per byte:
      */
-    let mut x_0: libc::c_int = 0 as libc::c_int;
-    while x_0 < 4 as libc::c_int {
+    let mut x_0: libc::c_int = 0i32;
+    while x_0 < 4i32 {
         deltas[x_0 as usize] =
             (*blackboxCurrent).rcCommand[x_0 as usize] as libc::c_int -
                 (*blackboxLast).rcCommand[x_0 as usize] as libc::c_int;
@@ -3801,7 +3722,7 @@ unsafe extern "C" fn writeInterframe() {
     }
     blackboxWriteTag8_4S16(deltas.as_mut_ptr());
     //Check for sensors that are updated periodically (so deltas are normally zero)
-    let mut optionalFieldCount: libc::c_int = 0 as libc::c_int;
+    let mut optionalFieldCount: libc::c_int = 0i32;
     if testBlackboxCondition(FLIGHT_LOG_FIELD_CONDITION_VBAT) {
         let fresh0 = optionalFieldCount;
         optionalFieldCount = optionalFieldCount + 1;
@@ -3816,8 +3737,8 @@ unsafe extern "C" fn writeInterframe() {
             (*blackboxCurrent).amperageLatest - (*blackboxLast).amperageLatest
     }
     if testBlackboxCondition(FLIGHT_LOG_FIELD_CONDITION_MAG) {
-        let mut x_1: libc::c_int = 0 as libc::c_int;
-        while x_1 < 3 as libc::c_int {
+        let mut x_1: libc::c_int = 0i32;
+        while x_1 < 3i32 {
             let fresh2 = optionalFieldCount;
             optionalFieldCount = optionalFieldCount + 1;
             deltas[fresh2 as usize] =
@@ -3841,48 +3762,33 @@ unsafe extern "C" fn writeInterframe() {
     }
     blackboxWriteTag8_8SVB(deltas.as_mut_ptr(), optionalFieldCount);
     //Since gyros, accs and motors are noisy, base their predictions on the average of the history:
-    blackboxWriteMainStateArrayUsingAveragePredictor(60 as libc::c_ulong as
-                                                         libc::c_int,
-                                                     3 as libc::c_int);
+    blackboxWriteMainStateArrayUsingAveragePredictor(60u64 as libc::c_int,
+                                                     3i32);
     if testBlackboxCondition(FLIGHT_LOG_FIELD_CONDITION_ACC) {
-        blackboxWriteMainStateArrayUsingAveragePredictor(66 as libc::c_ulong
-                                                             as libc::c_int,
-                                                         3 as libc::c_int);
+        blackboxWriteMainStateArrayUsingAveragePredictor(66u64 as libc::c_int,
+                                                         3i32);
     }
     if testBlackboxCondition(FLIGHT_LOG_FIELD_CONDITION_DEBUG) {
-        blackboxWriteMainStateArrayUsingAveragePredictor(72 as libc::c_ulong
-                                                             as libc::c_int,
-                                                         4 as libc::c_int);
+        blackboxWriteMainStateArrayUsingAveragePredictor(72u64 as libc::c_int,
+                                                         4i32);
     }
-    blackboxWriteMainStateArrayUsingAveragePredictor(80 as libc::c_ulong as
-                                                         libc::c_int,
+    blackboxWriteMainStateArrayUsingAveragePredictor(80u64 as libc::c_int,
                                                      getMotorCount() as
                                                          libc::c_int);
     if testBlackboxCondition(FLIGHT_LOG_FIELD_CONDITION_TRICOPTER) {
-        blackboxWriteSignedVB((*blackboxCurrent).servo[5 as libc::c_int as
-                                                           usize] as
-                                  libc::c_int -
-                                  (*blackboxLast).servo[5 as libc::c_int as
-                                                            usize] as
-                                      libc::c_int);
+        blackboxWriteSignedVB((*blackboxCurrent).servo[5] as libc::c_int -
+                                  (*blackboxLast).servo[5] as libc::c_int);
     }
     //Rotate our history buffers
-    blackboxHistory[2 as libc::c_int as usize] =
-        blackboxHistory[1 as libc::c_int as usize];
-    blackboxHistory[1 as libc::c_int as usize] =
-        blackboxHistory[0 as libc::c_int as usize];
-    blackboxHistory[0 as libc::c_int as usize] =
-        blackboxHistoryRing.as_mut_ptr().offset(((blackboxHistory[0 as
-                                                                      libc::c_int
-                                                                      as
-                                                                      usize].wrapping_offset_from(blackboxHistoryRing.as_mut_ptr())
+    blackboxHistory[2] = blackboxHistory[1];
+    blackboxHistory[1] = blackboxHistory[0];
+    blackboxHistory[0] =
+        blackboxHistoryRing.as_mut_ptr().offset(((blackboxHistory[0].wrapping_offset_from(blackboxHistoryRing.as_mut_ptr())
                                                       as libc::c_long +
-                                                      1 as libc::c_int as
-                                                          libc::c_long) %
-                                                     3 as libc::c_int as
-                                                         libc::c_long) as
+                                                      1i32 as libc::c_long) %
+                                                     3i32 as libc::c_long) as
                                                     isize);
-    blackboxLoggedAnyFrames = 1 as libc::c_int != 0;
+    blackboxLoggedAnyFrames = 1i32 != 0;
 }
 /* Write the contents of the global "slowHistory" to the log as an "S" frame. Because this data is logged so
  * infrequently, delta updates are not reasonable, so we log independent frames. */
@@ -3894,17 +3800,17 @@ unsafe extern "C" fn writeSlowFrame() {
     /*
      * Most of the time these three values will be able to pack into one byte for us:
      */
-    values[0 as libc::c_int as usize] = slowHistory.failsafePhase as int32_t;
-    values[1 as libc::c_int as usize] =
+    values[0] = slowHistory.failsafePhase as int32_t;
+    values[1] =
         if slowHistory.rxSignalReceived as libc::c_int != 0 {
-            1 as libc::c_int
-        } else { 0 as libc::c_int };
-    values[2 as libc::c_int as usize] =
+            1i32
+        } else { 0i32 };
+    values[2] =
         if slowHistory.rxFlightChannelsValid as libc::c_int != 0 {
-            1 as libc::c_int
-        } else { 0 as libc::c_int };
+            1i32
+        } else { 0i32 };
     blackboxWriteTag2_3S32(values.as_mut_ptr());
-    blackboxSlowFrameIterationTimer = 0 as libc::c_int;
+    blackboxSlowFrameIterationTimer = 0i32;
 }
 /* *
  * Load rarely-changing values from the FC into the given structure
@@ -3946,7 +3852,7 @@ unsafe extern "C" fn writeSlowFrameIfNeeded() -> bool {
                   &mut slowHistory as *mut blackboxSlowState_t as
                       *const libc::c_void,
                   ::core::mem::size_of::<blackboxSlowState_t>() as
-                      libc::c_ulong) != 0 as libc::c_int {
+                      libc::c_ulong) != 0i32 {
             // Use the new state as our new history
             memcpy(&mut slowHistory as *mut blackboxSlowState_t as
                        *mut libc::c_void,
@@ -3954,7 +3860,7 @@ unsafe extern "C" fn writeSlowFrameIfNeeded() -> bool {
                        *const libc::c_void,
                    ::core::mem::size_of::<blackboxSlowState_t>() as
                        libc::c_ulong);
-            shouldWrite = 1 as libc::c_int != 0
+            shouldWrite = 1i32 != 0
         }
     }
     if shouldWrite { writeSlowFrame(); }
@@ -3972,11 +3878,11 @@ pub unsafe extern "C" fn blackboxValidateConfig() {
     };
 }
 unsafe extern "C" fn blackboxResetIterationTimers() {
-    blackboxIteration = 0 as libc::c_int as uint32_t;
-    blackboxLoopIndex = 0 as libc::c_int as uint16_t;
-    blackboxIFrameIndex = 0 as libc::c_int as uint16_t;
-    blackboxPFrameIndex = 0 as libc::c_int as uint16_t;
-    blackboxSlowFrameIterationTimer = 0 as libc::c_int;
+    blackboxIteration = 0i32 as uint32_t;
+    blackboxLoopIndex = 0i32 as uint16_t;
+    blackboxIFrameIndex = 0i32 as uint16_t;
+    blackboxPFrameIndex = 0i32 as uint16_t;
+    blackboxSlowFrameIterationTimer = 0i32;
 }
 /* *
  * Start Blackbox logging if it is not already running. Intended to be called upon arming.
@@ -3988,19 +3894,16 @@ unsafe extern "C" fn blackboxStart() {
         return
     }
     memset(&mut gpsHistory as *mut blackboxGpsState_t as *mut libc::c_void,
-           0 as libc::c_int,
+           0i32,
            ::core::mem::size_of::<blackboxGpsState_t>() as libc::c_ulong);
-    blackboxHistory[0 as libc::c_int as usize] =
-        &mut *blackboxHistoryRing.as_mut_ptr().offset(0 as libc::c_int as
-                                                          isize) as
+    blackboxHistory[0] =
+        &mut *blackboxHistoryRing.as_mut_ptr().offset(0) as
             *mut blackboxMainState_t;
-    blackboxHistory[1 as libc::c_int as usize] =
-        &mut *blackboxHistoryRing.as_mut_ptr().offset(1 as libc::c_int as
-                                                          isize) as
+    blackboxHistory[1] =
+        &mut *blackboxHistoryRing.as_mut_ptr().offset(1) as
             *mut blackboxMainState_t;
-    blackboxHistory[2 as libc::c_int as usize] =
-        &mut *blackboxHistoryRing.as_mut_ptr().offset(2 as libc::c_int as
-                                                          isize) as
+    blackboxHistory[2] =
+        &mut *blackboxHistoryRing.as_mut_ptr().offset(2) as
             *mut blackboxMainState_t;
     vbatReference = getBatteryVoltageLatest();
     //No need to clear the content of blackboxHistoryRing since our first frame will be an intra which overwrites it
@@ -4051,7 +3954,7 @@ pub unsafe extern "C" fn blackboxFinish() {
 /* *
  * Test Motors Blackbox Logging
  */
-static mut startedLoggingInTestMode: bool = 0 as libc::c_int != 0;
+static mut startedLoggingInTestMode: bool = 0i32 != 0;
 unsafe extern "C" fn startInTestMode() {
     if !startedLoggingInTestMode {
         if (*blackboxConfig()).device as libc::c_int ==
@@ -4065,13 +3968,13 @@ unsafe extern "C" fn startInTestMode() {
             }
         }
         blackboxStart();
-        startedLoggingInTestMode = 1 as libc::c_int != 0
+        startedLoggingInTestMode = 1i32 != 0
     };
 }
 unsafe extern "C" fn stopInTestMode() {
     if startedLoggingInTestMode {
         blackboxFinish();
-        startedLoggingInTestMode = 0 as libc::c_int != 0
+        startedLoggingInTestMode = 0i32 != 0
     };
 }
 /* *
@@ -4085,13 +3988,11 @@ unsafe extern "C" fn stopInTestMode() {
  * test mode to trigger again; its just that the data will be in a second, third, fourth etc log file.
  */
 unsafe extern "C" fn inMotorTestMode() -> bool {
-    static mut resetTime: uint32_t =
-        0 as libc::c_int as uint32_t; // add 5 seconds
+    static mut resetTime: uint32_t = 0i32 as uint32_t; // add 5 seconds
     if armingFlags as libc::c_int & ARMED as libc::c_int == 0 &&
            areMotorsRunning() as libc::c_int != 0 {
-        resetTime =
-            millis().wrapping_add(5000 as libc::c_int as libc::c_uint);
-        return 1 as libc::c_int != 0
+        resetTime = millis().wrapping_add(5000i32 as libc::c_uint);
+        return 1i32 != 0
     } else {
         // Monitor the duration at minimum
         return millis() < resetTime
@@ -4099,13 +4000,11 @@ unsafe extern "C" fn inMotorTestMode() -> bool {
 }
 unsafe extern "C" fn writeGPSHomeFrame() {
     blackboxWrite('H' as i32 as uint8_t);
-    blackboxWriteSignedVB(GPS_home[0 as libc::c_int as usize]);
-    blackboxWriteSignedVB(GPS_home[1 as libc::c_int as usize]);
+    blackboxWriteSignedVB(GPS_home[0]);
+    blackboxWriteSignedVB(GPS_home[1]);
     //TODO it'd be great if we could grab the GPS current time and write that too
-    gpsHistory.GPS_home[0 as libc::c_int as usize] =
-        GPS_home[0 as libc::c_int as usize];
-    gpsHistory.GPS_home[1 as libc::c_int as usize] =
-        GPS_home[1 as libc::c_int as usize];
+    gpsHistory.GPS_home[0] = GPS_home[0];
+    gpsHistory.GPS_home[1] = GPS_home[1];
 }
 unsafe extern "C" fn writeGPSFrame(mut currentTimeUs: timeUs_t) {
     blackboxWrite('G' as i32 as uint8_t);
@@ -4118,33 +4017,26 @@ unsafe extern "C" fn writeGPSFrame(mut currentTimeUs: timeUs_t) {
     if testBlackboxCondition(FLIGHT_LOG_FIELD_CONDITION_NOT_LOGGING_EVERY_FRAME)
        {
         // Predict the time of the last frame in the main log
-        blackboxWriteUnsignedVB(currentTimeUs.wrapping_sub((*blackboxHistory[1
-                                                                                 as
-                                                                                 libc::c_int
-                                                                                 as
-                                                                                 usize]).time));
+        blackboxWriteUnsignedVB(currentTimeUs.wrapping_sub((*blackboxHistory[1]).time));
     }
     blackboxWriteUnsignedVB(gpsSol.numSat as uint32_t);
-    blackboxWriteSignedVB(gpsSol.llh.lat -
-                              gpsHistory.GPS_home[0 as libc::c_int as usize]);
-    blackboxWriteSignedVB(gpsSol.llh.lon -
-                              gpsHistory.GPS_home[1 as libc::c_int as usize]);
+    blackboxWriteSignedVB(gpsSol.llh.lat - gpsHistory.GPS_home[0]);
+    blackboxWriteSignedVB(gpsSol.llh.lon - gpsHistory.GPS_home[1]);
     blackboxWriteUnsignedVB(gpsSol.llh.alt as uint32_t);
     blackboxWriteUnsignedVB(gpsSol.groundSpeed as uint32_t);
     blackboxWriteUnsignedVB(gpsSol.groundCourse as uint32_t);
     gpsHistory.GPS_numSat = gpsSol.numSat;
-    gpsHistory.GPS_coord[0 as libc::c_int as usize] = gpsSol.llh.lat;
-    gpsHistory.GPS_coord[1 as libc::c_int as usize] = gpsSol.llh.lon;
+    gpsHistory.GPS_coord[0] = gpsSol.llh.lat;
+    gpsHistory.GPS_coord[1] = gpsSol.llh.lon;
 }
 /* *
  * Fill the current state of the blackbox using values read from the flight controller
  */
 unsafe extern "C" fn loadMainState(mut currentTimeUs: timeUs_t) {
-    let mut blackboxCurrent: *mut blackboxMainState_t =
-        blackboxHistory[0 as libc::c_int as usize];
+    let mut blackboxCurrent: *mut blackboxMainState_t = blackboxHistory[0];
     (*blackboxCurrent).time = currentTimeUs;
-    let mut i: libc::c_int = 0 as libc::c_int;
-    while i < 3 as libc::c_int {
+    let mut i: libc::c_int = 0i32;
+    while i < 3i32 {
         (*blackboxCurrent).axisPID_P[i as usize] =
             pidData[i as usize].P as int32_t;
         (*blackboxCurrent).axisPID_I[i as usize] =
@@ -4161,19 +4053,19 @@ unsafe extern "C" fn loadMainState(mut currentTimeUs: timeUs_t) {
             mag.magADC[i as usize] as int16_t;
         i += 1
     }
-    let mut i_0: libc::c_int = 0 as libc::c_int;
-    while i_0 < 4 as libc::c_int {
+    let mut i_0: libc::c_int = 0i32;
+    while i_0 < 4i32 {
         (*blackboxCurrent).rcCommand[i_0 as usize] =
             rcCommand[i_0 as usize] as int16_t;
         i_0 += 1
     }
-    let mut i_1: libc::c_int = 0 as libc::c_int;
-    while i_1 < 4 as libc::c_int {
+    let mut i_1: libc::c_int = 0i32;
+    while i_1 < 4i32 {
         (*blackboxCurrent).debug[i_1 as usize] = debug[i_1 as usize];
         i_1 += 1
     }
     let motorCount: libc::c_int = getMotorCount() as libc::c_int;
-    let mut i_2: libc::c_int = 0 as libc::c_int;
+    let mut i_2: libc::c_int = 0i32;
     while i_2 < motorCount {
         (*blackboxCurrent).motor[i_2 as usize] =
             motor[i_2 as usize] as int16_t;
@@ -4184,8 +4076,7 @@ unsafe extern "C" fn loadMainState(mut currentTimeUs: timeUs_t) {
     (*blackboxCurrent).BaroAlt = baro.BaroAlt;
     (*blackboxCurrent).rssi = getRssi();
     //Tail servo for tricopters
-    (*blackboxCurrent).servo[5 as libc::c_int as usize] =
-        servo[5 as libc::c_int as usize];
+    (*blackboxCurrent).servo[5] = servo[5];
     // UNIT_TEST
 }
 /* *
@@ -4220,7 +4111,7 @@ unsafe extern "C" fn sendFieldDefinition(mut mainFrameChar: libc::c_char,
     let mut def: *const blackboxFieldDefinition_t =
         0 as *const blackboxFieldDefinition_t;
     let mut headerCount: libc::c_uint = 0;
-    static mut needComma: bool = 0 as libc::c_int != 0;
+    static mut needComma: bool = 0i32 != 0;
     let mut definitionStride: size_t =
         (secondFieldDefinition as
              *mut libc::c_char).wrapping_offset_from(fieldDefinitions as
@@ -4242,9 +4133,7 @@ unsafe extern "C" fn sendFieldDefinition(mut mainFrameChar: libc::c_char,
             (::core::mem::size_of::<[*const libc::c_char; 6]>() as
                  libc::c_ulong).wrapping_div(::core::mem::size_of::<*const libc::c_char>()
                                                  as
-                                                 libc::c_ulong).wrapping_sub(2
-                                                                                 as
-                                                                                 libc::c_int
+                                                 libc::c_ulong).wrapping_sub(2i32
                                                                                  as
                                                                                  libc::c_ulong)
                 as libc::c_uint
@@ -4254,9 +4143,9 @@ unsafe extern "C" fn sendFieldDefinition(mut mainFrameChar: libc::c_char,
      * the whole header.
      */
     // On our first call we need to print the name of the header and a colon
-    if xmitState.u.fieldIndex == -(1 as libc::c_int) {
+    if xmitState.u.fieldIndex == -1i32 {
         if xmitState.headerIndex >= headerCount {
-            return 0 as libc::c_int != 0
+            return 0i32 != 0
             //Someone probably called us again after we had already completed transmission
         }
         let mut charsToBeWritten: uint32_t =
@@ -4268,7 +4157,7 @@ unsafe extern "C" fn sendFieldDefinition(mut mainFrameChar: libc::c_char,
         if blackboxDeviceReserveBufferSpace(charsToBeWritten as int32_t) as
                libc::c_uint !=
                BLACKBOX_RESERVE_SUCCESS as libc::c_int as libc::c_uint {
-            return 1 as libc::c_int != 0
+            return 1i32 != 0
             // Try again later
         }
         blackboxHeaderBudget -=
@@ -4279,9 +4168,7 @@ unsafe extern "C" fn sendFieldDefinition(mut mainFrameChar: libc::c_char,
                                        as
                                        libc::c_ulong).wrapping_div(::core::mem::size_of::<*const libc::c_char>()
                                                                        as
-                                                                       libc::c_ulong).wrapping_sub(2
-                                                                                                       as
-                                                                                                       libc::c_int
+                                                                       libc::c_ulong).wrapping_sub(2i32
                                                                                                        as
                                                                                                        libc::c_ulong)
                               {
@@ -4290,10 +4177,10 @@ unsafe extern "C" fn sendFieldDefinition(mut mainFrameChar: libc::c_char,
                            blackboxFieldHeaderNames[xmitState.headerIndex as
                                                         usize]);
         xmitState.u.fieldIndex += 1;
-        needComma = 0 as libc::c_int != 0
+        needComma = 0i32 != 0
     }
     // The longest we expect an integer to be as a string:
-    let LONGEST_INTEGER_STRLEN: uint32_t = 2 as libc::c_int as uint32_t;
+    let LONGEST_INTEGER_STRLEN: uint32_t = 2i32 as uint32_t;
     while xmitState.u.fieldIndex < fieldCount {
         def =
             (fieldDefinitions as
@@ -4310,9 +4197,9 @@ unsafe extern "C" fn sendFieldDefinition(mut mainFrameChar: libc::c_char,
                                          FlightLogFieldCondition) as
                    libc::c_int != 0 {
             // First (over)estimate the length of the string we want to print
-            let mut bytesToWrite: int32_t = 1 as libc::c_int; // Leading comma
+            let mut bytesToWrite: int32_t = 1i32; // Leading comma
             // The first header is a field name
-            if xmitState.headerIndex == 0 as libc::c_int as libc::c_uint {
+            if xmitState.headerIndex == 0i32 as libc::c_uint {
                 bytesToWrite =
                     (bytesToWrite as
                          libc::c_ulong).wrapping_add(strlen((*def).name).wrapping_add(strlen(b"[]\x00"
@@ -4335,18 +4222,17 @@ unsafe extern "C" fn sendFieldDefinition(mut mainFrameChar: libc::c_char,
                    != BLACKBOX_RESERVE_SUCCESS as libc::c_int as libc::c_uint
                {
                 // Ran out of space!
-                return 1 as libc::c_int != 0
+                return 1i32 != 0
             }
             blackboxHeaderBudget -= bytesToWrite;
             if needComma {
                 blackboxWrite(',' as i32 as uint8_t);
-            } else { needComma = 1 as libc::c_int != 0 }
+            } else { needComma = 1i32 != 0 }
             // The first header is a field name
-            if xmitState.headerIndex == 0 as libc::c_int as libc::c_uint {
+            if xmitState.headerIndex == 0i32 as libc::c_uint {
                 blackboxWriteString((*def).name);
                 // Do we need to print an index in brackets after the name?
-                if (*def).fieldNameIndex as libc::c_int != -(1 as libc::c_int)
-                   {
+                if (*def).fieldNameIndex as libc::c_int != -1i32 {
                     blackboxPrintf(b"[%d]\x00" as *const u8 as
                                        *const libc::c_char,
                                    (*def).fieldNameIndex as libc::c_int);
@@ -4354,9 +4240,7 @@ unsafe extern "C" fn sendFieldDefinition(mut mainFrameChar: libc::c_char,
             } else {
                 //The other headers are integers
                 blackboxPrintf(b"%d\x00" as *const u8 as *const libc::c_char,
-                               *(*def).arr.as_ptr().offset(xmitState.headerIndex.wrapping_sub(1
-                                                                                                  as
-                                                                                                  libc::c_int
+                               *(*def).arr.as_ptr().offset(xmitState.headerIndex.wrapping_sub(1i32
                                                                                                   as
                                                                                                   libc::c_uint)
                                                                as isize) as
@@ -4367,12 +4251,12 @@ unsafe extern "C" fn sendFieldDefinition(mut mainFrameChar: libc::c_char,
     }
     // Did we complete this line?
     if xmitState.u.fieldIndex == fieldCount &&
-           blackboxDeviceReserveBufferSpace(1 as libc::c_int) as libc::c_uint
-               == BLACKBOX_RESERVE_SUCCESS as libc::c_int as libc::c_uint {
+           blackboxDeviceReserveBufferSpace(1i32) as libc::c_uint ==
+               BLACKBOX_RESERVE_SUCCESS as libc::c_int as libc::c_uint {
         blackboxHeaderBudget -= 1;
         blackboxWrite('\n' as i32 as uint8_t);
         xmitState.headerIndex = xmitState.headerIndex.wrapping_add(1);
-        xmitState.u.fieldIndex = -(1 as libc::c_int)
+        xmitState.u.fieldIndex = -1i32
     }
     return xmitState.headerIndex < headerCount;
 }
@@ -4401,9 +4285,9 @@ unsafe extern "C" fn blackboxWriteSysinfo() -> bool {
     let motorOutputLowInt: uint16_t = lrintf(motorOutputLow) as uint16_t;
     let motorOutputHighInt: uint16_t = lrintf(motorOutputHigh) as uint16_t;
     // Make sure we have enough room in the buffer for our longest line (as of this writing, the "Firmware date" line)
-    if blackboxDeviceReserveBufferSpace(64 as libc::c_int) as libc::c_uint !=
+    if blackboxDeviceReserveBufferSpace(64i32) as libc::c_uint !=
            BLACKBOX_RESERVE_SUCCESS as libc::c_int as libc::c_uint {
-        return 0 as libc::c_int != 0
+        return 0i32 != 0
     }
     let mut buf: [libc::c_char; 30] = [0; 30];
     let mut currentControlRateProfile: *const controlRateConfig_t =
@@ -4523,8 +4407,7 @@ unsafe extern "C" fn blackboxWriteSysinfo() -> bool {
             } else {
                 xmitState.headerIndex =
                     (xmitState.headerIndex as
-                         libc::c_uint).wrapping_add(2 as libc::c_int as
-                                                        libc::c_uint) as
+                         libc::c_uint).wrapping_add(2i32 as libc::c_uint) as
                         uint32_t as uint32_t
                 // Skip the next two vbat fields too
             }
@@ -5177,12 +5060,12 @@ unsafe extern "C" fn blackboxWriteSysinfo() -> bool {
         }
         _ => {
             // USE_RC_SMOOTHING_FILTER
-            return 1 as libc::c_int != 0
+            return 1i32 != 0
         }
     }
     xmitState.headerIndex = xmitState.headerIndex.wrapping_add(1);
     // UNIT_TEST
-    return 0 as libc::c_int != 0;
+    return 0i32 != 0;
 }
 /* *
  * Write the given event to the log immediately
@@ -5212,8 +5095,7 @@ pub unsafe extern "C" fn blackboxLogEvent(mut event: FlightLogEvent,
         13 => {
             if (*data).inflightAdjustment.floatFlag {
                 blackboxWrite(((*data).inflightAdjustment.adjustmentFunction
-                                   as libc::c_int + 128 as libc::c_int) as
-                                  uint8_t);
+                                   as libc::c_int + 128i32) as uint8_t);
                 blackboxWriteFloat((*data).inflightAdjustment.newFloatValue);
             } else {
                 blackboxWrite((*data).inflightAdjustment.adjustmentFunction);
@@ -5227,7 +5109,7 @@ pub unsafe extern "C" fn blackboxLogEvent(mut event: FlightLogEvent,
         255 => {
             blackboxWriteString(b"End of log\x00" as *const u8 as
                                     *const libc::c_char);
-            blackboxWrite(0 as libc::c_int as uint8_t);
+            blackboxWrite(0i32 as uint8_t);
         }
         _ => { }
     };
@@ -5273,11 +5155,11 @@ unsafe extern "C" fn blackboxCheckAndLogFlightMode() {
     };
 }
 unsafe extern "C" fn blackboxShouldLogPFrame() -> bool {
-    return blackboxPFrameIndex as libc::c_int == 0 as libc::c_int &&
-               (*blackboxConfig()).p_ratio as libc::c_int != 0 as libc::c_int;
+    return blackboxPFrameIndex as libc::c_int == 0i32 &&
+               (*blackboxConfig()).p_ratio as libc::c_int != 0i32;
 }
 unsafe extern "C" fn blackboxShouldLogIFrame() -> bool {
-    return blackboxLoopIndex as libc::c_int == 0 as libc::c_int;
+    return blackboxLoopIndex as libc::c_int == 0i32;
 }
 /*
  * If the GPS home point has been updated, or every 128 I-frames (~10 seconds), write the
@@ -5287,17 +5169,14 @@ unsafe extern "C" fn blackboxShouldLogIFrame() -> bool {
  * still be interpreted correctly.
  */
 unsafe extern "C" fn blackboxShouldLogGpsHomeFrame() -> bool {
-    if GPS_home[0 as libc::c_int as usize] !=
-           gpsHistory.GPS_home[0 as libc::c_int as usize] ||
-           GPS_home[1 as libc::c_int as usize] !=
-               gpsHistory.GPS_home[1 as libc::c_int as usize] ||
+    if GPS_home[0] != gpsHistory.GPS_home[0] ||
+           GPS_home[1] != gpsHistory.GPS_home[1] ||
            blackboxPFrameIndex as libc::c_int ==
-               blackboxIInterval as libc::c_int / 2 as libc::c_int &&
-               blackboxIFrameIndex as libc::c_int % 128 as libc::c_int ==
-                   0 as libc::c_int {
-        return 1 as libc::c_int != 0
+               blackboxIInterval as libc::c_int / 2i32 &&
+               blackboxIFrameIndex as libc::c_int % 128i32 == 0i32 {
+        return 1i32 != 0
     }
-    return 0 as libc::c_int != 0;
+    return 0i32 != 0;
 }
 // GPS
 // Called once every FC loop in order to keep track of how many FC loop iterations have passed
@@ -5306,14 +5185,14 @@ unsafe extern "C" fn blackboxAdvanceIterationTimers() {
     blackboxIteration = blackboxIteration.wrapping_add(1);
     blackboxLoopIndex = blackboxLoopIndex.wrapping_add(1);
     if blackboxLoopIndex as libc::c_int >= blackboxIInterval as libc::c_int {
-        blackboxLoopIndex = 0 as libc::c_int as uint16_t;
+        blackboxLoopIndex = 0i32 as uint16_t;
         blackboxIFrameIndex = blackboxIFrameIndex.wrapping_add(1);
-        blackboxPFrameIndex = 0 as libc::c_int as uint16_t
+        blackboxPFrameIndex = 0i32 as uint16_t
     } else {
         blackboxPFrameIndex = blackboxPFrameIndex.wrapping_add(1);
         if blackboxPFrameIndex as libc::c_int >=
                blackboxPInterval as libc::c_int {
-            blackboxPFrameIndex = 0 as libc::c_int as uint16_t
+            blackboxPFrameIndex = 0i32 as uint16_t
         }
     };
 }
@@ -5348,12 +5227,8 @@ unsafe extern "C" fn blackboxLogIteration(mut currentTimeUs: timeUs_t) {
                 writeGPSFrame(currentTimeUs);
             } else if gpsSol.numSat as libc::c_int !=
                           gpsHistory.GPS_numSat as libc::c_int ||
-                          gpsSol.llh.lat !=
-                              gpsHistory.GPS_coord[0 as libc::c_int as usize]
-                          ||
-                          gpsSol.llh.lon !=
-                              gpsHistory.GPS_coord[1 as libc::c_int as usize]
-             {
+                          gpsSol.llh.lat != gpsHistory.GPS_coord[0] ||
+                          gpsSol.llh.lon != gpsHistory.GPS_coord[1] {
                 //We could check for velocity changes as well but I doubt it changes independent of position
                 writeGPSFrame(currentTimeUs);
             }
@@ -5387,14 +5262,13 @@ pub unsafe extern "C" fn blackboxUpdate(mut currentTimeUs: timeUs_t) {
          * buffer, overflow the OpenLog's buffer, or keep the main loop busy for too long.
          */
             if millis() >
-                   xmitState.u.startTime.wrapping_add(100 as libc::c_int as
-                                                          libc::c_uint) {
-                if blackboxDeviceReserveBufferSpace(64 as libc::c_int) as
-                       libc::c_uint ==
+                   xmitState.u.startTime.wrapping_add(100i32 as libc::c_uint)
+               {
+                if blackboxDeviceReserveBufferSpace(64i32) as libc::c_uint ==
                        BLACKBOX_RESERVE_SUCCESS as libc::c_int as libc::c_uint
                    {
-                    let mut i: libc::c_int = 0 as libc::c_int;
-                    while i < 64 as libc::c_int &&
+                    let mut i: libc::c_int = 0i32;
+                    while i < 64i32 &&
                               blackboxHeader[xmitState.headerIndex as usize]
                                   as libc::c_int != '\u{0}' as i32 {
                         blackboxWrite(blackboxHeader[xmitState.headerIndex as
@@ -5418,25 +5292,16 @@ pub unsafe extern "C" fn blackboxUpdate(mut currentTimeUs: timeUs_t) {
                                     'P' as i32 as libc::c_char,
                                     blackboxMainFields.as_ptr() as
                                         *const libc::c_void,
-                                    blackboxMainFields.as_ptr().offset(1 as
-                                                                           libc::c_int
-                                                                           as
-                                                                           isize)
-                                        as *const libc::c_void,
+                                    blackboxMainFields.as_ptr().offset(1) as
+                                        *const libc::c_void,
                                     (::core::mem::size_of::<[blackboxDeltaFieldDefinition_t; 44]>()
                                          as
                                          libc::c_ulong).wrapping_div(::core::mem::size_of::<blackboxDeltaFieldDefinition_t>()
                                                                          as
                                                                          libc::c_ulong)
                                         as libc::c_int,
-                                    &(*blackboxMainFields.as_ptr().offset(0 as
-                                                                              libc::c_int
-                                                                              as
-                                                                              isize)).condition,
-                                    &(*blackboxMainFields.as_ptr().offset(1 as
-                                                                              libc::c_int
-                                                                              as
-                                                                              isize)).condition)
+                                    &(*blackboxMainFields.as_ptr().offset(0)).condition,
+                                    &(*blackboxMainFields.as_ptr().offset(1)).condition)
                {
                 if feature(FEATURE_GPS as libc::c_int as uint32_t) {
                     blackboxSetState(BLACKBOX_STATE_SEND_GPS_H_HEADER);
@@ -5447,14 +5312,11 @@ pub unsafe extern "C" fn blackboxUpdate(mut currentTimeUs: timeUs_t) {
             blackboxReplenishHeaderBudget();
             //On entry of this state, xmitState.headerIndex is 0 and xmitState.u.fieldIndex is -1
             if !sendFieldDefinition('H' as i32 as libc::c_char,
-                                    0 as libc::c_int as libc::c_char,
+                                    0i32 as libc::c_char,
                                     blackboxGpsHFields.as_ptr() as
                                         *const libc::c_void,
-                                    blackboxGpsHFields.as_ptr().offset(1 as
-                                                                           libc::c_int
-                                                                           as
-                                                                           isize)
-                                        as *const libc::c_void,
+                                    blackboxGpsHFields.as_ptr().offset(1) as
+                                        *const libc::c_void,
                                     (::core::mem::size_of::<[blackboxSimpleFieldDefinition_t; 2]>()
                                          as
                                          libc::c_ulong).wrapping_div(::core::mem::size_of::<blackboxSimpleFieldDefinition_t>()
@@ -5469,28 +5331,19 @@ pub unsafe extern "C" fn blackboxUpdate(mut currentTimeUs: timeUs_t) {
             blackboxReplenishHeaderBudget();
             //On entry of this state, xmitState.headerIndex is 0 and xmitState.u.fieldIndex is -1
             if !sendFieldDefinition('G' as i32 as libc::c_char,
-                                    0 as libc::c_int as libc::c_char,
+                                    0i32 as libc::c_char,
                                     blackboxGpsGFields.as_ptr() as
                                         *const libc::c_void,
-                                    blackboxGpsGFields.as_ptr().offset(1 as
-                                                                           libc::c_int
-                                                                           as
-                                                                           isize)
-                                        as *const libc::c_void,
+                                    blackboxGpsGFields.as_ptr().offset(1) as
+                                        *const libc::c_void,
                                     (::core::mem::size_of::<[blackboxConditionalFieldDefinition_t; 7]>()
                                          as
                                          libc::c_ulong).wrapping_div(::core::mem::size_of::<blackboxConditionalFieldDefinition_t>()
                                                                          as
                                                                          libc::c_ulong)
                                         as libc::c_int,
-                                    &(*blackboxGpsGFields.as_ptr().offset(0 as
-                                                                              libc::c_int
-                                                                              as
-                                                                              isize)).condition,
-                                    &(*blackboxGpsGFields.as_ptr().offset(1 as
-                                                                              libc::c_int
-                                                                              as
-                                                                              isize)).condition)
+                                    &(*blackboxGpsGFields.as_ptr().offset(0)).condition,
+                                    &(*blackboxGpsGFields.as_ptr().offset(1)).condition)
                {
                 blackboxSetState(BLACKBOX_STATE_SEND_SLOW_HEADER);
             }
@@ -5499,14 +5352,11 @@ pub unsafe extern "C" fn blackboxUpdate(mut currentTimeUs: timeUs_t) {
             blackboxReplenishHeaderBudget();
             //On entry of this state, xmitState.headerIndex is 0 and xmitState.u.fieldIndex is -1
             if !sendFieldDefinition('S' as i32 as libc::c_char,
-                                    0 as libc::c_int as libc::c_char,
+                                    0i32 as libc::c_char,
                                     blackboxSlowFields.as_ptr() as
                                         *const libc::c_void,
-                                    blackboxSlowFields.as_ptr().offset(1 as
-                                                                           libc::c_int
-                                                                           as
-                                                                           isize)
-                                        as *const libc::c_void,
+                                    blackboxSlowFields.as_ptr().offset(1) as
+                                        *const libc::c_void,
                                     (::core::mem::size_of::<[blackboxSimpleFieldDefinition_t; 5]>()
                                          as
                                          libc::c_ulong).wrapping_div(::core::mem::size_of::<blackboxSimpleFieldDefinition_t>()
@@ -5573,8 +5423,7 @@ pub unsafe extern "C" fn blackboxUpdate(mut currentTimeUs: timeUs_t) {
             if blackboxDeviceEndLog(blackboxLoggedAnyFrames) as libc::c_int !=
                    0 &&
                    (millis() >
-                        xmitState.u.startTime.wrapping_add(200 as libc::c_int
-                                                               as
+                        xmitState.u.startTime.wrapping_add(200i32 as
                                                                libc::c_uint)
                         || blackboxDeviceFlushForce() as libc::c_int != 0) {
                 blackboxDeviceClose();
@@ -5587,9 +5436,7 @@ pub unsafe extern "C" fn blackboxUpdate(mut currentTimeUs: timeUs_t) {
     if isBlackboxDeviceFull() {
         blackboxSetState(BLACKBOX_STATE_STOPPED); // Only log in test mode if there is room!
         // ensure we reset the test mode flag if we stop due to full memory card
-        if startedLoggingInTestMode {
-            startedLoggingInTestMode = 0 as libc::c_int != 0
-        }
+        if startedLoggingInTestMode { startedLoggingInTestMode = 0i32 != 0 }
     } else {
         match (*blackboxConfig()).mode as libc::c_int {
             1 => {
@@ -5635,27 +5482,27 @@ pub unsafe extern "C" fn blackboxInit() {
     // an I-frame is written every 32ms
     // blackboxUpdate() is run in synchronisation with the PID loop
     // targetPidLooptime is 1000 for 1kHz loop, 500 for 2kHz loop etc, targetPidLooptime is rounded for short looptimes
-    if targetPidLooptime == 31 as libc::c_int as libc::c_uint {
+    if targetPidLooptime == 31i32 as libc::c_uint {
         // rounded from 31.25us
-        blackboxIInterval = 1024 as libc::c_int as int16_t
-    } else if targetPidLooptime == 63 as libc::c_int as libc::c_uint {
+        blackboxIInterval = 1024i32 as int16_t
+    } else if targetPidLooptime == 63i32 as libc::c_uint {
         // rounded from 62.5us
-        blackboxIInterval = 512 as libc::c_int as int16_t
+        blackboxIInterval = 512i32 as int16_t
     } else {
         blackboxIInterval =
-            ((32 as libc::c_int * 1000 as libc::c_int) as
+            ((32i32 * 1000i32) as
                  libc::c_uint).wrapping_div(targetPidLooptime) as uint16_t as
                 int16_t
     }
     // by default p_ratio is 32 and a P-frame is written every 1ms
     // if p_ratio is zero then no P-frames are logged
-    if (*blackboxConfig()).p_ratio as libc::c_int == 0 as libc::c_int {
-        blackboxPInterval = 0 as libc::c_int as int16_t
+    if (*blackboxConfig()).p_ratio as libc::c_int == 0i32 {
+        blackboxPInterval = 0i32 as int16_t
         // blackboxPInterval not used when p_ratio is zero, so just set it to zero
     } else if (*blackboxConfig()).p_ratio as libc::c_int >
                   blackboxIInterval as libc::c_int &&
-                  blackboxIInterval as libc::c_int >= 32 as libc::c_int {
-        blackboxPInterval = 1 as libc::c_int as int16_t
+                  blackboxIInterval as libc::c_int >= 32i32 {
+        blackboxPInterval = 1i32 as int16_t
     } else {
         blackboxPInterval =
             (blackboxIInterval as libc::c_int /
@@ -5664,6 +5511,6 @@ pub unsafe extern "C" fn blackboxInit() {
     if (*blackboxConfig()).device != 0 {
         blackboxSetState(BLACKBOX_STATE_STOPPED);
     } else { blackboxSetState(BLACKBOX_STATE_DISABLED); }
-    blackboxSInterval = blackboxIInterval as libc::c_int * 256 as libc::c_int;
+    blackboxSInterval = blackboxIInterval as libc::c_int * 256i32;
     // S-frame is written every 256*32 = 8192ms, approx every 8 seconds
 }

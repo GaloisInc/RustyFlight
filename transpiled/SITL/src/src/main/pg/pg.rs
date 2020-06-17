@@ -1,4 +1,5 @@
-use ::libc;
+use core;
+use libc;
 extern "C" {
     #[no_mangle]
     fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong)
@@ -50,7 +51,7 @@ pub const PGR_PGN_MASK: C2RustUnnamed = 4095;
 pub type pgResetFunc
     =
     unsafe extern "C" fn(_: *mut libc::c_void, _: libc::c_int) -> ();
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct pgRegistry_s {
     pub pgn: pgn_t,
@@ -60,11 +61,12 @@ pub struct pgRegistry_s {
     pub ptr: *mut *mut uint8_t,
     pub reset: C2RustUnnamed_0,
 }
-#[derive(Copy, Clone)]
-#[repr(C)]
+#[derive ( Copy, Clone )]
+#[repr ( C )]
 pub union C2RustUnnamed_0 {
     pub ptr: *mut libc::c_void,
-    pub fn_0: Option<pgResetFunc>,
+    pub fn_0: Option<unsafe extern "C" fn(_: *mut libc::c_void,
+                                          _: libc::c_int) -> ()>,
 }
 pub type pgRegistry_t = pgRegistry_s;
 #[no_mangle]
@@ -76,7 +78,7 @@ unsafe extern "C" fn pgN(mut reg: *const pgRegistry_t) -> uint16_t {
 }
 #[inline]
 unsafe extern "C" fn pgVersion(mut reg: *const pgRegistry_t) -> uint8_t {
-    return ((*reg).pgn as libc::c_int >> 12 as libc::c_int) as uint8_t;
+    return ((*reg).pgn as libc::c_int >> 12i32) as uint8_t;
 }
 #[inline]
 unsafe extern "C" fn pgSize(mut reg: *const pgRegistry_t) -> uint16_t {
@@ -127,8 +129,7 @@ unsafe extern "C" fn pgOffset(mut reg: *const pgRegistry_t) -> *mut uint8_t {
 pub unsafe extern "C" fn pgResetInstance(mut reg: *const pgRegistry_t,
                                          mut base: *mut uint8_t) {
     let regSize: uint16_t = pgSize(reg);
-    memset(base as *mut libc::c_void, 0 as libc::c_int,
-           regSize as libc::c_ulong);
+    memset(base as *mut libc::c_void, 0i32, regSize as libc::c_ulong);
     if (*reg).reset.ptr >= __pg_resetdata_start.as_ptr() as *mut libc::c_void
            &&
            (*reg).reset.ptr < __pg_resetdata_end.as_ptr() as *mut libc::c_void
@@ -154,9 +155,9 @@ pub unsafe extern "C" fn pgResetCopy(mut copy: *mut libc::c_void,
     let mut reg: *const pgRegistry_t = pgFind(pgn);
     if !reg.is_null() {
         pgResetInstance(reg, copy as *mut uint8_t);
-        return 1 as libc::c_int != 0
+        return 1i32 != 0
     }
-    return 0 as libc::c_int != 0;
+    return 0i32 != 0;
 }
 #[no_mangle]
 pub unsafe extern "C" fn pgLoad(mut reg: *const pgRegistry_t,
@@ -174,9 +175,9 @@ pub unsafe extern "C" fn pgLoad(mut reg: *const pgRegistry_t,
              });
         memcpy(pgOffset(reg) as *mut libc::c_void, from,
                take as libc::c_ulong);
-        return 1 as libc::c_int != 0
+        return 1i32 != 0
     }
-    return 0 as libc::c_int != 0;
+    return 0i32 != 0;
 }
 #[no_mangle]
 pub unsafe extern "C" fn pgStore(mut reg: *const pgRegistry_t,

@@ -1,4 +1,5 @@
-use ::libc;
+use core;
+use libc;
 extern "C" {
     #[no_mangle]
     static debugModeNames: [*const libc::c_char; 44];
@@ -18,7 +19,26 @@ pub type uint8_t = __uint8_t;
 pub type uint16_t = __uint16_t;
 pub type uint32_t = __uint32_t;
 pub type pgn_t = uint16_t;
-#[derive(Copy, Clone)]
+/*
+ * This file is part of Cleanflight and Betaflight.
+ *
+ * Cleanflight and Betaflight are free software. You can redistribute
+ * this software and/or modify this software under the terms of the
+ * GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * Cleanflight and Betaflight are distributed in the hope that they
+ * will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this software.
+ *
+ * If not, see <http://www.gnu.org/licenses/>.
+ */
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct displayPortVTable_s {
     pub grab: Option<unsafe extern "C" fn(_: *mut displayPort_t)
@@ -49,27 +69,8 @@ pub struct displayPortVTable_s {
     pub txBytesFree: Option<unsafe extern "C" fn(_: *const displayPort_t)
                                 -> uint32_t>,
 }
-/*
- * This file is part of Cleanflight and Betaflight.
- *
- * Cleanflight and Betaflight are free software. You can redistribute
- * this software and/or modify this software under the terms of the
- * GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option)
- * any later version.
- *
- * Cleanflight and Betaflight are distributed in the hope that they
- * will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this software.
- *
- * If not, see <http://www.gnu.org/licenses/>.
- */
 pub type displayPort_t = displayPort_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct displayPort_s {
     pub vTable: *const displayPortVTable_s,
@@ -95,7 +96,6 @@ pub const THROTTLE: rc_alias = 3;
 pub const YAW: rc_alias = 2;
 pub const PITCH: rc_alias = 1;
 pub const ROLL: rc_alias = 0;
-// CMS state
 /*
  * This file is part of Cleanflight and Betaflight.
  *
@@ -169,7 +169,7 @@ pub const TABLE_GPS_PROVIDER: lookupTableIndex_e = 3;
 pub const TABLE_ALIGNMENT: lookupTableIndex_e = 2;
 pub const TABLE_UNIT: lookupTableIndex_e = 1;
 pub const TABLE_OFF_ON: lookupTableIndex_e = 0;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct lookupTableEntry_s {
     pub values: *const *const libc::c_char,
@@ -189,34 +189,34 @@ pub const VAR_INT16: C2RustUnnamed_0 = 3;
 pub const VAR_UINT16: C2RustUnnamed_0 = 2;
 pub const VAR_INT8: C2RustUnnamed_0 = 1;
 pub const VAR_UINT8: C2RustUnnamed_0 = 0;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct cliMinMaxConfig_s {
     pub min: int16_t,
     pub max: int16_t,
 }
 pub type cliMinMaxConfig_t = cliMinMaxConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct cliLookupTableConfig_s {
     pub tableIndex: lookupTableIndex_e,
 }
 pub type cliLookupTableConfig_t = cliLookupTableConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct cliArrayLengthConfig_s {
     pub length: uint8_t,
 }
 pub type cliArrayLengthConfig_t = cliArrayLengthConfig_s;
-#[derive(Copy, Clone)]
-#[repr(C)]
+#[derive ( Copy, Clone )]
+#[repr ( C )]
 pub union cliValueConfig_t {
     pub lookup: cliLookupTableConfig_t,
     pub minmax: cliMinMaxConfig_t,
     pub array: cliArrayLengthConfig_t,
     pub bitpos: uint8_t,
 }
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C, packed)]
 pub struct clivalue_s {
     pub name: *const libc::c_char,
@@ -226,7 +226,7 @@ pub struct clivalue_s {
     pub offset: uint16_t,
 }
 pub type clivalue_t = clivalue_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct hsvColor_s {
     pub h: uint16_t,
@@ -234,13 +234,13 @@ pub struct hsvColor_s {
     pub v: uint8_t,
 }
 pub type hsvColor_t = hsvColor_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct modeColorIndexes_s {
     pub color: [uint8_t; 6],
 }
 pub type modeColorIndexes_t = modeColorIndexes_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct specialColorIndexes_s {
     pub color: [uint8_t; 11],
@@ -499,8 +499,8 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                                                     TABLE_ALIGNMENT,};
                                                      init
                                                  },},
-                        pgn: 10 as libc::c_int as pgn_t,
-                        offset: 0 as libc::c_ulong as uint16_t,};
+                        pgn: 10i32 as pgn_t,
+                        offset: 0u64 as uint16_t,};
          init
      },
      {
@@ -520,8 +520,8 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                                                     TABLE_GYRO_HARDWARE_LPF,};
                                                      init
                                                  },},
-                        pgn: 10 as libc::c_int as pgn_t,
-                        offset: 3 as libc::c_ulong as uint16_t,};
+                        pgn: 10i32 as pgn_t,
+                        offset: 3u64 as uint16_t,};
          init
      },
      {
@@ -537,21 +537,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               1
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               1i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               32
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               32i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 10 as libc::c_int as pgn_t,
-                        offset: 2 as libc::c_ulong as uint16_t,};
+                        pgn: 10i32 as pgn_t,
+                        offset: 2u64 as uint16_t,};
          init
      },
      {
@@ -571,8 +567,8 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                                                     TABLE_LOWPASS_TYPE,};
                                                      init
                                                  },},
-                        pgn: 10 as libc::c_int as pgn_t,
-                        offset: 23 as libc::c_ulong as uint16_t,};
+                        pgn: 10i32 as pgn_t,
+                        offset: 23u64 as uint16_t,};
          init
      },
      {
@@ -588,21 +584,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               16000
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               16000i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 10 as libc::c_int as pgn_t,
-                        offset: 8 as libc::c_ulong as uint16_t,};
+                        pgn: 10i32 as pgn_t,
+                        offset: 8u64 as uint16_t,};
          init
      },
      {
@@ -622,8 +614,8 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                                                     TABLE_LOWPASS_TYPE,};
                                                      init
                                                  },},
-                        pgn: 10 as libc::c_int as pgn_t,
-                        offset: 24 as libc::c_ulong as uint16_t,};
+                        pgn: 10i32 as pgn_t,
+                        offset: 24u64 as uint16_t,};
          init
      },
      {
@@ -639,21 +631,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               16000
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               16000i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 10 as libc::c_int as pgn_t,
-                        offset: 10 as libc::c_ulong as uint16_t,};
+                        pgn: 10i32 as pgn_t,
+                        offset: 10u64 as uint16_t,};
          init
      },
      {
@@ -669,21 +657,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               16000
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               16000i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 10 as libc::c_int as pgn_t,
-                        offset: 12 as libc::c_ulong as uint16_t,};
+                        pgn: 10i32 as pgn_t,
+                        offset: 12u64 as uint16_t,};
          init
      },
      {
@@ -699,21 +683,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               16000
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               16000i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 10 as libc::c_int as pgn_t,
-                        offset: 14 as libc::c_ulong as uint16_t,};
+                        pgn: 10i32 as pgn_t,
+                        offset: 14u64 as uint16_t,};
          init
      },
      {
@@ -729,21 +709,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               16000
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               16000i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 10 as libc::c_int as pgn_t,
-                        offset: 16 as libc::c_ulong as uint16_t,};
+                        pgn: 10i32 as pgn_t,
+                        offset: 16u64 as uint16_t,};
          init
      },
      {
@@ -759,21 +735,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               16000
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               16000i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 10 as libc::c_int as pgn_t,
-                        offset: 18 as libc::c_ulong as uint16_t,};
+                        pgn: 10i32 as pgn_t,
+                        offset: 18u64 as uint16_t,};
          init
      },
      {
@@ -789,21 +761,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               50
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               50i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               3000
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               3000i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 10 as libc::c_int as pgn_t,
-                        offset: 28 as libc::c_ulong as uint16_t,};
+                        pgn: 10i32 as pgn_t,
+                        offset: 28u64 as uint16_t,};
          init
      },
      {
@@ -819,21 +787,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               200
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               200i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 10 as libc::c_int as pgn_t,
-                        offset: 1 as libc::c_ulong as uint16_t,};
+                        pgn: 10i32 as pgn_t,
+                        offset: 1u64 as uint16_t,};
          init
      },
      {
@@ -849,21 +813,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               -(1000
-                                                                                     as
-                                                                                     libc::c_int)
+                                                                               -1000i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               1000
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               1000i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 10 as libc::c_int as pgn_t,
-                        offset: 20 as libc::c_ulong as uint16_t,};
+                        pgn: 10i32 as pgn_t,
+                        offset: 20u64 as uint16_t,};
          init
      },
      {
@@ -883,8 +843,8 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                                                     TABLE_GYRO_OVERFLOW_CHECK,};
                                                      init
                                                  },},
-                        pgn: 10 as libc::c_int as pgn_t,
-                        offset: 22 as libc::c_ulong as uint16_t,};
+                        pgn: 10i32 as pgn_t,
+                        offset: 22u64 as uint16_t,};
          init
      },
      {
@@ -904,8 +864,8 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                                                     TABLE_OFF_ON,};
                                                      init
                                                  },},
-                        pgn: 10 as libc::c_int as pgn_t,
-                        offset: 25 as libc::c_ulong as uint16_t,};
+                        pgn: 10i32 as pgn_t,
+                        offset: 25u64 as uint16_t,};
          init
      },
      {
@@ -921,21 +881,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               500
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               500i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               1950
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               1950i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 10 as libc::c_int as pgn_t,
-                        offset: 26 as libc::c_ulong as uint16_t,};
+                        pgn: 10i32 as pgn_t,
+                        offset: 26u64 as uint16_t,};
          init
      },
      {
@@ -955,8 +911,8 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                                                     TABLE_ALIGNMENT,};
                                                      init
                                                  },},
-                        pgn: 35 as libc::c_int as pgn_t,
-                        offset: 4 as libc::c_ulong as uint16_t,};
+                        pgn: 35i32 as pgn_t,
+                        offset: 4u64 as uint16_t,};
          init
      },
      {
@@ -976,8 +932,8 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                                                     TABLE_ACC_HARDWARE,};
                                                      init
                                                  },},
-                        pgn: 35 as libc::c_int as pgn_t,
-                        offset: 8 as libc::c_ulong as uint16_t,};
+                        pgn: 35i32 as pgn_t,
+                        offset: 8u64 as uint16_t,};
          init
      },
      {
@@ -993,21 +949,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               400
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               400i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 35 as libc::c_int as pgn_t,
-                        offset: 0 as libc::c_ulong as uint16_t,};
+                        pgn: 35i32 as pgn_t,
+                        offset: 0u64 as uint16_t,};
          init
      },
      {
@@ -1023,21 +975,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               -(300
-                                                                                     as
-                                                                                     libc::c_int)
+                                                                               -300i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               300
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               300i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 35 as libc::c_int as pgn_t,
-                        offset: 18 as libc::c_ulong as uint16_t,};
+                        pgn: 35i32 as pgn_t,
+                        offset: 18u64 as uint16_t,};
          init
      },
      {
@@ -1053,21 +1001,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               -(300
-                                                                                     as
-                                                                                     libc::c_int)
+                                                                               -300i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               300
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               300i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 35 as libc::c_int as pgn_t,
-                        offset: 16 as libc::c_ulong as uint16_t,};
+                        pgn: 35i32 as pgn_t,
+                        offset: 16u64 as uint16_t,};
          init
      },
      {
@@ -1084,15 +1028,13 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliArrayLengthConfig_s{length:
-                                                                                    3
-                                                                                        as
-                                                                                        libc::c_int
+                                                                                    3i32
                                                                                         as
                                                                                         uint8_t,};
                                                      init
                                                  },},
-                        pgn: 35 as libc::c_int as pgn_t,
-                        offset: 10 as libc::c_ulong as uint16_t,};
+                        pgn: 35i32 as pgn_t,
+                        offset: 10u64 as uint16_t,};
          init
      },
      {
@@ -1112,8 +1054,8 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                                                     TABLE_ALIGNMENT,};
                                                      init
                                                  },},
-                        pgn: 40 as libc::c_int as pgn_t,
-                        offset: 4 as libc::c_ulong as uint16_t,};
+                        pgn: 40i32 as pgn_t,
+                        offset: 4u64 as uint16_t,};
          init
      },
      {
@@ -1133,8 +1075,8 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                                                     TABLE_BUS_TYPE,};
                                                      init
                                                  },},
-                        pgn: 40 as libc::c_int as pgn_t,
-                        offset: 9 as libc::c_ulong as uint16_t,};
+                        pgn: 40i32 as pgn_t,
+                        offset: 9u64 as uint16_t,};
          init
      },
      {
@@ -1150,21 +1092,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               4
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               4i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 40 as libc::c_int as pgn_t,
-                        offset: 10 as libc::c_ulong as uint16_t,};
+                        pgn: 40i32 as pgn_t,
+                        offset: 10u64 as uint16_t,};
          init
      },
      {
@@ -1180,21 +1118,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               119
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               119i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 40 as libc::c_int as pgn_t,
-                        offset: 11 as libc::c_ulong as uint16_t,};
+                        pgn: 40i32 as pgn_t,
+                        offset: 11u64 as uint16_t,};
          init
      },
      {
@@ -1210,21 +1144,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               4
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               4i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 40 as libc::c_int as pgn_t,
-                        offset: 12 as libc::c_ulong as uint16_t,};
+                        pgn: 40i32 as pgn_t,
+                        offset: 12u64 as uint16_t,};
          init
      },
      {
@@ -1244,8 +1174,8 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                                                     TABLE_MAG_HARDWARE,};
                                                      init
                                                  },},
-                        pgn: 40 as libc::c_int as pgn_t,
-                        offset: 8 as libc::c_ulong as uint16_t,};
+                        pgn: 40i32 as pgn_t,
+                        offset: 8u64 as uint16_t,};
          init
      },
      {
@@ -1261,21 +1191,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               -(18000
-                                                                                     as
-                                                                                     libc::c_int)
+                                                                               -18000i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               18000
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               18000i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 40 as libc::c_int as pgn_t,
-                        offset: 0 as libc::c_ulong as uint16_t,};
+                        pgn: 40i32 as pgn_t,
+                        offset: 0u64 as uint16_t,};
          init
      },
      {
@@ -1292,15 +1218,13 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliArrayLengthConfig_s{length:
-                                                                                    3
-                                                                                        as
-                                                                                        libc::c_int
+                                                                                    3i32
                                                                                         as
                                                                                         uint8_t,};
                                                      init
                                                  },},
-                        pgn: 40 as libc::c_int as pgn_t,
-                        offset: 16 as libc::c_ulong as uint16_t,};
+                        pgn: 40i32 as pgn_t,
+                        offset: 16u64 as uint16_t,};
          init
      },
      {
@@ -1320,8 +1244,8 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                                                     TABLE_BUS_TYPE,};
                                                      init
                                                  },},
-                        pgn: 38 as libc::c_int as pgn_t,
-                        offset: 0 as libc::c_ulong as uint16_t,};
+                        pgn: 38i32 as pgn_t,
+                        offset: 0u64 as uint16_t,};
          init
      },
      {
@@ -1337,21 +1261,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               5
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               5i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 38 as libc::c_int as pgn_t,
-                        offset: 1 as libc::c_ulong as uint16_t,};
+                        pgn: 38i32 as pgn_t,
+                        offset: 1u64 as uint16_t,};
          init
      },
      {
@@ -1367,21 +1287,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               5
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               5i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 38 as libc::c_int as pgn_t,
-                        offset: 3 as libc::c_ulong as uint16_t,};
+                        pgn: 38i32 as pgn_t,
+                        offset: 3u64 as uint16_t,};
          init
      },
      {
@@ -1397,21 +1313,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               119
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               119i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 38 as libc::c_int as pgn_t,
-                        offset: 4 as libc::c_ulong as uint16_t,};
+                        pgn: 38i32 as pgn_t,
+                        offset: 4u64 as uint16_t,};
          init
      },
      {
@@ -1431,8 +1343,8 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                                                     TABLE_BARO_HARDWARE,};
                                                      init
                                                  },},
-                        pgn: 38 as libc::c_int as pgn_t,
-                        offset: 5 as libc::c_ulong as uint16_t,};
+                        pgn: 38i32 as pgn_t,
+                        offset: 5u64 as uint16_t,};
          init
      },
      {
@@ -1448,21 +1360,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               48
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               48i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 38 as libc::c_int as pgn_t,
-                        offset: 6 as libc::c_ulong as uint16_t,};
+                        pgn: 38i32 as pgn_t,
+                        offset: 6u64 as uint16_t,};
          init
      },
      {
@@ -1478,21 +1386,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               1000
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               1000i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 38 as libc::c_int as pgn_t,
-                        offset: 8 as libc::c_ulong as uint16_t,};
+                        pgn: 38i32 as pgn_t,
+                        offset: 8u64 as uint16_t,};
          init
      },
      {
@@ -1508,21 +1412,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               1000
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               1000i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 38 as libc::c_int as pgn_t,
-                        offset: 10 as libc::c_ulong as uint16_t,};
+                        pgn: 38i32 as pgn_t,
+                        offset: 10u64 as uint16_t,};
          init
      },
      {
@@ -1538,21 +1438,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               1000
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               1000i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 38 as libc::c_int as pgn_t,
-                        offset: 12 as libc::c_ulong as uint16_t,};
+                        pgn: 38i32 as pgn_t,
+                        offset: 12u64 as uint16_t,};
          init
      },
      {
@@ -1567,21 +1463,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               1200
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               1200i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               1700
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               1700i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 24 as libc::c_int as pgn_t,
-                        offset: 18 as libc::c_ulong as uint16_t,};
+                        pgn: 24i32 as pgn_t,
+                        offset: 18u64 as uint16_t,};
          init
      },
      {
@@ -1597,21 +1489,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               750
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               750i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               2250
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               2250i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 24 as libc::c_int as pgn_t,
-                        offset: 20 as libc::c_ulong as uint16_t,};
+                        pgn: 24i32 as pgn_t,
+                        offset: 20u64 as uint16_t,};
          init
      },
      {
@@ -1627,21 +1515,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               750
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               750i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               2250
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               2250i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 24 as libc::c_int as pgn_t,
-                        offset: 22 as libc::c_ulong as uint16_t,};
+                        pgn: 24i32 as pgn_t,
+                        offset: 22u64 as uint16_t,};
          init
      },
      {
@@ -1657,21 +1541,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               18
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               18i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 24 as libc::c_int as pgn_t,
-                        offset: 15 as libc::c_ulong as uint16_t,};
+                        pgn: 24i32 as pgn_t,
+                        offset: 15u64 as uint16_t,};
          init
      },
      {
@@ -1691,8 +1571,8 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                                                     TABLE_OFF_ON,};
                                                      init
                                                  },},
-                        pgn: 24 as libc::c_int as pgn_t,
-                        offset: 35 as libc::c_ulong as uint16_t,};
+                        pgn: 24i32 as pgn_t,
+                        offset: 35u64 as uint16_t,};
          init
      },
      {
@@ -1708,21 +1588,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               1
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               1i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               255
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               255i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 24 as libc::c_int as pgn_t,
-                        offset: 16 as libc::c_ulong as uint16_t,};
+                        pgn: 24i32 as pgn_t,
+                        offset: 16u64 as uint16_t,};
          init
      },
      {
@@ -1738,21 +1614,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               -(100
-                                                                                     as
-                                                                                     libc::c_int)
+                                                                               -100i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               100
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               100i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 24 as libc::c_int as pgn_t,
-                        offset: 36 as libc::c_ulong as uint16_t,};
+                        pgn: 24i32 as pgn_t,
+                        offset: 36u64 as uint16_t,};
          init
      },
      {
@@ -1772,8 +1644,8 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                                                     TABLE_OFF_ON,};
                                                      init
                                                  },},
-                        pgn: 24 as libc::c_int as pgn_t,
-                        offset: 17 as libc::c_ulong as uint16_t,};
+                        pgn: 24i32 as pgn_t,
+                        offset: 17u64 as uint16_t,};
          init
      },
      {
@@ -1793,8 +1665,8 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                                                     TABLE_RC_INTERPOLATION,};
                                                      init
                                                  },},
-                        pgn: 24 as libc::c_int as pgn_t,
-                        offset: 24 as libc::c_ulong as uint16_t,};
+                        pgn: 24i32 as pgn_t,
+                        offset: 24u64 as uint16_t,};
          init
      },
      {
@@ -1814,8 +1686,8 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                                                     TABLE_RC_INTERPOLATION_CHANNELS,};
                                                      init
                                                  },},
-                        pgn: 24 as libc::c_int as pgn_t,
-                        offset: 25 as libc::c_ulong as uint16_t,};
+                        pgn: 24i32 as pgn_t,
+                        offset: 25u64 as uint16_t,};
          init
      },
      {
@@ -1831,21 +1703,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               1
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               1i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               50
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               50i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 24 as libc::c_int as pgn_t,
-                        offset: 26 as libc::c_ulong as uint16_t,};
+                        pgn: 24i32 as pgn_t,
+                        offset: 26u64 as uint16_t,};
          init
      },
      {
@@ -1865,8 +1733,8 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                                                     TABLE_RC_SMOOTHING_TYPE,};
                                                      init
                                                  },},
-                        pgn: 24 as libc::c_int as pgn_t,
-                        offset: 37 as libc::c_ulong as uint16_t,};
+                        pgn: 24i32 as pgn_t,
+                        offset: 37u64 as uint16_t,};
          init
      },
      {
@@ -1882,21 +1750,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               255
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               255i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 24 as libc::c_int as pgn_t,
-                        offset: 38 as libc::c_ulong as uint16_t,};
+                        pgn: 24i32 as pgn_t,
+                        offset: 38u64 as uint16_t,};
          init
      },
      {
@@ -1912,21 +1776,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               255
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               255i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 24 as libc::c_int as pgn_t,
-                        offset: 39 as libc::c_ulong as uint16_t,};
+                        pgn: 24i32 as pgn_t,
+                        offset: 39u64 as uint16_t,};
          init
      },
      {
@@ -1946,8 +1806,8 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                                                     TABLE_RC_SMOOTHING_DEBUG,};
                                                      init
                                                  },},
-                        pgn: 24 as libc::c_int as pgn_t,
-                        offset: 40 as libc::c_ulong as uint16_t,};
+                        pgn: 24i32 as pgn_t,
+                        offset: 40u64 as uint16_t,};
          init
      },
      {
@@ -1967,8 +1827,8 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                                                     TABLE_RC_SMOOTHING_INPUT_TYPE,};
                                                      init
                                                  },},
-                        pgn: 24 as libc::c_int as pgn_t,
-                        offset: 41 as libc::c_ulong as uint16_t,};
+                        pgn: 24i32 as pgn_t,
+                        offset: 41u64 as uint16_t,};
          init
      },
      {
@@ -1988,8 +1848,8 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                                                     TABLE_RC_SMOOTHING_DERIVATIVE_TYPE,};
                                                      init
                                                  },},
-                        pgn: 24 as libc::c_int as pgn_t,
-                        offset: 42 as libc::c_ulong as uint16_t,};
+                        pgn: 24i32 as pgn_t,
+                        offset: 42u64 as uint16_t,};
          init
      },
      {
@@ -2005,21 +1865,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               50
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               50i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 24 as libc::c_int as pgn_t,
-                        offset: 27 as libc::c_ulong as uint16_t,};
+                        pgn: 24i32 as pgn_t,
+                        offset: 27u64 as uint16_t,};
          init
      },
      {
@@ -2035,25 +1891,19 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               (18
-                                                                                    as
-                                                                                    libc::c_int
+                                                                               (18i32
                                                                                     -
-                                                                                    4
-                                                                                        as
-                                                                                        libc::c_int)
+                                                                                    4i32)
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 24 as libc::c_int as pgn_t,
-                        offset: 34 as libc::c_ulong as uint16_t,};
+                        pgn: 24i32 as pgn_t,
+                        offset: 34u64 as uint16_t,};
          init
      },
      {
@@ -2069,21 +1919,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               100
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               100i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 24 as libc::c_int as pgn_t,
-                        offset: 28 as libc::c_ulong as uint16_t,};
+                        pgn: 24i32 as pgn_t,
+                        offset: 28u64 as uint16_t,};
          init
      },
      {
@@ -2099,21 +1945,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               750
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               750i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               2250
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               2250i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 24 as libc::c_int as pgn_t,
-                        offset: 30 as libc::c_ulong as uint16_t,};
+                        pgn: 24i32 as pgn_t,
+                        offset: 30u64 as uint16_t,};
          init
      },
      {
@@ -2129,21 +1971,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               750
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               750i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               2250
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               2250i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 24 as libc::c_int as pgn_t,
-                        offset: 32 as libc::c_ulong as uint16_t,};
+                        pgn: 24i32 as pgn_t,
+                        offset: 32u64 as uint16_t,};
          init
      },
      {
@@ -2163,8 +2001,8 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                                                     TABLE_OFF_ON,};
                                                      init
                                                  },},
-                        pgn: 24 as libc::c_int as pgn_t,
-                        offset: 10 as libc::c_ulong as uint16_t,};
+                        pgn: 24i32 as pgn_t,
+                        offset: 10u64 as uint16_t,};
          init
      },
      {
@@ -2180,21 +2018,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               32767
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               32767i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 5 as libc::c_int as pgn_t,
-                        offset: 0 as libc::c_ulong as uint16_t,};
+                        pgn: 5i32 as pgn_t,
+                        offset: 0u64 as uint16_t,};
          init
      },
      {
@@ -2214,8 +2048,8 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                                                     TABLE_BLACKBOX_DEVICE,};
                                                      init
                                                  },},
-                        pgn: 5 as libc::c_int as pgn_t,
-                        offset: 2 as libc::c_ulong as uint16_t,};
+                        pgn: 5i32 as pgn_t,
+                        offset: 2u64 as uint16_t,};
          init
      },
      {
@@ -2235,8 +2069,8 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                                                     TABLE_OFF_ON,};
                                                      init
                                                  },},
-                        pgn: 5 as libc::c_int as pgn_t,
-                        offset: 3 as libc::c_ulong as uint16_t,};
+                        pgn: 5i32 as pgn_t,
+                        offset: 3u64 as uint16_t,};
          init
      },
      {
@@ -2256,8 +2090,8 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                                                     TABLE_BLACKBOX_MODE,};
                                                      init
                                                  },},
-                        pgn: 5 as libc::c_int as pgn_t,
-                        offset: 4 as libc::c_ulong as uint16_t,};
+                        pgn: 5i32 as pgn_t,
+                        offset: 4u64 as uint16_t,};
          init
      },
      {
@@ -2273,21 +2107,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               750
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               750i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               2250
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               2250i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 6 as libc::c_int as pgn_t,
-                        offset: 16 as libc::c_ulong as uint16_t,};
+                        pgn: 6i32 as pgn_t,
+                        offset: 16u64 as uint16_t,};
          init
      },
      {
@@ -2303,21 +2133,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               750
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               750i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               2250
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               2250i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 6 as libc::c_int as pgn_t,
-                        offset: 18 as libc::c_ulong as uint16_t,};
+                        pgn: 6i32 as pgn_t,
+                        offset: 18u64 as uint16_t,};
          init
      },
      {
@@ -2333,21 +2159,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               750
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               750i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               2250
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               2250i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 6 as libc::c_int as pgn_t,
-                        offset: 20 as libc::c_ulong as uint16_t,};
+                        pgn: 6i32 as pgn_t,
+                        offset: 20u64 as uint16_t,};
          init
      },
      {
@@ -2367,8 +2189,8 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                                                     TABLE_OFF_ON,};
                                                      init
                                                  },},
-                        pgn: 6 as libc::c_int as pgn_t,
-                        offset: 4 as libc::c_ulong as uint16_t,};
+                        pgn: 6i32 as pgn_t,
+                        offset: 4u64 as uint16_t,};
          init
      },
      {
@@ -2388,8 +2210,8 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                                                     TABLE_MOTOR_PWM_PROTOCOL,};
                                                      init
                                                  },},
-                        pgn: 6 as libc::c_int as pgn_t,
-                        offset: 2 as libc::c_ulong as uint16_t,};
+                        pgn: 6i32 as pgn_t,
+                        offset: 2u64 as uint16_t,};
          init
      },
      {
@@ -2405,21 +2227,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               200
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               200i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               32000
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               32000i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 6 as libc::c_int as pgn_t,
-                        offset: 0 as libc::c_ulong as uint16_t,};
+                        pgn: 6i32 as pgn_t,
+                        offset: 0u64 as uint16_t,};
          init
      },
      {
@@ -2439,8 +2257,8 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                                                     TABLE_OFF_ON,};
                                                      init
                                                  },},
-                        pgn: 6 as libc::c_int as pgn_t,
-                        offset: 3 as libc::c_ulong as uint16_t,};
+                        pgn: 6i32 as pgn_t,
+                        offset: 3u64 as uint16_t,};
          init
      },
      {
@@ -2456,21 +2274,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               4
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               4i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               255
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               255i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 6 as libc::c_int as pgn_t,
-                        offset: 22 as libc::c_ulong as uint16_t,};
+                        pgn: 6i32 as pgn_t,
+                        offset: 22u64 as uint16_t,};
          init
      },
      {
@@ -2486,21 +2300,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               150
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               150i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 39 as libc::c_int as pgn_t,
-                        offset: 2 as libc::c_ulong as uint16_t,};
+                        pgn: 39i32 as pgn_t,
+                        offset: 2u64 as uint16_t,};
          init
      },
      {
@@ -2516,21 +2326,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               1
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               1i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               900
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               900i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 39 as libc::c_int as pgn_t,
-                        offset: 0 as libc::c_ulong as uint16_t,};
+                        pgn: 39i32 as pgn_t,
+                        offset: 0u64 as uint16_t,};
          init
      },
      {
@@ -2546,21 +2352,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               200
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               200i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 1 as libc::c_int as pgn_t,
-                        offset: 4 as libc::c_ulong as uint16_t,};
+                        pgn: 1i32 as pgn_t,
+                        offset: 4u64 as uint16_t,};
          init
      },
      {
@@ -2576,21 +2378,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               200
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               200i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 1 as libc::c_int as pgn_t,
-                        offset: 5 as libc::c_ulong as uint16_t,};
+                        pgn: 1i32 as pgn_t,
+                        offset: 5u64 as uint16_t,};
          init
      },
      {
@@ -2606,21 +2404,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               750
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               750i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               2250
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               2250i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 1 as libc::c_int as pgn_t,
-                        offset: 0 as libc::c_ulong as uint16_t,};
+                        pgn: 1i32 as pgn_t,
+                        offset: 0u64 as uint16_t,};
          init
      },
      {
@@ -2640,8 +2434,8 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                                                     TABLE_FAILSAFE_SWITCH_MODE,};
                                                      init
                                                  },},
-                        pgn: 1 as libc::c_int as pgn_t,
-                        offset: 6 as libc::c_ulong as uint16_t,};
+                        pgn: 1i32 as pgn_t,
+                        offset: 6u64 as uint16_t,};
          init
      },
      {
@@ -2657,21 +2451,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               300
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               300i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 1 as libc::c_int as pgn_t,
-                        offset: 2 as libc::c_ulong as uint16_t,};
+                        pgn: 1i32 as pgn_t,
+                        offset: 2u64 as uint16_t,};
          init
      },
      {
@@ -2691,8 +2481,8 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                                                     TABLE_FAILSAFE,};
                                                      init
                                                  },},
-                        pgn: 1 as libc::c_int as pgn_t,
-                        offset: 7 as libc::c_ulong as uint16_t,};
+                        pgn: 1i32 as pgn_t,
+                        offset: 7u64 as uint16_t,};
          init
      },
      {
@@ -2708,21 +2498,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               -(180
-                                                                                     as
-                                                                                     libc::c_int)
+                                                                               -180i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               360
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               360i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 2 as libc::c_int as pgn_t,
-                        offset: 0 as libc::c_ulong as uint16_t,};
+                        pgn: 2i32 as pgn_t,
+                        offset: 0u64 as uint16_t,};
          init
      },
      {
@@ -2738,21 +2524,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               -(180
-                                                                                     as
-                                                                                     libc::c_int)
+                                                                               -180i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               360
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               360i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 2 as libc::c_int as pgn_t,
-                        offset: 4 as libc::c_ulong as uint16_t,};
+                        pgn: 2i32 as pgn_t,
+                        offset: 4u64 as uint16_t,};
          init
      },
      {
@@ -2768,21 +2550,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               -(180
-                                                                                     as
-                                                                                     libc::c_int)
+                                                                               -180i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               360
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               360i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 2 as libc::c_int as pgn_t,
-                        offset: 8 as libc::c_ulong as uint16_t,};
+                        pgn: 2i32 as pgn_t,
+                        offset: 8u64 as uint16_t,};
          init
      },
      {
@@ -2802,8 +2580,8 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                                                     TABLE_GIMBAL_MODE,};
                                                      init
                                                  },},
-                        pgn: 3 as libc::c_int as pgn_t,
-                        offset: 0 as libc::c_ulong as uint16_t,};
+                        pgn: 3i32 as pgn_t,
+                        offset: 0u64 as uint16_t,};
          init
      },
      {
@@ -2819,21 +2597,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               20000
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               20000i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 11 as libc::c_int as pgn_t,
-                        offset: 16 as libc::c_ulong as uint16_t,};
+                        pgn: 11i32 as pgn_t,
+                        offset: 16u64 as uint16_t,};
          init
      },
      {
@@ -2849,21 +2623,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               10
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               10i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               50
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               50i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 11 as libc::c_int as pgn_t,
-                        offset: 0 as libc::c_ulong as uint16_t,};
+                        pgn: 11i32 as pgn_t,
+                        offset: 0u64 as uint16_t,};
          init
      },
      {
@@ -2879,21 +2649,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               10
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               10i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               50
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               50i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 11 as libc::c_int as pgn_t,
-                        offset: 22 as libc::c_ulong as uint16_t,};
+                        pgn: 11i32 as pgn_t,
+                        offset: 22u64 as uint16_t,};
          init
      },
      {
@@ -2909,21 +2675,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               10
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               10i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               50
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               50i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 11 as libc::c_int as pgn_t,
-                        offset: 1 as libc::c_ulong as uint16_t,};
+                        pgn: 11i32 as pgn_t,
+                        offset: 1u64 as uint16_t,};
          init
      },
      {
@@ -2939,21 +2701,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               10
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               10i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               50
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               50i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 11 as libc::c_int as pgn_t,
-                        offset: 2 as libc::c_ulong as uint16_t,};
+                        pgn: 11i32 as pgn_t,
+                        offset: 2u64 as uint16_t,};
          init
      },
      {
@@ -2969,21 +2727,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               250
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               250i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 11 as libc::c_int as pgn_t,
-                        offset: 21 as libc::c_ulong as uint16_t,};
+                        pgn: 11i32 as pgn_t,
+                        offset: 21u64 as uint16_t,};
          init
      },
      {
@@ -3003,8 +2757,8 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                                                     TABLE_CURRENT_METER,};
                                                      init
                                                  },},
-                        pgn: 11 as libc::c_int as pgn_t,
-                        offset: 12 as libc::c_ulong as uint16_t,};
+                        pgn: 11i32 as pgn_t,
+                        offset: 12u64 as uint16_t,};
          init
      },
      {
@@ -3024,8 +2778,8 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                                                     TABLE_VOLTAGE_METER,};
                                                      init
                                                  },},
-                        pgn: 11 as libc::c_int as pgn_t,
-                        offset: 8 as libc::c_ulong as uint16_t,};
+                        pgn: 11i32 as pgn_t,
+                        offset: 8u64 as uint16_t,};
          init
      },
      {
@@ -3041,21 +2795,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               200
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               200i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 11 as libc::c_int as pgn_t,
-                        offset: 3 as libc::c_ulong as uint16_t,};
+                        pgn: 11i32 as pgn_t,
+                        offset: 3u64 as uint16_t,};
          init
      },
      {
@@ -3075,8 +2825,8 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                                                     TABLE_OFF_ON,};
                                                      init
                                                  },},
-                        pgn: 11 as libc::c_int as pgn_t,
-                        offset: 18 as libc::c_ulong as uint16_t,};
+                        pgn: 11i32 as pgn_t,
+                        offset: 18u64 as uint16_t,};
          init
      },
      {
@@ -3096,8 +2846,8 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                                                     TABLE_OFF_ON,};
                                                      init
                                                  },},
-                        pgn: 11 as libc::c_int as pgn_t,
-                        offset: 19 as libc::c_ulong as uint16_t,};
+                        pgn: 11i32 as pgn_t,
+                        offset: 19u64 as uint16_t,};
          init
      },
      {
@@ -3113,21 +2863,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               100
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               100i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 11 as libc::c_int as pgn_t,
-                        offset: 20 as libc::c_ulong as uint16_t,};
+                        pgn: 11i32 as pgn_t,
+                        offset: 20u64 as uint16_t,};
          init
      },
      {
@@ -3143,21 +2889,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               100
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               100i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 11 as libc::c_int as pgn_t,
-                        offset: 4 as libc::c_ulong as uint16_t,};
+                        pgn: 11i32 as pgn_t,
+                        offset: 4u64 as uint16_t,};
          init
      },
      {
@@ -3173,21 +2915,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               255
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               255i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 258 as libc::c_int as pgn_t,
-                        offset: 0 as libc::c_ulong as uint16_t,};
+                        pgn: 258i32 as pgn_t,
+                        offset: 0u64 as uint16_t,};
          init
      },
      {
@@ -3203,21 +2941,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               1
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               1i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               255
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               255i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 258 as libc::c_int as pgn_t,
-                        offset: 1 as libc::c_ulong as uint16_t,};
+                        pgn: 258i32 as pgn_t,
+                        offset: 1u64 as uint16_t,};
          init
      },
      {
@@ -3233,21 +2967,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               1
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               1i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               255
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               255i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 258 as libc::c_int as pgn_t,
-                        offset: 2 as libc::c_ulong as uint16_t,};
+                        pgn: 258i32 as pgn_t,
+                        offset: 2u64 as uint16_t,};
          init
      },
      {
@@ -3263,21 +2993,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               -(16000
-                                                                                     as
-                                                                                     libc::c_int)
+                                                                               -16000i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               16000
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               16000i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 256 as libc::c_int as pgn_t,
-                        offset: 0 as libc::c_ulong as uint16_t,};
+                        pgn: 256i32 as pgn_t,
+                        offset: 0u64 as uint16_t,};
          init
      },
      {
@@ -3293,21 +3019,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               -(32000
-                                                                                     as
-                                                                                     libc::c_int)
+                                                                               -32000i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               32000
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               32000i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 256 as libc::c_int as pgn_t,
-                        offset: 2 as libc::c_ulong as uint16_t,};
+                        pgn: 256i32 as pgn_t,
+                        offset: 2u64 as uint16_t,};
          init
      },
      {
@@ -3323,21 +3045,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               -(16000
-                                                                                     as
-                                                                                     libc::c_int)
+                                                                               -16000i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               16000
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               16000i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 257 as libc::c_int as pgn_t,
-                        offset: 0 as libc::c_ulong as uint16_t,};
+                        pgn: 257i32 as pgn_t,
+                        offset: 0u64 as uint16_t,};
          init
      },
      {
@@ -3353,21 +3071,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               16000
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               16000i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 257 as libc::c_int as pgn_t,
-                        offset: 2 as libc::c_ulong as uint16_t,};
+                        pgn: 257i32 as pgn_t,
+                        offset: 2u64 as uint16_t,};
          init
      },
      {
@@ -3387,8 +3101,8 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                                                     TABLE_OFF_ON,};
                                                      init
                                                  },},
-                        pgn: 20 as libc::c_int as pgn_t,
-                        offset: 1 as libc::c_ulong as uint16_t,};
+                        pgn: 20i32 as pgn_t,
+                        offset: 1u64 as uint16_t,};
          init
      },
      {
@@ -3404,21 +3118,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               100
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               100i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 20 as libc::c_int as pgn_t,
-                        offset: 2 as libc::c_ulong as uint16_t,};
+                        pgn: 20i32 as pgn_t,
+                        offset: 2u64 as uint16_t,};
          init
      },
      {
@@ -3434,33 +3144,23 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               750
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               750i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               (1000
-                                                                                    as
-                                                                                    libc::c_int
+                                                                               (1000i32
                                                                                     +
-                                                                                    (2000
-                                                                                         as
-                                                                                         libc::c_int
+                                                                                    (2000i32
                                                                                          -
-                                                                                         1000
-                                                                                             as
-                                                                                             libc::c_int)
+                                                                                         1000i32)
                                                                                         /
-                                                                                        2
-                                                                                            as
-                                                                                            libc::c_int)
+                                                                                        2i32)
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 26 as libc::c_int as pgn_t,
-                        offset: 0 as libc::c_ulong as uint16_t,};
+                        pgn: 26i32 as pgn_t,
+                        offset: 0u64 as uint16_t,};
          init
      },
      {
@@ -3476,33 +3176,23 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               (1000
-                                                                                    as
-                                                                                    libc::c_int
+                                                                               (1000i32
                                                                                     +
-                                                                                    (2000
-                                                                                         as
-                                                                                         libc::c_int
+                                                                                    (2000i32
                                                                                          -
-                                                                                         1000
-                                                                                             as
-                                                                                             libc::c_int)
+                                                                                         1000i32)
                                                                                         /
-                                                                                        2
-                                                                                            as
-                                                                                            libc::c_int)
+                                                                                        2i32)
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               2250
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               2250i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 26 as libc::c_int as pgn_t,
-                        offset: 2 as libc::c_ulong as uint16_t,};
+                        pgn: 26i32 as pgn_t,
+                        offset: 2u64 as uint16_t,};
          init
      },
      {
@@ -3518,21 +3208,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               750
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               750i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               2250
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               2250i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 26 as libc::c_int as pgn_t,
-                        offset: 4 as libc::c_ulong as uint16_t,};
+                        pgn: 26i32 as pgn_t,
+                        offset: 4u64 as uint16_t,};
          init
      },
      {
@@ -3548,21 +3234,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               1
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               1i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               100
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               100i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 26 as libc::c_int as pgn_t,
-                        offset: 6 as libc::c_ulong as uint16_t,};
+                        pgn: 26i32 as pgn_t,
+                        offset: 6u64 as uint16_t,};
          init
      },
      {
@@ -3578,33 +3260,23 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               750
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               750i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               (1000
-                                                                                    as
-                                                                                    libc::c_int
+                                                                               (1000i32
                                                                                     +
-                                                                                    (2000
-                                                                                         as
-                                                                                         libc::c_int
+                                                                                    (2000i32
                                                                                          -
-                                                                                         1000
-                                                                                             as
-                                                                                             libc::c_int)
+                                                                                         1000i32)
                                                                                         /
-                                                                                        2
-                                                                                            as
-                                                                                            libc::c_int)
+                                                                                        2i32)
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 26 as libc::c_int as pgn_t,
-                        offset: 8 as libc::c_ulong as uint16_t,};
+                        pgn: 26i32 as pgn_t,
+                        offset: 8u64 as uint16_t,};
          init
      },
      {
@@ -3620,33 +3292,23 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               (1000
-                                                                                    as
-                                                                                    libc::c_int
+                                                                               (1000i32
                                                                                     +
-                                                                                    (2000
-                                                                                         as
-                                                                                         libc::c_int
+                                                                                    (2000i32
                                                                                          -
-                                                                                         1000
-                                                                                             as
-                                                                                             libc::c_int)
+                                                                                         1000i32)
                                                                                         /
-                                                                                        2
-                                                                                            as
-                                                                                            libc::c_int)
+                                                                                        2i32)
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               2250
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               2250i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 26 as libc::c_int as pgn_t,
-                        offset: 10 as libc::c_ulong as uint16_t,};
+                        pgn: 26i32 as pgn_t,
+                        offset: 10u64 as uint16_t,};
          init
      },
      {
@@ -3666,8 +3328,8 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                                                     TABLE_OFF_ON,};
                                                      init
                                                  },},
-                        pgn: 26 as libc::c_int as pgn_t,
-                        offset: 12 as libc::c_ulong as uint16_t,};
+                        pgn: 26i32 as pgn_t,
+                        offset: 12u64 as uint16_t,};
          init
      },
      {
@@ -3683,21 +3345,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               750
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               750i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               2250
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               2250i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 52 as libc::c_int as pgn_t,
-                        offset: 0 as libc::c_ulong as uint16_t,};
+                        pgn: 52i32 as pgn_t,
+                        offset: 0u64 as uint16_t,};
          init
      },
      {
@@ -3713,21 +3371,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               50
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               50i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               498
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               498i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 52 as libc::c_int as pgn_t,
-                        offset: 2 as libc::c_ulong as uint16_t,};
+                        pgn: 52i32 as pgn_t,
+                        offset: 2u64 as uint16_t,};
          init
      },
      {
@@ -3743,21 +3397,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               400
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               400i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 52 as libc::c_int as pgn_t,
-                        offset: 12 as libc::c_ulong as uint16_t,};
+                        pgn: 52i32 as pgn_t,
+                        offset: 12u64 as uint16_t,};
          init
      },
      {
@@ -3777,8 +3427,8 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                                                     TABLE_OFF_ON,};
                                                      init
                                                  },},
-                        pgn: 52 as libc::c_int as pgn_t,
-                        offset: 14 as libc::c_ulong as uint16_t,};
+                        pgn: 52i32 as pgn_t,
+                        offset: 14u64 as uint16_t,};
          init
      },
      {
@@ -3800,15 +3450,13 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               18
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               18i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 52 as libc::c_int as pgn_t,
-                        offset: 15 as libc::c_ulong as uint16_t,};
+                        pgn: 52i32 as pgn_t,
+                        offset: 15u64 as uint16_t,};
          init
      },
      {
@@ -3825,21 +3473,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               100
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               100i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 12 as libc::c_int as pgn_t,
-                        offset: 0 as libc::c_ulong as uint16_t,};
+                        pgn: 12i32 as pgn_t,
+                        offset: 0u64 as uint16_t,};
          init
      },
      {
@@ -3856,21 +3500,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               100
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               100i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 12 as libc::c_int as pgn_t,
-                        offset: 1 as libc::c_ulong as uint16_t,};
+                        pgn: 12i32 as pgn_t,
+                        offset: 1u64 as uint16_t,};
          init
      },
      {
@@ -3890,8 +3530,8 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                                                     TABLE_RATES_TYPE,};
                                                      init
                                                  },},
-                        pgn: 12 as libc::c_int as pgn_t,
-                        offset: 2 as libc::c_ulong as uint16_t,};
+                        pgn: 12i32 as pgn_t,
+                        offset: 2u64 as uint16_t,};
          init
      },
      {
@@ -3908,21 +3548,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               255
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               255i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 12 as libc::c_int as pgn_t,
-                        offset: 3 as libc::c_ulong as uint16_t,};
+                        pgn: 12i32 as pgn_t,
+                        offset: 3u64 as uint16_t,};
          init
      },
      {
@@ -3939,21 +3575,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               255
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               255i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 12 as libc::c_int as pgn_t,
-                        offset: 4 as libc::c_ulong as uint16_t,};
+                        pgn: 12i32 as pgn_t,
+                        offset: 4u64 as uint16_t,};
          init
      },
      {
@@ -3970,21 +3602,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               255
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               255i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 12 as libc::c_int as pgn_t,
-                        offset: 5 as libc::c_ulong as uint16_t,};
+                        pgn: 12i32 as pgn_t,
+                        offset: 5u64 as uint16_t,};
          init
      },
      {
@@ -4001,21 +3629,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               100
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               100i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 12 as libc::c_int as pgn_t,
-                        offset: 6 as libc::c_ulong as uint16_t,};
+                        pgn: 12i32 as pgn_t,
+                        offset: 6u64 as uint16_t,};
          init
      },
      {
@@ -4032,21 +3656,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               100
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               100i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 12 as libc::c_int as pgn_t,
-                        offset: 7 as libc::c_ulong as uint16_t,};
+                        pgn: 12i32 as pgn_t,
+                        offset: 7u64 as uint16_t,};
          init
      },
      {
@@ -4063,21 +3683,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               100
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               100i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 12 as libc::c_int as pgn_t,
-                        offset: 8 as libc::c_ulong as uint16_t,};
+                        pgn: 12i32 as pgn_t,
+                        offset: 8u64 as uint16_t,};
          init
      },
      {
@@ -4094,21 +3710,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               255
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               255i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 12 as libc::c_int as pgn_t,
-                        offset: 9 as libc::c_ulong as uint16_t,};
+                        pgn: 12i32 as pgn_t,
+                        offset: 9u64 as uint16_t,};
          init
      },
      {
@@ -4125,21 +3737,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               255
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               255i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 12 as libc::c_int as pgn_t,
-                        offset: 10 as libc::c_ulong as uint16_t,};
+                        pgn: 12i32 as pgn_t,
+                        offset: 10u64 as uint16_t,};
          init
      },
      {
@@ -4156,21 +3764,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               255
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               255i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 12 as libc::c_int as pgn_t,
-                        offset: 11 as libc::c_ulong as uint16_t,};
+                        pgn: 12i32 as pgn_t,
+                        offset: 11u64 as uint16_t,};
          init
      },
      {
@@ -4187,21 +3791,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               100
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               100i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 12 as libc::c_int as pgn_t,
-                        offset: 12 as libc::c_ulong as uint16_t,};
+                        pgn: 12i32 as pgn_t,
+                        offset: 12u64 as uint16_t,};
          init
      },
      {
@@ -4218,21 +3818,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               750
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               750i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               2250
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               2250i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 12 as libc::c_int as pgn_t,
-                        offset: 14 as libc::c_ulong as uint16_t,};
+                        pgn: 12i32 as pgn_t,
+                        offset: 14u64 as uint16_t,};
          init
      },
      {
@@ -4252,8 +3848,8 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                                                     TABLE_THROTTLE_LIMIT_TYPE,};
                                                      init
                                                  },},
-                        pgn: 12 as libc::c_int as pgn_t,
-                        offset: 16 as libc::c_ulong as uint16_t,};
+                        pgn: 12i32 as pgn_t,
+                        offset: 16u64 as uint16_t,};
          init
      },
      {
@@ -4270,21 +3866,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               25
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               25i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               100
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               100i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 12 as libc::c_int as pgn_t,
-                        offset: 17 as libc::c_ulong as uint16_t,};
+                        pgn: 12i32 as pgn_t,
+                        offset: 17u64 as uint16_t,};
          init
      },
      {
@@ -4300,21 +3892,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               48
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               48i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               126
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               126i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 13 as libc::c_int as pgn_t,
-                        offset: 98 as libc::c_ulong as uint16_t,};
+                        pgn: 13i32 as pgn_t,
+                        offset: 98u64 as uint16_t,};
          init
      },
      {
@@ -4330,21 +3918,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               100
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               100i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               2000
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               2000i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 13 as libc::c_int as pgn_t,
-                        offset: 96 as libc::c_ulong as uint16_t,};
+                        pgn: 13i32 as pgn_t,
+                        offset: 96u64 as uint16_t,};
          init
      },
      {
@@ -4360,21 +3944,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               100
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               100i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 22 as libc::c_int as pgn_t,
-                        offset: 6 as libc::c_ulong as uint16_t,};
+                        pgn: 22i32 as pgn_t,
+                        offset: 6u64 as uint16_t,};
          init
      },
      {
@@ -4390,21 +3970,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               100
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               100i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 22 as libc::c_int as pgn_t,
-                        offset: 7 as libc::c_ulong as uint16_t,};
+                        pgn: 22i32 as pgn_t,
+                        offset: 7u64 as uint16_t,};
          init
      },
      {
@@ -4424,8 +4000,8 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                                                     TABLE_OFF_ON,};
                                                      init
                                                  },},
-                        pgn: 22 as libc::c_int as pgn_t,
-                        offset: 5 as libc::c_ulong as uint16_t,};
+                        pgn: 22i32 as pgn_t,
+                        offset: 5u64 as uint16_t,};
          init
      },
      {
@@ -4441,21 +4017,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               32000
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               32000i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 22 as libc::c_int as pgn_t,
-                        offset: 0 as libc::c_ulong as uint16_t,};
+                        pgn: 22i32 as pgn_t,
+                        offset: 0u64 as uint16_t,};
          init
      },
      {
@@ -4471,21 +4043,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               32000
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               32000i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 22 as libc::c_int as pgn_t,
-                        offset: 2 as libc::c_ulong as uint16_t,};
+                        pgn: 22i32 as pgn_t,
+                        offset: 2u64 as uint16_t,};
          init
      },
      {
@@ -4501,21 +4069,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               180
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               180i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 22 as libc::c_int as pgn_t,
-                        offset: 4 as libc::c_ulong as uint16_t,};
+                        pgn: 22i32 as pgn_t,
+                        offset: 4u64 as uint16_t,};
          init
      },
      {
@@ -4531,21 +4095,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               60
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               60i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 16 as libc::c_int as pgn_t,
-                        offset: 1 as libc::c_ulong as uint16_t,};
+                        pgn: 16i32 as pgn_t,
+                        offset: 1u64 as uint16_t,};
          init
      },
      {
@@ -4565,8 +4125,8 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                                                     TABLE_OFF_ON,};
                                                      init
                                                  },},
-                        pgn: 16 as libc::c_int as pgn_t,
-                        offset: 0 as libc::c_ulong as uint16_t,};
+                        pgn: 16i32 as pgn_t,
+                        offset: 0u64 as uint16_t,};
          init
      },
      {
@@ -4586,8 +4146,8 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                                                     TABLE_GPS_PROVIDER,};
                                                      init
                                                  },},
-                        pgn: 30 as libc::c_int as pgn_t,
-                        offset: 0 as libc::c_ulong as uint16_t,};
+                        pgn: 30i32 as pgn_t,
+                        offset: 0u64 as uint16_t,};
          init
      },
      {
@@ -4607,8 +4167,8 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                                                     TABLE_GPS_SBAS_MODE,};
                                                      init
                                                  },},
-                        pgn: 30 as libc::c_int as pgn_t,
-                        offset: 4 as libc::c_ulong as uint16_t,};
+                        pgn: 30i32 as pgn_t,
+                        offset: 4u64 as uint16_t,};
          init
      },
      {
@@ -4628,8 +4188,8 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                                                     TABLE_OFF_ON,};
                                                      init
                                                  },},
-                        pgn: 30 as libc::c_int as pgn_t,
-                        offset: 8 as libc::c_ulong as uint16_t,};
+                        pgn: 30i32 as pgn_t,
+                        offset: 8u64 as uint16_t,};
          init
      },
      {
@@ -4649,8 +4209,8 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                                                     TABLE_OFF_ON,};
                                                      init
                                                  },},
-                        pgn: 30 as libc::c_int as pgn_t,
-                        offset: 12 as libc::c_ulong as uint16_t,};
+                        pgn: 30i32 as pgn_t,
+                        offset: 12u64 as uint16_t,};
          init
      },
      {
@@ -4670,8 +4230,8 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                                                     TABLE_OFF_ON,};
                                                      init
                                                  },},
-                        pgn: 30 as libc::c_int as pgn_t,
-                        offset: 16 as libc::c_ulong as uint16_t,};
+                        pgn: 30i32 as pgn_t,
+                        offset: 16u64 as uint16_t,};
          init
      },
      {
@@ -4687,21 +4247,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               32
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               32i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 25 as libc::c_int as pgn_t,
-                        offset: 0 as libc::c_ulong as uint16_t,};
+                        pgn: 25i32 as pgn_t,
+                        offset: 0u64 as uint16_t,};
          init
      },
      {
@@ -4717,21 +4273,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               100
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               100i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 25 as libc::c_int as pgn_t,
-                        offset: 1 as libc::c_ulong as uint16_t,};
+                        pgn: 25i32 as pgn_t,
+                        offset: 1u64 as uint16_t,};
          init
      },
      {
@@ -4751,8 +4303,8 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                                                     TABLE_OFF_ON,};
                                                      init
                                                  },},
-                        pgn: 25 as libc::c_int as pgn_t,
-                        offset: 4 as libc::c_ulong as uint16_t,};
+                        pgn: 25i32 as pgn_t,
+                        offset: 4u64 as uint16_t,};
          init
      },
      {
@@ -4768,21 +4320,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               1
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               1i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               16
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               16i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 504 as libc::c_int as pgn_t,
-                        offset: 0 as libc::c_ulong as uint16_t,};
+                        pgn: 504i32 as pgn_t,
+                        offset: 0u64 as uint16_t,};
          init
      },
      {
@@ -4801,8 +4349,8 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                                                     TABLE_OFF_ON,};
                                                      init
                                                  },},
-                        pgn: 504 as libc::c_int as pgn_t,
-                        offset: 1 as libc::c_ulong as uint16_t,};
+                        pgn: 504i32 as pgn_t,
+                        offset: 1u64 as uint16_t,};
          init
      },
      {
@@ -4818,21 +4366,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               100
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               100i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               1000
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               1000i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 504 as libc::c_int as pgn_t,
-                        offset: 2 as libc::c_ulong as uint16_t,};
+                        pgn: 504i32 as pgn_t,
+                        offset: 2u64 as uint16_t,};
          init
      },
      {
@@ -4848,21 +4392,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               100
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               100i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 504 as libc::c_int as pgn_t,
-                        offset: 4 as libc::c_ulong as uint16_t,};
+                        pgn: 504i32 as pgn_t,
+                        offset: 4u64 as uint16_t,};
          init
      },
      {
@@ -4882,8 +4422,8 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                                                     TABLE_DTERM_LOWPASS_TYPE,};
                                                      init
                                                  },},
-                        pgn: 14 as libc::c_int as pgn_t,
-                        offset: 38 as libc::c_ulong as uint16_t,};
+                        pgn: 14i32 as pgn_t,
+                        offset: 38u64 as uint16_t,};
          init
      },
      {
@@ -4899,21 +4439,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               16000
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               16000i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 14 as libc::c_int as pgn_t,
-                        offset: 2 as libc::c_ulong as uint16_t,};
+                        pgn: 14i32 as pgn_t,
+                        offset: 2u64 as uint16_t,};
          init
      },
      {
@@ -4929,21 +4465,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               16000
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               16000i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 14 as libc::c_int as pgn_t,
-                        offset: 76 as libc::c_ulong as uint16_t,};
+                        pgn: 14i32 as pgn_t,
+                        offset: 76u64 as uint16_t,};
          init
      },
      {
@@ -4959,21 +4491,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               16000
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               16000i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 14 as libc::c_int as pgn_t,
-                        offset: 4 as libc::c_ulong as uint16_t,};
+                        pgn: 14i32 as pgn_t,
+                        offset: 4u64 as uint16_t,};
          init
      },
      {
@@ -4989,21 +4517,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               16000
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               16000i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 14 as libc::c_int as pgn_t,
-                        offset: 6 as libc::c_ulong as uint16_t,};
+                        pgn: 14i32 as pgn_t,
+                        offset: 6u64 as uint16_t,};
          init
      },
      {
@@ -5023,8 +4547,8 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                                                     TABLE_OFF_ON,};
                                                      init
                                                  },},
-                        pgn: 14 as libc::c_int as pgn_t,
-                        offset: 70 as libc::c_ulong as uint16_t,};
+                        pgn: 14i32 as pgn_t,
+                        offset: 70u64 as uint16_t,};
          init
      },
      {
@@ -5044,8 +4568,8 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                                                     TABLE_OFF_ON,};
                                                      init
                                                  },},
-                        pgn: 14 as libc::c_int as pgn_t,
-                        offset: 44 as libc::c_ulong as uint16_t,};
+                        pgn: 14i32 as pgn_t,
+                        offset: 44u64 as uint16_t,};
          init
      },
      {
@@ -5065,8 +4589,8 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                                                     TABLE_ANTI_GRAVITY_MODE,};
                                                      init
                                                  },},
-                        pgn: 14 as libc::c_int as pgn_t,
-                        offset: 48 as libc::c_ulong as uint16_t,};
+                        pgn: 14i32 as pgn_t,
+                        offset: 48u64 as uint16_t,};
          init
      },
      {
@@ -5082,21 +4606,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               20
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               20i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               1000
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               1000i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 14 as libc::c_int as pgn_t,
-                        offset: 50 as libc::c_ulong as uint16_t,};
+                        pgn: 14i32 as pgn_t,
+                        offset: 50u64 as uint16_t,};
          init
      },
      {
@@ -5112,21 +4632,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               1000
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               1000i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               30000
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               30000i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 14 as libc::c_int as pgn_t,
-                        offset: 52 as libc::c_ulong as uint16_t,};
+                        pgn: 14i32 as pgn_t,
+                        offset: 52u64 as uint16_t,};
          init
      },
      {
@@ -5142,21 +4658,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               100
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               100i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 14 as libc::c_int as pgn_t,
-                        offset: 71 as libc::c_ulong as uint16_t,};
+                        pgn: 14i32 as pgn_t,
+                        offset: 71u64 as uint16_t,};
          init
      },
      {
@@ -5172,21 +4684,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               500
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               500i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 14 as libc::c_int as pgn_t,
-                        offset: 54 as libc::c_ulong as uint16_t,};
+                        pgn: 14i32 as pgn_t,
+                        offset: 54u64 as uint16_t,};
          init
      },
      {
@@ -5202,21 +4710,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               500
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               500i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 14 as libc::c_int as pgn_t,
-                        offset: 56 as libc::c_ulong as uint16_t,};
+                        pgn: 14i32 as pgn_t,
+                        offset: 56u64 as uint16_t,};
          init
      },
      {
@@ -5232,21 +4736,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               2000
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               2000i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 14 as libc::c_int as pgn_t,
-                        offset: 58 as libc::c_ulong as uint16_t,};
+                        pgn: 14i32 as pgn_t,
+                        offset: 58u64 as uint16_t,};
          init
      },
      {
@@ -5262,21 +4762,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               2000
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               2000i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 14 as libc::c_int as pgn_t,
-                        offset: 60 as libc::c_ulong as uint16_t,};
+                        pgn: 14i32 as pgn_t,
+                        offset: 60u64 as uint16_t,};
          init
      },
      {
@@ -5292,21 +4788,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               2000
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               2000i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 14 as libc::c_int as pgn_t,
-                        offset: 62 as libc::c_ulong as uint16_t,};
+                        pgn: 14i32 as pgn_t,
+                        offset: 62u64 as uint16_t,};
          init
      },
      {
@@ -5322,21 +4814,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               5000
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               5000i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 14 as libc::c_int as pgn_t,
-                        offset: 64 as libc::c_ulong as uint16_t,};
+                        pgn: 14i32 as pgn_t,
+                        offset: 64u64 as uint16_t,};
          init
      },
      {
@@ -5352,21 +4840,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               500
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               500i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 14 as libc::c_int as pgn_t,
-                        offset: 66 as libc::c_ulong as uint16_t,};
+                        pgn: 14i32 as pgn_t,
+                        offset: 66u64 as uint16_t,};
          init
      },
      {
@@ -5382,21 +4866,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               30
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               30i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 14 as libc::c_int as pgn_t,
-                        offset: 68 as libc::c_ulong as uint16_t,};
+                        pgn: 14i32 as pgn_t,
+                        offset: 68u64 as uint16_t,};
          init
      },
      {
@@ -5412,21 +4892,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               255
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               255i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 14 as libc::c_int as pgn_t,
-                        offset: 69 as libc::c_ulong as uint16_t,};
+                        pgn: 14i32 as pgn_t,
+                        offset: 69u64 as uint16_t,};
          init
      },
      {
@@ -5442,21 +4918,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               1000
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               1000i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 14 as libc::c_int as pgn_t,
-                        offset: 72 as libc::c_ulong as uint16_t,};
+                        pgn: 14i32 as pgn_t,
+                        offset: 72u64 as uint16_t,};
          init
      },
      {
@@ -5476,8 +4948,8 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                                                     TABLE_CRASH_RECOVERY,};
                                                      init
                                                  },},
-                        pgn: 14 as libc::c_int as pgn_t,
-                        offset: 78 as libc::c_ulong as uint16_t,};
+                        pgn: 14i32 as pgn_t,
+                        offset: 78u64 as uint16_t,};
          init
      },
      {
@@ -5497,8 +4969,8 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                                                     TABLE_OFF_ON,};
                                                      init
                                                  },},
-                        pgn: 14 as libc::c_int as pgn_t,
-                        offset: 81 as libc::c_ulong as uint16_t,};
+                        pgn: 14i32 as pgn_t,
+                        offset: 81u64 as uint16_t,};
          init
      },
      {
@@ -5518,8 +4990,8 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                                                     TABLE_OFF_ON,};
                                                      init
                                                  },},
-                        pgn: 14 as libc::c_int as pgn_t,
-                        offset: 82 as libc::c_ulong as uint16_t,};
+                        pgn: 14i32 as pgn_t,
+                        offset: 82u64 as uint16_t,};
          init
      },
      {
@@ -5539,8 +5011,8 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                                                     TABLE_ITERM_RELAX,};
                                                      init
                                                  },},
-                        pgn: 14 as libc::c_int as pgn_t,
-                        offset: 85 as libc::c_ulong as uint16_t,};
+                        pgn: 14i32 as pgn_t,
+                        offset: 85u64 as uint16_t,};
          init
      },
      {
@@ -5560,8 +5032,8 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                                                     TABLE_ITERM_RELAX_TYPE,};
                                                      init
                                                  },},
-                        pgn: 14 as libc::c_int as pgn_t,
-                        offset: 83 as libc::c_ulong as uint16_t,};
+                        pgn: 14i32 as pgn_t,
+                        offset: 83u64 as uint16_t,};
          init
      },
      {
@@ -5577,21 +5049,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               1
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               1i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               100
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               100i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 14 as libc::c_int as pgn_t,
-                        offset: 84 as libc::c_ulong as uint16_t,};
+                        pgn: 14i32 as pgn_t,
+                        offset: 84u64 as uint16_t,};
          init
      },
      {
@@ -5607,21 +5075,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               30
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               30i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               100
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               100i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 14 as libc::c_int as pgn_t,
-                        offset: 39 as libc::c_ulong as uint16_t,};
+                        pgn: 14i32 as pgn_t,
+                        offset: 39u64 as uint16_t,};
          init
      },
      {
@@ -5637,21 +5101,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               500
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               500i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 14 as libc::c_int as pgn_t,
-                        offset: 74 as libc::c_ulong as uint16_t,};
+                        pgn: 14i32 as pgn_t,
+                        offset: 74u64 as uint16_t,};
          init
      },
      {
@@ -5667,21 +5127,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               100
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               100i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               1000
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               1000i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 14 as libc::c_int as pgn_t,
-                        offset: 40 as libc::c_ulong as uint16_t,};
+                        pgn: 14i32 as pgn_t,
+                        offset: 40u64 as uint16_t,};
          init
      },
      {
@@ -5697,21 +5153,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               100
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               100i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               1000
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               1000i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 14 as libc::c_int as pgn_t,
-                        offset: 42 as libc::c_ulong as uint16_t,};
+                        pgn: 14i32 as pgn_t,
+                        offset: 42u64 as uint16_t,};
          init
      },
      {
@@ -5727,21 +5179,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               500
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               500i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 14 as libc::c_int as pgn_t,
-                        offset: 0 as libc::c_ulong as uint16_t,};
+                        pgn: 14i32 as pgn_t,
+                        offset: 0u64 as uint16_t,};
          init
      },
      {
@@ -5757,21 +5205,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               100
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               100i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 14 as libc::c_int as pgn_t,
-                        offset: 79 as libc::c_ulong as uint16_t,};
+                        pgn: 14i32 as pgn_t,
+                        offset: 79u64 as uint16_t,};
          init
      },
      {
@@ -5787,21 +5231,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               5
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               5i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               50
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               50i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 14 as libc::c_int as pgn_t,
-                        offset: 80 as libc::c_ulong as uint16_t,};
+                        pgn: 14i32 as pgn_t,
+                        offset: 80u64 as uint16_t,};
          init
      },
      {
@@ -5817,21 +5257,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               10
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               10i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               80
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               80i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 14 as libc::c_int as pgn_t,
-                        offset: 86 as libc::c_ulong as uint16_t,};
+                        pgn: 14i32 as pgn_t,
+                        offset: 86u64 as uint16_t,};
          init
      },
      {
@@ -5847,21 +5283,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               10
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               10i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               200
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               200i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 14 as libc::c_int as pgn_t,
-                        offset: 90 as libc::c_ulong as uint16_t,};
+                        pgn: 14i32 as pgn_t,
+                        offset: 90u64 as uint16_t,};
          init
      },
      {
@@ -5881,8 +5313,8 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                                                     TABLE_ACRO_TRAINER_DEBUG,};
                                                      init
                                                  },},
-                        pgn: 14 as libc::c_int as pgn_t,
-                        offset: 87 as libc::c_ulong as uint16_t,};
+                        pgn: 14i32 as pgn_t,
+                        offset: 87u64 as uint16_t,};
          init
      },
      {
@@ -5898,21 +5330,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               25
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               25i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               255
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               255i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 14 as libc::c_int as pgn_t,
-                        offset: 88 as libc::c_ulong as uint16_t,};
+                        pgn: 14i32 as pgn_t,
+                        offset: 88u64 as uint16_t,};
          init
      },
      {
@@ -5928,21 +5356,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               200
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               200i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 14 as libc::c_int as pgn_t,
-                        offset: 14 as libc::c_ulong as uint16_t,};
+                        pgn: 14i32 as pgn_t,
+                        offset: 14u64 as uint16_t,};
          init
      },
      {
@@ -5958,21 +5382,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               200
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               200i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 14 as libc::c_int as pgn_t,
-                        offset: 15 as libc::c_ulong as uint16_t,};
+                        pgn: 14i32 as pgn_t,
+                        offset: 15u64 as uint16_t,};
          init
      },
      {
@@ -5988,21 +5408,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               200
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               200i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 14 as libc::c_int as pgn_t,
-                        offset: 16 as libc::c_ulong as uint16_t,};
+                        pgn: 14i32 as pgn_t,
+                        offset: 16u64 as uint16_t,};
          init
      },
      {
@@ -6018,21 +5434,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               2000
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               2000i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 14 as libc::c_int as pgn_t,
-                        offset: 18 as libc::c_ulong as uint16_t,};
+                        pgn: 14i32 as pgn_t,
+                        offset: 18u64 as uint16_t,};
          init
      },
      {
@@ -6047,21 +5459,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               200
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               200i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 14 as libc::c_int as pgn_t,
-                        offset: 8 as libc::c_ulong as uint16_t,};
+                        pgn: 14i32 as pgn_t,
+                        offset: 8u64 as uint16_t,};
          init
      },
      {
@@ -6076,21 +5484,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               200
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               200i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 14 as libc::c_int as pgn_t,
-                        offset: 9 as libc::c_ulong as uint16_t,};
+                        pgn: 14i32 as pgn_t,
+                        offset: 9u64 as uint16_t,};
          init
      },
      {
@@ -6105,21 +5509,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               200
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               200i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 14 as libc::c_int as pgn_t,
-                        offset: 10 as libc::c_ulong as uint16_t,};
+                        pgn: 14i32 as pgn_t,
+                        offset: 10u64 as uint16_t,};
          init
      },
      {
@@ -6134,21 +5534,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               2000
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               2000i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 14 as libc::c_int as pgn_t,
-                        offset: 12 as libc::c_ulong as uint16_t,};
+                        pgn: 14i32 as pgn_t,
+                        offset: 12u64 as uint16_t,};
          init
      },
      {
@@ -6163,21 +5559,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               200
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               200i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 14 as libc::c_int as pgn_t,
-                        offset: 20 as libc::c_ulong as uint16_t,};
+                        pgn: 14i32 as pgn_t,
+                        offset: 20u64 as uint16_t,};
          init
      },
      {
@@ -6192,21 +5584,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               200
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               200i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 14 as libc::c_int as pgn_t,
-                        offset: 21 as libc::c_ulong as uint16_t,};
+                        pgn: 14i32 as pgn_t,
+                        offset: 21u64 as uint16_t,};
          init
      },
      {
@@ -6221,21 +5609,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               200
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               200i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 14 as libc::c_int as pgn_t,
-                        offset: 22 as libc::c_ulong as uint16_t,};
+                        pgn: 14i32 as pgn_t,
+                        offset: 22u64 as uint16_t,};
          init
      },
      {
@@ -6250,21 +5634,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               2000
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               2000i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 14 as libc::c_int as pgn_t,
-                        offset: 24 as libc::c_ulong as uint16_t,};
+                        pgn: 14i32 as pgn_t,
+                        offset: 24u64 as uint16_t,};
          init
      },
      {
@@ -6280,21 +5660,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               200
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               200i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 14 as libc::c_int as pgn_t,
-                        offset: 26 as libc::c_ulong as uint16_t,};
+                        pgn: 14i32 as pgn_t,
+                        offset: 26u64 as uint16_t,};
          init
      },
      {
@@ -6310,21 +5686,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               200
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               200i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 14 as libc::c_int as pgn_t,
-                        offset: 27 as libc::c_ulong as uint16_t,};
+                        pgn: 14i32 as pgn_t,
+                        offset: 27u64 as uint16_t,};
          init
      },
      {
@@ -6340,21 +5712,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               200
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               200i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 14 as libc::c_int as pgn_t,
-                        offset: 28 as libc::c_ulong as uint16_t,};
+                        pgn: 14i32 as pgn_t,
+                        offset: 28u64 as uint16_t,};
          init
      },
      {
@@ -6370,21 +5738,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               10
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               10i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               90
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               90i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 14 as libc::c_int as pgn_t,
-                        offset: 45 as libc::c_ulong as uint16_t,};
+                        pgn: 14i32 as pgn_t,
+                        offset: 45u64 as uint16_t,};
          init
      },
      {
@@ -6400,21 +5764,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               250
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               250i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 14 as libc::c_int as pgn_t,
-                        offset: 46 as libc::c_ulong as uint16_t,};
+                        pgn: 14i32 as pgn_t,
+                        offset: 46u64 as uint16_t,};
          init
      },
      {
@@ -6434,8 +5794,8 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                                                     TABLE_OFF_ON,};
                                                      init
                                                  },},
-                        pgn: 14 as libc::c_int as pgn_t,
-                        offset: 47 as libc::c_ulong as uint16_t,};
+                        pgn: 14i32 as pgn_t,
+                        offset: 47u64 as uint16_t,};
          init
      },
      {
@@ -6451,21 +5811,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               20
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               20i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 14 as libc::c_int as pgn_t,
-                        offset: 92 as libc::c_ulong as uint16_t,};
+                        pgn: 14i32 as pgn_t,
+                        offset: 92u64 as uint16_t,};
          init
      },
      {
@@ -6481,21 +5837,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               10
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               10i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               255
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               255i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 14 as libc::c_int as pgn_t,
-                        offset: 93 as libc::c_ulong as uint16_t,};
+                        pgn: 14i32 as pgn_t,
+                        offset: 93u64 as uint16_t,};
          init
      },
      {
@@ -6511,21 +5863,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               1
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               1i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               45
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               45i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 14 as libc::c_int as pgn_t,
-                        offset: 94 as libc::c_ulong as uint16_t,};
+                        pgn: 14i32 as pgn_t,
+                        offset: 94u64 as uint16_t,};
          init
      },
      {
@@ -6545,8 +5893,8 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                                                     TABLE_OFF_ON,};
                                                      init
                                                  },},
-                        pgn: 31 as libc::c_int as pgn_t,
-                        offset: 4 as libc::c_ulong as uint16_t,};
+                        pgn: 31i32 as pgn_t,
+                        offset: 4u64 as uint16_t,};
          init
      },
      {
@@ -6566,8 +5914,8 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                                                     TABLE_OFF_ON,};
                                                      init
                                                  },},
-                        pgn: 31 as libc::c_int as pgn_t,
-                        offset: 5 as libc::c_ulong as uint16_t,};
+                        pgn: 31i32 as pgn_t,
+                        offset: 5u64 as uint16_t,};
          init
      },
      {
@@ -6583,21 +5931,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               120
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               120i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 31 as libc::c_int as pgn_t,
-                        offset: 17 as libc::c_ulong as uint16_t,};
+                        pgn: 31i32 as pgn_t,
+                        offset: 17u64 as uint16_t,};
          init
      },
      {
@@ -6617,8 +5961,8 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                                                     TABLE_OFF_ON,};
                                                      init
                                                  },},
-                        pgn: 31 as libc::c_int as pgn_t,
-                        offset: 18 as libc::c_ulong as uint16_t,};
+                        pgn: 31i32 as pgn_t,
+                        offset: 18u64 as uint16_t,};
          init
      },
      {
@@ -6638,8 +5982,8 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                                                     TABLE_OFF_ON,};
                                                      init
                                                  },},
-                        pgn: 31 as libc::c_int as pgn_t,
-                        offset: 19 as libc::c_ulong as uint16_t,};
+                        pgn: 31i32 as pgn_t,
+                        offset: 19u64 as uint16_t,};
          init
      },
      {
@@ -6659,8 +6003,8 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                                                     TABLE_OFF_ON,};
                                                      init
                                                  },},
-                        pgn: 18 as libc::c_int as pgn_t,
-                        offset: 3 as libc::c_ulong as uint16_t,};
+                        pgn: 18i32 as pgn_t,
+                        offset: 3u64 as uint16_t,};
          init
      },
      {
@@ -6680,8 +6024,8 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                                                     TABLE_DEBUG,};
                                                      init
                                                  },},
-                        pgn: 18 as libc::c_int as pgn_t,
-                        offset: 2 as libc::c_ulong as uint16_t,};
+                        pgn: 18i32 as pgn_t,
+                        offset: 2u64 as uint16_t,};
          init
      },
      {
@@ -6701,8 +6045,8 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                                                     TABLE_OFF_ON,};
                                                      init
                                                  },},
-                        pgn: 18 as libc::c_int as pgn_t,
-                        offset: 4 as libc::c_ulong as uint16_t,};
+                        pgn: 18i32 as pgn_t,
+                        offset: 4u64 as uint16_t,};
          init
      },
      {
@@ -6718,21 +6062,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               30
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               30i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 18 as libc::c_int as pgn_t,
-                        offset: 6 as libc::c_ulong as uint16_t,};
+                        pgn: 18i32 as pgn_t,
+                        offset: 6u64 as uint16_t,};
          init
      },
      {
@@ -6748,21 +6088,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               -(6
-                                                                                     as
-                                                                                     libc::c_int)
+                                                                               -6i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 512 as libc::c_int as pgn_t,
-                        offset: 0 as libc::c_ulong as uint16_t,};
+                        pgn: 512i32 as pgn_t,
+                        offset: 0u64 as uint16_t,};
          init
      },
      {
@@ -6778,21 +6114,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               -(3
-                                                                                     as
-                                                                                     libc::c_int)
+                                                                               -3i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 512 as libc::c_int as pgn_t,
-                        offset: 1 as libc::c_ulong as uint16_t,};
+                        pgn: 512i32 as pgn_t,
+                        offset: 1u64 as uint16_t,};
          init
      },
      {
@@ -6808,29 +6140,21 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               (((1
-                                                                                      as
-                                                                                      libc::c_int)
+                                                                               ((1i32
                                                                                      <<
-                                                                                     3
-                                                                                         as
-                                                                                         libc::c_int)
+                                                                                     3i32)
                                                                                     -
-                                                                                    1
-                                                                                        as
-                                                                                        libc::c_int)
+                                                                                    1i32)
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 505 as libc::c_int as pgn_t,
-                        offset: 3 as libc::c_ulong as uint16_t,};
+                        pgn: 505i32 as pgn_t,
+                        offset: 3u64 as uint16_t,};
          init
      },
      {
@@ -6847,15 +6171,13 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliArrayLengthConfig_s{length:
-                                                                                    4
-                                                                                        as
-                                                                                        libc::c_int
+                                                                                    4i32
                                                                                         as
                                                                                         uint8_t,};
                                                      init
                                                  },},
-                        pgn: 529 as libc::c_int as pgn_t,
-                        offset: 4 as libc::c_ulong as uint16_t,};
+                        pgn: 529i32 as pgn_t,
+                        offset: 4u64 as uint16_t,};
          init
      },
      {
@@ -6872,15 +6194,13 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliArrayLengthConfig_s{length:
-                                                                                    4
-                                                                                        as
-                                                                                        libc::c_int
+                                                                                    4i32
                                                                                         as
                                                                                         uint8_t,};
                                                      init
                                                  },},
-                        pgn: 530 as libc::c_int as pgn_t,
-                        offset: 0 as libc::c_ulong as uint16_t,};
+                        pgn: 530i32 as pgn_t,
+                        offset: 0u64 as uint16_t,};
          init
      },
      {
@@ -6896,21 +6216,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               0
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               0i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               10
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               10i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 539 as libc::c_int as pgn_t,
-                        offset: 0 as libc::c_ulong as uint16_t,};
+                        pgn: 539i32 as pgn_t,
+                        offset: 0u64 as uint16_t,};
          init
      },
      {
@@ -6926,21 +6242,17 @@ pub static mut valueTable: [clivalue_t; 234] =
                                                  {
                                                      let mut init =
                                                          cliMinMaxConfig_s{min:
-                                                                               500
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               500i32
                                                                                    as
                                                                                    int16_t,
                                                                            max:
-                                                                               5000
-                                                                                   as
-                                                                                   libc::c_int
+                                                                               5000i32
                                                                                    as
                                                                                    int16_t,};
                                                      init
                                                  },},
-                        pgn: 539 as libc::c_int as pgn_t,
-                        offset: 4 as libc::c_ulong as uint16_t,};
+                        pgn: 539i32 as pgn_t,
+                        offset: 4u64 as uint16_t,};
          init
      }];
 // Initialized in run_static_initializers
@@ -7391,7 +6703,7 @@ unsafe extern "C" fn run_static_initializers() {
                                              as libc::c_ulong) as uint16_t
 }
 #[used]
-#[cfg_attr(target_os = "linux", link_section = ".init_array")]
-#[cfg_attr(target_os = "windows", link_section = ".CRT$XIB")]
-#[cfg_attr(target_os = "macos", link_section = "__DATA,__mod_init_func")]
+#[cfg_attr ( target_os = "linux", link_section = ".init_array" )]
+#[cfg_attr ( target_os = "windows", link_section = ".CRT$XIB" )]
+#[cfg_attr ( target_os = "macos", link_section = "__DATA,__mod_init_func" )]
 static INIT_ARRAY: [unsafe extern "C" fn(); 1] = [run_static_initializers];

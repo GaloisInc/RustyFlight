@@ -1,4 +1,5 @@
-use ::libc;
+use core;
+use libc;
 pub type __uint8_t = libc::c_uchar;
 pub type __uint16_t = libc::c_ushort;
 pub type __uint32_t = libc::c_uint;
@@ -34,7 +35,7 @@ pub const PGR_PGN_MASK: C2RustUnnamed = 4095;
 pub type pgResetFunc
     =
     unsafe extern "C" fn(_: *mut libc::c_void, _: libc::c_int) -> ();
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct pgRegistry_s {
     pub pgn: pgn_t,
@@ -44,11 +45,12 @@ pub struct pgRegistry_s {
     pub ptr: *mut *mut uint8_t,
     pub reset: C2RustUnnamed_0,
 }
-#[derive(Copy, Clone)]
-#[repr(C)]
+#[derive ( Copy, Clone )]
+#[repr ( C )]
 pub union C2RustUnnamed_0 {
     pub ptr: *mut libc::c_void,
-    pub fn_0: Option<pgResetFunc>,
+    pub fn_0: Option<unsafe extern "C" fn(_: *mut libc::c_void,
+                                          _: libc::c_int) -> ()>,
 }
 pub type pgRegistry_t = pgRegistry_s;
 pub type C2RustUnnamed_1 = libc::c_uint;
@@ -76,7 +78,7 @@ pub const FEATURE_MOTOR_STOP: C2RustUnnamed_1 = 16;
 pub const FEATURE_RX_SERIAL: C2RustUnnamed_1 = 8;
 pub const FEATURE_INFLIGHT_ACC_CAL: C2RustUnnamed_1 = 4;
 pub const FEATURE_RX_PPM: C2RustUnnamed_1 = 1;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct featureConfig_s {
     pub enabledFeatures: uint32_t,
@@ -139,7 +141,7 @@ unsafe extern "C" fn featureConfigMutable() -> *mut featureConfig_t {
  *
  * If not, see <http://www.gnu.org/licenses/>.
  */
-static mut activeFeaturesLatch: uint32_t = 0 as libc::c_int as uint32_t;
+static mut activeFeaturesLatch: uint32_t = 0i32 as uint32_t;
 #[no_mangle]
 #[link_section = ".pg_registry"]
 #[used]
@@ -147,10 +149,7 @@ pub static mut featureConfig_Registry: pgRegistry_t =
     unsafe {
         {
             let mut init =
-                pgRegistry_s{pgn:
-                                 (19 as libc::c_int |
-                                      (0 as libc::c_int) << 12 as libc::c_int)
-                                     as pgn_t,
+                pgRegistry_s{pgn: (19i32 | 0i32 << 12i32) as pgn_t,
                              size:
                                  (::core::mem::size_of::<featureConfig_t>() as
                                       libc::c_ulong |
@@ -209,7 +208,7 @@ pub unsafe extern "C" fn intFeatureClear(mut mask: uint32_t,
 }
 #[no_mangle]
 pub unsafe extern "C" fn intFeatureClearAll(mut features: *mut uint32_t) {
-    *features = 0 as libc::c_int as uint32_t;
+    *features = 0i32 as uint32_t;
 }
 #[no_mangle]
 pub unsafe extern "C" fn latchActiveFeatures() {

@@ -1,4 +1,5 @@
-use ::libc;
+use core;
+use libc;
 extern "C" {
     #[no_mangle]
     fn delay(ms: timeMs_t);
@@ -83,5 +84,5 @@ pub unsafe extern "C" fn HardFault_Handler() {
            requiredStateForMotors as libc::c_int {
         stopMotors();
     }
-    loop  { delay(50 as libc::c_int as timeMs_t); };
+    loop  { delay(50i32 as timeMs_t); };
 }

@@ -1,10 +1,11 @@
-use ::libc;
+use core;
+use libc;
 pub type __int32_t = libc::c_int;
 pub type __uint32_t = libc::c_uint;
 pub type int32_t = __int32_t;
 pub type uint32_t = __uint32_t;
-#[derive(Copy, Clone)]
-#[repr(C)]
+#[derive ( Copy, Clone )]
+#[repr ( C )]
 pub union floatConvert_t {
     pub f: libc::c_float,
     pub u: uint32_t,
@@ -69,6 +70,5 @@ pub unsafe extern "C" fn castFloatBytesToInt(mut f: libc::c_float)
  */
 #[no_mangle]
 pub unsafe extern "C" fn zigzagEncode(mut value: int32_t) -> uint32_t {
-    return (value << 1 as libc::c_int ^ value >> 31 as libc::c_int) as
-               uint32_t;
+    return (value << 1i32 ^ value >> 31i32) as uint32_t;
 }

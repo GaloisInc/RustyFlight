@@ -1,4 +1,5 @@
-use ::libc;
+use core;
+use libc;
 extern "C" {
     #[no_mangle]
     fn parseRcChannels(input: *const libc::c_char, rxConfig: *mut rxConfig_s);
@@ -40,7 +41,7 @@ pub const PGR_PGN_MASK: C2RustUnnamed = 4095;
 pub type pgResetFunc
     =
     unsafe extern "C" fn(_: *mut libc::c_void, _: libc::c_int) -> ();
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct pgRegistry_s {
     pub pgn: pgn_t,
@@ -50,11 +51,12 @@ pub struct pgRegistry_s {
     pub ptr: *mut *mut uint8_t,
     pub reset: C2RustUnnamed_0,
 }
-#[derive(Copy, Clone)]
-#[repr(C)]
+#[derive ( Copy, Clone )]
+#[repr ( C )]
 pub union C2RustUnnamed_0 {
     pub ptr: *mut libc::c_void,
-    pub fn_0: Option<pgResetFunc>,
+    pub fn_0: Option<unsafe extern "C" fn(_: *mut libc::c_void,
+                                          _: libc::c_int) -> ()>,
 }
 pub type pgRegistry_t = pgRegistry_s;
 /* base */
@@ -88,7 +90,7 @@ pub type pgRegistry_t = pgRegistry_s;
 // IO pin identification
 // make sure that ioTag_t can't be assigned into IO_t without warning
 pub type ioTag_t = uint8_t;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct rxConfig_s {
     pub rcmap: [uint8_t; 8],
@@ -319,10 +321,7 @@ pub static mut rxConfig_Registry: pgRegistry_t =
     unsafe {
         {
             let mut init =
-                pgRegistry_s{pgn:
-                                 (24 as libc::c_int |
-                                      (2 as libc::c_int) << 12 as libc::c_int)
-                                     as pgn_t,
+                pgRegistry_s{pgn: (24i32 | 2i32 << 12i32) as pgn_t,
                              size:
                                  (::core::mem::size_of::<rxConfig_t>() as
                                       libc::c_ulong |
@@ -343,12 +342,17 @@ pub static mut rxConfig_Registry: pgRegistry_t =
                                                                                                               *mut rxConfig_t)
                                                                                          ->
                                                                                              ()>,
-                                                                              Option<pgResetFunc>>(Some(pgResetFn_rxConfig
-                                                                                                            as
-                                                                                                            unsafe extern "C" fn(_:
-                                                                                                                                     *mut rxConfig_t)
-                                                                                                                ->
-                                                                                                                    ())),},};
+                                                                              Option<unsafe extern "C" fn(_:
+                                                                                                              *mut libc::c_void,
+                                                                                                          _:
+                                                                                                              libc::c_int)
+                                                                                         ->
+                                                                                             ()>>(Some(pgResetFn_rxConfig
+                                                                                                           as
+                                                                                                           unsafe extern "C" fn(_:
+                                                                                                                                    *mut rxConfig_t)
+                                                                                                               ->
+                                                                                                                   ())),},};
             init
         }
     };
@@ -358,44 +362,37 @@ pub unsafe extern "C" fn pgResetFn_rxConfig(mut rxConfig: *mut rxConfig_t) {
         {
             let mut init =
                 rxConfig_s{rcmap: [0; 8],
-                           serialrx_provider: 0 as libc::c_int as uint8_t,
-                           serialrx_inverted: 0 as libc::c_int as uint8_t,
-                           halfDuplex: 0 as libc::c_int as uint8_t,
-                           spektrum_bind_pin_override_ioTag:
-                               0 as libc::c_int as ioTag_t,
-                           spektrum_bind_plug_ioTag:
-                               0 as libc::c_int as ioTag_t,
-                           spektrum_sat_bind: 0 as libc::c_int as uint8_t,
-                           spektrum_sat_bind_autoreset:
-                               1 as libc::c_int as uint8_t,
-                           rssi_channel: 0 as libc::c_int as uint8_t,
-                           rssi_scale: 100 as libc::c_int as uint8_t,
-                           rssi_invert: 0 as libc::c_int as uint8_t,
-                           midrc: 1500 as libc::c_int as uint16_t,
-                           mincheck: 1050 as libc::c_int as uint16_t,
-                           maxcheck: 1900 as libc::c_int as uint16_t,
+                           serialrx_provider: 0i32 as uint8_t,
+                           serialrx_inverted: 0i32 as uint8_t,
+                           halfDuplex: 0i32 as uint8_t,
+                           spektrum_bind_pin_override_ioTag: 0i32 as ioTag_t,
+                           spektrum_bind_plug_ioTag: 0i32 as ioTag_t,
+                           spektrum_sat_bind: 0i32 as uint8_t,
+                           spektrum_sat_bind_autoreset: 1i32 as uint8_t,
+                           rssi_channel: 0i32 as uint8_t,
+                           rssi_scale: 100i32 as uint8_t,
+                           rssi_invert: 0i32 as uint8_t,
+                           midrc: 1500i32 as uint16_t,
+                           mincheck: 1050i32 as uint16_t,
+                           maxcheck: 1900i32 as uint16_t,
                            rcInterpolation:
                                RC_SMOOTHING_AUTO as libc::c_int as uint8_t,
                            rcInterpolationChannels:
                                INTERPOLATION_CHANNELS_RPYT as libc::c_int as
                                    uint8_t,
-                           rcInterpolationInterval:
-                               19 as libc::c_int as uint8_t,
-                           fpvCamAngleDegrees: 0 as libc::c_int as uint8_t,
-                           airModeActivateThreshold:
-                               32 as libc::c_int as uint8_t,
-                           rx_min_usec: 885 as libc::c_int as uint16_t,
-                           rx_max_usec: 2115 as libc::c_int as uint16_t,
-                           max_aux_channel: 6 as libc::c_int as uint8_t,
-                           rssi_src_frame_errors: 0 as libc::c_int as uint8_t,
-                           rssi_offset: 0 as libc::c_int as int8_t,
+                           rcInterpolationInterval: 19i32 as uint8_t,
+                           fpvCamAngleDegrees: 0i32 as uint8_t,
+                           airModeActivateThreshold: 32i32 as uint8_t,
+                           rx_min_usec: 885i32 as uint16_t,
+                           rx_max_usec: 2115i32 as uint16_t,
+                           max_aux_channel: 6i32 as uint8_t,
+                           rssi_src_frame_errors: 0i32 as uint8_t,
+                           rssi_offset: 0i32 as int8_t,
                            rc_smoothing_type:
                                RC_SMOOTHING_TYPE_INTERPOLATION as libc::c_int
                                    as uint8_t,
-                           rc_smoothing_input_cutoff:
-                               0 as libc::c_int as uint8_t,
-                           rc_smoothing_derivative_cutoff:
-                               0 as libc::c_int as uint8_t,
+                           rc_smoothing_input_cutoff: 0i32 as uint8_t,
+                           rc_smoothing_derivative_cutoff: 0i32 as uint8_t,
                            rc_smoothing_debug_axis:
                                ROLL as libc::c_int as uint8_t,
                            rc_smoothing_input_type:

@@ -1,14 +1,15 @@
-use ::libc;
+use core;
+use libc;
 pub type __int32_t = libc::c_int;
 pub type int32_t = __int32_t;
-#[derive(Copy, Clone)]
-#[repr(C)]
+#[derive ( Copy, Clone )]
+#[repr ( C )]
 pub union C2RustUnnamed {
     pub i: int32_t,
     pub f: libc::c_float,
 }
-#[derive(Copy, Clone)]
-#[repr(C)]
+#[derive ( Copy, Clone )]
+#[repr ( C )]
 pub union C2RustUnnamed_0 {
     pub f: libc::c_float,
     pub i: int32_t,
@@ -64,8 +65,8 @@ pub unsafe extern "C" fn exp_approx(mut val: libc::c_float) -> libc::c_float {
     val3 = if val2 < exp_cst1 { val2 } else { exp_cst1 };
     val4 = if val3 > exp_cst2 { val3 } else { exp_cst2 };
     val4i = val4 as int32_t;
-    xu.i = val4i & 0x7f800000 as libc::c_int;
-    xu2.i = val4i & 0x7fffff as libc::c_int | 0x3f800000 as libc::c_int;
+    xu.i = val4i & 0x7f800000i32;
+    xu2.i = val4i & 0x7fffffi32 | 0x3f800000i32;
     b = xu2.f;
     /* Generated in Sollya with:
      > f=remez(1-x*exp(-(x-1)*log(2)),
@@ -96,13 +97,13 @@ pub unsafe extern "C" fn log_approx(mut val: libc::c_float) -> libc::c_float {
     let mut addcst: libc::c_float = 0.;
     let mut x: libc::c_float = 0.;
     valu.f = val;
-    exp = (valu.i >> 23 as libc::c_int) as libc::c_float;
+    exp = (valu.i >> 23i32) as libc::c_float;
     /* 89.970756366f = 127 * log(2) - constant term of polynomial */
     addcst =
-        if val > 0 as libc::c_int as libc::c_float {
+        if val > 0i32 as libc::c_float {
             -89.970756366f32
         } else { -::core::f32::INFINITY };
-    valu.i = valu.i & 0x7fffff as libc::c_int | 0x3f800000 as libc::c_int;
+    valu.i = valu.i & 0x7fffffi32 | 0x3f800000i32;
     x = valu.f;
     /* Generated in Sollya using:
     > f = remez(log(x)-(x-1)*log(2),

@@ -1,4 +1,5 @@
-use ::libc;
+use core;
+use libc;
 pub type __uint8_t = libc::c_uchar;
 pub type __uint16_t = libc::c_ushort;
 pub type __int32_t = libc::c_int;
@@ -7,7 +8,7 @@ pub type int32_t = __int32_t;
 pub type uint8_t = __uint8_t;
 pub type uint16_t = __uint16_t;
 pub type uint32_t = __uint32_t;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct SPI_TypeDef {
     pub test: *mut libc::c_void,
@@ -43,32 +44,32 @@ pub const BUSTYPE_MPU_SLAVE: busType_e = 3;
 pub const BUSTYPE_SPI: busType_e = 2;
 pub const BUSTYPE_I2C: busType_e = 1;
 pub const BUSTYPE_NONE: busType_e = 0;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct busDevice_s {
     pub bustype: busType_e,
     pub busdev_u: C2RustUnnamed,
 }
-#[derive(Copy, Clone)]
-#[repr(C)]
+#[derive ( Copy, Clone )]
+#[repr ( C )]
 pub union C2RustUnnamed {
     pub spi: deviceSpi_s,
     pub i2c: deviceI2C_s,
     pub mpuSlave: deviceMpuSlave_s,
 }
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct deviceMpuSlave_s {
     pub master: *const busDevice_s,
     pub address: uint8_t,
 }
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct deviceI2C_s {
     pub device: I2CDevice,
     pub address: uint8_t,
 }
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct deviceSpi_s {
     pub instance: *mut SPI_TypeDef,
@@ -95,8 +96,6 @@ pub type busDevice_t = busDevice_s;
  *
  * If not, see <http://www.gnu.org/licenses/>.
  */
-// baro start operation
-// baro calculation (filled params are pressure and temperature)
 /*
  * This file is part of Cleanflight and Betaflight.
  *
@@ -116,7 +115,7 @@ pub type busDevice_t = busDevice_s;
  *
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct baroDev_s {
     pub busdev: busDevice_t,
@@ -176,10 +175,10 @@ pub unsafe extern "C" fn fakeBaroSet(mut pressure: int32_t,
 }
 #[no_mangle]
 pub unsafe extern "C" fn fakeBaroDetect(mut baro: *mut baroDev_t) -> bool {
-    fakePressure = 101325 as libc::c_int;
-    fakeTemperature = 2500 as libc::c_int;
+    fakePressure = 101325i32;
+    fakeTemperature = 2500i32;
     // these are dummy as temperature is measured as part of pressure
-    (*baro).ut_delay = 10000 as libc::c_int as uint16_t;
+    (*baro).ut_delay = 10000i32 as uint16_t;
     (*baro).get_ut =
         Some(fakeBaroStartGet as
                  unsafe extern "C" fn(_: *mut baroDev_t) -> ());
@@ -187,7 +186,7 @@ pub unsafe extern "C" fn fakeBaroDetect(mut baro: *mut baroDev_t) -> bool {
         Some(fakeBaroStartGet as
                  unsafe extern "C" fn(_: *mut baroDev_t) -> ());
     // only _up part is executed, and gets both temperature and pressure
-    (*baro).up_delay = 10000 as libc::c_int as uint16_t;
+    (*baro).up_delay = 10000i32 as uint16_t;
     (*baro).start_up =
         Some(fakeBaroStartGet as
                  unsafe extern "C" fn(_: *mut baroDev_t) -> ());
@@ -198,6 +197,6 @@ pub unsafe extern "C" fn fakeBaroDetect(mut baro: *mut baroDev_t) -> bool {
         Some(fakeBaroCalculate as
                  unsafe extern "C" fn(_: *mut int32_t, _: *mut int32_t)
                      -> ());
-    return 1 as libc::c_int != 0;
+    return 1i32 != 0;
 }
 // USE_FAKE_BARO

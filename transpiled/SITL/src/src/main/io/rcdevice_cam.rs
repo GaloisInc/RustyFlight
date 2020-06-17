@@ -1,4 +1,5 @@
-use ::libc;
+use core;
+use libc;
 extern "C" {
     #[no_mangle]
     static mut armingFlags: uint8_t;
@@ -15,10 +16,6 @@ extern "C" {
     fn runcamDeviceSimulateCameraButton(device: *mut runcamDevice_t,
                                         operation: uint8_t) -> bool;
     // 5 key osd cable simulation
-    #[no_mangle]
-    fn runcamDeviceOpen5KeyOSDCableConnection(device: *mut runcamDevice_t,
-                                              parseFunc:
-                                                  rcdeviceRespParseFunc);
     #[no_mangle]
     fn runcamDeviceClose5KeyOSDCableConnection(device: *mut runcamDevice_t,
                                                parseFunc:
@@ -37,6 +34,10 @@ extern "C" {
     #[no_mangle]
     fn IS_RC_MODE_ACTIVE(boxId: boxId_e) -> bool;
     #[no_mangle]
+    fn runcamDeviceOpen5KeyOSDCableConnection(device: *mut runcamDevice_t,
+                                              parseFunc:
+                                                  rcdeviceRespParseFunc);
+    #[no_mangle]
     static mut rcData: [int16_t; 18];
 }
 pub type __int8_t = libc::c_schar;
@@ -53,7 +54,26 @@ pub type uint32_t = __uint32_t;
 pub type timeMs_t = uint32_t;
 // microsecond time
 pub type timeUs_t = uint32_t;
-#[derive(Copy, Clone)]
+/*
+ * This file is part of Cleanflight and Betaflight.
+ *
+ * Cleanflight and Betaflight are free software. You can redistribute
+ * this software and/or modify this software under the terms of the
+ * GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * Cleanflight and Betaflight are distributed in the hope that they
+ * will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this software.
+ *
+ * If not, see <http://www.gnu.org/licenses/>.
+ */
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct displayPortVTable_s {
     pub grab: Option<unsafe extern "C" fn(_: *mut displayPort_t)
@@ -84,27 +104,8 @@ pub struct displayPortVTable_s {
     pub txBytesFree: Option<unsafe extern "C" fn(_: *const displayPort_t)
                                 -> uint32_t>,
 }
-/*
- * This file is part of Cleanflight and Betaflight.
- *
- * Cleanflight and Betaflight are free software. You can redistribute
- * this software and/or modify this software under the terms of the
- * GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option)
- * any later version.
- *
- * Cleanflight and Betaflight are distributed in the hope that they
- * will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this software.
- *
- * If not, see <http://www.gnu.org/licenses/>.
- */
 pub type displayPort_t = displayPort_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct displayPort_s {
     pub vTable: *const displayPortVTable_s,
@@ -225,26 +226,6 @@ pub const BEEPER_RX_LOST_LANDING: beeperMode_e = 3;
 pub const BEEPER_RX_LOST: beeperMode_e = 2;
 pub const BEEPER_GYRO_CALIBRATED: beeperMode_e = 1;
 pub const BEEPER_SILENCE: beeperMode_e = 0;
-// CMS state
-/*
- * This file is part of Cleanflight and Betaflight.
- *
- * Cleanflight and Betaflight are free software. You can redistribute
- * this software and/or modify this software under the terms of the
- * GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option)
- * any later version.
- *
- * Cleanflight and Betaflight are distributed in the hope that they
- * will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this software.
- *
- * If not, see <http://www.gnu.org/licenses/>.
- */
 pub type portMode_e = libc::c_uint;
 pub const MODE_RXTX: portMode_e = 3;
 pub const MODE_TX: portMode_e = 2;
@@ -264,7 +245,7 @@ pub const SERIAL_NOT_INVERTED: portOptions_e = 0;
 pub type serialReceiveCallbackPtr
     =
     Option<unsafe extern "C" fn(_: uint16_t, _: *mut libc::c_void) -> ()>;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct serialPort_s {
     pub vTable: *const serialPortVTable,
@@ -283,7 +264,7 @@ pub struct serialPort_s {
     pub rxCallbackData: *mut libc::c_void,
     pub identifier: uint8_t,
 }
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct serialPortVTable {
     pub serialWrite: Option<unsafe extern "C" fn(_: *mut serialPort_t,
@@ -373,7 +354,7 @@ pub type rcdevice_protocol_version_e = libc::c_uint;
 pub const RCDEVICE_PROTOCOL_UNKNOWN: rcdevice_protocol_version_e = 2;
 pub const RCDEVICE_PROTOCOL_VERSION_1_0: rcdevice_protocol_version_e = 1;
 pub const RCDEVICE_PROTOCOL_RCSPLIT_VERSION: rcdevice_protocol_version_e = 0;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct runcamDeviceInfo_s {
     pub protocolVersion: rcdevice_protocol_version_e,
@@ -381,7 +362,7 @@ pub struct runcamDeviceInfo_s {
 }
 // end of Runcam Device definition
 pub type runcamDeviceInfo_t = runcamDeviceInfo_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct runcamDevice_s {
     pub serialPort: *mut serialPort_t,
@@ -394,7 +375,7 @@ pub type rcdeviceResponseStatus_e = libc::c_uint;
 pub const RCDEVICE_RESP_TIMEOUT: rcdeviceResponseStatus_e = 2;
 pub const RCDEVICE_RESP_INCORRECT_CRC: rcdeviceResponseStatus_e = 1;
 pub const RCDEVICE_RESP_SUCCESS: rcdeviceResponseStatus_e = 0;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct rcdeviceResponseParseContext_s {
     pub command: uint8_t,
@@ -417,26 +398,7 @@ pub type rcdeviceRespParseFunc
     Option<unsafe extern "C" fn(_: *mut rcdeviceResponseParseContext_t)
                -> ()>;
 pub type rcdeviceResponseParseContext_t = rcdeviceResponseParseContext_s;
-/*
- * This file is part of Cleanflight and Betaflight.
- *
- * Cleanflight and Betaflight are free software. You can redistribute
- * this software and/or modify this software under the terms of the
- * GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option)
- * any later version.
- *
- * Cleanflight and Betaflight are distributed in the hope that they
- * will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this software.
- *
- * If not, see <http://www.gnu.org/licenses/>.
- */
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct rcdeviceSwitchState_s {
     pub isActivated: bool,
@@ -444,26 +406,6 @@ pub struct rcdeviceSwitchState_s {
 pub type rcdeviceSwitchState_t = rcdeviceSwitchState_s;
 #[no_mangle]
 pub static mut SystemCoreClock: uint32_t = 0;
-/*
- * This file is part of Cleanflight and Betaflight.
- *
- * Cleanflight and Betaflight are free software. You can redistribute
- * this software and/or modify this software under the terms of the
- * GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option)
- * any later version.
- *
- * Cleanflight and Betaflight are distributed in the hope that they
- * will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this software.
- *
- * If not, see <http://www.gnu.org/licenses/>.
- */
-// Device management
 #[no_mangle]
 pub static mut pCurrentDisplay: *mut displayPort_t =
     0 as *const displayPort_t as *mut displayPort_t;
@@ -501,17 +443,17 @@ pub static mut camDevice: *mut runcamDevice_t =
 pub static mut switchStates: [rcdeviceSwitchState_t; 3] =
     [rcdeviceSwitchState_t{isActivated: false,}; 3];
 #[no_mangle]
-pub static mut rcdeviceInMenu: bool = 0 as libc::c_int != 0;
+pub static mut rcdeviceInMenu: bool = 0i32 != 0;
 #[no_mangle]
-pub static mut isButtonPressed: bool = 0 as libc::c_int != 0;
+pub static mut isButtonPressed: bool = 0i32 != 0;
 #[no_mangle]
-pub static mut waitingDeviceResponse: bool = 0 as libc::c_int != 0;
+pub static mut waitingDeviceResponse: bool = 0i32 != 0;
 unsafe extern "C" fn isFeatureSupported(mut feature: uint8_t) -> bool {
     if (*camDevice).info.features as libc::c_int & feature as libc::c_int != 0
        {
-        return 1 as libc::c_int != 0
+        return 1i32 != 0
     }
-    return 0 as libc::c_int != 0;
+    return 0i32 != 0;
 }
 #[no_mangle]
 pub unsafe extern "C" fn rcdeviceIsEnabled() -> bool {
@@ -522,9 +464,9 @@ unsafe extern "C" fn rcdeviceIs5KeyEnabled() -> bool {
            isFeatureSupported(RCDEVICE_PROTOCOL_FEATURE_SIMULATE_5_KEY_OSD_CABLE
                                   as libc::c_int as uint8_t) as libc::c_int !=
                0 {
-        return 1 as libc::c_int != 0
+        return 1i32 != 0
     }
-    return 0 as libc::c_int != 0;
+    return 0i32 != 0;
 }
 unsafe extern "C" fn rcdeviceCameraControlProcess() {
     let mut i: boxId_e = BOXCAMERA1;
@@ -552,7 +494,7 @@ unsafe extern "C" fn rcdeviceCameraControlProcess() {
                                    getArmingDisableFlags() as libc::c_uint &
                                        ARMING_DISABLED_RUNAWAY_TAKEOFF as
                                            libc::c_int as libc::c_uint ==
-                                       0 as libc::c_int as libc::c_uint {
+                                       0i32 as libc::c_uint {
                                 behavior =
                                     RCDEVICE_PROTOCOL_CAM_CTRL_SIMULATE_WIFI_BTN
                                         as libc::c_int as uint8_t
@@ -576,7 +518,7 @@ unsafe extern "C" fn rcdeviceCameraControlProcess() {
                                    getArmingDisableFlags() as libc::c_uint &
                                        ARMING_DISABLED_RUNAWAY_TAKEOFF as
                                            libc::c_int as libc::c_uint ==
-                                       0 as libc::c_int as libc::c_uint {
+                                       0i32 as libc::c_uint {
                                 behavior =
                                     RCDEVICE_PROTOCOL_CAM_CTRL_CHANGE_MODE as
                                         libc::c_int as uint8_t
@@ -589,31 +531,23 @@ unsafe extern "C" fn rcdeviceCameraControlProcess() {
                        RCDEVICE_PROTOCOL_CAM_CTRL_UNKNOWN_CAMERA_OPERATION as
                            libc::c_int {
                     runcamDeviceSimulateCameraButton(camDevice, behavior);
-                    switchStates[switchIndex as usize].isActivated =
-                        1 as libc::c_int != 0
+                    switchStates[switchIndex as usize].isActivated = 1i32 != 0
                 }
             }
-        } else {
-            switchStates[switchIndex as usize].isActivated =
-                0 as libc::c_int != 0
-        }
+        } else { switchStates[switchIndex as usize].isActivated = 0i32 != 0 }
         i += 1
     };
 }
 unsafe extern "C" fn rcdeviceSimulationOSDCableFailed(mut ctx:
                                                           *mut rcdeviceResponseParseContext_t) {
-    if (*ctx).command as libc::c_int == 0x4 as libc::c_int {
-        let mut operationID: uint8_t =
-            (*ctx).paramData[0 as libc::c_int as usize];
+    if (*ctx).command as libc::c_int == 0x4i32 {
+        let mut operationID: uint8_t = (*ctx).paramData[0];
         if operationID as libc::c_int ==
                RCDEVICE_PROTOCOL_5KEY_CONNECTION_CLOSE as libc::c_int {
-            waitingDeviceResponse = 0 as libc::c_int != 0;
+            waitingDeviceResponse = 0i32 != 0;
             return
         }
-    } else {
-        rcdeviceInMenu = 0 as libc::c_int != 0;
-        waitingDeviceResponse = 0 as libc::c_int != 0
-    };
+    } else { rcdeviceInMenu = 0i32 != 0; waitingDeviceResponse = 0i32 != 0 };
 }
 unsafe extern "C" fn rcdeviceSimulationRespHandle(mut ctx:
                                                       *mut rcdeviceResponseParseContext_t) {
@@ -623,38 +557,36 @@ unsafe extern "C" fn rcdeviceSimulationRespHandle(mut ctx:
         return
     }
     match (*ctx).command as libc::c_int {
-        3 => { isButtonPressed = 0 as libc::c_int != 0 }
+        3 => { isButtonPressed = 0i32 != 0 }
         4 => {
             // the high 4 bits is the operationID that we sent
         // the low 4 bits is the result code
-            isButtonPressed = 1 as libc::c_int != 0;
-            let mut operationID: uint8_t =
-                (*ctx).paramData[0 as libc::c_int as usize];
+            isButtonPressed = 1i32 != 0;
+            let mut operationID: uint8_t = (*ctx).paramData[0];
             let mut errorCode: bool =
-                *(*ctx).recvBuf.offset(1 as libc::c_int as isize) as
-                    libc::c_int & 0xf as libc::c_int != 0;
+                *(*ctx).recvBuf.offset(1) as libc::c_int & 0xfi32 != 0;
             if operationID as libc::c_int ==
                    RCDEVICE_PROTOCOL_5KEY_CONNECTION_OPEN as libc::c_int {
-                if errorCode as libc::c_int == 1 as libc::c_int {
-                    rcdeviceInMenu = 1 as libc::c_int != 0;
+                if errorCode as libc::c_int == 1i32 {
+                    rcdeviceInMenu = 1i32 != 0;
                     beeper(BEEPER_CAM_CONNECTION_OPEN);
                 } else {
-                    rcdeviceInMenu = 0 as libc::c_int != 0;
+                    rcdeviceInMenu = 0i32 != 0;
                     beeper(BEEPER_CAM_CONNECTION_CLOSE);
                 }
             } else if operationID as libc::c_int ==
                           RCDEVICE_PROTOCOL_5KEY_CONNECTION_CLOSE as
                               libc::c_int {
-                if errorCode as libc::c_int == 1 as libc::c_int {
-                    rcdeviceInMenu = 0 as libc::c_int != 0;
+                if errorCode as libc::c_int == 1i32 {
+                    rcdeviceInMenu = 0i32 != 0;
                     beeper(BEEPER_CAM_CONNECTION_CLOSE);
                 }
             }
         }
-        2 => { isButtonPressed = 1 as libc::c_int != 0 }
+        2 => { isButtonPressed = 1i32 != 0 }
         _ => { }
     }
-    waitingDeviceResponse = 0 as libc::c_int != 0;
+    waitingDeviceResponse = 0i32 != 0;
 }
 unsafe extern "C" fn rcdeviceCamSimulate5KeyCablePress(mut key:
                                                            rcdeviceCamSimulationKeyEvent_e) {
@@ -742,89 +674,88 @@ unsafe extern "C" fn rcdevice5KeySimulationProcess(mut currentTimeUs:
     }
     if waitingDeviceResponse { return }
     if isButtonPressed {
-        if rcData[YAW as libc::c_int as usize] as libc::c_int >
-               1350 as libc::c_int &&
-               (rcData[YAW as libc::c_int as usize] as libc::c_int) <
-                   1650 as libc::c_int &&
-               (rcData[PITCH as libc::c_int as usize] as libc::c_int >
-                    1350 as libc::c_int &&
+        if rcData[YAW as libc::c_int as usize] as libc::c_int > 1350i32 &&
+               (rcData[YAW as libc::c_int as usize] as libc::c_int) < 1650i32
+               &&
+               (rcData[PITCH as libc::c_int as usize] as libc::c_int > 1350i32
+                    &&
                     (rcData[PITCH as libc::c_int as usize] as libc::c_int) <
-                        1650 as libc::c_int) &&
-               (rcData[ROLL as libc::c_int as usize] as libc::c_int >
-                    1350 as libc::c_int &&
+                        1650i32) &&
+               (rcData[ROLL as libc::c_int as usize] as libc::c_int > 1350i32
+                    &&
                     (rcData[ROLL as libc::c_int as usize] as libc::c_int) <
-                        1650 as libc::c_int) {
+                        1650i32) {
             if rcdeviceIs5KeyEnabled() {
                 rcdeviceSend5KeyOSDCableSimualtionEvent(RCDEVICE_CAM_KEY_RELEASE);
-                waitingDeviceResponse = 1 as libc::c_int != 0
+                waitingDeviceResponse = 1i32 != 0
             }
         }
     } else {
         let mut key: rcdeviceCamSimulationKeyEvent_e = RCDEVICE_CAM_KEY_NONE;
-        if rcData[THROTTLE as libc::c_int as usize] as libc::c_int >
-               1350 as libc::c_int &&
+        if rcData[THROTTLE as libc::c_int as usize] as libc::c_int > 1350i32
+               &&
                (rcData[THROTTLE as libc::c_int as usize] as libc::c_int) <
-                   1650 as libc::c_int &&
-               (rcData[ROLL as libc::c_int as usize] as libc::c_int >
-                    1350 as libc::c_int &&
+                   1650i32 &&
+               (rcData[ROLL as libc::c_int as usize] as libc::c_int > 1350i32
+                    &&
                     (rcData[ROLL as libc::c_int as usize] as libc::c_int) <
-                        1650 as libc::c_int) &&
-               (rcData[PITCH as libc::c_int as usize] as libc::c_int >
-                    1350 as libc::c_int &&
+                        1650i32) &&
+               (rcData[PITCH as libc::c_int as usize] as libc::c_int > 1350i32
+                    &&
                     (rcData[PITCH as libc::c_int as usize] as libc::c_int) <
-                        1650 as libc::c_int) &&
-               (rcData[YAW as libc::c_int as usize] as libc::c_int) <
-                   1080 as libc::c_int {
+                        1650i32) &&
+               (rcData[YAW as libc::c_int as usize] as libc::c_int) < 1080i32
+           {
             // Disconnect HI YAW
             if rcdeviceInMenu { key = RCDEVICE_CAM_KEY_CONNECTION_CLOSE }
         } else if rcdeviceInMenu {
-            if (rcData[ROLL as libc::c_int as usize] as libc::c_int) <
-                   1080 as libc::c_int {
+            if (rcData[ROLL as libc::c_int as usize] as libc::c_int) < 1080i32
+               {
                 // Left LO ROLL
                 key = RCDEVICE_CAM_KEY_LEFT
             } else if rcData[PITCH as libc::c_int as usize] as libc::c_int >
-                          1920 as libc::c_int {
+                          1920i32 {
                 // Up HI PITCH
                 key = RCDEVICE_CAM_KEY_UP
             } else if rcData[ROLL as libc::c_int as usize] as libc::c_int >
-                          1920 as libc::c_int {
+                          1920i32 {
                 // Right HI ROLL
                 key = RCDEVICE_CAM_KEY_RIGHT
             } else if (rcData[PITCH as libc::c_int as usize] as libc::c_int) <
-                          1080 as libc::c_int {
+                          1080i32 {
                 // Down LO PITCH
                 key = RCDEVICE_CAM_KEY_DOWN
             } else if rcData[THROTTLE as libc::c_int as usize] as libc::c_int
-                          > 1350 as libc::c_int &&
+                          > 1350i32 &&
                           (rcData[THROTTLE as libc::c_int as usize] as
-                               libc::c_int) < 1650 as libc::c_int &&
+                               libc::c_int) < 1650i32 &&
                           (rcData[ROLL as libc::c_int as usize] as libc::c_int
-                               > 1350 as libc::c_int &&
+                               > 1350i32 &&
                                (rcData[ROLL as libc::c_int as usize] as
-                                    libc::c_int) < 1650 as libc::c_int) &&
+                                    libc::c_int) < 1650i32) &&
                           (rcData[PITCH as libc::c_int as usize] as
-                               libc::c_int > 1350 as libc::c_int &&
+                               libc::c_int > 1350i32 &&
                                (rcData[PITCH as libc::c_int as usize] as
-                                    libc::c_int) < 1650 as libc::c_int) &&
+                                    libc::c_int) < 1650i32) &&
                           rcData[YAW as libc::c_int as usize] as libc::c_int >
-                              1920 as libc::c_int {
+                              1920i32 {
                 // Enter HI YAW
                 key = RCDEVICE_CAM_KEY_ENTER
             }
         } else if rcData[THROTTLE as libc::c_int as usize] as libc::c_int >
-                      1350 as libc::c_int &&
+                      1350i32 &&
                       (rcData[THROTTLE as libc::c_int as usize] as
-                           libc::c_int) < 1650 as libc::c_int &&
+                           libc::c_int) < 1650i32 &&
                       (rcData[ROLL as libc::c_int as usize] as libc::c_int >
-                           1350 as libc::c_int &&
+                           1350i32 &&
                            (rcData[ROLL as libc::c_int as usize] as
-                                libc::c_int) < 1650 as libc::c_int) &&
+                                libc::c_int) < 1650i32) &&
                       (rcData[PITCH as libc::c_int as usize] as libc::c_int >
-                           1350 as libc::c_int &&
+                           1350i32 &&
                            (rcData[PITCH as libc::c_int as usize] as
-                                libc::c_int) < 1650 as libc::c_int) &&
+                                libc::c_int) < 1650i32) &&
                       rcData[YAW as libc::c_int as usize] as libc::c_int >
-                          1920 as libc::c_int {
+                          1920i32 {
             // Enter HI YAW
             key = RCDEVICE_CAM_KEY_CONNECTION_OPEN
         }
@@ -832,7 +763,7 @@ unsafe extern "C" fn rcdevice5KeySimulationProcess(mut currentTimeUs:
                RCDEVICE_CAM_KEY_NONE as libc::c_int as libc::c_uint {
             if rcdeviceIs5KeyEnabled() {
                 rcdeviceSend5KeyOSDCableSimualtionEvent(key);
-                waitingDeviceResponse = 1 as libc::c_int != 0
+                waitingDeviceResponse = 1i32 != 0
             }
         }
     };
@@ -853,8 +784,7 @@ pub unsafe extern "C" fn rcdeviceInit() {
             (i as
                  libc::c_uint).wrapping_sub(BOXCAMERA1 as libc::c_int as
                                                 libc::c_uint) as uint8_t;
-        switchStates[switchIndex as usize].isActivated =
-            1 as libc::c_int != 0;
+        switchStates[switchIndex as usize].isActivated = 1i32 != 0;
         i += 1
     };
 }

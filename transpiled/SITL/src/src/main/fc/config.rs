@@ -1,4 +1,5 @@
-use ::libc;
+use core;
+use libc;
 extern "C" {
     #[no_mangle]
     fn lrintf(_: libc::c_float) -> libc::c_long;
@@ -24,11 +25,10 @@ extern "C" {
     fn initRcProcessing();
     #[no_mangle]
     fn rcSmoothingIsEnabled() -> bool;
-    // enough for 4 x 3position switches / 4 aux channel
-    #[no_mangle]
-    fn useAdjustmentConfig(pidProfileToUse: *mut pidProfile_s);
     #[no_mangle]
     fn resetAdjustmentStates();
+    #[no_mangle]
+    fn useAdjustmentConfig(pidProfileToUse: *mut pidProfile_s);
     #[no_mangle]
     fn isModeActivationConditionPresent(modeId: boxId_e) -> bool;
     #[no_mangle]
@@ -45,9 +45,9 @@ extern "C" {
     #[no_mangle]
     static mixers: [mixer_t; 0];
     #[no_mangle]
-    static mut mixerConfig_System: mixerConfig_t;
-    #[no_mangle]
     static mut motorConfig_System: motorConfig_t;
+    #[no_mangle]
+    static mut mixerConfig_System: mixerConfig_t;
     #[no_mangle]
     static mut pidProfiles_SystemArray: [pidProfile_t; 3];
     #[no_mangle]
@@ -59,12 +59,12 @@ extern "C" {
     #[no_mangle]
     fn beeperConfirmationBeeps(beepCount: uint8_t);
     #[no_mangle]
+    fn findSerialPortConfig(function: serialPortFunction_e)
+     -> *mut serialPortConfig_t;
+    #[no_mangle]
     static mut serialConfig_System: serialConfig_t;
     #[no_mangle]
     fn isSerialConfigValid(serialConfig_0: *const serialConfig_t) -> bool;
-    #[no_mangle]
-    fn findSerialPortConfig(function: serialPortFunction_e)
-     -> *mut serialPortConfig_t;
     #[no_mangle]
     fn pgResetFn_serialConfig(serialConfig_0: *mut serialConfig_t);
     #[no_mangle]
@@ -74,6 +74,8 @@ extern "C" {
     #[no_mangle]
     fn resumeRxSignal();
     #[no_mangle]
+    static mut accelerometerConfig_System: accelerometerConfig_t;
+    #[no_mangle]
     fn setAccelerationTrims(accelerationTrimsToUse:
                                 *mut flightDynamicsTrims_u);
     #[no_mangle]
@@ -82,8 +84,6 @@ extern "C" {
     static mut gyroConfig_System: gyroConfig_t;
     #[no_mangle]
     fn gyroMpuDetectionResult() -> *const mpuDetectionResult_s;
-    #[no_mangle]
-    static mut accelerometerConfig_System: accelerometerConfig_t;
 }
 pub type __int8_t = libc::c_schar;
 pub type __uint8_t = libc::c_uchar;
@@ -147,10 +147,11 @@ pub const PGR_SIZE_SYSTEM_FLAG: C2RustUnnamed_0 = 0;
 pub const PGR_SIZE_MASK: C2RustUnnamed_0 = 4095;
 pub const PGR_PGN_VERSION_MASK: C2RustUnnamed_0 = 61440;
 pub const PGR_PGN_MASK: C2RustUnnamed_0 = 4095;
+// function that resets a single parameter group instance
 pub type pgResetFunc
     =
     unsafe extern "C" fn(_: *mut libc::c_void, _: libc::c_int) -> ();
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct pgRegistry_s {
     pub pgn: pgn_t,
@@ -160,11 +161,12 @@ pub struct pgRegistry_s {
     pub ptr: *mut *mut uint8_t,
     pub reset: C2RustUnnamed_1,
 }
-#[derive(Copy, Clone)]
-#[repr(C)]
+#[derive ( Copy, Clone )]
+#[repr ( C )]
 pub union C2RustUnnamed_1 {
     pub ptr: *mut libc::c_void,
-    pub fn_0: Option<pgResetFunc>,
+    pub fn_0: Option<unsafe extern "C" fn(_: *mut libc::c_void,
+                                          _: libc::c_int) -> ()>,
 }
 pub type pgRegistry_t = pgRegistry_s;
 pub type C2RustUnnamed_2 = libc::c_uint;
@@ -192,6 +194,15 @@ pub const FEATURE_MOTOR_STOP: C2RustUnnamed_2 = 16;
 pub const FEATURE_RX_SERIAL: C2RustUnnamed_2 = 8;
 pub const FEATURE_INFLIGHT_ACC_CAL: C2RustUnnamed_2 = 4;
 pub const FEATURE_RX_PPM: C2RustUnnamed_2 = 1;
+/* base */
+/* size */
+// The parameter group number, the top 4 bits are reserved for version
+// Size of the group in RAM, the top 4 bits are reserved for flags
+// Address of the group in RAM.
+// Address of the copy in RAM.
+// The pointer to update after loading the record into ram.
+// Pointer to init template
+// Pointer to pgResetFunc
 /*
  * This file is part of Cleanflight and Betaflight.
  *
@@ -214,7 +225,7 @@ pub const FEATURE_RX_PPM: C2RustUnnamed_2 = 1;
 // IO pin identification
 // make sure that ioTag_t can't be assigned into IO_t without warning
 pub type ioTag_t = uint8_t;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct pilotConfig_s {
     pub name: [libc::c_char; 17],
@@ -239,7 +250,7 @@ pub struct pilotConfig_s {
  * If not, see <http://www.gnu.org/licenses/>.
  */
 pub type pilotConfig_t = pilotConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct systemConfig_s {
     pub pidProfileIndex: uint8_t,
@@ -252,7 +263,7 @@ pub struct systemConfig_s {
     pub boardIdentifier: [libc::c_char; 6],
 }
 pub type systemConfig_t = systemConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct pidProfile_s {
     pub yaw_lowpass_hz: uint16_t,
@@ -302,7 +313,7 @@ pub struct pidProfile_s {
     pub abs_control_error_limit: uint8_t,
 }
 pub type pidf_t = pidf_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct pidf_s {
     pub P: uint8_t,
@@ -312,54 +323,13 @@ pub struct pidf_s {
 }
 pub type pidProfile_t = pidProfile_s;
 pub type throttleCorrectionConfig_t = throttleCorrectionConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct throttleCorrectionConfig_s {
     pub throttle_correction_angle: uint16_t,
     pub throttle_correction_value: uint8_t,
 }
 // in seconds
-// Additional yaw filter when yaw axis too noisy
-// Delta Filter in hz
-// Biquad dterm notch hz
-// Biquad dterm notch low cutoff
-// Filter selection for dterm
-// Experimental ITerm windup threshold, percent motor saturation
-// Disable/Enable pids on zero throttle. Normally even without airmode P and D would be active.
-// Max angle in degrees in level mode
-// inclination factor for Horizon mode
-// OFF or ON
-// Betaflight PID controller parameters
-// type of anti gravity method
-// max allowed throttle delta before iterm accelerated in ms
-// Iterm Accelerator Gain when itermThrottlethreshold is hit
-// yaw accel limiter for deg/sec/ms
-// accel limiter roll/pitch deg/sec/ms
-// dterm crash value
-// gyro crash value
-// setpoint must be below this value to detect crash, so flips and rolls are not interpreted as crashes
-// ms
-// ms
-// degrees
-// degree/second
-// Scale PIDsum to battery voltage
-// Feed forward weight transition
-// limits yaw errorRate, so crashes don't cause huge throttle increase
-// Extra PT1 Filter on D in hz
-// off, on, on and beeps when it is in crash recovery mode
-// how much should throttle be boosted during transient changes 0-100, 100 adds 10x hpf filtered throttle
-// Which cutoff frequency to use for throttle boost. higher cutoffs keep the boost on for shorter. Specified in hz.
-// rotates iterm to translate world errors to local coordinate system
-// takes only the larger of P and the D weight feed forward term if they have the same sign.
-// Specifies type of relax algorithm
-// This cutoff frequency specifies a low pass filter which predicts average response of the quad to setpoint
-// Enable iterm suppression during stick input
-// Acro trainer roll/pitch angle limit in degrees
-// The axis for which record debugging values are captured 0=roll, 1=pitch
-// The strength of the limiting. Raising may reduce overshoot but also lead to oscillation around the angle limit
-// The lookahead window in milliseconds used to reduce overshoot
-// How strongly should the absolute accumulated error be corrected for
-// Limit to the correction
 // Limit to the accumulated error
 /*
  * This file is part of Cleanflight and Betaflight.
@@ -381,42 +351,22 @@ pub struct throttleCorrectionConfig_s {
  * If not, see <http://www.gnu.org/licenses/>.
  */
 pub type flightDynamicsTrims_t = flightDynamicsTrims_u;
-#[derive(Copy, Clone)]
-#[repr(C)]
+#[derive ( Copy, Clone )]
+#[repr ( C )]
 pub union flightDynamicsTrims_u {
     pub raw: [int16_t; 3],
     pub values: flightDynamicsTrims_def_t,
 }
 pub type flightDynamicsTrims_def_t = int16_flightDynamicsTrims_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct int16_flightDynamicsTrims_s {
     pub roll: int16_t,
     pub pitch: int16_t,
     pub yaw: int16_t,
 }
-/*
- * This file is part of Cleanflight and Betaflight.
- *
- * Cleanflight and Betaflight are free software. You can redistribute
- * this software and/or modify this software under the terms of the
- * GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option)
- * any later version.
- *
- * Cleanflight and Betaflight are distributed in the hope that they
- * will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this software.
- *
- * If not, see <http://www.gnu.org/licenses/>.
- */
-// Type of accelerometer used/detected
 pub type accelerometerConfig_t = accelerometerConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct accelerometerConfig_s {
     pub acc_lpf_hz: uint16_t,
@@ -427,14 +377,14 @@ pub struct accelerometerConfig_s {
     pub accelerometerTrims: rollAndPitchTrims_t,
 }
 pub type rollAndPitchTrims_t = rollAndPitchTrims_u;
-#[derive(Copy, Clone)]
-#[repr(C)]
+#[derive ( Copy, Clone )]
+#[repr ( C )]
 pub union rollAndPitchTrims_u {
     pub raw: [int16_t; 2],
     pub values: rollAndPitchTrims_t_def,
 }
 pub type rollAndPitchTrims_t_def = rollAndPitchTrims_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct rollAndPitchTrims_s {
     pub roll: int16_t,
@@ -520,7 +470,7 @@ pub const FAILSAFE_PROCEDURE_DROP_IT: C2RustUnnamed_4 = 1;
 // millis
 // millis
 pub type failsafeConfig_t = failsafeConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct failsafeConfig_s {
     pub failsafe_throttle: uint16_t,
@@ -532,33 +482,8 @@ pub struct failsafeConfig_s {
 }
 pub const FAILSAFE_PROCEDURE_GPS_RESCUE: C2RustUnnamed_4 = 2;
 pub const INTERPOLATION_CHANNELS_RPT: C2RustUnnamed_3 = 4;
-// Throttle level used for landing - specify value between 1000..2000 (pwm pulse width for slightly below hover). center throttle = 1500.
-// Time throttle stick must have been below 'min_check' to "JustDisarm" instead of "full failsafe procedure".
-// Guard time for failsafe activation after signal lost. 1 step = 0.1sec - 1sec in example (10)
-// Time for Landing before motors stop in 0.1sec. 1 step = 0.1sec - 20sec in example (200)
-// failsafe switch action is 0: stage1 (identical to rc link loss), 1: disarms instantly, 2: stage2
-// selected full failsafe procedure is 0: auto-landing, 1: Drop it
-/*
- * This file is part of Cleanflight and Betaflight.
- *
- * Cleanflight and Betaflight are free software. You can redistribute
- * this software and/or modify this software under the terms of the
- * GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option)
- * any later version.
- *
- * Cleanflight and Betaflight are distributed in the hope that they
- * will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this software.
- *
- * If not, see <http://www.gnu.org/licenses/>.
- */
 pub type rxConfig_t = rxConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct rxConfig_s {
     pub rcmap: [uint8_t; 8],
@@ -598,24 +523,12 @@ pub const PID_YAW: C2RustUnnamed_6 = 2;
 pub const INTERPOLATION_CHANNELS_RPY: C2RustUnnamed_3 = 1;
 pub const PID_PITCH: C2RustUnnamed_6 = 1;
 pub const PID_ROLL: C2RustUnnamed_6 = 0;
-// mapping of radio channels to internal RPYTA+ order
-// type of UART-based receiver (0 = spek 10, 1 = spek 11, 2 = sbus). Must be enabled by FEATURE_RX_SERIAL first.
-// invert the serial RX protocol compared to it's default setting
-// allow rx to operate in half duplex mode on F4, ignored for F1 and F3.
-// number of bind pulses for Spektrum satellite receivers
-// whenever we will reset (exit) binding mode after hard reboot
-// Some radios have not a neutral point centered on 1500. can be changed here
-// minimum rc end
-// maximum rc end
-// Camera angle to be scaled into rc commands
-// Throttle setpoint percent where airmode gets activated
-// true to use frame drop flags in the rx protocol
-// offset applied to the RSSI value before it is returned
-// Determines the smoothing algorithm to use: INTERPOLATION or FILTER
-// Filter cutoff frequency for the input filter (0 = auto)
-// Filter cutoff frequency for the setpoint weight derivative filter (0 = auto)
-// Axis to log as debug values when debug_mode = RC_SMOOTHING
-// Input filter type (0 = PT1, 1 = BIQUAD)
+// Throttle level used for landing - specify value between 1000..2000 (pwm pulse width for slightly below hover). center throttle = 1500.
+// Time throttle stick must have been below 'min_check' to "JustDisarm" instead of "full failsafe procedure".
+// Guard time for failsafe activation after signal lost. 1 step = 0.1sec - 1sec in example (10)
+// Time for Landing before motors stop in 0.1sec. 1 step = 0.1sec - 20sec in example (200)
+// failsafe switch action is 0: stage1 (identical to rc link loss), 1: disarms instantly, 2: stage2
+// selected full failsafe procedure is 0: auto-landing, 1: Drop it
 // Derivative filter type (0 = OFF, 1 = PT1, 2 = BIQUAD)
 /*
  * This file is part of Cleanflight and Betaflight.
@@ -637,7 +550,7 @@ pub const PID_ROLL: C2RustUnnamed_6 = 0;
  * If not, see <http://www.gnu.org/licenses/>.
  */
 pub type gyroConfig_t = gyroConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct gyroConfig_s {
     pub gyro_align: uint8_t,
@@ -665,7 +578,7 @@ pub struct gyroConfig_s {
     pub dyn_notch_width_percent: uint8_t,
 }
 pub type pidConfig_t = pidConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct pidConfig_s {
     pub pid_process_denom: uint8_t,
@@ -685,52 +598,9 @@ pub struct pidConfig_s {
 // off, on - enables pidsum runaway disarm logic
 // delay in ms for "in-flight" conditions before deactivation (successful flight)
 // minimum throttle percent required during deactivation phase
-/*
- * This file is part of Cleanflight and Betaflight.
- *
- * Cleanflight and Betaflight are free software. You can redistribute
- * this software and/or modify this software under the terms of the
- * GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option)
- * any later version.
- *
- * Cleanflight and Betaflight are distributed in the hope that they
- * will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this software.
- *
- * If not, see <http://www.gnu.org/licenses/>.
- */
-/*
-  DshotSettingRequest (KISS24). Spin direction, 3d and save Settings reqire 10 requests.. and the TLM Byte must always be high if 1-47 are used to send settings
-
-  3D Mode:
-  0 = stop
-  48   (low) - 1047 (high) -> negative direction
-  1048 (low) - 2047 (high) -> positive direction
- */
-// V2 includes settings
-// Currently not implemented
-// BLHeli32 only
-// BLHeli32 only
-// BLHeli32 only
-// BLHeli32 only
-// BLHeli32 only
-// BLHeli32 only
-// BLHeli32 only
-// BLHeli32 only
-// KISS audio Stream mode on/Off
-// KISS silent Mode on/Off
-/* resolution + frame reset (2us) */
-/* resolution + frame reset (2us) */
-// function pointer used to write motors
-// function pointer used after motors are written
 //CAVEAT: This is used in the `motorConfig_t` parameter group, so the parameter group constraints apply
 pub type motorDevConfig_t = motorDevConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct motorDevConfig_s {
     pub motorPwmRate: uint16_t,
@@ -741,7 +611,7 @@ pub struct motorDevConfig_s {
     pub ioTags: [ioTag_t; 8],
 }
 pub type motorConfig_t = motorConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct motorConfig_s {
     pub dev: motorDevConfig_t,
@@ -769,7 +639,7 @@ pub const MPU_60x0_SPI: mpuSensor_e = 3;
 pub const MPU_60x0: mpuSensor_e = 2;
 pub const MPU_3050: mpuSensor_e = 1;
 pub const MPU_NONE: mpuSensor_e = 0;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct mpuDetectionResult_s {
     pub sensor: mpuSensor_e,
@@ -778,14 +648,8 @@ pub struct mpuDetectionResult_s {
 pub type mpu6050Resolution_e = libc::c_uint;
 pub const MPU_FULL_RESOLUTION: mpu6050Resolution_e = 1;
 pub const MPU_HALF_RESOLUTION: mpu6050Resolution_e = 0;
-// The update rate of motor outputs (50-498Hz)
-// Pwm Protocol
-// Active-High vs Active-Low. Useful for brushed FCs converted for brushless operation
-//
-// configuration
-//
 pub type serialPortConfig_t = serialPortConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct serialPortConfig_s {
     pub functionMask: uint16_t,
@@ -826,7 +690,7 @@ pub const FUNCTION_GPS: serialPortFunction_e = 2;
 pub const FUNCTION_MSP: serialPortFunction_e = 1;
 pub const FUNCTION_NONE: serialPortFunction_e = 0;
 pub type serialConfig_t = serialConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct serialConfig_s {
     pub portConfigs: [serialPortConfig_t; 8],
@@ -835,18 +699,19 @@ pub struct serialConfig_s {
 }
 pub const MIXER_CUSTOM_AIRPLANE: mixerMode = 24;
 pub type mixerConfig_t = mixerConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct mixerConfig_s {
     pub mixerMode: uint8_t,
     pub yaw_motors_reversed: bool,
     pub crashflip_motor_percent: uint8_t,
 }
-// not used for all telemetry systems, e.g. HoTT only works at 19200.
-// which byte is used to reboot. Default 'R', could be changed carefully to something else.
+// The update rate of motor outputs (50-498Hz)
+// Pwm Protocol
+// Active-High vs Active-Low. Useful for brushed FCs converted for brushless operation
 // Custom mixer configuration
 pub type mixerRules_t = mixerRules_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct mixerRules_s {
     pub servoRuleCount: uint8_t,
@@ -854,7 +719,7 @@ pub struct mixerRules_s {
 }
 // FIXME rename to servoChannel_e
 pub type servoMixer_t = servoMixer_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct servoMixer_s {
     pub targetChannel: uint8_t,
@@ -865,15 +730,6 @@ pub struct servoMixer_s {
     pub max: int8_t,
     pub box_0: uint8_t,
 }
-// servo that receives the output of the rule
-// input channel for this rule
-// range [-125;+125] ; can be used to adjust a rate 0-125% and a direction
-// reduces the speed of the rule, 0=unlimited speed
-// lower bound of rule range [0;100]% of servo max-min
-// lower bound of rule range [0;100]% of servo max-min
-// active rule if box is enabled, range [0;3], 0=no box, 1=BOXSERVO1, 2=BOXSERVO2, 3=BOXSERVO3
-// Digital protocol has fixed values
-// Note: this is called MultiType/MULTITYPE_* in baseflight.
 pub type mixerMode_e = mixerMode;
 pub type mixerMode = libc::c_uint;
 pub const MIXER_QUADX_1234: mixerMode = 26;
@@ -901,20 +757,16 @@ pub const MIXER_BICOPTER: mixerMode = 4;
 pub const MIXER_QUADX: mixerMode = 3;
 pub const MIXER_QUADP: mixerMode = 2;
 pub const MIXER_TRI: mixerMode = 1;
-// airplane / singlecopter / dualcopter (not yet properly supported)
-// PPM -> servo relay
-// Custom mixer configuration
 pub type mixer_t = mixer_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct mixer_s {
     pub motorCount: uint8_t,
     pub useServo: uint8_t,
     pub motor: *const motorMixer_t,
 }
-// Custom mixer data per motor
 pub type motorMixer_t = motorMixer_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct motorMixer_s {
     pub throttle: libc::c_float,
@@ -933,6 +785,13 @@ pub type C2RustUnnamed_6 = libc::c_uint;
 pub const PID_ITEM_COUNT: C2RustUnnamed_6 = 5;
 pub const PID_MAG: C2RustUnnamed_6 = 4;
 pub const PID_LEVEL: C2RustUnnamed_6 = 3;
+// servo that receives the output of the rule
+// input channel for this rule
+// range [-125;+125] ; can be used to adjust a rate 0-125% and a direction
+// reduces the speed of the rule, 0=unlimited speed
+// lower bound of rule range [0;100]% of servo max-min
+// lower bound of rule range [0;100]% of servo max-min
+// active rule if box is enabled, range [0;3], 0=no box, 1=BOXSERVO1, 2=BOXSERVO2, 3=BOXSERVO3
 /*
  * This file is part of Cleanflight and Betaflight.
  *
@@ -969,7 +828,7 @@ pub const INPUT_STABILIZED_THROTTLE: C2RustUnnamed_7 = 3;
 pub const INPUT_STABILIZED_YAW: C2RustUnnamed_7 = 2;
 pub const INPUT_STABILIZED_PITCH: C2RustUnnamed_7 = 1;
 pub const INPUT_STABILIZED_ROLL: C2RustUnnamed_7 = 0;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct hsvColor_s {
     pub h: uint16_t,
@@ -977,13 +836,13 @@ pub struct hsvColor_s {
     pub v: uint8_t,
 }
 pub type hsvColor_t = hsvColor_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct modeColorIndexes_s {
     pub color: [uint8_t; 6],
 }
 pub type modeColorIndexes_t = modeColorIndexes_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct specialColorIndexes_s {
     pub color: [uint8_t; 11],
@@ -998,11 +857,11 @@ pub type specialColorIndexes_t = specialColorIndexes_s;
 #[no_mangle]
 pub static mut SystemCoreClock: uint32_t = 0;
 #[inline]
-unsafe extern "C" fn systemConfigMutable() -> *mut systemConfig_t {
+unsafe extern "C" fn systemConfig() -> *const systemConfig_t {
     return &mut systemConfig_System;
 }
 #[inline]
-unsafe extern "C" fn systemConfig() -> *const systemConfig_t {
+unsafe extern "C" fn systemConfigMutable() -> *mut systemConfig_t {
     return &mut systemConfig_System;
 }
 #[inline]
@@ -1011,11 +870,11 @@ unsafe extern "C" fn throttleCorrectionConfig()
     return &mut throttleCorrectionConfig_System;
 }
 #[inline]
-unsafe extern "C" fn failsafeConfigMutable() -> *mut failsafeConfig_t {
+unsafe extern "C" fn failsafeConfig() -> *const failsafeConfig_t {
     return &mut failsafeConfig_System;
 }
 #[inline]
-unsafe extern "C" fn failsafeConfig() -> *const failsafeConfig_t {
+unsafe extern "C" fn failsafeConfigMutable() -> *mut failsafeConfig_t {
     return &mut failsafeConfig_System;
 }
 #[inline]
@@ -1044,11 +903,11 @@ unsafe extern "C" fn pidProfilesMutable(mut _index: libc::c_int)
                as *mut pidProfile_t;
 }
 #[inline]
-unsafe extern "C" fn pidConfigMutable() -> *mut pidConfig_t {
+unsafe extern "C" fn pidConfig() -> *const pidConfig_t {
     return &mut pidConfig_System;
 }
 #[inline]
-unsafe extern "C" fn pidConfig() -> *const pidConfig_t {
+unsafe extern "C" fn pidConfigMutable() -> *mut pidConfig_t {
     return &mut pidConfig_System;
 }
 #[no_mangle]
@@ -1063,19 +922,19 @@ pub static mut modeColors: *const modeColorIndexes_t =
 pub static mut specialColors: specialColorIndexes_t =
     specialColorIndexes_t{color: [0; 11],};
 #[inline]
-unsafe extern "C" fn serialConfig() -> *const serialConfig_t {
-    return &mut serialConfig_System;
-}
-#[inline]
 unsafe extern "C" fn serialConfigMutable() -> *mut serialConfig_t {
     return &mut serialConfig_System;
 }
 #[inline]
-unsafe extern "C" fn rxConfig() -> *const rxConfig_t {
-    return &mut rxConfig_System;
+unsafe extern "C" fn serialConfig() -> *const serialConfig_t {
+    return &mut serialConfig_System;
 }
 #[inline]
 unsafe extern "C" fn rxConfigMutable() -> *mut rxConfig_t {
+    return &mut rxConfig_System;
+}
+#[inline]
+unsafe extern "C" fn rxConfig() -> *const rxConfig_t {
     return &mut rxConfig_System;
 }
 #[inline]
@@ -1120,10 +979,7 @@ pub static mut pilotConfig_Registry: pgRegistry_t =
     unsafe {
         {
             let mut init =
-                pgRegistry_s{pgn:
-                                 (47 as libc::c_int |
-                                      (0 as libc::c_int) << 12 as libc::c_int)
-                                     as pgn_t,
+                pgRegistry_s{pgn: (47i32 | 0i32 << 12i32) as pgn_t,
                              size:
                                  (::core::mem::size_of::<pilotConfig_t>() as
                                       libc::c_ulong |
@@ -1161,20 +1017,10 @@ pub static mut pgResetTemplate_pilotConfig: pilotConfig_t =
     {
         let mut init =
             pilotConfig_s{name:
-                              [0 as libc::c_int as libc::c_char, 0, 0, 0, 0,
-                               0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],};
+                              [0i32 as libc::c_char, 0, 0, 0, 0, 0, 0, 0, 0,
+                               0, 0, 0, 0, 0, 0, 0, 0],};
         init
     };
-#[no_mangle]
-pub static mut systemConfig_System: systemConfig_t =
-    systemConfig_t{pidProfileIndex: 0,
-                   activeRateProfile: 0,
-                   debug_mode: 0,
-                   task_statistics: 0,
-                   rateProfile6PosSwitch: 0,
-                   cpu_overclock: 0,
-                   powerOnArmingGraceTime: 0,
-                   boardIdentifier: [0; 6],};
 #[no_mangle]
 #[link_section = ".pg_registry"]
 #[used]
@@ -1182,10 +1028,7 @@ pub static mut systemConfig_Registry: pgRegistry_t =
     unsafe {
         {
             let mut init =
-                pgRegistry_s{pgn:
-                                 (18 as libc::c_int |
-                                      (2 as libc::c_int) << 12 as libc::c_int)
-                                     as pgn_t,
+                pgRegistry_s{pgn: (18i32 | 2i32 << 12i32) as pgn_t,
                              size:
                                  (::core::mem::size_of::<systemConfig_t>() as
                                       libc::c_ulong |
@@ -1221,19 +1064,28 @@ pub static mut systemConfig_Copy: systemConfig_t =
                    powerOnArmingGraceTime: 0,
                    boardIdentifier: [0; 6],};
 #[no_mangle]
+pub static mut systemConfig_System: systemConfig_t =
+    systemConfig_t{pidProfileIndex: 0,
+                   activeRateProfile: 0,
+                   debug_mode: 0,
+                   task_statistics: 0,
+                   rateProfile6PosSwitch: 0,
+                   cpu_overclock: 0,
+                   powerOnArmingGraceTime: 0,
+                   boardIdentifier: [0; 6],};
+#[no_mangle]
 #[link_section = ".pg_resetdata"]
 #[used]
 pub static mut pgResetTemplate_systemConfig: systemConfig_t =
     {
         let mut init =
-            systemConfig_s{pidProfileIndex: 0 as libc::c_int as uint8_t,
-                           activeRateProfile: 0 as libc::c_int as uint8_t,
+            systemConfig_s{pidProfileIndex: 0i32 as uint8_t,
+                           activeRateProfile: 0i32 as uint8_t,
                            debug_mode: DEBUG_NONE as libc::c_int as uint8_t,
-                           task_statistics: 1 as libc::c_int as uint8_t,
+                           task_statistics: 1i32 as uint8_t,
                            rateProfile6PosSwitch: 0,
-                           cpu_overclock: 0 as libc::c_int as uint8_t,
-                           powerOnArmingGraceTime:
-                               5 as libc::c_int as uint8_t,
+                           cpu_overclock: 0i32 as uint8_t,
+                           powerOnArmingGraceTime: 5i32 as uint8_t,
                            boardIdentifier: [83, 73, 84, 76, 0, 0],};
         init
     };
@@ -1296,7 +1148,7 @@ unsafe extern "C" fn validateAndFixConfig() {
                libc::c_int != 0 &&
                (*servoMixers.as_ptr().offset(mixerMode as
                                                  isize)).servoRuleCount as
-                   libc::c_int == 0 as libc::c_int {
+                   libc::c_int == 0i32 {
             (*mixerConfigMutable()).mixerMode =
                 MIXER_CUSTOM_AIRPLANE as libc::c_int as uint8_t
         }
@@ -1304,39 +1156,33 @@ unsafe extern "C" fn validateAndFixConfig() {
     if !isSerialConfigValid(serialConfig()) {
         pgResetFn_serialConfig(serialConfigMutable());
     }
-    if findSerialPortConfig(FUNCTION_GPS).is_null() && 1 as libc::c_int != 0 {
+    if findSerialPortConfig(FUNCTION_GPS).is_null() && 1i32 != 0 {
         featureClear(FEATURE_GPS as libc::c_int as uint32_t);
     }
-    if (*systemConfig()).activeRateProfile as libc::c_int >= 6 as libc::c_int
-       {
-        (*systemConfigMutable()).activeRateProfile =
-            0 as libc::c_int as uint8_t
+    if (*systemConfig()).activeRateProfile as libc::c_int >= 6i32 {
+        (*systemConfigMutable()).activeRateProfile = 0i32 as uint8_t
     }
     loadControlRateProfile();
-    if (*systemConfig()).pidProfileIndex as libc::c_int >= 3 as libc::c_int {
-        (*systemConfigMutable()).pidProfileIndex = 0 as libc::c_int as uint8_t
+    if (*systemConfig()).pidProfileIndex as libc::c_int >= 3i32 {
+        (*systemConfigMutable()).pidProfileIndex = 0i32 as uint8_t
     }
     loadPidProfile();
     // Prevent invalid notch cutoff
     if (*currentPidProfile).dterm_notch_cutoff as libc::c_int >=
            (*currentPidProfile).dterm_notch_hz as libc::c_int {
-        (*currentPidProfile).dterm_notch_hz = 0 as libc::c_int as uint16_t
+        (*currentPidProfile).dterm_notch_hz = 0i32 as uint16_t
     }
     if (*motorConfig()).dev.motorPwmProtocol as libc::c_int ==
            PWM_TYPE_BRUSHED as libc::c_int {
         featureClear(FEATURE_3D as libc::c_int as uint32_t);
-        if ((*motorConfig()).mincommand as libc::c_int) < 1000 as libc::c_int
-           {
-            (*motorConfigMutable()).mincommand =
-                1000 as libc::c_int as uint16_t
+        if ((*motorConfig()).mincommand as libc::c_int) < 1000i32 {
+            (*motorConfigMutable()).mincommand = 1000i32 as uint16_t
         }
     }
     if (*motorConfig()).dev.motorPwmProtocol as libc::c_int ==
            PWM_TYPE_STANDARD as libc::c_int &&
-           (*motorConfig()).dev.motorPwmRate as libc::c_int >
-               480 as libc::c_int {
-        (*motorConfigMutable()).dev.motorPwmRate =
-            480 as libc::c_int as uint16_t
+           (*motorConfig()).dev.motorPwmRate as libc::c_int > 480i32 {
+        (*motorConfigMutable()).dev.motorPwmRate = 480i32 as uint16_t
     }
     validateAndFixGyroConfig();
     if !(featureConfigured(FEATURE_RX_PARALLEL_PWM as libc::c_int as uint32_t)
@@ -1378,23 +1224,22 @@ unsafe extern "C" fn validateAndFixConfig() {
     }
     // USE_SOFTSPI
     if (*rxConfigMutable()).rssi_channel != 0 {
-        (*rxConfigMutable()).rssi_src_frame_errors =
-            0 as libc::c_int as uint8_t
+        (*rxConfigMutable()).rssi_src_frame_errors = 0i32 as uint8_t
     }
     if !rcSmoothingIsEnabled() ||
            (*rxConfig()).rcInterpolationChannels as libc::c_int ==
                INTERPOLATION_CHANNELS_T as libc::c_int {
-        let mut i: libc::c_uint = 0 as libc::c_int as libc::c_uint;
-        while i < 3 as libc::c_int as libc::c_uint {
+        let mut i: libc::c_uint = 0i32 as libc::c_uint;
+        while i < 3i32 as libc::c_uint {
             (*pidProfilesMutable(i as
                                      libc::c_int)).pid[PID_ROLL as libc::c_int
                                                            as usize].F =
-                0 as libc::c_int as uint16_t;
+                0i32 as uint16_t;
             (*pidProfilesMutable(i as
                                      libc::c_int)).pid[PID_PITCH as
                                                            libc::c_int as
                                                            usize].F =
-                0 as libc::c_int as uint16_t;
+                0i32 as uint16_t;
             i = i.wrapping_add(1)
         }
     }
@@ -1403,12 +1248,12 @@ unsafe extern "C" fn validateAndFixConfig() {
                INTERPOLATION_CHANNELS_RPY as libc::c_int &&
                (*rxConfig()).rcInterpolationChannels as libc::c_int !=
                    INTERPOLATION_CHANNELS_RPYT as libc::c_int {
-        let mut i_0: libc::c_uint = 0 as libc::c_int as libc::c_uint;
-        while i_0 < 3 as libc::c_int as libc::c_uint {
+        let mut i_0: libc::c_uint = 0i32 as libc::c_uint;
+        while i_0 < 3i32 as libc::c_uint {
             (*pidProfilesMutable(i_0 as
                                      libc::c_int)).pid[PID_YAW as libc::c_int
                                                            as usize].F =
-                0 as libc::c_int as uint16_t;
+                0i32 as uint16_t;
             i_0 = i_0.wrapping_add(1)
         }
     }
@@ -1419,16 +1264,16 @@ unsafe extern "C" fn validateAndFixConfig() {
                      INTERPOLATION_CHANNELS_T as libc::c_int ||
                  (*rxConfig()).rcInterpolationChannels as libc::c_int ==
                      INTERPOLATION_CHANNELS_RPT as libc::c_int) {
-        let mut i_1: libc::c_uint = 0 as libc::c_int as libc::c_uint;
-        while i_1 < 3 as libc::c_int as libc::c_uint {
+        let mut i_1: libc::c_uint = 0i32 as libc::c_uint;
+        while i_1 < 3i32 as libc::c_uint {
             (*pidProfilesMutable(i_1 as libc::c_int)).throttle_boost =
-                0 as libc::c_int as uint8_t;
+                0i32 as uint8_t;
             i_1 = i_1.wrapping_add(1)
         }
     }
     if featureConfigured(FEATURE_3D as libc::c_int as uint32_t) as libc::c_int
            != 0 || !featureConfigured(FEATURE_GPS as libc::c_int as uint32_t)
-           || 1 as libc::c_int != 0 {
+           || 1i32 != 0 {
         if (*failsafeConfig()).failsafe_procedure as libc::c_int ==
                FAILSAFE_PROCEDURE_GPS_RESCUE as libc::c_int {
             (*failsafeConfigMutable()).failsafe_procedure =
@@ -1461,20 +1306,17 @@ pub unsafe extern "C" fn validateAndFixGyroConfig() {
     // Prevent invalid notch cutoff
     if (*gyroConfig()).gyro_soft_notch_cutoff_1 as libc::c_int >=
            (*gyroConfig()).gyro_soft_notch_hz_1 as libc::c_int {
-        (*gyroConfigMutable()).gyro_soft_notch_hz_1 =
-            0 as libc::c_int as uint16_t
+        (*gyroConfigMutable()).gyro_soft_notch_hz_1 = 0i32 as uint16_t
     } // When gyro set to 1khz always set pid speed 1:1 to sampling speed
     if (*gyroConfig()).gyro_soft_notch_cutoff_2 as libc::c_int >=
            (*gyroConfig()).gyro_soft_notch_hz_2 as libc::c_int {
-        (*gyroConfigMutable()).gyro_soft_notch_hz_2 =
-            0 as libc::c_int as uint16_t
+        (*gyroConfigMutable()).gyro_soft_notch_hz_2 = 0i32 as uint16_t
     }
-    if (*gyroConfig()).gyro_hardware_lpf as libc::c_int != 0 as libc::c_int &&
-           (*gyroConfig()).gyro_hardware_lpf as libc::c_int !=
-               1 as libc::c_int {
-        (*pidConfigMutable()).pid_process_denom = 1 as libc::c_int as uint8_t;
-        (*gyroConfigMutable()).gyro_sync_denom = 1 as libc::c_int as uint8_t;
-        (*gyroConfigMutable()).gyro_use_32khz = 0 as libc::c_int as uint8_t
+    if (*gyroConfig()).gyro_hardware_lpf as libc::c_int != 0i32 &&
+           (*gyroConfig()).gyro_hardware_lpf as libc::c_int != 1i32 {
+        (*pidConfigMutable()).pid_process_denom = 1i32 as uint8_t;
+        (*gyroConfigMutable()).gyro_sync_denom = 1i32 as uint8_t;
+        (*gyroConfigMutable()).gyro_use_32khz = 0i32 as uint8_t
     }
     ((*gyroConfig()).gyro_use_32khz) != 0;
     let mut samplingTime: libc::c_float = 0.;
@@ -1483,9 +1325,8 @@ pub unsafe extern "C" fn validateAndFixGyroConfig() {
         12 => { samplingTime = 0.0003125f32 }
         _ => { samplingTime = 0.000125f32 }
     }
-    if (*gyroConfig()).gyro_hardware_lpf as libc::c_int != 0 as libc::c_int &&
-           (*gyroConfig()).gyro_hardware_lpf as libc::c_int !=
-               1 as libc::c_int {
+    if (*gyroConfig()).gyro_hardware_lpf as libc::c_int != 0i32 &&
+           (*gyroConfig()).gyro_hardware_lpf as libc::c_int != 1i32 {
         match (*gyroMpuDetectionResult()).sensor as libc::c_uint {
             10 => { samplingTime = 1.0f32 / 1100.0f32 }
             _ => { samplingTime = 0.001f32 }
@@ -1497,10 +1338,7 @@ pub unsafe extern "C" fn validateAndFixGyroConfig() {
     // check for looptime restrictions based on motor protocol. Motor times have safety margin
     let mut motorUpdateRestriction: libc::c_float = 0.;
     match (*motorConfig()).dev.motorPwmProtocol as libc::c_int {
-        0 => {
-            motorUpdateRestriction =
-                1.0f32 / 480 as libc::c_int as libc::c_float
-        }
+        0 => { motorUpdateRestriction = 1.0f32 / 480i32 as libc::c_float }
         1 => { motorUpdateRestriction = 0.0005f32 }
         2 => { motorUpdateRestriction = 0.0001f32 }
         _ => { motorUpdateRestriction = 0.00003125f32 }
@@ -1535,8 +1373,7 @@ pub unsafe extern "C" fn validateAndFixGyroConfig() {
                                (samplingTime *
                                     (*gyroConfig()).gyro_sync_denom as
                                         libc::c_int as libc::c_float)) as
-                              libc::c_int, 1 as libc::c_int,
-                          16 as libc::c_int) as uint8_t;
+                              libc::c_int, 1i32, 16i32) as uint8_t;
             (*pidConfigMutable()).pid_process_denom =
                 ({
                      let mut _a: uint8_t =
@@ -1582,14 +1419,14 @@ pub unsafe extern "C" fn ensureEEPROMStructureIsValid() {
 pub unsafe extern "C" fn saveConfigAndNotify() {
     writeEEPROM();
     readEEPROM();
-    beeperConfirmationBeeps(1 as libc::c_int as uint8_t);
+    beeperConfirmationBeeps(1i32 as uint8_t);
 }
 #[no_mangle]
 pub unsafe extern "C" fn changePidProfile(mut pidProfileIndex: uint8_t) {
-    if (pidProfileIndex as libc::c_int) < 3 as libc::c_int {
+    if (pidProfileIndex as libc::c_int) < 3i32 {
         (*systemConfigMutable()).pidProfileIndex = pidProfileIndex;
         loadPidProfile();
     }
-    beeperConfirmationBeeps((pidProfileIndex as libc::c_int +
-                                 1 as libc::c_int) as uint8_t);
+    beeperConfirmationBeeps((pidProfileIndex as libc::c_int + 1i32) as
+                                uint8_t);
 }

@@ -1,4 +1,5 @@
-use ::libc;
+use core;
+use libc;
 /*
  * This file is part of Cleanflight and Betaflight.
  *

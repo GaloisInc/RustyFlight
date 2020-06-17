@@ -1,4 +1,5 @@
-use ::libc;
+use core;
+use libc;
 extern "C" {
     /*
  * This file is part of Cleanflight and Betaflight.
@@ -109,14 +110,14 @@ pub type int32_t = __int32_t;
 pub type uint8_t = __uint8_t;
 pub type uint16_t = __uint16_t;
 pub type uint32_t = __uint32_t;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct __pthread_internal_list {
     pub __prev: *mut __pthread_internal_list,
     pub __next: *mut __pthread_internal_list,
 }
 pub type __pthread_list_t = __pthread_internal_list;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct __pthread_mutex_s {
     pub __lock: libc::c_int,
@@ -128,14 +129,14 @@ pub struct __pthread_mutex_s {
     pub __elision: libc::c_short,
     pub __list: __pthread_list_t,
 }
-#[derive(Copy, Clone)]
-#[repr(C)]
+#[derive ( Copy, Clone )]
+#[repr ( C )]
 pub union pthread_mutex_t {
     pub __data: __pthread_mutex_s,
     pub __size: [libc::c_char; 40],
     pub __align: libc::c_long,
 }
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct SPI_TypeDef {
     pub test: *mut libc::c_void,
@@ -190,7 +191,7 @@ pub type C2RustUnnamed_0 = libc::c_uint;
 pub const Z: C2RustUnnamed_0 = 2;
 pub const Y: C2RustUnnamed_0 = 1;
 pub const X: C2RustUnnamed_0 = 0;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct stdev_s {
     pub m_oldM: libc::c_float,
@@ -201,14 +202,14 @@ pub struct stdev_s {
 }
 pub type stdev_t = stdev_s;
 pub type filter_t = filter_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct pt1Filter_s {
     pub state: libc::c_float,
     pub k: libc::c_float,
 }
 pub type pt1Filter_t = pt1Filter_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct biquadFilter_s {
     pub b0: libc::c_float,
@@ -243,7 +244,7 @@ pub const PGR_PGN_MASK: C2RustUnnamed_2 = 4095;
 pub type pgResetFunc
     =
     unsafe extern "C" fn(_: *mut libc::c_void, _: libc::c_int) -> ();
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct pgRegistry_s {
     pub pgn: pgn_t,
@@ -253,11 +254,12 @@ pub struct pgRegistry_s {
     pub ptr: *mut *mut uint8_t,
     pub reset: C2RustUnnamed_3,
 }
-#[derive(Copy, Clone)]
-#[repr(C)]
+#[derive ( Copy, Clone )]
+#[repr ( C )]
 pub union C2RustUnnamed_3 {
     pub ptr: *mut libc::c_void,
-    pub fn_0: Option<pgResetFunc>,
+    pub fn_0: Option<unsafe extern "C" fn(_: *mut libc::c_void,
+                                          _: libc::c_int) -> ()>,
 }
 pub type pgRegistry_t = pgRegistry_s;
 /*
@@ -283,10 +285,10 @@ pub type pgRegistry_t = pgRegistry_s;
 // make sure that ioTag_t can't be assigned into IO_t without warning
 pub type ioTag_t = uint8_t;
 pub type IO_t = *mut libc::c_void;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct extiCallbackRec_s {
-    pub fn_0: Option<extiHandlerCallback>,
+    pub fn_0: Option<unsafe extern "C" fn(_: *mut extiCallbackRec_t) -> ()>,
 }
 pub type extiHandlerCallback
     =
@@ -341,32 +343,32 @@ pub const BUSTYPE_MPU_SLAVE: busType_e = 3;
 pub const BUSTYPE_SPI: busType_e = 2;
 pub const BUSTYPE_I2C: busType_e = 1;
 pub const BUSTYPE_NONE: busType_e = 0;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct busDevice_s {
     pub bustype: busType_e,
     pub busdev_u: C2RustUnnamed_4,
 }
-#[derive(Copy, Clone)]
-#[repr(C)]
+#[derive ( Copy, Clone )]
+#[repr ( C )]
 pub union C2RustUnnamed_4 {
     pub spi: deviceSpi_s,
     pub i2c: deviceI2C_s,
     pub mpuSlave: deviceMpuSlave_s,
 }
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct deviceMpuSlave_s {
     pub master: *const busDevice_s,
     pub address: uint8_t,
 }
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct deviceI2C_s {
     pub device: I2CDevice,
     pub address: uint8_t,
 }
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct deviceSpi_s {
     pub instance: *mut SPI_TypeDef,
@@ -442,7 +444,7 @@ pub const ALIGN_DEFAULT: sensor_align_e = 0;
 //[15:0] ZG_OFFS_USR
 // RF = Register Flag
 pub type mpuDetectionResult_t = mpuDetectionResult_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct mpuDetectionResult_s {
     pub sensor: mpuSensor_e,
@@ -465,7 +467,7 @@ pub const MPU_60x0_SPI: mpuSensor_e = 3;
 pub const MPU_60x0: mpuSensor_e = 2;
 pub const MPU_3050: mpuSensor_e = 1;
 pub const MPU_NONE: mpuSensor_e = 0;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct gyroDev_s {
     pub lock: pthread_mutex_t,
@@ -519,7 +521,7 @@ pub const GYRO_RATE_3200_Hz: gyroRateKHz_e = 2;
 pub const GYRO_RATE_1100_Hz: gyroRateKHz_e = 1;
 pub const GYRO_RATE_1_kHz: gyroRateKHz_e = 0;
 pub type mpuConfiguration_t = mpuConfiguration_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct mpuConfiguration_s {
     pub resetFn: mpuResetFnPtr,
@@ -562,7 +564,7 @@ pub const GYRO_OVERFLOW_NONE: C2RustUnnamed_5 = 0;
 pub type timeDelta_t = int32_t;
 // microsecond time
 pub type timeUs_t = uint32_t;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct gyro_s {
     pub targetLooptime: uint32_t,
@@ -576,7 +578,7 @@ pub const GYRO_OVERFLOW_CHECK_NONE: C2RustUnnamed_6 = 0;
 pub type C2RustUnnamed_7 = libc::c_uint;
 pub const FILTER_LOWPASS2: C2RustUnnamed_7 = 1;
 pub const FILTER_LOWPASS: C2RustUnnamed_7 = 0;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct gyroConfig_s {
     pub gyro_align: uint8_t,
@@ -606,7 +608,7 @@ pub struct gyroConfig_s {
 pub type gyroConfig_t = gyroConfig_s;
 pub type gyroDev_t = gyroDev_s;
 pub type gyroSensor_t = gyroSensor_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct gyroSensor_s {
     pub gyroDev: gyroDev_t,
@@ -627,14 +629,14 @@ pub struct gyroSensor_s {
     pub yawSpinDetected: bool,
 }
 pub type gyroLowpassFilter_t = gyroLowpassFilter_u;
-#[derive(Copy, Clone)]
-#[repr(C)]
+#[derive ( Copy, Clone )]
+#[repr ( C )]
 pub union gyroLowpassFilter_u {
     pub pt1FilterState: pt1Filter_t,
     pub biquadFilterState: biquadFilter_t,
 }
 pub type gyroCalibration_t = gyroCalibration_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct gyroCalibration_s {
     pub sum: [libc::c_float; 3],
@@ -800,15 +802,15 @@ unsafe extern "C" fn gyroConfigMutable() -> *mut gyroConfig_t {
 #[no_mangle]
 pub static mut gyro: gyro_t = gyro_t{targetLooptime: 0, gyroADCf: [0.; 3],};
 static mut gyroDebugMode: uint8_t = 0;
-static mut gyroToUse: uint8_t = 0 as libc::c_int as uint8_t;
+static mut gyroToUse: uint8_t = 0i32 as uint8_t;
 static mut overflowAxisMask: uint8_t = 0;
 static mut accumulatedMeasurements: [libc::c_float; 3] = [0.; 3];
 static mut gyroPrevious: [libc::c_float; 3] = [0.; 3];
 static mut accumulatedMeasurementTimeUs: timeUs_t = 0;
 static mut accumulationLastTimeSampledUs: timeUs_t = 0;
-static mut gyroHasOverflowProtection: bool = 1 as libc::c_int != 0;
+static mut gyroHasOverflowProtection: bool = 1i32 != 0;
 #[no_mangle]
-pub static mut firstArmingCalibrationWasStarted: bool = 0 as libc::c_int != 0;
+pub static mut firstArmingCalibrationWasStarted: bool = 0i32 != 0;
 static mut gyroSensor1: gyroSensor_t =
     gyroSensor_t{gyroDev:
                      gyroDev_t{lock:
@@ -997,10 +999,7 @@ pub static mut gyroConfig_Registry: pgRegistry_t =
     unsafe {
         {
             let mut init =
-                pgRegistry_s{pgn:
-                                 (10 as libc::c_int |
-                                      (4 as libc::c_int) << 12 as libc::c_int)
-                                     as pgn_t,
+                pgRegistry_s{pgn: (10i32 | 4i32 << 12i32) as pgn_t,
                              size:
                                  (::core::mem::size_of::<gyroConfig_t>() as
                                       libc::c_ulong |
@@ -1032,23 +1031,20 @@ pub static mut pgResetTemplate_gyroConfig: gyroConfig_t =
     {
         let mut init =
             gyroConfig_s{gyro_align: ALIGN_DEFAULT as libc::c_int as uint8_t,
-                         gyroMovementCalibrationThreshold:
-                             48 as libc::c_int as uint8_t,
-                         gyro_sync_denom: 3 as libc::c_int as uint8_t,
-                         gyro_hardware_lpf: 0 as libc::c_int as uint8_t,
-                         gyro_32khz_hardware_lpf: 0 as libc::c_int as uint8_t,
-                         gyro_high_fsr: 0 as libc::c_int as uint8_t,
-                         gyro_use_32khz: 0 as libc::c_int as uint8_t,
-                         gyro_to_use: 0 as libc::c_int as uint8_t,
-                         gyro_lowpass_hz: 100 as libc::c_int as uint16_t,
-                         gyro_lowpass2_hz: 300 as libc::c_int as uint16_t,
-                         gyro_soft_notch_hz_1: 0 as libc::c_int as uint16_t,
-                         gyro_soft_notch_cutoff_1:
-                             0 as libc::c_int as uint16_t,
-                         gyro_soft_notch_hz_2: 0 as libc::c_int as uint16_t,
-                         gyro_soft_notch_cutoff_2:
-                             0 as libc::c_int as uint16_t,
-                         gyro_offset_yaw: 0 as libc::c_int as int16_t,
+                         gyroMovementCalibrationThreshold: 48i32 as uint8_t,
+                         gyro_sync_denom: 3i32 as uint8_t,
+                         gyro_hardware_lpf: 0i32 as uint8_t,
+                         gyro_32khz_hardware_lpf: 0i32 as uint8_t,
+                         gyro_high_fsr: 0i32 as uint8_t,
+                         gyro_use_32khz: 0i32 as uint8_t,
+                         gyro_to_use: 0i32 as uint8_t,
+                         gyro_lowpass_hz: 100i32 as uint16_t,
+                         gyro_lowpass2_hz: 300i32 as uint16_t,
+                         gyro_soft_notch_hz_1: 0i32 as uint16_t,
+                         gyro_soft_notch_cutoff_1: 0i32 as uint16_t,
+                         gyro_soft_notch_hz_2: 0i32 as uint16_t,
+                         gyro_soft_notch_cutoff_2: 0i32 as uint16_t,
+                         gyro_offset_yaw: 0i32 as int16_t,
                          checkOverflow:
                              GYRO_OVERFLOW_CHECK_ALL_AXES as libc::c_int as
                                  uint8_t,
@@ -1056,13 +1052,11 @@ pub static mut pgResetTemplate_gyroConfig: gyroConfig_t =
                              FILTER_PT1 as libc::c_int as uint8_t,
                          gyro_lowpass2_type:
                              FILTER_PT1 as libc::c_int as uint8_t,
-                         yaw_spin_recovery: 1 as libc::c_int as uint8_t,
-                         yaw_spin_threshold: 1950 as libc::c_int as int16_t,
-                         gyroCalibrationDuration:
-                             125 as libc::c_int as uint16_t,
-                         dyn_notch_quality: 70 as libc::c_int as uint8_t,
-                         dyn_notch_width_percent:
-                             50 as libc::c_int as uint8_t,};
+                         yaw_spin_recovery: 1i32 as uint8_t,
+                         yaw_spin_threshold: 1950i32 as int16_t,
+                         gyroCalibrationDuration: 125i32 as uint16_t,
+                         dyn_notch_quality: 70i32 as uint8_t,
+                         dyn_notch_width_percent: 50i32 as uint8_t,};
         init
     };
 #[no_mangle]
@@ -1115,14 +1109,13 @@ unsafe extern "C" fn gyroInitSensor(mut gyroSensor: *mut gyroSensor_t)
     (*gyroSensor).gyroDev.gyroHardware = gyroHardware;
     if gyroHardware as libc::c_uint ==
            GYRO_NONE as libc::c_int as libc::c_uint {
-        return 0 as libc::c_int != 0
+        return 0i32 != 0
     }
     match gyroHardware as libc::c_uint {
         7 | 8 | 9 | 10 | 11 | 13 => { }
         _ => {
             // gyro does not support 32kHz
-            (*gyroConfigMutable()).gyro_use_32khz =
-                0 as libc::c_int as uint8_t
+            (*gyroConfigMutable()).gyro_use_32khz = 0i32 as uint8_t
         }
     }
     // Must set gyro targetLooptime before gyroDev.init and initialisation of filters
@@ -1145,21 +1138,18 @@ unsafe extern "C" fn gyroInitSensor(mut gyroSensor: *mut gyroSensor_t)
     match gyroHardware as libc::c_uint {
         0 | 1 | 15 | 2 | 3 | 4 | 5 | 14 | 6 | 7 | 8 => {
             // Won't ever actually get here, but included to account for all gyro types
-            (*gyroSensor).gyroDev.gyroHasOverflowProtection =
-                1 as libc::c_int as uint8_t
+            (*gyroSensor).gyroDev.gyroHasOverflowProtection = 1i32 as uint8_t
         }
         9 | 10 | 11 | 12 | 13 => {
             // we don't actually know if this is affected, but as there are currently no flight controllers using it we err on the side of caution
-            (*gyroSensor).gyroDev.gyroHasOverflowProtection =
-                0 as libc::c_int as uint8_t
+            (*gyroSensor).gyroDev.gyroHasOverflowProtection = 0i32 as uint8_t
         }
         _ => {
-            (*gyroSensor).gyroDev.gyroHasOverflowProtection =
-                0 as libc::c_int as uint8_t
+            (*gyroSensor).gyroDev.gyroHasOverflowProtection = 0i32 as uint8_t
         }
     } // default catch for newly added gyros until proven to be unaffected
     gyroInitSensorFilters(gyroSensor);
-    return 1 as libc::c_int != 0;
+    return 1i32 != 0;
 }
 #[no_mangle]
 pub unsafe extern "C" fn gyroInit() -> bool {
@@ -1171,7 +1161,7 @@ pub unsafe extern "C" fn gyroInit() -> bool {
         overflowAxisMask =
             (GYRO_OVERFLOW_X as libc::c_int | GYRO_OVERFLOW_Y as libc::c_int |
                  GYRO_OVERFLOW_Z as libc::c_int) as uint8_t
-    } else { overflowAxisMask = 0 as libc::c_int as uint8_t }
+    } else { overflowAxisMask = 0i32 as uint8_t }
     match debugMode as libc::c_int {
         15 | 17 | 19 | 6 | 3 => { gyroDebugMode = debugMode }
         _ => {
@@ -1179,11 +1169,11 @@ pub unsafe extern "C" fn gyroInit() -> bool {
             gyroDebugMode = DEBUG_NONE as libc::c_int as uint8_t
         }
     }
-    firstArmingCalibrationWasStarted = 0 as libc::c_int != 0;
-    let mut ret: bool = 0 as libc::c_int != 0;
+    firstArmingCalibrationWasStarted = 0i32 != 0;
+    let mut ret: bool = 0i32 != 0;
     gyroToUse = (*gyroConfig()).gyro_to_use;
     gyroSensor1.gyroDev.gyroAlign = ALIGN_DEFAULT;
-    gyroSensor1.gyroDev.mpuIntExtiTag = 0 as libc::c_int as ioTag_t;
+    gyroSensor1.gyroDev.mpuIntExtiTag = 0i32 as ioTag_t;
     // GYRO_1_EXTI_PIN
     // USE_DUAL_GYRO
     ret = gyroInitSensor(&mut gyroSensor1);
@@ -1217,7 +1207,7 @@ unsafe extern "C" fn gyroInitLowpassFilterLpf(mut gyroSensor:
     }
     // Establish some common constants
     let gyroFrequencyNyquist: uint32_t =
-        ((1000000 as libc::c_int / 2 as libc::c_int) as
+        ((1000000i32 / 2i32) as
              libc::c_uint).wrapping_div(gyro.targetLooptime);
     let gyroDt: libc::c_float =
         gyro.targetLooptime as libc::c_float * 1e-6f32;
@@ -1248,8 +1238,8 @@ unsafe extern "C" fn gyroInitLowpassFilterLpf(mut gyroSensor:
                                                                                                  libc::c_float)
                                                                             ->
                                                                                 libc::c_float));
-                let mut axis: libc::c_int = 0 as libc::c_int;
-                while axis < 3 as libc::c_int {
+                let mut axis: libc::c_int = 0i32;
+                while axis < 3i32 {
                     pt1FilterInit(&mut (*lowpassFilter.offset(axis as
                                                                   isize)).pt1FilterState,
                                   gain);
@@ -1271,8 +1261,8 @@ unsafe extern "C" fn gyroInitLowpassFilterLpf(mut gyroSensor:
                                                                                                  libc::c_float)
                                                                             ->
                                                                                 libc::c_float));
-                let mut axis_0: libc::c_int = 0 as libc::c_int;
-                while axis_0 < 3 as libc::c_int {
+                let mut axis_0: libc::c_int = 0i32;
+                while axis_0 < 3i32 {
                     biquadFilterInitLPF(&mut (*lowpassFilter.offset(axis_0 as
                                                                         isize)).biquadFilterState,
                                         lpfHz as libc::c_float,
@@ -1289,12 +1279,12 @@ unsafe extern "C" fn calculateNyquistAdjustedNotchHz(mut notchHz: uint16_t,
                                                          uint16_t)
  -> uint16_t {
     let gyroFrequencyNyquist: uint32_t =
-        ((1000000 as libc::c_int / 2 as libc::c_int) as
+        ((1000000i32 / 2i32) as
              libc::c_uint).wrapping_div(gyro.targetLooptime);
     if notchHz as libc::c_uint > gyroFrequencyNyquist {
         if (notchCutoffHz as libc::c_uint) < gyroFrequencyNyquist {
             notchHz = gyroFrequencyNyquist as uint16_t
-        } else { notchHz = 0 as libc::c_int as uint16_t }
+        } else { notchHz = 0i32 as uint16_t }
     }
     return notchHz;
 }
@@ -1306,8 +1296,8 @@ unsafe extern "C" fn gyroInitFilterNotch1(mut gyroSensor: *mut gyroSensor_t,
                  unsafe extern "C" fn(_: *mut filter_t, _: libc::c_float)
                      -> libc::c_float);
     notchHz = calculateNyquistAdjustedNotchHz(notchHz, notchCutoffHz);
-    if notchHz as libc::c_int != 0 as libc::c_int &&
-           notchCutoffHz as libc::c_int != 0 as libc::c_int {
+    if notchHz as libc::c_int != 0i32 && notchCutoffHz as libc::c_int != 0i32
+       {
         (*gyroSensor).notchFilter1ApplyFn =
             ::core::mem::transmute::<Option<unsafe extern "C" fn(_:
                                                                      *mut biquadFilter_t,
@@ -1325,8 +1315,8 @@ unsafe extern "C" fn gyroInitFilterNotch1(mut gyroSensor: *mut gyroSensor_t,
         let notchQ: libc::c_float =
             filterGetNotchQ(notchHz as libc::c_float,
                             notchCutoffHz as libc::c_float);
-        let mut axis: libc::c_int = 0 as libc::c_int;
-        while axis < 3 as libc::c_int {
+        let mut axis: libc::c_int = 0i32;
+        while axis < 3i32 {
             biquadFilterInit(&mut *(*gyroSensor).notchFilter1.as_mut_ptr().offset(axis
                                                                                       as
                                                                                       isize),
@@ -1344,8 +1334,8 @@ unsafe extern "C" fn gyroInitFilterNotch2(mut gyroSensor: *mut gyroSensor_t,
                  unsafe extern "C" fn(_: *mut filter_t, _: libc::c_float)
                      -> libc::c_float);
     notchHz = calculateNyquistAdjustedNotchHz(notchHz, notchCutoffHz);
-    if notchHz as libc::c_int != 0 as libc::c_int &&
-           notchCutoffHz as libc::c_int != 0 as libc::c_int {
+    if notchHz as libc::c_int != 0i32 && notchCutoffHz as libc::c_int != 0i32
+       {
         (*gyroSensor).notchFilter2ApplyFn =
             ::core::mem::transmute::<Option<unsafe extern "C" fn(_:
                                                                      *mut biquadFilter_t,
@@ -1363,8 +1353,8 @@ unsafe extern "C" fn gyroInitFilterNotch2(mut gyroSensor: *mut gyroSensor_t,
         let notchQ: libc::c_float =
             filterGetNotchQ(notchHz as libc::c_float,
                             notchCutoffHz as libc::c_float);
-        let mut axis: libc::c_int = 0 as libc::c_int;
-        while axis < 3 as libc::c_int {
+        let mut axis: libc::c_int = 0i32;
+        while axis < 3i32 {
             biquadFilterInit(&mut *(*gyroSensor).notchFilter2.as_mut_ptr().offset(axis
                                                                                       as
                                                                                       isize),
@@ -1396,7 +1386,7 @@ pub unsafe extern "C" fn gyroInitFilters() {
 pub unsafe extern "C" fn isGyroSensorCalibrationComplete(mut gyroSensor:
                                                              *const gyroSensor_t)
  -> bool {
-    return (*gyroSensor).calibration.cyclesRemaining == 0 as libc::c_int;
+    return (*gyroSensor).calibration.cyclesRemaining == 0i32;
 }
 #[no_mangle]
 pub unsafe extern "C" fn isGyroCalibrationComplete() -> bool {
@@ -1405,12 +1395,12 @@ pub unsafe extern "C" fn isGyroCalibrationComplete() -> bool {
 unsafe extern "C" fn isOnFinalGyroCalibrationCycle(mut gyroCalibration:
                                                        *const gyroCalibration_t)
  -> bool {
-    return (*gyroCalibration).cyclesRemaining == 1 as libc::c_int;
+    return (*gyroCalibration).cyclesRemaining == 1i32;
 }
 unsafe extern "C" fn gyroCalculateCalibratingCycles() -> int32_t {
     return (((*gyroConfig()).gyroCalibrationDuration as libc::c_int *
-                 10000 as libc::c_int) as
-                libc::c_uint).wrapping_div(gyro.targetLooptime) as int32_t;
+                 10000i32) as libc::c_uint).wrapping_div(gyro.targetLooptime)
+               as int32_t;
 }
 unsafe extern "C" fn isOnFirstGyroCalibrationCycle(mut gyroCalibration:
                                                        *const gyroCalibration_t)
@@ -1430,7 +1420,7 @@ pub unsafe extern "C" fn gyroStartCalibration(mut isFirstArmingCalibration:
              firstArmingCalibrationWasStarted as libc::c_int != 0) {
         gyroSetCalibrationCycles(&mut gyroSensor1);
         if isFirstArmingCalibration {
-            firstArmingCalibrationWasStarted = 1 as libc::c_int != 0
+            firstArmingCalibrationWasStarted = 1i32 != 0
         }
     };
 }
@@ -1442,8 +1432,8 @@ pub unsafe extern "C" fn isFirstArmingGyroCalibrationRunning() -> bool {
 unsafe extern "C" fn performGyroCalibration(mut gyroSensor: *mut gyroSensor_t,
                                             mut gyroMovementCalibrationThreshold:
                                                 uint8_t) {
-    let mut axis: libc::c_int = 0 as libc::c_int;
-    while axis < 3 as libc::c_int {
+    let mut axis: libc::c_int = 0i32;
+    while axis < 3i32 {
         // Reset g[axis] at start of calibration
         if isOnFirstGyroCalibrationCycle(&mut (*gyroSensor).calibration) {
             (*gyroSensor).calibration.sum[axis as usize] = 0.0f32;
@@ -1471,8 +1461,7 @@ unsafe extern "C" fn performGyroCalibration(mut gyroSensor: *mut gyroSensor_t,
             // into the spare field - debug[3], in DEBUG_GYRO_RAW
             if axis == X as libc::c_int {
                 if debugMode as libc::c_int == DEBUG_GYRO_RAW as libc::c_int {
-                    debug[3 as libc::c_int as usize] =
-                        lrintf(stddev) as int16_t
+                    debug[3] = lrintf(stddev) as int16_t
                 }
             }
             // check deviation and startover in case the model was moved
@@ -1491,7 +1480,7 @@ unsafe extern "C" fn performGyroCalibration(mut gyroSensor: *mut gyroSensor_t,
             if axis == Z as libc::c_int {
                 (*gyroSensor).gyroDev.gyroZero[axis as usize] -=
                     (*gyroConfig()).gyro_offset_yaw as libc::c_float /
-                        100 as libc::c_int as libc::c_float
+                        100i32 as libc::c_float
             }
         }
         axis += 1
@@ -1501,7 +1490,7 @@ unsafe extern "C" fn performGyroCalibration(mut gyroSensor: *mut gyroSensor_t,
         if !firstArmingCalibrationWasStarted ||
                getArmingDisableFlags() as libc::c_uint &
                    !(ARMING_DISABLED_CALIBRATING as libc::c_int) as
-                       libc::c_uint == 0 as libc::c_int as libc::c_uint {
+                       libc::c_uint == 0i32 as libc::c_uint {
             beeper(BEEPER_GYRO_CALIBRATED);
         }
     }
@@ -1510,7 +1499,7 @@ unsafe extern "C" fn performGyroCalibration(mut gyroSensor: *mut gyroSensor_t,
 unsafe extern "C" fn handleOverflow(mut gyroSensor: *mut gyroSensor_t,
                                     mut currentTimeUs: timeUs_t) {
     let gyroOverflowResetRate: libc::c_float =
-        30340 as libc::c_int as libc::c_float * (*gyroSensor).gyroDev.scale;
+        30340i32 as libc::c_float * (*gyroSensor).gyroDev.scale;
     if (abs(gyro.gyroADCf[X as libc::c_int as usize] as libc::c_int) as
             libc::c_float) < gyroOverflowResetRate &&
            (abs(gyro.gyroADCf[Y as libc::c_int as usize] as libc::c_int) as
@@ -1519,9 +1508,8 @@ unsafe extern "C" fn handleOverflow(mut gyroSensor: *mut gyroSensor_t,
                 libc::c_float) < gyroOverflowResetRate {
         // if we have 50ms of consecutive OK gyro vales, then assume yaw readings are OK again and reset overflowDetected
         // reset requires good OK values on all axes
-        if cmpTimeUs(currentTimeUs, (*gyroSensor).overflowTimeUs) >
-               50000 as libc::c_int {
-            (*gyroSensor).overflowDetected = 0 as libc::c_int != 0
+        if cmpTimeUs(currentTimeUs, (*gyroSensor).overflowTimeUs) > 50000i32 {
+            (*gyroSensor).overflowDetected = 0i32 != 0
         }
     } else {
         // not a consecutive OK value, so reset the overflow time
@@ -1547,9 +1535,8 @@ unsafe extern "C" fn handleYawSpin(mut gyroSensor: *mut gyroSensor_t,
     if (abs(gyro.gyroADCf[Z as libc::c_int as usize] as libc::c_int) as
             libc::c_float) < yawSpinResetRate {
         // testing whether 20ms of consecutive OK gyro yaw values is enough
-        if cmpTimeUs(currentTimeUs, (*gyroSensor).yawSpinTimeUs) >
-               20000 as libc::c_int {
-            (*gyroSensor).yawSpinDetected = 0 as libc::c_int != 0
+        if cmpTimeUs(currentTimeUs, (*gyroSensor).yawSpinTimeUs) > 20000i32 {
+            (*gyroSensor).yawSpinDetected = 0i32 != 0
         }
     } else {
         // reset the yaw spin time
@@ -1560,7 +1547,7 @@ unsafe extern "C" fn checkForYawSpin(mut gyroSensor: *mut gyroSensor_t,
                                      mut currentTimeUs: timeUs_t) {
     // if not in overflow mode, handle yaw spins above threshold
     if (*gyroSensor).overflowDetected {
-        (*gyroSensor).yawSpinDetected = 0 as libc::c_int != 0;
+        (*gyroSensor).yawSpinDetected = 0i32 != 0;
         return
     }
     // USE_GYRO_OVERFLOW_CHECK
@@ -1570,8 +1557,8 @@ unsafe extern "C" fn checkForYawSpin(mut gyroSensor: *mut gyroSensor_t,
 }
 unsafe extern "C" fn filterGyroDebug(mut gyroSensor: *mut gyroSensor_t,
                                      mut sampleDeltaUs: timeDelta_t) {
-    let mut axis: libc::c_int = 0 as libc::c_int;
-    while axis < 3 as libc::c_int {
+    let mut axis: libc::c_int = 0i32;
+    while axis < 3i32 {
         if debugMode as libc::c_int == DEBUG_GYRO_RAW as libc::c_int {
             debug[axis as usize] =
                 (*gyroSensor).gyroDev.gyroADCRaw[axis as usize]
@@ -1643,8 +1630,8 @@ unsafe extern "C" fn filterGyroDebug(mut gyroSensor: *mut gyroSensor_t,
 }
 unsafe extern "C" fn filterGyro(mut gyroSensor: *mut gyroSensor_t,
                                 mut sampleDeltaUs: timeDelta_t) {
-    let mut axis: libc::c_int = 0 as libc::c_int;
-    while axis < 3 as libc::c_int {
+    let mut axis: libc::c_int = 0i32;
+    while axis < 3i32 {
         let mut gyroADCf: libc::c_float =
             (*gyroSensor).gyroDev.gyroADC[axis as usize] *
                 (*gyroSensor).gyroDev.scale;
@@ -1701,7 +1688,7 @@ unsafe extern "C" fn gyroUpdateSensor(mut gyroSensor: *mut gyroSensor_t,
        {
         return
     }
-    (*gyroSensor).gyroDev.dataReady = 0 as libc::c_int != 0;
+    (*gyroSensor).gyroDev.dataReady = 0i32 != 0;
     if isGyroSensorCalibrationComplete(gyroSensor) {
         // move 16-bit gyro data into 32-bit variables to avoid overflows in calculations
         (*gyroSensor).gyroDev.gyroADC[X as libc::c_int as usize] =
@@ -1757,25 +1744,25 @@ pub unsafe extern "C" fn gyroUpdate(mut currentTimeUs: timeUs_t) {
 pub unsafe extern "C" fn gyroGetAccumulationAverage(mut accumulationAverage:
                                                         *mut libc::c_float)
  -> bool {
-    if accumulatedMeasurementTimeUs > 0 as libc::c_int as libc::c_uint {
+    if accumulatedMeasurementTimeUs > 0i32 as libc::c_uint {
         // If we have gyro data accumulated, calculate average rate that will yield the same rotation
-        let mut axis: libc::c_int = 0 as libc::c_int;
-        while axis < 3 as libc::c_int {
+        let mut axis: libc::c_int = 0i32;
+        while axis < 3i32 {
             *accumulationAverage.offset(axis as isize) =
                 accumulatedMeasurements[axis as usize] /
                     accumulatedMeasurementTimeUs as libc::c_float;
             accumulatedMeasurements[axis as usize] = 0.0f32;
             axis += 1
         }
-        accumulatedMeasurementTimeUs = 0 as libc::c_int as timeUs_t;
-        return 1 as libc::c_int != 0
+        accumulatedMeasurementTimeUs = 0i32 as timeUs_t;
+        return 1i32 != 0
     } else {
-        let mut axis_0: libc::c_int = 0 as libc::c_int;
-        while axis_0 < 3 as libc::c_int {
+        let mut axis_0: libc::c_int = 0i32;
+        while axis_0 < 3i32 {
             *accumulationAverage.offset(axis_0 as isize) = 0.0f32;
             axis_0 += 1
         }
-        return 0 as libc::c_int != 0
+        return 0i32 != 0
     };
 }
 #[no_mangle]

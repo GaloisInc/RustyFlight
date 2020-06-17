@@ -1,4 +1,5 @@
-use ::libc;
+use core;
+use libc;
 pub type __uint8_t = libc::c_uchar;
 pub type __uint16_t = libc::c_ushort;
 pub type __uint32_t = libc::c_uint;
@@ -35,7 +36,7 @@ pub const PGR_PGN_MASK: C2RustUnnamed = 4095;
 pub type pgResetFunc
     =
     unsafe extern "C" fn(_: *mut libc::c_void, _: libc::c_int) -> ();
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct pgRegistry_s {
     pub pgn: pgn_t,
@@ -45,18 +46,19 @@ pub struct pgRegistry_s {
     pub ptr: *mut *mut uint8_t,
     pub reset: C2RustUnnamed_0,
 }
-#[derive(Copy, Clone)]
-#[repr(C)]
+#[derive ( Copy, Clone )]
+#[repr ( C )]
 pub union C2RustUnnamed_0 {
     pub ptr: *mut libc::c_void,
-    pub fn_0: Option<pgResetFunc>,
+    pub fn_0: Option<unsafe extern "C" fn(_: *mut libc::c_void,
+                                          _: libc::c_int) -> ()>,
 }
 pub type pgRegistry_t = pgRegistry_s;
 /* base */
 /* size */
 // millisecond time
 pub type timeMs_t = uint32_t;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct rcdeviceConfig_s {
     pub initDeviceAttempts: uint8_t,
@@ -97,10 +99,7 @@ pub static mut rcdeviceConfig_Registry: pgRegistry_t =
     unsafe {
         {
             let mut init =
-                pgRegistry_s{pgn:
-                                 (539 as libc::c_int |
-                                      (0 as libc::c_int) << 12 as libc::c_int)
-                                     as pgn_t,
+                pgRegistry_s{pgn: (539i32 | 0i32 << 12i32) as pgn_t,
                              size:
                                  (::core::mem::size_of::<rcdeviceConfig_t>()
                                       as libc::c_ulong |
@@ -123,19 +122,23 @@ pub static mut rcdeviceConfig_Registry: pgRegistry_t =
                                                                                                               *mut rcdeviceConfig_t)
                                                                                          ->
                                                                                              ()>,
-                                                                              Option<pgResetFunc>>(Some(pgResetFn_rcdeviceConfig
-                                                                                                            as
-                                                                                                            unsafe extern "C" fn(_:
-                                                                                                                                     *mut rcdeviceConfig_t)
-                                                                                                                ->
-                                                                                                                    ())),},};
+                                                                              Option<unsafe extern "C" fn(_:
+                                                                                                              *mut libc::c_void,
+                                                                                                          _:
+                                                                                                              libc::c_int)
+                                                                                         ->
+                                                                                             ()>>(Some(pgResetFn_rcdeviceConfig
+                                                                                                           as
+                                                                                                           unsafe extern "C" fn(_:
+                                                                                                                                    *mut rcdeviceConfig_t)
+                                                                                                               ->
+                                                                                                                   ())),},};
             init
         }
     };
 #[no_mangle]
 pub unsafe extern "C" fn pgResetFn_rcdeviceConfig(mut rcdeviceConfig:
                                                       *mut rcdeviceConfig_t) {
-    (*rcdeviceConfig).initDeviceAttempts = 4 as libc::c_int as uint8_t;
-    (*rcdeviceConfig).initDeviceAttemptInterval =
-        1000 as libc::c_int as timeMs_t;
+    (*rcdeviceConfig).initDeviceAttempts = 4i32 as uint8_t;
+    (*rcdeviceConfig).initDeviceAttemptInterval = 1000i32 as timeMs_t;
 }

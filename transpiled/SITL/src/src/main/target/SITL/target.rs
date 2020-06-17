@@ -1,4 +1,5 @@
-use ::libc;
+use core;
+use libc;
 extern "C" {
     pub type _IO_wide_data;
     pub type _IO_codecvt;
@@ -70,11 +71,11 @@ extern "C" {
     fn pthread_join(__th: pthread_t, __thread_return: *mut *mut libc::c_void)
      -> libc::c_int;
     #[no_mangle]
-    fn pthread_mutex_trylock(__mutex: *mut pthread_mutex_t) -> libc::c_int;
-    #[no_mangle]
     fn pthread_mutex_init(__mutex: *mut pthread_mutex_t,
                           __mutexattr: *const pthread_mutexattr_t)
      -> libc::c_int;
+    #[no_mangle]
+    fn pthread_mutex_trylock(__mutex: *mut pthread_mutex_t) -> libc::c_int;
     #[no_mangle]
     fn pthread_mutex_unlock(__mutex: *mut pthread_mutex_t) -> libc::c_int;
     #[no_mangle]
@@ -95,6 +96,7 @@ extern "C" {
     static mut fakeGyroDev: *mut gyroDev_s;
     #[no_mangle]
     fn fakeGyroSet(gyro: *mut gyroDev_s, x: int16_t, y: int16_t, z: int16_t);
+    // in deg
     #[no_mangle]
     fn imuSetAttitudeQuat(w: libc::c_float, x: libc::c_float,
                           y: libc::c_float, z: libc::c_float);
@@ -102,6 +104,12 @@ extern "C" {
     fn feature(mask: uint32_t) -> bool;
     #[no_mangle]
     fn rescheduleTask(taskId: cfTaskId_e, newPeriodMicros: uint32_t);
+    /* *
+ * Copyright (c) 2017 cs8425
+ *
+ * This library is free software; you can redistribute it and/or modify it
+ * under the terms of the MIT license.
+ */
     #[no_mangle]
     fn udpInit(link: *mut udpLink_t, addr: *const libc::c_char,
                port: libc::c_int, isServer: bool) -> libc::c_int;
@@ -131,7 +139,7 @@ pub type uint32_t = __uint32_t;
 pub type uint64_t = __uint64_t;
 pub type uintptr_t = libc::c_ulong;
 pub type size_t = libc::c_ulong;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct _IO_FILE {
     pub _flags: libc::c_int,
@@ -167,20 +175,20 @@ pub struct _IO_FILE {
 pub type _IO_lock_t = ();
 pub type FILE = _IO_FILE;
 pub type clockid_t = __clockid_t;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct timespec {
     pub tv_sec: __time_t,
     pub tv_nsec: __syscall_slong_t,
 }
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct __pthread_internal_list {
     pub __prev: *mut __pthread_internal_list,
     pub __next: *mut __pthread_internal_list,
 }
 pub type __pthread_list_t = __pthread_internal_list;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct __pthread_mutex_s {
     pub __lock: libc::c_int,
@@ -193,26 +201,26 @@ pub struct __pthread_mutex_s {
     pub __list: __pthread_list_t,
 }
 pub type pthread_t = libc::c_ulong;
-#[derive(Copy, Clone)]
-#[repr(C)]
+#[derive ( Copy, Clone )]
+#[repr ( C )]
 pub union pthread_mutexattr_t {
     pub __size: [libc::c_char; 4],
     pub __align: libc::c_int,
 }
-#[derive(Copy, Clone)]
-#[repr(C)]
+#[derive ( Copy, Clone )]
+#[repr ( C )]
 pub union pthread_attr_t {
     pub __size: [libc::c_char; 56],
     pub __align: libc::c_long,
 }
-#[derive(Copy, Clone)]
-#[repr(C)]
+#[derive ( Copy, Clone )]
+#[repr ( C )]
 pub union pthread_mutex_t {
     pub __data: __pthread_mutex_s,
     pub __size: [libc::c_char; 40],
     pub __align: libc::c_long,
 }
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct TIM_TypeDef {
     pub test: *mut libc::c_void,
@@ -223,7 +231,7 @@ pub const FLASH_COMPLETE: FLASH_Status = 4;
 pub const FLASH_ERROR_WRP: FLASH_Status = 3;
 pub const FLASH_ERROR_PG: FLASH_Status = 2;
 pub const FLASH_BUSY: FLASH_Status = 1;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct fdm_packet {
     pub timestamp: libc::c_double,
@@ -232,11 +240,13 @@ pub struct fdm_packet {
     pub imu_orientation_quat: [libc::c_double; 4],
     pub velocity_xyz: [libc::c_double; 3],
     pub position_xyz: [libc::c_double; 3],
+    // meters, NED from origin
 }
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct servo_packet {
     pub motor_speed: [libc::c_float; 4],
+    // normal: [0.0, 1.0], 3D: [-1.0, 1.0]
 }
 /*
  * This file is part of Cleanflight and Betaflight.
@@ -262,7 +272,7 @@ pub struct servo_packet {
 pub type ioTag_t = uint8_t;
 // packet tag to specify IO pin
 pub type IO_t = *mut libc::c_void;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct serialPinConfig_s {
     pub ioTagTx: [ioTag_t; 10],
@@ -272,7 +282,7 @@ pub struct serialPinConfig_s {
 pub type serialPinConfig_t = serialPinConfig_s;
 pub type sa_family_t = libc::c_ushort;
 pub type in_port_t = uint16_t;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct sockaddr_in {
     pub sin_family: sa_family_t,
@@ -280,7 +290,7 @@ pub struct sockaddr_in {
     pub sin_addr: in_addr,
     pub sin_zero: [libc::c_uchar; 8],
 }
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct in_addr {
     pub s_addr: in_addr_t,
@@ -308,7 +318,7 @@ pub const TASK_ACCEL: cfTaskId_e = 3;
 pub const TASK_GYROPID: cfTaskId_e = 2;
 pub const TASK_MAIN: cfTaskId_e = 1;
 pub const TASK_SYSTEM: cfTaskId_e = 0;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct udpLink_t {
     pub fd: libc::c_int,
@@ -338,7 +348,7 @@ pub const TIM_USE_PWM: timerUsageFlag_e = 2;
 pub const TIM_USE_PPM: timerUsageFlag_e = 1;
 pub const TIM_USE_NONE: timerUsageFlag_e = 0;
 pub const TIM_USE_ANY: timerUsageFlag_e = 0;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct timerHardware_s {
     pub tim: *mut TIM_TypeDef,
@@ -348,13 +358,13 @@ pub struct timerHardware_s {
     pub output: uint8_t,
 }
 pub type timerHardware_t = timerHardware_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct timerChannel_t {
     pub ccr: *mut timCCR_t,
     pub tim: *mut TIM_TypeDef,
 }
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct pwmOutputPort_t {
     pub channel: timerChannel_t,
@@ -364,7 +374,7 @@ pub struct pwmOutputPort_t {
     pub enabled: bool,
     pub io: IO_t,
 }
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct motorDevConfig_s {
     pub motorPwmRate: uint16_t,
@@ -375,7 +385,7 @@ pub struct motorDevConfig_s {
     pub ioTags: [ioTag_t; 8],
 }
 pub type motorDevConfig_t = motorDevConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct servoDevConfig_s {
     pub servoCenterPulse: uint16_t,
@@ -408,7 +418,7 @@ pub const FEATURE_MOTOR_STOP: C2RustUnnamed = 16;
 pub const FEATURE_RX_SERIAL: C2RustUnnamed = 8;
 pub const FEATURE_INFLIGHT_ACC_CAL: C2RustUnnamed = 4;
 pub const FEATURE_RX_PPM: C2RustUnnamed = 1;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct rxConfig_s {
     pub rcmap: [uint8_t; 8],
@@ -469,6 +479,8 @@ unsafe extern "C" fn constrain(mut amt: libc::c_int, mut low: libc::c_int,
         return low
     } else if amt > high { return high } else { return amt };
 }
+#[no_mangle]
+pub static mut SystemCoreClock: uint32_t = 0;
 // mapping of radio channels to internal RPYTA+ order
 // type of UART-based receiver (0 = spek 10, 1 = spek 11, 2 = sbus). Must be enabled by FEATURE_RX_SERIAL first.
 // invert the serial RX protocol compared to it's default setting
@@ -488,13 +500,6 @@ unsafe extern "C" fn constrain(mut amt: libc::c_int, mut low: libc::c_int,
 // Axis to log as debug values when debug_mode = RC_SMOOTHING
 // Input filter type (0 = PT1, 1 = BIQUAD)
 // Derivative filter type (0 = OFF, 1 = PT1, 2 = BIQUAD)
-//#define USE_SOFTSERIAL1
-//#define USE_SOFTSERIAL2
-// I think SITL don't need this
-// suppress 'no pins defined' warning
-// belows are internal stuff
-#[no_mangle]
-pub static mut SystemCoreClock: uint32_t = 0;
 /*
  * This file is part of Cleanflight and Betaflight.
  *
@@ -534,7 +539,7 @@ static mut start_time: timespec = timespec{tv_sec: 0, tv_nsec: 0,};
 static mut simRate: libc::c_double = 1.0f64;
 static mut tcpWorker: pthread_t = 0;
 static mut udpWorker: pthread_t = 0;
-static mut workerRunning: bool = 1 as libc::c_int != 0;
+static mut workerRunning: bool = 1i32 != 0;
 static mut stateLink: udpLink_t =
     udpLink_t{fd: 0,
               si:
@@ -618,15 +623,15 @@ pub unsafe extern "C" fn sendMotorUpdate() {
 #[no_mangle]
 pub unsafe extern "C" fn updateState(mut pkt: *const fdm_packet) {
     static mut last_timestamp: libc::c_double =
-        0 as libc::c_int as libc::c_double; // last packet
-    static mut last_realtime: uint64_t = 0 as libc::c_int as uint64_t;
+        0i32 as libc::c_double; // last packet
+    static mut last_realtime: uint64_t = 0i32 as uint64_t;
     static mut last_ts: timespec = timespec{tv_sec: 0, tv_nsec: 0,};
     let mut now_ts: timespec = timespec{tv_sec: 0, tv_nsec: 0,};
-    clock_gettime(1 as libc::c_int, &mut now_ts);
+    clock_gettime(1i32, &mut now_ts);
     let realtime_now: uint64_t = micros64_real();
     if realtime_now as libc::c_double >
-           last_realtime as libc::c_double +
-               500 as libc::c_int as libc::c_double * 1e3f64 {
+           last_realtime as libc::c_double + 500i32 as libc::c_double * 1e3f64
+       {
         // 500ms timeout
         last_timestamp = (*pkt).timestamp; // in seconds
         last_realtime = realtime_now;
@@ -634,7 +639,7 @@ pub unsafe extern "C" fn updateState(mut pkt: *const fdm_packet) {
         return
     }
     let deltaSim: libc::c_double = (*pkt).timestamp - last_timestamp;
-    if deltaSim < 0 as libc::c_int as libc::c_double {
+    if deltaSim < 0i32 as libc::c_double {
         // don't use old packet
         return
     }
@@ -642,51 +647,38 @@ pub unsafe extern "C" fn updateState(mut pkt: *const fdm_packet) {
     let mut y: int16_t = 0;
     let mut z: int16_t = 0;
     x =
-        constrain((-(*pkt).imu_linear_acceleration_xyz[0 as libc::c_int as
-                                                           usize] *
-                       (256 as libc::c_int as libc::c_double / 9.80665f64)) as
-                      libc::c_int, -(32767 as libc::c_int),
-                  32767 as libc::c_int) as int16_t;
+        constrain((-(*pkt).imu_linear_acceleration_xyz[0] *
+                       (256i32 as libc::c_double / 9.80665f64)) as
+                      libc::c_int, -32767i32, 32767i32) as int16_t;
     y =
-        constrain((-(*pkt).imu_linear_acceleration_xyz[1 as libc::c_int as
-                                                           usize] *
-                       (256 as libc::c_int as libc::c_double / 9.80665f64)) as
-                      libc::c_int, -(32767 as libc::c_int),
-                  32767 as libc::c_int) as int16_t;
+        constrain((-(*pkt).imu_linear_acceleration_xyz[1] *
+                       (256i32 as libc::c_double / 9.80665f64)) as
+                      libc::c_int, -32767i32, 32767i32) as int16_t;
     z =
-        constrain((-(*pkt).imu_linear_acceleration_xyz[2 as libc::c_int as
-                                                           usize] *
-                       (256 as libc::c_int as libc::c_double / 9.80665f64)) as
-                      libc::c_int, -(32767 as libc::c_int),
-                  32767 as libc::c_int) as int16_t;
+        constrain((-(*pkt).imu_linear_acceleration_xyz[2] *
+                       (256i32 as libc::c_double / 9.80665f64)) as
+                      libc::c_int, -32767i32, 32767i32) as int16_t;
     fakeAccSet(fakeAccDev, x, y, z);
     //    printf("[acc]%lf,%lf,%lf\n", pkt->imu_linear_acceleration_xyz[0], pkt->imu_linear_acceleration_xyz[1], pkt->imu_linear_acceleration_xyz[2]);
     x =
-        constrain(((*pkt).imu_angular_velocity_rpy[0 as libc::c_int as usize]
-                       * 16.4f64 * (180.0f64 / 3.14159265358979323846f64)) as
-                      libc::c_int, -(32767 as libc::c_int),
-                  32767 as libc::c_int) as int16_t;
+        constrain(((*pkt).imu_angular_velocity_rpy[0] * 16.4f64 *
+                       (180.0f64 / 3.14159265358979323846f64)) as libc::c_int,
+                  -32767i32, 32767i32) as int16_t;
     y =
-        constrain((-(*pkt).imu_angular_velocity_rpy[1 as libc::c_int as usize]
-                       * 16.4f64 * (180.0f64 / 3.14159265358979323846f64)) as
-                      libc::c_int, -(32767 as libc::c_int),
-                  32767 as libc::c_int) as int16_t;
+        constrain((-(*pkt).imu_angular_velocity_rpy[1] * 16.4f64 *
+                       (180.0f64 / 3.14159265358979323846f64)) as libc::c_int,
+                  -32767i32, 32767i32) as int16_t;
     z =
-        constrain((-(*pkt).imu_angular_velocity_rpy[2 as libc::c_int as usize]
-                       * 16.4f64 * (180.0f64 / 3.14159265358979323846f64)) as
-                      libc::c_int, -(32767 as libc::c_int),
-                  32767 as libc::c_int) as int16_t;
+        constrain((-(*pkt).imu_angular_velocity_rpy[2] * 16.4f64 *
+                       (180.0f64 / 3.14159265358979323846f64)) as libc::c_int,
+                  -32767i32, 32767i32) as int16_t;
     fakeGyroSet(fakeGyroDev, x, y, z);
     //    printf("[gyr]%lf,%lf,%lf\n", pkt->imu_angular_velocity_rpy[0], pkt->imu_angular_velocity_rpy[1], pkt->imu_angular_velocity_rpy[2]);
-    imuSetAttitudeQuat((*pkt).imu_orientation_quat[0 as libc::c_int as usize]
-                           as libc::c_float,
-                       (*pkt).imu_orientation_quat[1 as libc::c_int as usize]
-                           as libc::c_float,
-                       (*pkt).imu_orientation_quat[2 as libc::c_int as usize]
-                           as libc::c_float,
-                       (*pkt).imu_orientation_quat[3 as libc::c_int as usize]
-                           as libc::c_float);
-    if deltaSim < 0.02f64 && deltaSim > 0 as libc::c_int as libc::c_double {
+    imuSetAttitudeQuat((*pkt).imu_orientation_quat[0] as libc::c_float,
+                       (*pkt).imu_orientation_quat[1] as libc::c_float,
+                       (*pkt).imu_orientation_quat[2] as libc::c_float,
+                       (*pkt).imu_orientation_quat[3] as libc::c_float);
+    if deltaSim < 0.02f64 && deltaSim > 0i32 as libc::c_double {
         // simulator should run faster than 50Hz
         //        simRate = simRate * 0.5 + (1e6 * deltaSim / (realtime_now - last_realtime)) * 0.5;
         let mut out_ts: timespec = timespec{tv_sec: 0, tv_nsec: 0,};
@@ -706,13 +698,13 @@ pub unsafe extern "C" fn updateState(mut pkt: *const fdm_packet) {
 }
 unsafe extern "C" fn udpThread(mut data: *mut libc::c_void)
  -> *mut libc::c_void {
-    let mut n: libc::c_int = 0 as libc::c_int;
+    let mut n: libc::c_int = 0i32;
     while workerRunning {
         n =
             udpRecv(&mut stateLink,
                     &mut fdmPkt as *mut fdm_packet as *mut libc::c_void,
                     ::core::mem::size_of::<fdm_packet>() as libc::c_ulong,
-                    100 as libc::c_int as uint32_t);
+                    100i32 as uint32_t);
         if n as libc::c_ulong ==
                ::core::mem::size_of::<fdm_packet>() as libc::c_ulong {
             //            printf("[data]new fdm %d\n", n);
@@ -755,22 +747,21 @@ unsafe extern "C" fn tcpThread(mut data: *mut libc::c_void)
 #[no_mangle]
 pub unsafe extern "C" fn systemInit() {
     let mut ret: libc::c_int = 0; // fake 500MHz
-    clock_gettime(1 as libc::c_int, &mut start_time);
+    clock_gettime(1i32, &mut start_time);
     printf(b"[system]Init...\n\x00" as *const u8 as *const libc::c_char);
-    SystemCoreClock =
-        (500 as libc::c_int as libc::c_double * 1e6f64) as uint32_t;
+    SystemCoreClock = (500i32 as libc::c_double * 1e6f64) as uint32_t;
     FLASH_Unlock();
     if pthread_mutex_init(&mut updateLock, 0 as *const pthread_mutexattr_t) !=
-           0 as libc::c_int {
+           0i32 {
         printf(b"Create updateLock error!\n\x00" as *const u8 as
                    *const libc::c_char);
-        exit(1 as libc::c_int);
+        exit(1i32);
     }
     if pthread_mutex_init(&mut mainLoopLock, 0 as *const pthread_mutexattr_t)
-           != 0 as libc::c_int {
+           != 0i32 {
         printf(b"Create mainLoopLock error!\n\x00" as *const u8 as
                    *const libc::c_char);
-        exit(1 as libc::c_int);
+        exit(1i32);
     }
     ret =
         pthread_create(&mut tcpWorker, 0 as *const pthread_attr_t,
@@ -778,20 +769,19 @@ pub unsafe extern "C" fn systemInit() {
                                 unsafe extern "C" fn(_: *mut libc::c_void)
                                     -> *mut libc::c_void),
                        0 as *mut libc::c_void);
-    if ret != 0 as libc::c_int {
+    if ret != 0i32 {
         printf(b"Create tcpWorker error!\n\x00" as *const u8 as
                    *const libc::c_char);
-        exit(1 as libc::c_int);
+        exit(1i32);
     }
     ret =
         udpInit(&mut pwmLink,
-                b"127.0.0.1\x00" as *const u8 as *const libc::c_char,
-                9002 as libc::c_int, 0 as libc::c_int != 0);
+                b"127.0.0.1\x00" as *const u8 as *const libc::c_char, 9002i32,
+                0i32 != 0);
     printf(b"init PwnOut UDP link...%d\n\x00" as *const u8 as
                *const libc::c_char, ret);
     ret =
-        udpInit(&mut stateLink, 0 as *const libc::c_char, 9003 as libc::c_int,
-                1 as libc::c_int != 0);
+        udpInit(&mut stateLink, 0 as *const libc::c_char, 9003i32, 1i32 != 0);
     printf(b"start UDP server...%d\n\x00" as *const u8 as *const libc::c_char,
            ret);
     ret =
@@ -800,31 +790,31 @@ pub unsafe extern "C" fn systemInit() {
                                 unsafe extern "C" fn(_: *mut libc::c_void)
                                     -> *mut libc::c_void),
                        0 as *mut libc::c_void);
-    if ret != 0 as libc::c_int {
+    if ret != 0i32 {
         printf(b"Create udpWorker error!\n\x00" as *const u8 as
                    *const libc::c_char);
-        exit(1 as libc::c_int);
+        exit(1i32);
     }
     // serial can't been slow down
-    rescheduleTask(TASK_SERIAL, 1 as libc::c_int as uint32_t);
+    rescheduleTask(TASK_SERIAL, 1i32 as uint32_t);
 }
 // bootloader/IAP
 #[no_mangle]
 pub unsafe extern "C" fn systemReset() {
     printf(b"[system]Reset!\n\x00" as *const u8 as *const libc::c_char);
-    workerRunning = 0 as libc::c_int != 0;
+    workerRunning = 0i32 != 0;
     pthread_join(tcpWorker, 0 as *mut *mut libc::c_void);
     pthread_join(udpWorker, 0 as *mut *mut libc::c_void);
-    exit(0 as libc::c_int);
+    exit(0i32);
 }
 #[no_mangle]
 pub unsafe extern "C" fn systemResetToBootloader() {
     printf(b"[system]ResetToBootloader!\n\x00" as *const u8 as
                *const libc::c_char);
-    workerRunning = 0 as libc::c_int != 0;
+    workerRunning = 0i32 != 0;
     pthread_join(tcpWorker, 0 as *mut *mut libc::c_void);
     pthread_join(udpWorker, 0 as *mut *mut libc::c_void);
-    exit(0 as libc::c_int);
+    exit(0i32);
 }
 #[no_mangle]
 pub unsafe extern "C" fn timerInit() {
@@ -850,7 +840,7 @@ pub unsafe extern "C" fn indicateFailure(mut mode: failureMode_e,
 #[no_mangle]
 pub unsafe extern "C" fn nanos64_real() -> uint64_t {
     let mut ts: timespec = timespec{tv_sec: 0, tv_nsec: 0,};
-    clock_gettime(1 as libc::c_int, &mut ts);
+    clock_gettime(1i32, &mut ts);
     return (ts.tv_sec as libc::c_double * 1e9f64 +
                 ts.tv_nsec as libc::c_double -
                 (start_time.tv_sec as libc::c_double * 1e9f64 +
@@ -859,7 +849,7 @@ pub unsafe extern "C" fn nanos64_real() -> uint64_t {
 #[no_mangle]
 pub unsafe extern "C" fn micros64_real() -> uint64_t {
     let mut ts: timespec = timespec{tv_sec: 0, tv_nsec: 0,};
-    clock_gettime(1 as libc::c_int, &mut ts);
+    clock_gettime(1i32, &mut ts);
     return (1.0e6f64 *
                 (ts.tv_sec as libc::c_double +
                      ts.tv_nsec as libc::c_double * 1.0e-9f64 -
@@ -870,7 +860,7 @@ pub unsafe extern "C" fn micros64_real() -> uint64_t {
 #[no_mangle]
 pub unsafe extern "C" fn millis64_real() -> uint64_t {
     let mut ts: timespec = timespec{tv_sec: 0, tv_nsec: 0,};
-    clock_gettime(1 as libc::c_int, &mut ts);
+    clock_gettime(1i32, &mut ts);
     return (1.0e3f64 *
                 (ts.tv_sec as libc::c_double +
                      ts.tv_nsec as libc::c_double * 1.0e-9f64 -
@@ -880,8 +870,8 @@ pub unsafe extern "C" fn millis64_real() -> uint64_t {
 }
 #[no_mangle]
 pub unsafe extern "C" fn micros64() -> uint64_t {
-    static mut last: uint64_t = 0 as libc::c_int as uint64_t;
-    static mut out: uint64_t = 0 as libc::c_int as uint64_t;
+    static mut last: uint64_t = 0i32 as uint64_t;
+    static mut out: uint64_t = 0i32 as uint64_t;
     let mut now: uint64_t = nanos64_real();
     out =
         (out as libc::c_double +
@@ -892,8 +882,8 @@ pub unsafe extern "C" fn micros64() -> uint64_t {
 }
 #[no_mangle]
 pub unsafe extern "C" fn millis64() -> uint64_t {
-    static mut last: uint64_t = 0 as libc::c_int as uint64_t;
-    static mut out: uint64_t = 0 as libc::c_int as uint64_t;
+    static mut last: uint64_t = 0i32 as uint64_t;
+    static mut out: uint64_t = 0i32 as uint64_t;
     let mut now: uint64_t = nanos64_real();
     out =
         (out as libc::c_double +
@@ -904,23 +894,20 @@ pub unsafe extern "C" fn millis64() -> uint64_t {
 }
 #[no_mangle]
 pub unsafe extern "C" fn micros() -> uint32_t {
-    return (micros64() & 0xffffffff as libc::c_uint as libc::c_ulong) as
-               uint32_t;
+    return (micros64() & 0xffffffffu32 as libc::c_ulong) as uint32_t;
 }
 #[no_mangle]
 pub unsafe extern "C" fn millis() -> uint32_t {
-    return (millis64() & 0xffffffff as libc::c_uint as libc::c_ulong) as
-               uint32_t;
+    return (millis64() & 0xffffffffu32 as libc::c_ulong) as uint32_t;
 }
 #[no_mangle]
 pub unsafe extern "C" fn microsleep(mut usec: uint32_t) {
     let mut ts: timespec = timespec{tv_sec: 0, tv_nsec: 0,};
-    ts.tv_sec = 0 as libc::c_int as __time_t;
+    ts.tv_sec = 0i32 as __time_t;
     ts.tv_nsec =
-        (usec as libc::c_ulong).wrapping_mul(1000 as libc::c_ulong) as
-            __syscall_slong_t;
-    while nanosleep(&mut ts, &mut ts) == -(1 as libc::c_int) &&
-              *__errno_location() == 4 as libc::c_int {
+        (usec as libc::c_ulong).wrapping_mul(1000u64) as __syscall_slong_t;
+    while nanosleep(&mut ts, &mut ts) == -1i32 && *__errno_location() == 4i32
+          {
     };
 }
 #[no_mangle]
@@ -935,7 +922,7 @@ pub unsafe extern "C" fn delayMicroseconds_real(mut us: uint32_t) {
 pub unsafe extern "C" fn delay(mut ms: uint32_t) {
     let mut start: uint64_t = millis64();
     while millis64().wrapping_sub(start) < ms as libc::c_ulong {
-        microsleep(1000 as libc::c_int as uint32_t);
+        microsleep(1000i32 as uint32_t);
     };
 }
 // Subtract the ‘struct timespec’ values X and Y,  storing the result in RESULT.
@@ -946,17 +933,15 @@ pub unsafe extern "C" fn delay(mut ms: uint32_t) {
 pub unsafe extern "C" fn timeval_sub(mut result: *mut timespec,
                                      mut x: *mut timespec,
                                      mut y: *mut timespec) -> libc::c_int {
-    let mut s_carry: libc::c_uint = 0 as libc::c_int as libc::c_uint;
-    let mut ns_carry: libc::c_uint = 0 as libc::c_int as libc::c_uint;
+    let mut s_carry: libc::c_uint = 0i32 as libc::c_uint;
+    let mut ns_carry: libc::c_uint = 0i32 as libc::c_uint;
     // Perform the carry for the later subtraction by updating y.
     if (*x).tv_nsec < (*y).tv_nsec {
         let mut nsec: libc::c_int =
-            (((*y).tv_nsec - (*x).tv_nsec) /
-                 1000000000 as libc::c_int as libc::c_long +
-                 1 as libc::c_int as libc::c_long) as libc::c_int;
+            (((*y).tv_nsec - (*x).tv_nsec) / 1000000000i32 as libc::c_long +
+                 1i32 as libc::c_long) as libc::c_int;
         ns_carry =
-            ns_carry.wrapping_add((1000000000 as libc::c_int * nsec) as
-                                      libc::c_uint);
+            ns_carry.wrapping_add((1000000000i32 * nsec) as libc::c_uint);
         s_carry = s_carry.wrapping_add(nsec as libc::c_uint)
     }
     // Compute the time remaining to wait. tv_usec is certainly positive.
@@ -967,7 +952,7 @@ pub unsafe extern "C" fn timeval_sub(mut result: *mut timespec,
     return ((*x).tv_sec < (*y).tv_sec) as libc::c_int;
 }
 // PWM part
-static mut pwmMotorsEnabled: bool = 0 as libc::c_int != 0;
+static mut pwmMotorsEnabled: bool = 0i32 != 0;
 static mut motors: [pwmOutputPort_t; 8] =
     [pwmOutputPort_t{channel:
                          timerChannel_t{ccr:
@@ -1004,44 +989,25 @@ pub unsafe extern "C" fn motorDevInit(mut motorConfig:
                                       mut _idlePulse: uint16_t,
                                       mut motorCount: uint8_t) {
     idlePulse = _idlePulse as int16_t;
-    let mut motorIndex: libc::c_int = 0 as libc::c_int;
-    while motorIndex < 8 as libc::c_int &&
-              motorIndex < motorCount as libc::c_int {
-        motors[motorIndex as usize].enabled = 1 as libc::c_int != 0;
+    let mut motorIndex: libc::c_int = 0i32;
+    while motorIndex < 8i32 && motorIndex < motorCount as libc::c_int {
+        motors[motorIndex as usize].enabled = 1i32 != 0;
         motorIndex += 1
     }
-    pwmMotorsEnabled = 1 as libc::c_int != 0;
+    pwmMotorsEnabled = 1i32 != 0;
 }
 #[no_mangle]
 pub unsafe extern "C" fn servoDevInit(mut servoConfig:
                                           *const servoDevConfig_t) {
-    let mut servoIndex: uint8_t = 0 as libc::c_int as uint8_t;
-    while (servoIndex as libc::c_int) < 8 as libc::c_int {
-        servos[servoIndex as usize].enabled = 1 as libc::c_int != 0;
+    let mut servoIndex: uint8_t = 0i32 as uint8_t;
+    while (servoIndex as libc::c_int) < 8i32 {
+        servos[servoIndex as usize].enabled = 1i32 != 0;
         servoIndex = servoIndex.wrapping_add(1)
     };
 }
 #[no_mangle]
 pub unsafe extern "C" fn pwmGetMotors() -> *mut pwmOutputPort_t {
     return motors.as_mut_ptr();
-}
-#[no_mangle]
-pub unsafe extern "C" fn pwmEnableMotors() {
-    pwmMotorsEnabled = 1 as libc::c_int != 0;
-}
-#[no_mangle]
-pub unsafe extern "C" fn pwmAreMotorsEnabled() -> bool {
-    return pwmMotorsEnabled;
-}
-#[no_mangle]
-pub unsafe extern "C" fn isMotorProtocolDshot() -> bool {
-    return 0 as libc::c_int != 0;
-}
-#[no_mangle]
-pub unsafe extern "C" fn pwmWriteMotor(mut index: uint8_t,
-                                       mut value: libc::c_float) {
-    motorsPwm[index as usize] =
-        (value - idlePulse as libc::c_int as libc::c_float) as int16_t;
 }
 /*
  * This file is part of Cleanflight and Betaflight.
@@ -1094,9 +1060,23 @@ pub unsafe extern "C" fn pwmWriteMotor(mut index: uint8_t,
 // This is the value for servos when they should be in the middle. e.g. 1500.
 // The update rate of servo outputs (50-498Hz)
 #[no_mangle]
+pub unsafe extern "C" fn pwmEnableMotors() { pwmMotorsEnabled = 1i32 != 0; }
+#[no_mangle]
+pub unsafe extern "C" fn pwmAreMotorsEnabled() -> bool {
+    return pwmMotorsEnabled;
+}
+#[no_mangle]
+pub unsafe extern "C" fn isMotorProtocolDshot() -> bool { return 0i32 != 0; }
+#[no_mangle]
+pub unsafe extern "C" fn pwmWriteMotor(mut index: uint8_t,
+                                       mut value: libc::c_float) {
+    motorsPwm[index as usize] =
+        (value - idlePulse as libc::c_int as libc::c_float) as int16_t;
+}
+#[no_mangle]
 pub unsafe extern "C" fn pwmShutdownPulsesForAllMotors(mut motorCount:
                                                            uint8_t) {
-    pwmMotorsEnabled = 0 as libc::c_int != 0;
+    pwmMotorsEnabled = 0i32 != 0;
 }
 #[no_mangle]
 pub unsafe extern "C" fn pwmCompleteMotorUpdate(mut motorCount: uint8_t) {
@@ -1104,20 +1084,20 @@ pub unsafe extern "C" fn pwmCompleteMotorUpdate(mut motorCount: uint8_t) {
     // for gazebo8 ArduCopterPlugin remap, normal range = [0.0, 1.0], 3D rang = [-1.0, 1.0]
     let mut outScale: libc::c_double = 1000.0f64;
     if feature(FEATURE_3D as libc::c_int as uint32_t) { outScale = 500.0f64 }
-    pwmPkt.motor_speed[3 as libc::c_int as usize] =
-        (motorsPwm[0 as libc::c_int as usize] as libc::c_int as libc::c_double
-             / outScale) as libc::c_float;
-    pwmPkt.motor_speed[0 as libc::c_int as usize] =
-        (motorsPwm[1 as libc::c_int as usize] as libc::c_int as libc::c_double
-             / outScale) as libc::c_float;
-    pwmPkt.motor_speed[1 as libc::c_int as usize] =
-        (motorsPwm[2 as libc::c_int as usize] as libc::c_int as libc::c_double
-             / outScale) as libc::c_float;
-    pwmPkt.motor_speed[2 as libc::c_int as usize] =
-        (motorsPwm[3 as libc::c_int as usize] as libc::c_int as libc::c_double
-             / outScale) as libc::c_float;
+    pwmPkt.motor_speed[3] =
+        (motorsPwm[0] as libc::c_int as libc::c_double / outScale) as
+            libc::c_float;
+    pwmPkt.motor_speed[0] =
+        (motorsPwm[1] as libc::c_int as libc::c_double / outScale) as
+            libc::c_float;
+    pwmPkt.motor_speed[1] =
+        (motorsPwm[2] as libc::c_int as libc::c_double / outScale) as
+            libc::c_float;
+    pwmPkt.motor_speed[2] =
+        (motorsPwm[3] as libc::c_int as libc::c_double / outScale) as
+            libc::c_float;
     // get one "fdm_packet" can only send one "servo_packet"!!
-    if pthread_mutex_trylock(&mut updateLock) != 0 as libc::c_int { return }
+    if pthread_mutex_trylock(&mut updateLock) != 0i32 { return }
     udpSend(&mut pwmLink,
             &mut pwmPkt as *mut servo_packet as *const libc::c_void,
             ::core::mem::size_of::<servo_packet>() as libc::c_ulong);
@@ -1131,7 +1111,7 @@ pub unsafe extern "C" fn pwmWriteServo(mut index: uint8_t,
 // ADC part
 #[no_mangle]
 pub unsafe extern "C" fn adcGetChannel(mut channel: uint8_t) -> uint16_t {
-    return 0 as libc::c_int as uint16_t;
+    return 0i32 as uint16_t;
 }
 // stack part
 #[no_mangle]
@@ -1156,12 +1136,12 @@ pub unsafe extern "C" fn FLASH_Unlock() {
               b"r+\x00" as *const u8 as *const libc::c_char);
     if !eepromFd.is_null() {
         // obtain file size:
-        fseek(eepromFd, 0 as libc::c_int as libc::c_long, 2 as libc::c_int);
+        fseek(eepromFd, 0i32 as libc::c_long, 2i32);
         let mut lSize: size_t = ftell(eepromFd) as size_t;
         rewind(eepromFd);
         let mut n: size_t =
             fread(eepromData.as_mut_ptr() as *mut libc::c_void,
-                  1 as libc::c_int as libc::c_ulong,
+                  1i32 as libc::c_ulong,
                   ::core::mem::size_of::<[uint8_t; 32768]>() as libc::c_ulong,
                   eepromFd);
         if n == lSize {
@@ -1195,8 +1175,7 @@ pub unsafe extern "C" fn FLASH_Unlock() {
         }
         if fwrite(eepromData.as_mut_ptr() as *const libc::c_void,
                   ::core::mem::size_of::<[uint8_t; 32768]>() as libc::c_ulong,
-                  1 as libc::c_int as libc::c_ulong, eepromFd) !=
-               1 as libc::c_int as libc::c_ulong {
+                  1i32 as libc::c_ulong, eepromFd) != 1i32 as libc::c_ulong {
             fprintf(stderr,
                     b"[FLASH_Unlock] write failed: %s\n\x00" as *const u8 as
                         *const libc::c_char, strerror(*__errno_location()));
@@ -1207,9 +1186,9 @@ pub unsafe extern "C" fn FLASH_Unlock() {
 pub unsafe extern "C" fn FLASH_Lock() {
     // flush & close
     if !eepromFd.is_null() {
-        fseek(eepromFd, 0 as libc::c_int as libc::c_long, 0 as libc::c_int);
+        fseek(eepromFd, 0i32 as libc::c_long, 0i32);
         fwrite(eepromData.as_mut_ptr() as *const libc::c_void,
-               1 as libc::c_int as libc::c_ulong,
+               1i32 as libc::c_ulong,
                ::core::mem::size_of::<[uint8_t; 32768]>() as libc::c_ulong,
                eepromFd);
         fclose(eepromFd);

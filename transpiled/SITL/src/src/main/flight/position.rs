@@ -1,4 +1,5 @@
-use ::libc;
+use core;
+use libc;
 extern "C" {
     /*
  * This file is part of Cleanflight and Betaflight.
@@ -106,7 +107,7 @@ pub const GPS_FIX: C2RustUnnamed_1 = 2;
 pub const GPS_FIX_HOME: C2RustUnnamed_1 = 1;
 pub type timeUs_t = uint32_t;
 pub type gpsSolutionData_t = gpsSolutionData_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct gpsSolutionData_s {
     pub llh: gpsLocation_t,
@@ -120,7 +121,7 @@ pub struct gpsSolutionData_s {
 // generic HDOP value (*100)
 /* LLH Location in NEU axis system */
 pub type gpsLocation_t = gpsLocation_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct gpsLocation_s {
     pub lat: int32_t,
@@ -160,8 +161,8 @@ pub static mut SystemCoreClock: uint32_t = 0;
  *
  * If not, see <http://www.gnu.org/licenses/>.
  */
-static mut estimatedAltitude: int32_t = 0 as libc::c_int;
-static mut altitudeOffsetSet: bool = 0 as libc::c_int != 0;
+static mut estimatedAltitude: int32_t = 0i32;
+static mut altitudeOffsetSet: bool = 0i32 != 0;
 /*
  * This file is part of Cleanflight and Betaflight.
  *
@@ -185,32 +186,27 @@ static mut altitudeOffsetSet: bool = 0 as libc::c_int != 0;
 pub unsafe extern "C" fn calculateEstimatedAltitude(mut currentTimeUs:
                                                         timeUs_t) {
     static mut previousTimeUs: timeUs_t =
-        0 as libc::c_int as timeUs_t; //conservative default
-    static mut baroAltOffset: int32_t = 0 as libc::c_int;
-    static mut gpsAltOffset: int32_t = 0 as libc::c_int;
+        0i32 as timeUs_t; //conservative default
+    static mut baroAltOffset: int32_t = 0i32;
+    static mut gpsAltOffset: int32_t = 0i32;
     let dTime: uint32_t = currentTimeUs.wrapping_sub(previousTimeUs);
-    if dTime < (1000 as libc::c_int * 25 as libc::c_int) as libc::c_uint {
-        return
-    }
+    if dTime < (1000i32 * 25i32) as libc::c_uint { return }
     previousTimeUs = currentTimeUs;
-    let mut baroAlt: int32_t = 0 as libc::c_int;
-    let mut gpsAlt: int32_t = 0 as libc::c_int;
+    let mut baroAlt: int32_t = 0i32;
+    let mut gpsAlt: int32_t = 0i32;
     let mut gpsTrust: libc::c_float = 0.3f64 as libc::c_float;
-    let mut haveBaroAlt: bool = 0 as libc::c_int != 0;
-    let mut haveGpsAlt: bool = 0 as libc::c_int != 0;
+    let mut haveBaroAlt: bool = 0i32 != 0;
+    let mut haveGpsAlt: bool = 0i32 != 0;
     if sensors(SENSOR_BARO as libc::c_int as uint32_t) {
         if !isBaroCalibrationComplete() {
             performBaroCalibrationCycle();
-        } else {
-            baroAlt = baroCalculateAltitude();
-            haveBaroAlt = 1 as libc::c_int != 0
-        }
+        } else { baroAlt = baroCalculateAltitude(); haveBaroAlt = 1i32 != 0 }
     }
     if sensors(SENSOR_GPS as libc::c_int as uint32_t) as libc::c_int != 0 &&
            stateFlags as libc::c_int & GPS_FIX as libc::c_int != 0 {
         gpsAlt = gpsSol.llh.alt;
-        haveGpsAlt = 1 as libc::c_int != 0;
-        if gpsSol.hdop as libc::c_int != 0 as libc::c_int {
+        haveGpsAlt = 1i32 != 0;
+        if gpsSol.hdop as libc::c_int != 0i32 {
             gpsTrust =
                 (100.0f64 / gpsSol.hdop as libc::c_int as libc::c_double) as
                     libc::c_float
@@ -227,10 +223,10 @@ pub unsafe extern "C" fn calculateEstimatedAltitude(mut currentTimeUs:
            !altitudeOffsetSet {
         baroAltOffset = baroAlt;
         gpsAltOffset = gpsAlt;
-        altitudeOffsetSet = 1 as libc::c_int != 0
+        altitudeOffsetSet = 1i32 != 0
     } else if armingFlags as libc::c_int & ARMED as libc::c_int == 0 &&
                   altitudeOffsetSet as libc::c_int != 0 {
-        altitudeOffsetSet = 0 as libc::c_int != 0
+        altitudeOffsetSet = 0i32 != 0
     }
     baroAlt -= baroAltOffset;
     gpsAlt -= gpsAltOffset;
@@ -238,21 +234,18 @@ pub unsafe extern "C" fn calculateEstimatedAltitude(mut currentTimeUs:
         estimatedAltitude =
             (gpsAlt as libc::c_float * gpsTrust +
                  baroAlt as libc::c_float *
-                     (1 as libc::c_int as libc::c_float - gpsTrust)) as
-                int32_t
+                     (1i32 as libc::c_float - gpsTrust)) as int32_t
     } else if haveGpsAlt {
         estimatedAltitude = gpsAlt
     } else if haveBaroAlt { estimatedAltitude = baroAlt }
     if debugMode as libc::c_int == DEBUG_ALTITUDE as libc::c_int {
-        debug[0 as libc::c_int as usize] =
-            (100 as libc::c_int as libc::c_float * gpsTrust) as int32_t as
-                int16_t
+        debug[0] = (100i32 as libc::c_float * gpsTrust) as int32_t as int16_t
     }
     if debugMode as libc::c_int == DEBUG_ALTITUDE as libc::c_int {
-        debug[1 as libc::c_int as usize] = baroAlt as int16_t
+        debug[1] = baroAlt as int16_t
     }
     if debugMode as libc::c_int == DEBUG_ALTITUDE as libc::c_int {
-        debug[2 as libc::c_int as usize] = gpsAlt as int16_t
+        debug[2] = gpsAlt as int16_t
     };
 }
 #[no_mangle]
@@ -266,5 +259,5 @@ pub unsafe extern "C" fn getEstimatedAltitude() -> int32_t {
 // This should be removed or fixed, but it would require changing a lot of other things to get rid of.
 #[no_mangle]
 pub unsafe extern "C" fn getEstimatedVario() -> int16_t {
-    return 0 as libc::c_int as int16_t;
+    return 0i32 as int16_t;
 }

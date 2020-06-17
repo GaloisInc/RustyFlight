@@ -1,4 +1,5 @@
-use ::libc;
+use core;
+use libc;
 extern "C" {
     #[no_mangle]
     fn IOWrite(io: IO_t, value: bool);
@@ -141,7 +142,7 @@ pub const PGR_PGN_MASK: C2RustUnnamed = 4095;
 pub type pgResetFunc
     =
     unsafe extern "C" fn(_: *mut libc::c_void, _: libc::c_int) -> ();
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct pgRegistry_s {
     pub pgn: pgn_t,
@@ -151,14 +152,15 @@ pub struct pgRegistry_s {
     pub ptr: *mut *mut uint8_t,
     pub reset: C2RustUnnamed_0,
 }
-#[derive(Copy, Clone)]
-#[repr(C)]
+#[derive ( Copy, Clone )]
+#[repr ( C )]
 pub union C2RustUnnamed_0 {
     pub ptr: *mut libc::c_void,
-    pub fn_0: Option<pgResetFunc>,
+    pub fn_0: Option<unsafe extern "C" fn(_: *mut libc::c_void,
+                                          _: libc::c_int) -> ()>,
 }
 pub type pgRegistry_t = pgRegistry_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct statusLedConfig_s {
     pub ioTags: [ioTag_t; 3],
@@ -234,10 +236,7 @@ pub static mut statusLedConfig_Registry: pgRegistry_t =
     unsafe {
         {
             let mut init =
-                pgRegistry_s{pgn:
-                                 (505 as libc::c_int |
-                                      (0 as libc::c_int) << 12 as libc::c_int)
-                                     as pgn_t,
+                pgRegistry_s{pgn: (505i32 | 0i32 << 12i32) as pgn_t,
                              size:
                                  (::core::mem::size_of::<statusLedConfig_t>()
                                       as libc::c_ulong |
@@ -260,12 +259,17 @@ pub static mut statusLedConfig_Registry: pgRegistry_t =
                                                                                                               *mut statusLedConfig_t)
                                                                                          ->
                                                                                              ()>,
-                                                                              Option<pgResetFunc>>(Some(pgResetFn_statusLedConfig
-                                                                                                            as
-                                                                                                            unsafe extern "C" fn(_:
-                                                                                                                                     *mut statusLedConfig_t)
-                                                                                                                ->
-                                                                                                                    ())),},};
+                                                                              Option<unsafe extern "C" fn(_:
+                                                                                                              *mut libc::c_void,
+                                                                                                          _:
+                                                                                                              libc::c_int)
+                                                                                         ->
+                                                                                             ()>>(Some(pgResetFn_statusLedConfig
+                                                                                                           as
+                                                                                                           unsafe extern "C" fn(_:
+                                                                                                                                    *mut statusLedConfig_t)
+                                                                                                               ->
+                                                                                                                   ())),},};
             init
         }
     };
@@ -277,30 +281,26 @@ pub static mut statusLedConfig_System: statusLedConfig_t =
     statusLedConfig_t{ioTags: [0; 3], inversion: 0,};
 static mut leds: [IO_t; 3] =
     [0 as *const libc::c_void as *mut libc::c_void; 3];
-static mut ledInversion: uint8_t = 0 as libc::c_int as uint8_t;
+static mut ledInversion: uint8_t = 0i32 as uint8_t;
 #[no_mangle]
 pub unsafe extern "C" fn pgResetFn_statusLedConfig(mut statusLedConfig:
                                                        *mut statusLedConfig_t) {
-    (*statusLedConfig).ioTags[0 as libc::c_int as usize] =
-        0 as libc::c_int as ioTag_t;
-    (*statusLedConfig).ioTags[1 as libc::c_int as usize] =
-        0 as libc::c_int as ioTag_t;
-    (*statusLedConfig).ioTags[2 as libc::c_int as usize] =
-        0 as libc::c_int as ioTag_t;
-    (*statusLedConfig).inversion = 0 as libc::c_int as uint8_t;
+    (*statusLedConfig).ioTags[0] = 0i32 as ioTag_t;
+    (*statusLedConfig).ioTags[1] = 0i32 as ioTag_t;
+    (*statusLedConfig).ioTags[2] = 0i32 as ioTag_t;
+    (*statusLedConfig).inversion = 0i32 as uint8_t;
 }
 #[no_mangle]
 pub unsafe extern "C" fn ledInit(mut statusLedConfig:
                                      *const statusLedConfig_t) {
     ledInversion = (*statusLedConfig).inversion;
-    let mut i: libc::c_int = 0 as libc::c_int;
-    while i < 3 as libc::c_int {
+    let mut i: libc::c_int = 0i32;
+    while i < 3i32 {
         if (*statusLedConfig).ioTags[i as usize] != 0 {
             leds[i as usize] =
                 IOGetByTag((*statusLedConfig).ioTags[i as usize]);
-            IOInit(leds[i as usize], OWNER_LED,
-                   (i + 1 as libc::c_int) as uint8_t);
-            IOConfigGPIO(leds[i as usize], 0 as libc::c_int as ioConfig_t);
+            IOInit(leds[i as usize], OWNER_LED, (i + 1i32) as uint8_t);
+            IOConfigGPIO(leds[i as usize], 0i32 as ioConfig_t);
         } else { leds[i as usize] = 0 as IO_t }
         i += 1
     };
@@ -311,8 +311,7 @@ pub unsafe extern "C" fn ledToggle(mut led: libc::c_int) {
 }
 #[no_mangle]
 pub unsafe extern "C" fn ledSet(mut led: libc::c_int, mut on: bool) {
-    let inverted: bool =
-        (1 as libc::c_int) << led & ledInversion as libc::c_int != 0;
+    let inverted: bool = 1i32 << led & ledInversion as libc::c_int != 0;
     IOWrite(leds[led as usize],
             if on as libc::c_int != 0 {
                 inverted as libc::c_int

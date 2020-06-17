@@ -1,4 +1,5 @@
-use ::libc;
+use core;
+use libc;
 pub type __uint8_t = libc::c_uchar;
 pub type __uint32_t = libc::c_uint;
 pub type uint8_t = __uint8_t;
@@ -49,19 +50,15 @@ pub unsafe extern "C" fn bitArrayGet(mut array: *const libc::c_void,
                  *mut uint32_t).offset((bit as
                                             libc::c_ulong).wrapping_div((::core::mem::size_of::<uint32_t>()
                                                                              as
-                                                                             libc::c_ulong).wrapping_mul(8
-                                                                                                             as
-                                                                                                             libc::c_int
+                                                                             libc::c_ulong).wrapping_mul(8i32
                                                                                                              as
                                                                                                              libc::c_ulong))
                                            as isize) &
-               ((1 as libc::c_int) <<
+               (1i32 <<
                     (bit as
                          libc::c_ulong).wrapping_rem((::core::mem::size_of::<uint32_t>()
                                                           as
-                                                          libc::c_ulong).wrapping_mul(8
-                                                                                          as
-                                                                                          libc::c_int
+                                                          libc::c_ulong).wrapping_mul(8i32
                                                                                           as
                                                                                           libc::c_ulong)))
                    as libc::c_uint != 0;
@@ -74,20 +71,16 @@ pub unsafe extern "C" fn bitArraySet(mut array: *mut libc::c_void,
               *mut uint32_t).offset((bit as
                                          libc::c_ulong).wrapping_div((::core::mem::size_of::<uint32_t>()
                                                                           as
-                                                                          libc::c_ulong).wrapping_mul(8
-                                                                                                          as
-                                                                                                          libc::c_int
+                                                                          libc::c_ulong).wrapping_mul(8i32
                                                                                                           as
                                                                                                           libc::c_ulong))
                                         as isize);
     *fresh0 |=
-        ((1 as libc::c_int) <<
+        (1i32 <<
              (bit as
                   libc::c_ulong).wrapping_rem((::core::mem::size_of::<uint32_t>()
                                                    as
-                                                   libc::c_ulong).wrapping_mul(8
-                                                                                   as
-                                                                                   libc::c_int
+                                                   libc::c_ulong).wrapping_mul(8i32
                                                                                    as
                                                                                    libc::c_ulong)))
             as libc::c_uint;
@@ -100,20 +93,16 @@ pub unsafe extern "C" fn bitArrayClr(mut array: *mut libc::c_void,
               *mut uint32_t).offset((bit as
                                          libc::c_ulong).wrapping_div((::core::mem::size_of::<uint32_t>()
                                                                           as
-                                                                          libc::c_ulong).wrapping_mul(8
-                                                                                                          as
-                                                                                                          libc::c_int
+                                                                          libc::c_ulong).wrapping_mul(8i32
                                                                                                           as
                                                                                                           libc::c_ulong))
                                         as isize);
     *fresh1 &=
-        !((1 as libc::c_int) <<
+        !(1i32 <<
               (bit as
                    libc::c_ulong).wrapping_rem((::core::mem::size_of::<uint32_t>()
                                                     as
-                                                    libc::c_ulong).wrapping_mul(8
-                                                                                    as
-                                                                                    libc::c_int
+                                                    libc::c_ulong).wrapping_mul(8i32
                                                                                     as
                                                                                     libc::c_ulong)))
             as libc::c_uint;
@@ -123,7 +112,7 @@ pub unsafe extern "C" fn bitArrayXor(mut dest: *mut libc::c_void,
                                      mut size: size_t,
                                      mut op1: *mut libc::c_void,
                                      mut op2: *mut libc::c_void) {
-    let mut i: size_t = 0 as libc::c_int as size_t;
+    let mut i: size_t = 0i32 as size_t;
     while i < size {
         *(dest as *mut uint8_t).offset(i as isize) =
             (*(op1 as *mut uint8_t).offset(i as isize) as libc::c_int ^

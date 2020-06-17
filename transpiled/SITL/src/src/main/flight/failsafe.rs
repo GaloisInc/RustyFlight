@@ -1,4 +1,5 @@
-use ::libc;
+use core;
+use libc;
 extern "C" {
     #[no_mangle]
     static mut rxConfig_System: rxConfig_t;
@@ -7,9 +8,9 @@ extern "C" {
     #[no_mangle]
     fn disarm();
     #[no_mangle]
-    fn isUsingSticksForArming() -> bool;
-    #[no_mangle]
     fn calculateThrottleStatus() -> throttleStatus_e;
+    #[no_mangle]
+    fn isUsingSticksForArming() -> bool;
     #[no_mangle]
     fn IS_RC_MODE_ACTIVE(boxId: boxId_e) -> bool;
     #[no_mangle]
@@ -68,7 +69,7 @@ pub const PGR_PGN_MASK: C2RustUnnamed = 4095;
 pub type pgResetFunc
     =
     unsafe extern "C" fn(_: *mut libc::c_void, _: libc::c_int) -> ();
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct pgRegistry_s {
     pub pgn: pgn_t,
@@ -78,15 +79,46 @@ pub struct pgRegistry_s {
     pub ptr: *mut *mut uint8_t,
     pub reset: C2RustUnnamed_0,
 }
-#[derive(Copy, Clone)]
-#[repr(C)]
+#[derive ( Copy, Clone )]
+#[repr ( C )]
 pub union C2RustUnnamed_0 {
     pub ptr: *mut libc::c_void,
-    pub fn_0: Option<pgResetFunc>,
+    pub fn_0: Option<unsafe extern "C" fn(_: *mut libc::c_void,
+                                          _: libc::c_int) -> ()>,
 }
 pub type pgRegistry_t = pgRegistry_s;
+/* base */
+/* size */
+// The parameter group number, the top 4 bits are reserved for version
+// Size of the group in RAM, the top 4 bits are reserved for flags
+// Address of the group in RAM.
+// Address of the copy in RAM.
+// The pointer to update after loading the record into ram.
+// Pointer to init template
+// Pointer to pgResetFunc
+/*
+ * This file is part of Cleanflight and Betaflight.
+ *
+ * Cleanflight and Betaflight are free software. You can redistribute
+ * this software and/or modify this software under the terms of the
+ * GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * Cleanflight and Betaflight are distributed in the hope that they
+ * will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this software.
+ *
+ * If not, see <http://www.gnu.org/licenses/>.
+ */
+// IO pin identification
+// make sure that ioTag_t can't be assigned into IO_t without warning
 pub type ioTag_t = uint8_t;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct rxConfig_s {
     pub rcmap: [uint8_t; 8],
@@ -120,15 +152,6 @@ pub struct rxConfig_s {
     pub rc_smoothing_input_type: uint8_t,
     pub rc_smoothing_derivative_type: uint8_t,
 }
-/* base */
-/* size */
-// The parameter group number, the top 4 bits are reserved for version
-// Size of the group in RAM, the top 4 bits are reserved for flags
-// Address of the group in RAM.
-// Address of the copy in RAM.
-// The pointer to update after loading the record into ram.
-// Pointer to init template
-// Pointer to pgResetFunc
 /*
  * This file is part of Cleanflight and Betaflight.
  *
@@ -266,7 +289,7 @@ pub const BARO_MODE: flightModeFlags_e = 8;
 pub const MAG_MODE: flightModeFlags_e = 4;
 pub const HORIZON_MODE: flightModeFlags_e = 2;
 pub const ANGLE_MODE: flightModeFlags_e = 1;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct failsafeConfig_s {
     pub failsafe_throttle: uint16_t,
@@ -297,7 +320,7 @@ pub type C2RustUnnamed_3 = libc::c_uint;
 pub const FAILSAFE_SWITCH_MODE_STAGE2: C2RustUnnamed_3 = 2;
 pub const FAILSAFE_SWITCH_MODE_KILL: C2RustUnnamed_3 = 1;
 pub const FAILSAFE_SWITCH_MODE_STAGE1: C2RustUnnamed_3 = 0;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct failsafeState_s {
     pub events: int16_t,
@@ -424,10 +447,7 @@ pub static mut failsafeConfig_Registry: pgRegistry_t =
     unsafe {
         {
             let mut init =
-                pgRegistry_s{pgn:
-                                 (1 as libc::c_int |
-                                      (2 as libc::c_int) << 12 as libc::c_int)
-                                     as pgn_t,
+                pgRegistry_s{pgn: (1i32 | 2i32 << 12i32) as pgn_t,
                              size:
                                  (::core::mem::size_of::<failsafeConfig_t>()
                                       as libc::c_ulong |
@@ -460,14 +480,11 @@ pub static mut failsafeConfig_Registry: pgRegistry_t =
 pub static mut pgResetTemplate_failsafeConfig: failsafeConfig_t =
     {
         let mut init =
-            failsafeConfig_s{failsafe_throttle:
-                                 1000 as libc::c_int as uint16_t,
-                             failsafe_throttle_low_delay:
-                                 100 as libc::c_int as uint16_t,
-                             failsafe_delay: 4 as libc::c_int as uint8_t,
-                             failsafe_off_delay: 10 as libc::c_int as uint8_t,
-                             failsafe_switch_mode:
-                                 0 as libc::c_int as uint8_t,
+            failsafeConfig_s{failsafe_throttle: 1000i32 as uint16_t,
+                             failsafe_throttle_low_delay: 100i32 as uint16_t,
+                             failsafe_delay: 4i32 as uint8_t,
+                             failsafe_off_delay: 10i32 as uint8_t,
+                             failsafe_switch_mode: 0i32 as uint8_t,
                              failsafe_procedure:
                                  FAILSAFE_PROCEDURE_DROP_IT as libc::c_int as
                                      uint8_t,};
@@ -480,22 +497,21 @@ pub static mut pgResetTemplate_failsafeConfig: failsafeConfig_t =
 #[no_mangle]
 pub unsafe extern "C" fn failsafeReset() {
     failsafeState.rxDataFailurePeriod =
-        (200 as libc::c_int +
-             (*failsafeConfig()).failsafe_delay as libc::c_int *
-                 100 as libc::c_int) as uint32_t;
-    failsafeState.validRxDataReceivedAt = 0 as libc::c_int as uint32_t;
-    failsafeState.validRxDataFailedAt = 0 as libc::c_int as uint32_t;
-    failsafeState.throttleLowPeriod = 0 as libc::c_int as uint32_t;
-    failsafeState.landingShouldBeFinishedAt = 0 as libc::c_int as uint32_t;
-    failsafeState.receivingRxDataPeriod = 0 as libc::c_int as uint32_t;
-    failsafeState.receivingRxDataPeriodPreset = 0 as libc::c_int as uint32_t;
+        (200i32 + (*failsafeConfig()).failsafe_delay as libc::c_int * 100i32)
+            as uint32_t;
+    failsafeState.validRxDataReceivedAt = 0i32 as uint32_t;
+    failsafeState.validRxDataFailedAt = 0i32 as uint32_t;
+    failsafeState.throttleLowPeriod = 0i32 as uint32_t;
+    failsafeState.landingShouldBeFinishedAt = 0i32 as uint32_t;
+    failsafeState.receivingRxDataPeriod = 0i32 as uint32_t;
+    failsafeState.receivingRxDataPeriodPreset = 0i32 as uint32_t;
     failsafeState.phase = FAILSAFE_IDLE;
     failsafeState.rxLinkState = FAILSAFE_RXLINK_DOWN;
 }
 #[no_mangle]
 pub unsafe extern "C" fn failsafeInit() {
-    failsafeState.events = 0 as libc::c_int as int16_t;
-    failsafeState.monitoring = 0 as libc::c_int != 0;
+    failsafeState.events = 0i32 as int16_t;
+    failsafeState.monitoring = 0i32 != 0;
 }
 #[no_mangle]
 pub unsafe extern "C" fn failsafePhase() -> failsafePhase_e {
@@ -511,19 +527,18 @@ pub unsafe extern "C" fn failsafeIsActive() -> bool {
 }
 #[no_mangle]
 pub unsafe extern "C" fn failsafeStartMonitoring() {
-    failsafeState.monitoring = 1 as libc::c_int != 0;
+    failsafeState.monitoring = 1i32 != 0;
 }
 unsafe extern "C" fn failsafeShouldHaveCausedLandingByNow() -> bool {
     return millis() > failsafeState.landingShouldBeFinishedAt;
 }
 unsafe extern "C" fn failsafeActivate() {
-    failsafeState.active = 1 as libc::c_int != 0;
+    failsafeState.active = 1i32 != 0;
     failsafeState.phase = FAILSAFE_LANDING;
     enableFlightMode(FAILSAFE_MODE);
     failsafeState.landingShouldBeFinishedAt =
         millis().wrapping_add(((*failsafeConfig()).failsafe_off_delay as
-                                   libc::c_int * 100 as libc::c_int) as
-                                  libc::c_uint);
+                                   libc::c_int * 100i32) as libc::c_uint);
     failsafeState.events += 1;
 }
 unsafe extern "C" fn failsafeApplyControlInput() {
@@ -532,8 +547,8 @@ unsafe extern "C" fn failsafeApplyControlInput() {
         enableFlightMode(GPS_RESCUE_MODE);
         return
     }
-    let mut i: libc::c_int = 0 as libc::c_int;
-    while i < 3 as libc::c_int {
+    let mut i: libc::c_int = 0i32;
+    while i < 3i32 {
         rcData[i as usize] = (*rxConfig()).midrc as int16_t;
         i += 1
     }
@@ -549,8 +564,7 @@ pub unsafe extern "C" fn failsafeIsReceivingRxData() -> bool {
 pub unsafe extern "C" fn failsafeOnRxSuspend(mut usSuspendPeriod: uint32_t) {
     failsafeState.validRxDataReceivedAt =
         (failsafeState.validRxDataReceivedAt as
-             libc::c_uint).wrapping_add(usSuspendPeriod.wrapping_div(1000 as
-                                                                         libc::c_int
+             libc::c_uint).wrapping_add(usSuspendPeriod.wrapping_div(1000i32
                                                                          as
                                                                          libc::c_uint))
             as uint32_t as uint32_t;
@@ -568,7 +582,7 @@ pub unsafe extern "C" fn failsafeOnValidDataReceived() {
     failsafeState.validRxDataReceivedAt =
         millis(); // To prevent arming with no RX link
     if failsafeState.validRxDataReceivedAt.wrapping_sub(failsafeState.validRxDataFailedAt)
-           > 200 as libc::c_int as libc::c_uint {
+           > 200i32 as libc::c_uint {
         failsafeState.rxLinkState = FAILSAFE_RXLINK_UP;
         unsetArmingDisabled(ARMING_DISABLED_RX_FAILSAFE);
     };
@@ -593,7 +607,7 @@ pub unsafe extern "C" fn failsafeUpdateState() {
     if failsafeSwitchIsOn as libc::c_int != 0 &&
            (*failsafeConfig()).failsafe_switch_mode as libc::c_int ==
                FAILSAFE_SWITCH_MODE_STAGE2 as libc::c_int {
-        receivingRxData = 0 as libc::c_int != 0
+        receivingRxData = 0i32 != 0
         // force Stage2
     }
     // Beep RX lost only if we are not seeing data and we have been armed earlier
@@ -603,7 +617,7 @@ pub unsafe extern "C" fn failsafeUpdateState() {
     }
     let mut reprocessState: bool = false;
     loop  {
-        reprocessState = 0 as libc::c_int != 0;
+        reprocessState = 0i32 != 0;
         match failsafeState.phase as libc::c_uint {
             0 => {
                 if armed {
@@ -613,7 +627,7 @@ pub unsafe extern "C" fn failsafeUpdateState() {
                         failsafeState.throttleLowPeriod =
                             millis().wrapping_add(((*failsafeConfig()).failsafe_throttle_low_delay
                                                        as libc::c_int *
-                                                       100 as libc::c_int) as
+                                                       100i32) as
                                                       libc::c_uint)
                     }
                     // Kill switch logic (must be independent of receivingRxData to skip PERIOD_RXDATA_FAILURE delay before disarming)
@@ -626,9 +640,8 @@ pub unsafe extern "C" fn failsafeUpdateState() {
                         failsafeState.phase =
                             FAILSAFE_LANDED; // require 1 seconds of valid rxData
                         failsafeState.receivingRxDataPeriodPreset =
-                            (1 as libc::c_int * 1000 as libc::c_int) as
-                                uint32_t;
-                        reprocessState = 1 as libc::c_int != 0
+                            (1i32 * 1000i32) as uint32_t;
+                        reprocessState = 1i32 != 0
                     } else if !receivingRxData {
                         if millis() > failsafeState.throttleLowPeriod &&
                                (*failsafeConfig()).failsafe_procedure as
@@ -641,12 +654,11 @@ pub unsafe extern "C" fn failsafeUpdateState() {
                             failsafeState.phase =
                                 FAILSAFE_LANDED; // skip auto-landing procedure
                             failsafeState.receivingRxDataPeriodPreset =
-                                (3 as libc::c_int * 1000 as libc::c_int) as
-                                    uint32_t
+                                (3i32 * 1000i32) as uint32_t
                         } else {
                             failsafeState.phase = FAILSAFE_RX_LOSS_DETECTED
                         }
-                        reprocessState = 1 as libc::c_int != 0
+                        reprocessState = 1i32 != 0
                     }
                 } else {
                     // When NOT armed, show rxLinkState of failsafe switch in GUI (failsafe mode)
@@ -654,8 +666,7 @@ pub unsafe extern "C" fn failsafeUpdateState() {
                         enableFlightMode(FAILSAFE_MODE);
                     } else { disableFlightMode(FAILSAFE_MODE); }
                     // Throttle low period expired (= low long enough for JustDisarm)
-                    failsafeState.throttleLowPeriod =
-                        0 as libc::c_int as uint32_t
+                    failsafeState.throttleLowPeriod = 0i32 as uint32_t
                 }
             }
             1 => {
@@ -674,27 +685,25 @@ pub unsafe extern "C" fn failsafeUpdateState() {
                             failsafeState.phase =
                                 FAILSAFE_LANDED; // require 3 seconds of valid rxData
                             failsafeState.receivingRxDataPeriodPreset =
-                                (3 as libc::c_int * 1000 as libc::c_int) as
-                                    uint32_t
+                                (3i32 * 1000i32) as uint32_t
                         }
                         2 => {
                             failsafeActivate(); // require 30 seconds of valid rxData
                             failsafeState.phase =
                                 FAILSAFE_GPS_RESCUE; // require 30 seconds of valid rxData
                             failsafeState.receivingRxDataPeriodPreset =
-                                (3 as libc::c_int * 1000 as libc::c_int) as
-                                    uint32_t
+                                (3i32 * 1000i32) as uint32_t
                         }
                         _ => { }
                     }
                 } // To prevent accidently rearming by an intermittent rx link
-                reprocessState = 1 as libc::c_int != 0
+                reprocessState = 1i32 != 0
             }
             2 => {
                 if receivingRxData {
                     failsafeState.phase =
                         FAILSAFE_RX_LOSS_RECOVERED; // set required period of valid rxData
-                    reprocessState = 1 as libc::c_int != 0
+                    reprocessState = 1i32 != 0
                 }
                 if armed {
                     failsafeApplyControlInput();
@@ -704,24 +713,24 @@ pub unsafe extern "C" fn failsafeUpdateState() {
                        || crashRecoveryModeActive() as libc::c_int != 0 ||
                        !armed {
                     failsafeState.receivingRxDataPeriodPreset =
-                        (30 as libc::c_int * 1000 as libc::c_int) as uint32_t;
+                        (30i32 * 1000i32) as uint32_t;
                     failsafeState.phase = FAILSAFE_LANDED;
-                    reprocessState = 1 as libc::c_int != 0
+                    reprocessState = 1i32 != 0
                 }
             }
             6 => {
                 if receivingRxData {
                     failsafeState.phase = FAILSAFE_RX_LOSS_RECOVERED;
-                    reprocessState = 1 as libc::c_int != 0
+                    reprocessState = 1i32 != 0
                 }
                 if armed {
                     failsafeApplyControlInput();
                     beeperMode = BEEPER_RX_LOST_LANDING
                 } else {
                     failsafeState.receivingRxDataPeriodPreset =
-                        (30 as libc::c_int * 1000 as libc::c_int) as uint32_t;
+                        (30i32 * 1000i32) as uint32_t;
                     failsafeState.phase = FAILSAFE_LANDED;
-                    reprocessState = 1 as libc::c_int != 0
+                    reprocessState = 1i32 != 0
                 }
             }
             3 => {
@@ -730,7 +739,7 @@ pub unsafe extern "C" fn failsafeUpdateState() {
                 failsafeState.receivingRxDataPeriod =
                     millis().wrapping_add(failsafeState.receivingRxDataPeriodPreset);
                 failsafeState.phase = FAILSAFE_RX_LOSS_MONITORING;
-                reprocessState = 1 as libc::c_int != 0
+                reprocessState = 1i32 != 0
             }
             4 => {
                 // Monitoring the rx link to allow rearming when it has become good for > `receivingRxDataPeriodPreset` time.
@@ -742,7 +751,7 @@ pub unsafe extern "C" fn failsafeUpdateState() {
                                      0) {
                             unsetArmingDisabled(ARMING_DISABLED_FAILSAFE);
                             failsafeState.phase = FAILSAFE_RX_LOSS_RECOVERED;
-                            reprocessState = 1 as libc::c_int != 0
+                            reprocessState = 1i32 != 0
                         }
                     }
                 } else {
@@ -756,13 +765,12 @@ pub unsafe extern "C" fn failsafeUpdateState() {
                 // Because that would have the effect of shutting down failsafe handling on intermittent connections.
                 failsafeState.throttleLowPeriod =
                     millis().wrapping_add(((*failsafeConfig()).failsafe_throttle_low_delay
-                                               as libc::c_int *
-                                               100 as libc::c_int) as
+                                               as libc::c_int * 100i32) as
                                               libc::c_uint);
                 failsafeState.phase = FAILSAFE_IDLE;
-                failsafeState.active = 0 as libc::c_int != 0;
+                failsafeState.active = 0i32 != 0;
                 disableFlightMode(FAILSAFE_MODE);
-                reprocessState = 1 as libc::c_int != 0
+                reprocessState = 1i32 != 0
             }
             _ => { }
         }

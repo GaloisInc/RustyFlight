@@ -1,4 +1,5 @@
-use ::libc;
+use core;
+use libc;
 pub type __uint32_t = libc::c_uint;
 pub type uint32_t = __uint32_t;
 #[no_mangle]

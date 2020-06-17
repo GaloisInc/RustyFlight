@@ -146,8 +146,19 @@ sed -i -e 's/"-c"/"-c", "-fblocks"/g' compile_commands.json
 
 ## Rebuilding `src`
 
-TBD. The goal, however, is that `src` contains the actual, hand-refactored
-source code.
+`src-original` contains known good transpiled code. It *should* be identical to the freshly transpiled code, but we include it for reference.
+
+### SITL
+
+Translation completes with some warnings and no errors. There are some duplicate symbols, we remove them using `replace.sh` which contains some clever 
+perl calls for string substitution. `_cargo_sitl` contains the linker script, cargo target config and eeprom file so the SITL binary can start.
+
+SITL target runs, and can be tested in Gazebo, as described below.
+
+
+### SPRACINGF3
+
+TBD
 
 ## Gazebo and SITL target
 Although [here are some basic instructions](https://github.com/cleanflight/cleanflight/tree/master/src/main/target/SITL) there are some extra steps that need to happen. [This video](https://www.youtube.com/watch?v=Qq6D3rDxgnk) might provide some insights as well.

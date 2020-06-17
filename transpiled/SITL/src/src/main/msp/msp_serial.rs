@@ -1,4 +1,5 @@
-use ::libc;
+use core;
+use libc;
 extern "C" {
     #[no_mangle]
     fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong)
@@ -33,14 +34,6 @@ extern "C" {
     fn serialBeginWrite(instance: *mut serialPort_t);
     #[no_mangle]
     fn serialEndWrite(instance: *mut serialPort_t);
-    // serial port identifiers are now fixed, these values are used by MSP commands.
-    //
-// runtime
-//
-    //
-// configuration
-//
-    // not used for all telemetry systems, e.g. HoTT only works at 19200.
     // which byte is used to reboot. Default 'R', could be changed carefully to something else.
     //
 // configuration
@@ -104,7 +97,7 @@ pub type uint_fast16_t = libc::c_ulong;
  *
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct sbuf_s {
     pub ptr: *mut uint8_t,
@@ -144,7 +137,7 @@ pub const MSP_RESULT_ACK: mspResult_e = 1;
 pub type mspDirection_e = libc::c_uint;
 pub const MSP_DIRECTION_REQUEST: mspDirection_e = 1;
 pub const MSP_DIRECTION_REPLY: mspDirection_e = 0;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct mspPacket_s {
     pub buf: sbuf_t,
@@ -154,7 +147,7 @@ pub struct mspPacket_s {
     pub direction: uint8_t,
 }
 pub type mspPacket_t = mspPacket_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct serialPort_s {
     pub vTable: *const serialPortVTable,
@@ -172,9 +165,9 @@ pub struct serialPort_s {
     pub rxCallback: serialReceiveCallbackPtr,
     pub rxCallbackData: *mut libc::c_void,
     pub identifier: uint8_t,
+    // data pointer must be first (sbuf_t* is equivalent to uint8_t **)
+    // msp post process function, used for gracefully handling reboots, etc.
 }
-// data pointer must be first (sbuf_t* is equivalent to uint8_t **)
-// Define known line control states which may be passed up by underlying serial driver callback
 pub type serialReceiveCallbackPtr
     =
     Option<unsafe extern "C" fn(_: uint16_t, _: *mut libc::c_void) -> ()>;
@@ -194,7 +187,7 @@ pub type portMode_e = libc::c_uint;
 pub const MODE_RXTX: portMode_e = 3;
 pub const MODE_TX: portMode_e = 2;
 pub const MODE_RX: portMode_e = 1;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct serialPortVTable {
     pub serialWrite: Option<unsafe extern "C" fn(_: *mut serialPort_t,
@@ -237,12 +230,10 @@ pub struct serialPortVTable {
     pub beginWrite: Option<unsafe extern "C" fn(_: *mut serialPort_t) -> ()>,
     pub endWrite: Option<unsafe extern "C" fn(_: *mut serialPort_t) -> ()>,
 }
-// used by serial drivers to return frames to app
 pub type serialPort_t = serialPort_s;
 pub type mspPostProcessFnPtr
     =
     Option<unsafe extern "C" fn(_: *mut serialPort_s) -> ()>;
-// msp post process function, used for gracefully handling reboots, etc.
 pub type mspProcessCommandFnPtr
     =
     Option<unsafe extern "C" fn(_: *mut mspPacket_t, _: *mut mspPacket_t,
@@ -250,7 +241,7 @@ pub type mspProcessCommandFnPtr
 pub type mspProcessReplyFnPtr
     =
     Option<unsafe extern "C" fn(_: *mut mspPacket_t) -> ()>;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct serialConfig_s {
     pub portConfigs: [serialPortConfig_t; 8],
@@ -258,7 +249,7 @@ pub struct serialConfig_s {
     pub reboot_character: uint8_t,
 }
 pub type serialPortConfig_t = serialPortConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct serialPortConfig_s {
     pub functionMask: uint16_t,
@@ -322,28 +313,6 @@ pub const MSP_PACKET_COMMAND: mspPacketType_e = 0;
 pub type mspEvaluateNonMspData_e = libc::c_uint;
 pub const MSP_SKIP_NON_MSP_DATA: mspEvaluateNonMspData_e = 1;
 pub const MSP_EVALUATE_NON_MSP_DATA: mspEvaluateNonMspData_e = 0;
-pub type mspPendingSystemRequest_e = libc::c_uint;
-pub const MSP_PENDING_CLI: mspPendingSystemRequest_e = 2;
-pub const MSP_PENDING_BOOTLOADER: mspPendingSystemRequest_e = 1;
-pub const MSP_PENDING_NONE: mspPendingSystemRequest_e = 0;
-#[derive(Copy, Clone)]
-#[repr(C, packed)]
-pub struct mspHeaderV1_t {
-    pub size: uint8_t,
-    pub cmd: uint8_t,
-}
-#[derive(Copy, Clone)]
-#[repr(C, packed)]
-pub struct mspHeaderJUMBO_t {
-    pub size: uint16_t,
-}
-#[derive(Copy, Clone)]
-#[repr(C, packed)]
-pub struct mspHeaderV2_t {
-    pub flags: uint8_t,
-    pub cmd: uint16_t,
-    pub size: uint16_t,
-}
 /*
  * This file is part of Cleanflight and Betaflight.
  *
@@ -364,7 +333,29 @@ pub struct mspHeaderV2_t {
  * If not, see <http://www.gnu.org/licenses/>.
  */
 // Each MSP port requires state and a receive buffer, revisit this default if someone needs more than 3 MSP ports.
-#[derive(Copy, Clone)]
+pub type mspPendingSystemRequest_e = libc::c_uint;
+pub const MSP_PENDING_CLI: mspPendingSystemRequest_e = 2;
+pub const MSP_PENDING_BOOTLOADER: mspPendingSystemRequest_e = 1;
+pub const MSP_PENDING_NONE: mspPendingSystemRequest_e = 0;
+#[derive ( Copy, Clone )]
+#[repr(C, packed)]
+pub struct mspHeaderV1_t {
+    pub size: uint8_t,
+    pub cmd: uint8_t,
+}
+#[derive ( Copy, Clone )]
+#[repr(C, packed)]
+pub struct mspHeaderJUMBO_t {
+    pub size: uint16_t,
+}
+#[derive ( Copy, Clone )]
+#[repr(C, packed)]
+pub struct mspHeaderV2_t {
+    pub flags: uint8_t,
+    pub cmd: uint16_t,
+    pub size: uint16_t,
+}
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct mspPort_s {
     pub port: *mut serialPort_s,
@@ -383,6 +374,7 @@ pub struct mspPort_s {
     pub sharedWithTelemetry: bool,
 }
 pub type mspPort_t = mspPort_s;
+// null when port unused.
 /*
  * This file is part of Cleanflight and Betaflight.
  *
@@ -458,18 +450,17 @@ static mut mspPorts: [mspPort_t; 3] =
 unsafe extern "C" fn resetMspPort(mut mspPortToReset: *mut mspPort_t,
                                   mut serialPort: *mut serialPort_t,
                                   mut sharedWithTelemetry: bool) {
-    memset(mspPortToReset as *mut libc::c_void, 0 as libc::c_int,
+    memset(mspPortToReset as *mut libc::c_void, 0i32,
            ::core::mem::size_of::<mspPort_t>() as libc::c_ulong);
     (*mspPortToReset).port = serialPort;
     (*mspPortToReset).sharedWithTelemetry = sharedWithTelemetry;
 }
 #[no_mangle]
 pub unsafe extern "C" fn mspSerialAllocatePorts() {
-    let mut portIndex: uint8_t = 0 as libc::c_int as uint8_t;
+    let mut portIndex: uint8_t = 0i32 as uint8_t;
     let mut portConfig: *mut serialPortConfig_t =
         findSerialPortConfig(FUNCTION_MSP);
-    while !portConfig.is_null() &&
-              (portIndex as libc::c_int) < 3 as libc::c_int {
+    while !portConfig.is_null() && (portIndex as libc::c_int) < 3i32 {
         let mut mspPort: *mut mspPort_t =
             &mut *mspPorts.as_mut_ptr().offset(portIndex as isize) as
                 *mut mspPort_t;
@@ -508,14 +499,14 @@ pub unsafe extern "C" fn mspSerialAllocatePorts() {
 #[no_mangle]
 pub unsafe extern "C" fn mspSerialReleasePortIfAllocated(mut serialPort:
                                                              *mut serialPort_t) {
-    let mut portIndex: uint8_t = 0 as libc::c_int as uint8_t;
-    while (portIndex as libc::c_int) < 3 as libc::c_int {
+    let mut portIndex: uint8_t = 0i32 as uint8_t;
+    while (portIndex as libc::c_int) < 3i32 {
         let mut candidateMspPort: *mut mspPort_t =
             &mut *mspPorts.as_mut_ptr().offset(portIndex as isize) as
                 *mut mspPort_t;
         if (*candidateMspPort).port == serialPort {
             closeSerialPort(serialPort);
-            memset(candidateMspPort as *mut libc::c_void, 0 as libc::c_int,
+            memset(candidateMspPort as *mut libc::c_void, 0i32,
                    ::core::mem::size_of::<mspPort_t>() as libc::c_ulong);
         }
         portIndex = portIndex.wrapping_add(1)
@@ -523,14 +514,14 @@ pub unsafe extern "C" fn mspSerialReleasePortIfAllocated(mut serialPort:
 }
 #[no_mangle]
 pub unsafe extern "C" fn mspSerialReleaseSharedTelemetryPorts() {
-    let mut portIndex: uint8_t = 0 as libc::c_int as uint8_t;
-    while (portIndex as libc::c_int) < 3 as libc::c_int {
+    let mut portIndex: uint8_t = 0i32 as uint8_t;
+    while (portIndex as libc::c_int) < 3i32 {
         let mut candidateMspPort: *mut mspPort_t =
             &mut *mspPorts.as_mut_ptr().offset(portIndex as isize) as
                 *mut mspPort_t;
         if (*candidateMspPort).sharedWithTelemetry {
             closeSerialPort((*candidateMspPort).port);
-            memset(candidateMspPort as *mut libc::c_void, 0 as libc::c_int,
+            memset(candidateMspPort as *mut libc::c_void, 0i32,
                    ::core::mem::size_of::<mspPort_t>() as libc::c_ulong);
         }
         portIndex = portIndex.wrapping_add(1)
@@ -541,9 +532,9 @@ unsafe extern "C" fn mspSerialProcessReceivedData(mut mspPort: *mut mspPort_t,
     match (*mspPort).c_state as libc::c_uint {
         1 => {
             // Waiting for 'M' (MSPv1 / MSPv2_over_v1) or 'X' (MSPv2 native)
-            (*mspPort).offset = 0 as libc::c_int as uint_fast16_t;
-            (*mspPort).checksum1 = 0 as libc::c_int as uint8_t;
-            (*mspPort).checksum2 = 0 as libc::c_int as uint8_t;
+            (*mspPort).offset = 0i32 as uint_fast16_t;
+            (*mspPort).checksum1 = 0i32 as uint8_t;
+            (*mspPort).checksum2 = 0i32 as uint8_t;
             match c as libc::c_int {
                 77 => {
                     (*mspPort).c_state = MSP_HEADER_M;
@@ -584,19 +575,16 @@ unsafe extern "C" fn mspSerialProcessReceivedData(mut mspPort: *mut mspPort_t,
             if (*mspPort).offset ==
                    ::core::mem::size_of::<mspHeaderV1_t>() as libc::c_ulong {
                 let mut hdr: *mut mspHeaderV1_t =
-                    &mut *(*mspPort).inBuf.as_mut_ptr().offset(0 as
-                                                                   libc::c_int
-                                                                   as isize)
-                        as *mut uint8_t as *mut mspHeaderV1_t;
+                    &mut *(*mspPort).inBuf.as_mut_ptr().offset(0) as
+                        *mut uint8_t as *mut mspHeaderV1_t;
                 // Check incoming buffer size limit
-                if (*hdr).size as libc::c_int > 192 as libc::c_int {
+                if (*hdr).size as libc::c_int > 192i32 {
                     (*mspPort).c_state = MSP_IDLE
-                } else if (*hdr).cmd as libc::c_int == 255 as libc::c_int {
+                } else if (*hdr).cmd as libc::c_int == 255i32 {
                     // MSPv1 payload must be big enough to hold V2 header + extra checksum
                     if (*hdr).size as libc::c_ulong >=
                            (::core::mem::size_of::<mspHeaderV2_t>() as
-                                libc::c_ulong).wrapping_add(1 as libc::c_int
-                                                                as
+                                libc::c_ulong).wrapping_add(1i32 as
                                                                 libc::c_ulong)
                        {
                         (*mspPort).mspVersion = MSP_V2_OVER_V1;
@@ -605,13 +593,12 @@ unsafe extern "C" fn mspSerialProcessReceivedData(mut mspPort: *mut mspPort_t,
                 } else {
                     (*mspPort).dataSize = (*hdr).size as uint_fast16_t;
                     (*mspPort).cmdMSP = (*hdr).cmd as uint16_t;
-                    (*mspPort).cmdFlags = 0 as libc::c_int as uint8_t;
+                    (*mspPort).cmdFlags = 0i32 as uint8_t;
                     // If no payload - jump to checksum byte
                     (*mspPort).offset =
-                        0 as libc::c_int as uint_fast16_t; // re-use buffer
+                        0i32 as uint_fast16_t; // re-use buffer
                     (*mspPort).c_state =
-                        if (*mspPort).dataSize >
-                               0 as libc::c_int as libc::c_ulong {
+                        if (*mspPort).dataSize > 0i32 as libc::c_ulong {
                             MSP_PAYLOAD_V1 as libc::c_int
                         } else { MSP_CHECKSUM_V1 as libc::c_int } as
                             mspState_e
@@ -656,10 +643,9 @@ unsafe extern "C" fn mspSerialProcessReceivedData(mut mspPort: *mut mspPort_t,
                 (*mspPort).dataSize = (*hdrv2).size as uint_fast16_t;
                 (*mspPort).cmdMSP = (*hdrv2).cmd;
                 (*mspPort).cmdFlags = (*hdrv2).flags;
-                (*mspPort).offset = 0 as libc::c_int as uint_fast16_t;
+                (*mspPort).offset = 0i32 as uint_fast16_t;
                 (*mspPort).c_state =
-                    if (*mspPort).dataSize > 0 as libc::c_int as libc::c_ulong
-                       {
+                    if (*mspPort).dataSize > 0i32 as libc::c_ulong {
                         MSP_PAYLOAD_V2_OVER_V1 as libc::c_int
                     } else { MSP_CHECKSUM_V2_OVER_V1 as libc::c_int } as
                         mspState_e
@@ -694,17 +680,14 @@ unsafe extern "C" fn mspSerialProcessReceivedData(mut mspPort: *mut mspPort_t,
             if (*mspPort).offset ==
                    ::core::mem::size_of::<mspHeaderV2_t>() as libc::c_ulong {
                 let mut hdrv2_0: *mut mspHeaderV2_t =
-                    &mut *(*mspPort).inBuf.as_mut_ptr().offset(0 as
-                                                                   libc::c_int
-                                                                   as isize)
-                        as *mut uint8_t as *mut mspHeaderV2_t;
+                    &mut *(*mspPort).inBuf.as_mut_ptr().offset(0) as
+                        *mut uint8_t as *mut mspHeaderV2_t;
                 (*mspPort).dataSize = (*hdrv2_0).size as uint_fast16_t;
                 (*mspPort).cmdMSP = (*hdrv2_0).cmd;
                 (*mspPort).cmdFlags = (*hdrv2_0).flags;
-                (*mspPort).offset = 0 as libc::c_int as uint_fast16_t;
+                (*mspPort).offset = 0i32 as uint_fast16_t;
                 (*mspPort).c_state =
-                    if (*mspPort).dataSize > 0 as libc::c_int as libc::c_ulong
-                       {
+                    if (*mspPort).dataSize > 0i32 as libc::c_ulong {
                         MSP_PAYLOAD_V2_NATIVE as libc::c_int
                     } else { MSP_CHECKSUM_V2_NATIVE as libc::c_int } as
                         mspState_e
@@ -728,10 +711,10 @@ unsafe extern "C" fn mspSerialProcessReceivedData(mut mspPort: *mut mspPort_t,
             // Waiting for '$' character
             if c as libc::c_int == '$' as i32 {
                 (*mspPort).c_state = MSP_HEADER_START
-            } else { return 0 as libc::c_int != 0 }
+            } else { return 0i32 != 0 }
         }
     }
-    return 1 as libc::c_int != 0;
+    return 1i32 != 0;
 }
 unsafe extern "C" fn mspSerialChecksumBuf(mut checksum: uint8_t,
                                           mut data: *const uint8_t,
@@ -739,7 +722,7 @@ unsafe extern "C" fn mspSerialChecksumBuf(mut checksum: uint8_t,
     loop  {
         let fresh6 = len;
         len = len - 1;
-        if !(fresh6 > 0 as libc::c_int) { break ; }
+        if !(fresh6 > 0i32) { break ; }
         let fresh7 = data;
         data = data.offset(1);
         checksum =
@@ -763,7 +746,7 @@ unsafe extern "C" fn mspSerialSendFrame(mut msp: *mut mspPort_t,
     if !isSerialTransmitBufferEmpty((*msp).port) &&
            (serialTxBytesFree((*msp).port) as libc::c_int) < totalFrameLength
        {
-        return 0 as libc::c_int
+        return 0i32
     }
     // Transmit frame
     serialBeginWrite((*msp).port);
@@ -789,8 +772,8 @@ unsafe extern "C" fn mspSerialEncode(mut msp: *mut mspPort_t,
          0];
     let mut crcBuf: [uint8_t; 2] = [0; 2];
     let mut checksum: uint8_t = 0;
-    let mut hdrLen: libc::c_int = 3 as libc::c_int;
-    let mut crcLen: libc::c_int = 0 as libc::c_int;
+    let mut hdrLen: libc::c_int = 3i32;
+    let mut crcLen: libc::c_int = 0i32;
     if mspVersion as libc::c_uint == MSP_V1 as libc::c_int as libc::c_uint {
         let mut hdrV1: *mut mspHeaderV1_t =
             &mut *hdrBuf.as_mut_ptr().offset(hdrLen as isize) as *mut uint8_t
@@ -802,7 +785,7 @@ unsafe extern "C" fn mspSerialEncode(mut msp: *mut mspPort_t,
                 libc::c_int as libc::c_int;
         (*hdrV1).cmd = (*packet).cmd as uint8_t;
         // Add JUMBO-frame header if necessary
-        if dataLen >= 255 as libc::c_int {
+        if dataLen >= 255i32 {
             let mut hdrJUMBO: *mut mspHeaderJUMBO_t =
                 &mut *hdrBuf.as_mut_ptr().offset(hdrLen as isize) as
                     *mut uint8_t as *mut mspHeaderJUMBO_t;
@@ -811,17 +794,15 @@ unsafe extern "C" fn mspSerialEncode(mut msp: *mut mspPort_t,
                      libc::c_ulong).wrapping_add(::core::mem::size_of::<mspHeaderJUMBO_t>()
                                                      as libc::c_ulong) as
                     libc::c_int as libc::c_int;
-            (*hdrV1).size = 255 as libc::c_int as uint8_t;
+            (*hdrV1).size = 255i32 as uint8_t;
             (*hdrJUMBO).size = dataLen as uint16_t
         } else { (*hdrV1).size = dataLen as uint8_t }
         // Pre-calculate CRC
         checksum =
-            mspSerialChecksumBuf(0 as libc::c_int as uint8_t,
-                                 hdrBuf.as_mut_ptr().offset(3 as libc::c_int
-                                                                as isize),
+            mspSerialChecksumBuf(0i32 as uint8_t,
+                                 hdrBuf.as_mut_ptr().offset(3),
                                  hdrLen -
-                                     3 as
-                                         libc::c_int); // MSPv2 header + data payload + MSPv2 checksum
+                                     3i32); // MSPv2 header + data payload + MSPv2 checksum
         checksum =
             mspSerialChecksumBuf(checksum, sbufPtr(&mut (*packet).buf),
                                  dataLen);
@@ -849,15 +830,13 @@ unsafe extern "C" fn mspSerialEncode(mut msp: *mut mspPort_t,
         let v1PayloadSize: libc::c_int =
             (::core::mem::size_of::<mspHeaderV2_t>() as
                  libc::c_ulong).wrapping_add(dataLen as
-                                                 libc::c_ulong).wrapping_add(1
-                                                                                 as
-                                                                                 libc::c_int
+                                                 libc::c_ulong).wrapping_add(1i32
                                                                                  as
                                                                                  libc::c_ulong)
                 as libc::c_int;
-        (*hdrV1_0).cmd = 255 as libc::c_int as uint8_t;
+        (*hdrV1_0).cmd = 255i32 as uint8_t;
         // Add JUMBO-frame header if necessary
-        if v1PayloadSize >= 255 as libc::c_int {
+        if v1PayloadSize >= 255i32 {
             let mut hdrJUMBO_0: *mut mspHeaderJUMBO_t =
                 &mut *hdrBuf.as_mut_ptr().offset(hdrLen as isize) as
                     *mut uint8_t as *mut mspHeaderJUMBO_t;
@@ -866,7 +845,7 @@ unsafe extern "C" fn mspSerialEncode(mut msp: *mut mspPort_t,
                      libc::c_ulong).wrapping_add(::core::mem::size_of::<mspHeaderJUMBO_t>()
                                                      as libc::c_ulong) as
                     libc::c_int as libc::c_int;
-            (*hdrV1_0).size = 255 as libc::c_int as uint8_t;
+            (*hdrV1_0).size = 255i32 as uint8_t;
             (*hdrJUMBO_0).size = v1PayloadSize as uint16_t
         } else { (*hdrV1_0).size = v1PayloadSize as uint8_t }
         // Fill V2 header
@@ -875,7 +854,7 @@ unsafe extern "C" fn mspSerialEncode(mut msp: *mut mspPort_t,
         (*hdrV2).size = dataLen as uint16_t;
         // V2 CRC: only V2 header + data payload
         checksum =
-            crc8_dvb_s2_update(0 as libc::c_int as uint8_t,
+            crc8_dvb_s2_update(0i32 as uint8_t,
                                hdrV2 as *mut uint8_t as *const libc::c_void,
                                ::core::mem::size_of::<mspHeaderV2_t>() as
                                    libc::c_ulong as uint32_t);
@@ -888,10 +867,9 @@ unsafe extern "C" fn mspSerialEncode(mut msp: *mut mspPort_t,
         crcBuf[fresh9 as usize] = checksum;
         // V1 CRC: All headers + data payload + V2 CRC byte
         checksum =
-            mspSerialChecksumBuf(0 as libc::c_int as uint8_t,
-                                 hdrBuf.as_mut_ptr().offset(3 as libc::c_int
-                                                                as isize),
-                                 hdrLen - 3 as libc::c_int);
+            mspSerialChecksumBuf(0i32 as uint8_t,
+                                 hdrBuf.as_mut_ptr().offset(3),
+                                 hdrLen - 3i32);
         checksum =
             mspSerialChecksumBuf(checksum, sbufPtr(&mut (*packet).buf),
                                  dataLen);
@@ -914,7 +892,7 @@ unsafe extern "C" fn mspSerialEncode(mut msp: *mut mspPort_t,
         (*hdrV2_0).cmd = (*packet).cmd as uint16_t;
         (*hdrV2_0).size = dataLen as uint16_t;
         checksum =
-            crc8_dvb_s2_update(0 as libc::c_int as uint8_t,
+            crc8_dvb_s2_update(0i32 as uint8_t,
                                hdrV2_0 as *mut uint8_t as *const libc::c_void,
                                ::core::mem::size_of::<mspHeaderV2_t>() as
                                    libc::c_ulong as uint32_t);
@@ -927,7 +905,7 @@ unsafe extern "C" fn mspSerialEncode(mut msp: *mut mspPort_t,
         crcBuf[fresh11 as usize] = checksum
     } else {
         // Shouldn't get here
-        return 0 as libc::c_int
+        return 0i32
     }
     // Send the frame
     return mspSerialSendFrame(msp, hdrBuf.as_mut_ptr(), hdrLen,
@@ -958,9 +936,9 @@ unsafe extern "C" fn mspSerialProcessReceivedCommand(mut msp: *mut mspPort_t,
                                                        as *mut uint8_t,};
                                     init
                                 },
-                            cmd: -(1 as libc::c_int) as int16_t,
-                            flags: 0 as libc::c_int as uint8_t,
-                            result: 0 as libc::c_int as int16_t,
+                            cmd: -1i32 as int16_t,
+                            flags: 0i32 as uint8_t,
+                            result: 0i32 as int16_t,
                             direction:
                                 MSP_DIRECTION_REPLY as libc::c_int as
                                     uint8_t,};
@@ -982,7 +960,7 @@ unsafe extern "C" fn mspSerialProcessReceivedCommand(mut msp: *mut mspPort_t,
                                 },
                             cmd: (*msp).cmdMSP as int16_t,
                             flags: (*msp).cmdFlags,
-                            result: 0 as libc::c_int as int16_t,
+                            result: 0i32 as int16_t,
                             direction:
                                 MSP_DIRECTION_REQUEST as libc::c_int as
                                     uint8_t,};
@@ -1016,7 +994,7 @@ unsafe extern "C" fn mspProcessPendingRequest(mut mspPort: *mut mspPort_t) {
     if (*mspPort).pendingRequest as libc::c_uint ==
            MSP_PENDING_NONE as libc::c_int as libc::c_uint ||
            millis().wrapping_sub((*mspPort).lastActivityMs) <
-               100 as libc::c_int as libc::c_uint {
+               100i32 as libc::c_uint {
         return
     }
     match (*mspPort).pendingRequest as libc::c_uint {
@@ -1043,7 +1021,7 @@ unsafe extern "C" fn mspSerialProcessReceivedReply(mut msp: *mut mspPort_t,
                                 },
                             cmd: (*msp).cmdMSP as int16_t,
                             flags: 0,
-                            result: 0 as libc::c_int as int16_t,
+                            result: 0i32 as int16_t,
                             direction: 0,};
             init
         };
@@ -1062,8 +1040,8 @@ pub unsafe extern "C" fn mspSerialProcess(mut evaluateNonMspData:
                                               mspProcessCommandFnPtr,
                                           mut mspProcessReplyFn:
                                               mspProcessReplyFnPtr) {
-    let mut portIndex: uint8_t = 0 as libc::c_int as uint8_t;
-    while (portIndex as libc::c_int) < 3 as libc::c_int {
+    let mut portIndex: uint8_t = 0i32 as uint8_t;
+    while (portIndex as libc::c_int) < 3i32 {
         let mspPort: *mut mspPort_t =
             &mut *mspPorts.as_mut_ptr().offset(portIndex as isize) as
                 *mut mspPort_t;
@@ -1114,23 +1092,21 @@ pub unsafe extern "C" fn mspSerialProcess(mut evaluateNonMspData:
 }
 #[no_mangle]
 pub unsafe extern "C" fn mspSerialWaiting() -> bool {
-    let mut portIndex: uint8_t = 0 as libc::c_int as uint8_t;
-    while (portIndex as libc::c_int) < 3 as libc::c_int {
+    let mut portIndex: uint8_t = 0i32 as uint8_t;
+    while (portIndex as libc::c_int) < 3i32 {
         let mspPort: *mut mspPort_t =
             &mut *mspPorts.as_mut_ptr().offset(portIndex as isize) as
                 *mut mspPort_t;
         if !(*mspPort).port.is_null() {
-            if serialRxBytesWaiting((*mspPort).port) != 0 {
-                return 1 as libc::c_int != 0
-            }
+            if serialRxBytesWaiting((*mspPort).port) != 0 { return 1i32 != 0 }
         }
         portIndex = portIndex.wrapping_add(1)
     }
-    return 0 as libc::c_int != 0;
+    return 0i32 != 0;
 }
 #[no_mangle]
 pub unsafe extern "C" fn mspSerialInit() {
-    memset(mspPorts.as_mut_ptr() as *mut libc::c_void, 0 as libc::c_int,
+    memset(mspPorts.as_mut_ptr() as *mut libc::c_void, 0i32,
            ::core::mem::size_of::<[mspPort_t; 3]>() as libc::c_ulong);
     mspSerialAllocatePorts();
 }
@@ -1140,9 +1116,9 @@ pub unsafe extern "C" fn mspSerialPush(mut cmd: uint8_t,
                                        mut datalen: libc::c_int,
                                        mut direction: mspDirection_e)
  -> libc::c_int {
-    let mut ret: libc::c_int = 0 as libc::c_int;
-    let mut portIndex: libc::c_int = 0 as libc::c_int;
-    while portIndex < 3 as libc::c_int {
+    let mut ret: libc::c_int = 0i32;
+    let mut portIndex: libc::c_int = 0i32;
+    while portIndex < 3i32 {
         let mspPort: *mut mspPort_t =
             &mut *mspPorts.as_mut_ptr().offset(portIndex as isize) as
                 *mut mspPort_t;
@@ -1165,7 +1141,7 @@ pub unsafe extern "C" fn mspSerialPush(mut cmd: uint8_t,
                                             },
                                         cmd: cmd as int16_t,
                                         flags: 0,
-                                        result: 0 as libc::c_int as int16_t,
+                                        result: 0i32 as int16_t,
                                         direction: direction as uint8_t,};
                         init
                     };
@@ -1179,9 +1155,9 @@ pub unsafe extern "C" fn mspSerialPush(mut cmd: uint8_t,
 }
 #[no_mangle]
 pub unsafe extern "C" fn mspSerialTxBytesFree() -> uint32_t {
-    let mut ret: uint32_t = 4294967295 as libc::c_uint;
-    let mut portIndex: libc::c_int = 0 as libc::c_int;
-    while portIndex < 3 as libc::c_int {
+    let mut ret: uint32_t = 4294967295u32;
+    let mut portIndex: libc::c_int = 0i32;
+    while portIndex < 3i32 {
         let mspPort: *mut mspPort_t =
             &mut *mspPorts.as_mut_ptr().offset(portIndex as isize) as
                 *mut mspPort_t;

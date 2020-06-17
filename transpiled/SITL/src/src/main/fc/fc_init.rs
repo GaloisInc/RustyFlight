@@ -1,4 +1,5 @@
-use ::libc;
+use core;
+use libc;
 extern "C" {
     #[no_mangle]
     fn strncasecmp(_: *const libc::c_char, _: *const libc::c_char,
@@ -39,10 +40,10 @@ extern "C" {
     #[no_mangle]
     fn timerStart();
     #[no_mangle]
-    fn servoDevInit(servoDevConfig: *const servoDevConfig_t);
-    #[no_mangle]
     fn motorDevInit(motorDevConfig: *const motorDevConfig_t,
                     idlePulse: uint16_t, motorCount: uint8_t);
+    #[no_mangle]
+    fn servoDevInit(servoDevConfig: *const servoDevConfig_t);
     #[no_mangle]
     fn pwmEnableMotors();
     #[no_mangle]
@@ -142,6 +143,28 @@ extern "C" {
     static mut stateFlags: uint8_t;
     #[no_mangle]
     fn cliInit(serialConfig_0: *const serialConfig_s);
+    /*
+ * This file is part of Cleanflight and Betaflight.
+ *
+ * Cleanflight and Betaflight are free software. You can redistribute
+ * this software and/or modify this software under the terms of the
+ * GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * Cleanflight and Betaflight are distributed in the hope that they
+ * will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this software.
+ *
+ * If not, see <http://www.gnu.org/licenses/>.
+ */
+    // return positive for ACK, negative on error, zero for no reply
+    // don't know how to process command, try next handler
+    // msp post process function, used for gracefully handling reboots, etc.
     #[no_mangle]
     fn mspInit();
     #[no_mangle]
@@ -210,8 +233,6 @@ extern "C" {
     fn accSetCalibrationCycles(calibrationCyclesRequired: uint16_t);
     #[no_mangle]
     fn accInitFilters();
-    // Use temperature for telemetry
-    // Use pressure for telemetry
     #[no_mangle]
     fn baroSetCalibrationCycles(calibrationCyclesRequired: uint16_t);
     #[no_mangle]
@@ -269,6 +290,25 @@ extern "C" {
     fn servosInit();
     #[no_mangle]
     fn servosFilterInit();
+    /*
+ * This file is part of Cleanflight and Betaflight.
+ *
+ * Cleanflight and Betaflight are free software. You can redistribute
+ * this software and/or modify this software under the terms of the
+ * GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * Cleanflight and Betaflight are distributed in the hope that they
+ * will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this software.
+ *
+ * If not, see <http://www.gnu.org/licenses/>.
+ */
     #[no_mangle]
     fn rcdeviceInit();
     #[no_mangle]
@@ -285,7 +325,7 @@ pub type uint8_t = __uint8_t;
 pub type uint16_t = __uint16_t;
 pub type uint32_t = __uint32_t;
 pub type timeMs_t = uint32_t;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct hsvColor_s {
     pub h: uint16_t,
@@ -318,7 +358,29 @@ pub const FEATURE_MOTOR_STOP: C2RustUnnamed = 16;
 pub const FEATURE_RX_SERIAL: C2RustUnnamed = 8;
 pub const FEATURE_INFLIGHT_ACC_CAL: C2RustUnnamed = 4;
 pub const FEATURE_RX_PPM: C2RustUnnamed = 1;
-#[derive(Copy, Clone)]
+// 0 - 359
+// 0 - 255
+// 0 - 255
+/*
+ * This file is part of Cleanflight and Betaflight.
+ *
+ * Cleanflight and Betaflight are free software. You can redistribute
+ * this software and/or modify this software under the terms of the
+ * GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * Cleanflight and Betaflight are distributed in the hope that they
+ * will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this software.
+ *
+ * If not, see <http://www.gnu.org/licenses/>.
+ */
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct displayPortVTable_s {
     pub grab: Option<unsafe extern "C" fn(_: *mut displayPort_t)
@@ -349,30 +411,8 @@ pub struct displayPortVTable_s {
     pub txBytesFree: Option<unsafe extern "C" fn(_: *const displayPort_t)
                                 -> uint32_t>,
 }
-// 0 - 359
-// 0 - 255
-// 0 - 255
-/*
- * This file is part of Cleanflight and Betaflight.
- *
- * Cleanflight and Betaflight are free software. You can redistribute
- * this software and/or modify this software under the terms of the
- * GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option)
- * any later version.
- *
- * Cleanflight and Betaflight are distributed in the hope that they
- * will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this software.
- *
- * If not, see <http://www.gnu.org/licenses/>.
- */
 pub type displayPort_t = displayPort_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct displayPort_s {
     pub vTable: *const displayPortVTable_s,
@@ -393,7 +433,7 @@ pub const PWM_TYPE_MULTISHOT: C2RustUnnamed_0 = 3;
 pub const PWM_TYPE_ONESHOT42: C2RustUnnamed_0 = 2;
 pub const PWM_TYPE_ONESHOT125: C2RustUnnamed_0 = 1;
 pub const PWM_TYPE_STANDARD: C2RustUnnamed_0 = 0;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct motorDevConfig_s {
     pub motorPwmRate: uint16_t,
@@ -404,7 +444,7 @@ pub struct motorDevConfig_s {
     pub ioTags: [ioTag_t; 8],
 }
 pub type motorDevConfig_t = motorDevConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct servoDevConfig_s {
     pub servoCenterPulse: uint16_t,
@@ -412,7 +452,7 @@ pub struct servoDevConfig_s {
     pub ioTags: [ioTag_t; 8],
 }
 pub type servoDevConfig_t = servoDevConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct serialPinConfig_s {
     pub ioTagTx: [ioTag_t; 10],
@@ -428,7 +468,7 @@ pub const FAILURE_ACC_INCOMPATIBLE: failureMode_e = 3;
 pub const FAILURE_ACC_INIT: failureMode_e = 2;
 pub const FAILURE_MISSING_ACC: failureMode_e = 1;
 pub const FAILURE_DEVELOPER: failureMode_e = 0;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct systemConfig_s {
     pub pidProfileIndex: uint8_t,
@@ -441,7 +481,42 @@ pub struct systemConfig_s {
     pub boardIdentifier: [libc::c_char; 6],
 }
 pub type systemConfig_t = systemConfig_s;
-#[derive(Copy, Clone)]
+// in seconds
+/*
+ * This file is part of Cleanflight and Betaflight.
+ *
+ * Cleanflight and Betaflight are free software. You can redistribute
+ * this software and/or modify this software under the terms of the
+ * GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * Cleanflight and Betaflight are distributed in the hope that they
+ * will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this software.
+ *
+ * If not, see <http://www.gnu.org/licenses/>.
+ */
+// (Super) rates are constrained to [0, 100] for Betaflight rates, so values higher than 100 won't make a difference. Range extended for RaceFlight rates.
+// introduce a deadband around the stick center for pitch and roll axis. Must be greater than zero.
+// introduce a deadband around the stick center for yaw axis. Must be greater than zero.
+// defines the neutral zone of throttle stick during altitude hold, default setting is +/-40
+// when disabled, turn off the althold when throttle stick is out of deadband defined with alt_hold_deadband; when enabled, altitude changes slowly proportional to stick movement
+// invert control direction of yaw
+// min 3d value
+// max 3d value
+// center 3d value
+// default throttle deadband from MIDRC
+// pwm output value for max negative thrust
+// pwm output value for max positive thrust
+// enable '3D Switched Mode'
+// allow disarm/arm on throttle down + roll left/right
+// allow automatically disarming multicopters after auto_disarm_delay seconds of zero throttle. Disabled when 0
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct pidProfile_s {
     pub yaw_lowpass_hz: uint16_t,
@@ -491,7 +566,7 @@ pub struct pidProfile_s {
     pub abs_control_error_limit: uint8_t,
 }
 pub type pidf_t = pidf_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct pidf_s {
     pub P: uint8_t,
@@ -530,7 +605,7 @@ pub const ARMING_DISABLED_NO_GYRO: armingDisableFlags_e = 1;
 pub const SMALL_ANGLE: C2RustUnnamed_2 = 8;
 pub const MIXER_GIMBAL: mixerMode = 5;
 pub type mixerConfig_t = mixerConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct mixerConfig_s {
     pub mixerMode: uint8_t,
@@ -538,21 +613,15 @@ pub struct mixerConfig_s {
     pub crashflip_motor_percent: uint8_t,
 }
 pub type serialConfig_t = serialConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct serialConfig_s {
     pub portConfigs: [serialPortConfig_t; 8],
     pub serial_update_rate_hz: uint16_t,
     pub reboot_character: uint8_t,
 }
-// CMS state
-// in seconds
-// which byte is used to reboot. Default 'R', could be changed carefully to something else.
-//
-// configuration
-//
 pub type serialPortConfig_t = serialPortConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct serialPortConfig_s {
     pub functionMask: uint16_t,
@@ -575,7 +644,7 @@ pub const SERIAL_PORT_USART3: serialPortIdentifier_e = 2;
 pub const SERIAL_PORT_USART2: serialPortIdentifier_e = 1;
 pub const SERIAL_PORT_USART1: serialPortIdentifier_e = 0;
 pub const SERIAL_PORT_NONE: serialPortIdentifier_e = -1;
-// not used for all telemetry systems, e.g. HoTT only works at 19200.
+// which byte is used to reboot. Default 'R', could be changed carefully to something else.
 /*
  * This file is part of Cleanflight and Betaflight.
  *
@@ -596,7 +665,7 @@ pub const SERIAL_PORT_NONE: serialPortIdentifier_e = -1;
  * If not, see <http://www.gnu.org/licenses/>.
  */
 pub type pinioBoxConfig_t = pinioBoxConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct pinioBoxConfig_s {
     pub permanentId: [uint8_t; 4],
@@ -621,14 +690,14 @@ pub struct pinioBoxConfig_s {
  * If not, see <http://www.gnu.org/licenses/>.
  */
 pub type pinioConfig_t = pinioConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct pinioConfig_s {
     pub ioTag: [ioTag_t; 4],
     pub config: [uint8_t; 4],
 }
 pub type servoConfig_t = servoConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct servoConfig_s {
     pub dev: servoDevConfig_t,
@@ -639,47 +708,6 @@ pub struct servoConfig_s {
 pub type pidProfile_t = pidProfile_s;
 // lowpass servo filter frequency selection; 1/1000ths of loop freq
 // send tail servo correction pulses even when unarmed
-// Additional yaw filter when yaw axis too noisy
-// Delta Filter in hz
-// Biquad dterm notch hz
-// Biquad dterm notch low cutoff
-// Filter selection for dterm
-// Experimental ITerm windup threshold, percent motor saturation
-// Disable/Enable pids on zero throttle. Normally even without airmode P and D would be active.
-// Max angle in degrees in level mode
-// inclination factor for Horizon mode
-// OFF or ON
-// Betaflight PID controller parameters
-// type of anti gravity method
-// max allowed throttle delta before iterm accelerated in ms
-// Iterm Accelerator Gain when itermThrottlethreshold is hit
-// yaw accel limiter for deg/sec/ms
-// accel limiter roll/pitch deg/sec/ms
-// dterm crash value
-// gyro crash value
-// setpoint must be below this value to detect crash, so flips and rolls are not interpreted as crashes
-// ms
-// ms
-// degrees
-// degree/second
-// Scale PIDsum to battery voltage
-// Feed forward weight transition
-// limits yaw errorRate, so crashes don't cause huge throttle increase
-// Extra PT1 Filter on D in hz
-// off, on, on and beeps when it is in crash recovery mode
-// how much should throttle be boosted during transient changes 0-100, 100 adds 10x hpf filtered throttle
-// Which cutoff frequency to use for throttle boost. higher cutoffs keep the boost on for shorter. Specified in hz.
-// rotates iterm to translate world errors to local coordinate system
-// takes only the larger of P and the D weight feed forward term if they have the same sign.
-// Specifies type of relax algorithm
-// This cutoff frequency specifies a low pass filter which predicts average response of the quad to setpoint
-// Enable iterm suppression during stick input
-// Acro trainer roll/pitch angle limit in degrees
-// The axis for which record debugging values are captured 0=roll, 1=pitch
-// The strength of the limiting. Raising may reduce overshoot but also lead to oscillation around the angle limit
-// The lookahead window in milliseconds used to reduce overshoot
-// How strongly should the absolute accumulated error be corrected for
-// Limit to the correction
 // Limit to the accumulated error
 /*
  * This file is part of Cleanflight and Betaflight.
@@ -701,7 +729,7 @@ pub type pidProfile_t = pidProfile_s;
  * If not, see <http://www.gnu.org/licenses/>.
  */
 pub type boardAlignment_t = boardAlignment_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct boardAlignment_s {
     pub rollDegrees: int32_t,
@@ -709,7 +737,7 @@ pub struct boardAlignment_s {
     pub yawDegrees: int32_t,
 }
 pub type motorConfig_t = motorConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct motorConfig_s {
     pub dev: motorDevConfig_t,
@@ -720,7 +748,7 @@ pub struct motorConfig_s {
     pub motorPoleCount: uint8_t,
 }
 pub type flight3DConfig_t = flight3DConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct flight3DConfig_s {
     pub deadband3d_low: uint16_t,
@@ -789,13 +817,13 @@ pub const FIXED_WING: C2RustUnnamed_2 = 16;
 pub const CALIBRATE_MAG: C2RustUnnamed_2 = 4;
 pub const GPS_FIX: C2RustUnnamed_2 = 2;
 pub const GPS_FIX_HOME: C2RustUnnamed_2 = 1;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct modeColorIndexes_s {
     pub color: [uint8_t; 6],
 }
 pub type modeColorIndexes_t = modeColorIndexes_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct specialColorIndexes_s {
     pub color: [uint8_t; 11],
@@ -839,7 +867,7 @@ pub const INPUT_STABILIZED_THROTTLE: C2RustUnnamed_3 = 3;
 pub const INPUT_STABILIZED_YAW: C2RustUnnamed_3 = 2;
 pub const INPUT_STABILIZED_PITCH: C2RustUnnamed_3 = 1;
 pub const INPUT_STABILIZED_ROLL: C2RustUnnamed_3 = 0;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct rcdeviceSwitchState_s {
     pub isActivated: bool,
@@ -976,7 +1004,7 @@ pub unsafe extern "C" fn init() {
     debugMode = (*systemConfig()).debug_mode;
     // Latch active features to be used for feature() in the remainder of init().
     latchActiveFeatures(); // timer must be initialized before any channel is allocated
-    delay(100 as libc::c_int as timeMs_t);
+    delay(100i32 as timeMs_t);
     timerInit();
     uartPinConfigure(serialPinConfig());
     serialInit(feature(FEATURE_SOFTSERIAL as libc::c_int as uint32_t),
@@ -989,7 +1017,7 @@ pub unsafe extern "C" fn init() {
     }
     if (*motorConfig()).dev.motorPwmProtocol as libc::c_int ==
            PWM_TYPE_BRUSHED as libc::c_int {
-        idlePulse = 0 as libc::c_int as uint16_t
+        idlePulse = 0i32 as uint16_t
         // brushed motors
     }
     /* Motors needs to be initialized soon as posible because hardware initialization
@@ -1011,7 +1039,7 @@ pub unsafe extern "C" fn init() {
     initBoardAlignment(boardAlignment());
     if !sensorsAutodetect() {
         // if gyro was not detected due to whatever reason, notify and don't arm.
-        indicateFailure(FAILURE_MISSING_ACC, 2 as libc::c_int);
+        indicateFailure(FAILURE_MISSING_ACC, 2i32);
         setArmingDisabled(ARMING_DISABLED_NO_GYRO);
     }
     systemState =
@@ -1033,11 +1061,8 @@ pub unsafe extern "C" fn init() {
     servosFilterInit();
     pinioInit(pinioConfig());
     pinioBoxInit(pinioBoxConfig());
-    let mut i: libc::c_int = 0 as libc::c_int;
-    while i < 10 as libc::c_int {
-        delay(50 as libc::c_int as timeMs_t);
-        i += 1
-    }
+    let mut i: libc::c_int = 0i32;
+    while i < 10i32 { delay(50i32 as timeMs_t); i += 1 }
     imuInit();
     mspInit();
     mspSerialInit();
@@ -1054,10 +1079,10 @@ pub unsafe extern "C" fn init() {
     blackboxInit();
     if (*mixerConfig()).mixerMode as libc::c_int ==
            MIXER_GIMBAL as libc::c_int {
-        accSetCalibrationCycles(400 as libc::c_int as uint16_t);
+        accSetCalibrationCycles(400i32 as uint16_t);
     }
-    gyroStartCalibration(0 as libc::c_int != 0);
-    baroSetCalibrationCycles(200 as libc::c_int as uint16_t);
+    gyroStartCalibration(0i32 != 0);
+    baroSetCalibrationCycles(200i32 as uint16_t);
     // VTX_CONTROL
     // start all timers
     // TODO - not implemented yet

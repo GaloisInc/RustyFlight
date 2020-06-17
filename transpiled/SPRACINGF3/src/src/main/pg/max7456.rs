@@ -1,4 +1,5 @@
-use ::libc;
+use core;
+use libc;
 // USE_MAX7456
 /*
  * This file is part of Cleanflight and Betaflight.

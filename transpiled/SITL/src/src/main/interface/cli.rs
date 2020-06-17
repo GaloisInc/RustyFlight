@@ -1,4 +1,5 @@
-use ::libc;
+use core;
+use libc;
 extern "C" {
     #[no_mangle]
     fn atoi(__nptr: *const libc::c_char) -> libc::c_int;
@@ -116,9 +117,9 @@ extern "C" {
     #[no_mangle]
     fn getEEPROMConfigSize() -> uint16_t;
     #[no_mangle]
-    static mut featureConfig_System: featureConfig_t;
-    #[no_mangle]
     static mut featureConfig_Copy: featureConfig_t;
+    #[no_mangle]
+    static mut featureConfig_System: featureConfig_t;
     #[no_mangle]
     fn featureSet(mask: uint32_t);
     #[no_mangle]
@@ -143,13 +144,9 @@ extern "C" {
     #[no_mangle]
     fn serialRxBytesWaiting(instance: *const serialPort_t) -> uint32_t;
     #[no_mangle]
-    fn serialSetBaudRate(instance: *mut serialPort_t, baudRate: uint32_t);
-    // A shim that adapts the bufWriter API to the serialWriteBuf() API.
-    #[no_mangle]
-    fn serialWriteBufShim(instance: *mut libc::c_void, data: *const uint8_t,
-                          count: libc::c_int);
-    #[no_mangle]
     fn serialRead(instance: *mut serialPort_t) -> uint8_t;
+    #[no_mangle]
+    fn serialSetBaudRate(instance: *mut serialPort_t, baudRate: uint32_t);
     #[no_mangle]
     fn serialSetMode(instance: *mut serialPort_t, mode: portMode_e);
     #[no_mangle]
@@ -167,6 +164,9 @@ extern "C" {
                                                                *mut serialPort_t,
                                                            _: uint32_t)
                                           -> ()>, context: *mut serialPort_t);
+    #[no_mangle]
+    fn serialWriteBufShim(instance: *mut libc::c_void, data: *const uint8_t,
+                          count: libc::c_int);
     #[no_mangle]
     fn getBatteryStateString() -> *const libc::c_char;
     #[no_mangle]
@@ -207,9 +207,9 @@ extern "C" {
     #[no_mangle]
     static mut pilotConfig_Copy: pilotConfig_t;
     #[no_mangle]
-    static mut systemConfig_System: systemConfig_t;
-    #[no_mangle]
     static mut systemConfig_Copy: systemConfig_t;
+    #[no_mangle]
+    static mut systemConfig_System: systemConfig_t;
     #[no_mangle]
     fn writeEEPROM();
     #[no_mangle]
@@ -229,14 +229,14 @@ extern "C" {
     #[no_mangle]
     fn rcSmoothingAutoCalculate() -> bool;
     #[no_mangle]
-    static mut adjustmentRanges_CopyArray: [adjustmentRange_t; 15];
-    #[no_mangle]
     static mut adjustmentRanges_SystemArray: [adjustmentRange_t; 15];
     #[no_mangle]
-    static mut modeActivationConditions_SystemArray:
-           [modeActivationCondition_t; 20];
+    static mut adjustmentRanges_CopyArray: [adjustmentRange_t; 15];
     #[no_mangle]
     static mut modeActivationConditions_CopyArray:
+           [modeActivationCondition_t; 20];
+    #[no_mangle]
+    static mut modeActivationConditions_SystemArray:
            [modeActivationCondition_t; 20];
     #[no_mangle]
     static mut armingDisableFlagNames: [*const libc::c_char; 20];
@@ -251,9 +251,9 @@ extern "C" {
     #[no_mangle]
     static mut customMotorMixer_SystemArray: [motorMixer_t; 8];
     #[no_mangle]
-    static mut mixerConfig_Copy: mixerConfig_t;
-    #[no_mangle]
     static mut mixerConfig_System: mixerConfig_t;
+    #[no_mangle]
+    static mut mixerConfig_Copy: mixerConfig_t;
     #[no_mangle]
     static mut motor_disarmed: [libc::c_float; 8];
     #[no_mangle]
@@ -269,9 +269,9 @@ extern "C" {
     #[no_mangle]
     static mut pidConfig_System: pidConfig_t;
     #[no_mangle]
-    static mut customServoMixers_SystemArray: [servoMixer_t; 16];
-    #[no_mangle]
     static mut customServoMixers_CopyArray: [servoMixer_t; 16];
+    #[no_mangle]
+    static mut customServoMixers_SystemArray: [servoMixer_t; 16];
     #[no_mangle]
     static mut servoParams_CopyArray: [servoParam_t; 8];
     #[no_mangle]
@@ -317,9 +317,9 @@ extern "C" {
     #[no_mangle]
     static baudRates: [uint32_t; 0];
     #[no_mangle]
-    static mut serialConfig_Copy: serialConfig_t;
-    #[no_mangle]
     static mut serialConfig_System: serialConfig_t;
+    #[no_mangle]
+    static mut serialConfig_Copy: serialConfig_t;
     #[no_mangle]
     fn serialIsPortAvailable(identifier: serialPortIdentifier_e) -> bool;
     #[no_mangle]
@@ -348,8 +348,10 @@ extern "C" {
 //
     #[no_mangle]
     fn serialPassthrough(left: *mut serialPort_t, right: *mut serialPort_t,
-                         leftC: Option<serialConsumer>,
-                         rightC: Option<serialConsumer>);
+                         leftC:
+                             Option<unsafe extern "C" fn(_: uint8_t) -> ()>,
+                         rightC:
+                             Option<unsafe extern "C" fn(_: uint8_t) -> ()>);
     #[no_mangle]
     fn pinioSet(index: libc::c_int, on: bool);
     #[no_mangle]
@@ -365,9 +367,9 @@ extern "C" {
     static mut rxFailsafeChannelConfigs_SystemArray:
            [rxFailsafeChannelConfig_t; 18];
     #[no_mangle]
-    static mut rxChannelRangeConfigs_SystemArray: [rxChannelRangeConfig_t; 4];
-    #[no_mangle]
     static mut rxChannelRangeConfigs_CopyArray: [rxChannelRangeConfig_t; 4];
+    #[no_mangle]
+    static mut rxChannelRangeConfigs_SystemArray: [rxChannelRangeConfig_t; 4];
     #[no_mangle]
     fn parseRcChannels(input: *const libc::c_char,
                        rxConfig_0: *mut rxConfig_s);
@@ -392,7 +394,7 @@ extern "C" {
     static mut detectedSensors: [uint8_t; 5];
 }
 pub type __builtin_va_list = [__va_list_tag; 1];
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct __va_list_tag {
     pub gp_offset: libc::c_uint,
@@ -413,14 +415,14 @@ pub type uint8_t = __uint8_t;
 pub type uint16_t = __uint16_t;
 pub type uint32_t = __uint32_t;
 pub type intptr_t = libc::c_long;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct __pthread_internal_list {
     pub __prev: *mut __pthread_internal_list,
     pub __next: *mut __pthread_internal_list,
 }
 pub type __pthread_list_t = __pthread_internal_list;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct __pthread_mutex_s {
     pub __lock: libc::c_int,
@@ -432,15 +434,15 @@ pub struct __pthread_mutex_s {
     pub __elision: libc::c_short,
     pub __list: __pthread_list_t,
 }
-#[derive(Copy, Clone)]
-#[repr(C)]
+#[derive ( Copy, Clone )]
+#[repr ( C )]
 pub union pthread_mutex_t {
     pub __data: __pthread_mutex_s,
     pub __size: [libc::c_char; 40],
     pub __align: libc::c_long,
 }
 pub type va_list = __builtin_va_list;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct SPI_TypeDef {
     pub test: *mut libc::c_void,
@@ -449,7 +451,7 @@ pub type pgn_t = uint16_t;
 pub type pgResetFunc
     =
     unsafe extern "C" fn(_: *mut libc::c_void, _: libc::c_int) -> ();
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct pgRegistry_s {
     pub pgn: pgn_t,
@@ -459,17 +461,18 @@ pub struct pgRegistry_s {
     pub ptr: *mut *mut uint8_t,
     pub reset: C2RustUnnamed,
 }
-#[derive(Copy, Clone)]
-#[repr(C)]
+#[derive ( Copy, Clone )]
+#[repr ( C )]
 pub union C2RustUnnamed {
     pub ptr: *mut libc::c_void,
-    pub fn_0: Option<pgResetFunc>,
+    pub fn_0: Option<unsafe extern "C" fn(_: *mut libc::c_void,
+                                          _: libc::c_int) -> ()>,
 }
 pub type pgRegistry_t = pgRegistry_s;
 pub type timeDelta_t = int32_t;
 pub type timeMs_t = uint32_t;
 pub type timeUs_t = uint32_t;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct _dateTime_s {
     pub year: uint16_t,
@@ -481,7 +484,7 @@ pub struct _dateTime_s {
     pub millis: uint16_t,
 }
 pub type dateTime_t = _dateTime_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct displayPortVTable_s {
     pub grab: Option<unsafe extern "C" fn(_: *mut displayPort_t)
@@ -513,7 +516,7 @@ pub struct displayPortVTable_s {
                                 -> uint32_t>,
 }
 pub type displayPort_t = displayPort_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct displayPort_s {
     pub vTable: *const displayPortVTable_s,
@@ -526,7 +529,7 @@ pub struct displayPort_s {
     pub cursorRow: int8_t,
     pub grabCount: int8_t,
 }
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct hsvColor_s {
     pub h: uint16_t,
@@ -534,7 +537,7 @@ pub struct hsvColor_s {
     pub v: uint8_t,
 }
 pub type hsvColor_t = hsvColor_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct serialPort_s {
     pub vTable: *const serialPortVTable,
@@ -572,7 +575,7 @@ pub type portMode_e = libc::c_uint;
 pub const MODE_RXTX: portMode_e = 3;
 pub const MODE_TX: portMode_e = 2;
 pub const MODE_RX: portMode_e = 1;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct serialPortVTable {
     pub serialWrite: Option<unsafe extern "C" fn(_: *mut serialPort_t,
@@ -615,10 +618,6 @@ pub struct serialPortVTable {
     pub beginWrite: Option<unsafe extern "C" fn(_: *mut serialPort_t) -> ()>,
     pub endWrite: Option<unsafe extern "C" fn(_: *mut serialPort_t) -> ()>,
 }
-// 0 - 359
-// 0 - 255
-// 0 - 255
-// used by serial drivers to return frames to app
 pub type serialPort_t = serialPort_s;
 pub type C2RustUnnamed_0 = libc::c_uint;
 pub const FEATURE_DYNAMIC_FILTER: C2RustUnnamed_0 = 536870912;
@@ -645,13 +644,15 @@ pub const FEATURE_MOTOR_STOP: C2RustUnnamed_0 = 16;
 pub const FEATURE_RX_SERIAL: C2RustUnnamed_0 = 8;
 pub const FEATURE_INFLIGHT_ACC_CAL: C2RustUnnamed_0 = 4;
 pub const FEATURE_RX_PPM: C2RustUnnamed_0 = 1;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct featureConfig_s {
     pub enabledFeatures: uint32_t,
 }
 pub type featureConfig_t = featureConfig_s;
-pub type ioTag_t = uint8_t;
+// 0 - 359
+// 0 - 255
+// 0 - 255
 /*
  * This file is part of Cleanflight and Betaflight.
  *
@@ -673,7 +674,7 @@ pub type ioTag_t = uint8_t;
  */
 // IO pin identification
 // make sure that ioTag_t can't be assigned into IO_t without warning
-// packet tag to specify IO pin
+pub type ioTag_t = uint8_t;
 pub type IO_t = *mut libc::c_void;
 pub type I2CDevice = libc::c_int;
 pub const I2CDEV_4: I2CDevice = 3;
@@ -686,32 +687,32 @@ pub const BUSTYPE_MPU_SLAVE: busType_e = 3;
 pub const BUSTYPE_SPI: busType_e = 2;
 pub const BUSTYPE_I2C: busType_e = 1;
 pub const BUSTYPE_NONE: busType_e = 0;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct busDevice_s {
     pub bustype: busType_e,
     pub busdev_u: C2RustUnnamed_1,
 }
-#[derive(Copy, Clone)]
-#[repr(C)]
+#[derive ( Copy, Clone )]
+#[repr ( C )]
 pub union C2RustUnnamed_1 {
     pub spi: deviceSpi_s,
     pub i2c: deviceI2C_s,
     pub mpuSlave: deviceMpuSlave_s,
 }
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct deviceMpuSlave_s {
     pub master: *const busDevice_s,
     pub address: uint8_t,
 }
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct deviceI2C_s {
     pub device: I2CDevice,
     pub address: uint8_t,
 }
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct deviceSpi_s {
     pub instance: *mut SPI_TypeDef,
@@ -728,31 +729,7 @@ pub const CW180_DEG: sensor_align_e = 3;
 pub const CW90_DEG: sensor_align_e = 2;
 pub const CW0_DEG: sensor_align_e = 1;
 pub const ALIGN_DEFAULT: sensor_align_e = 0;
-/*
- * This file is part of Cleanflight and Betaflight.
- *
- * Cleanflight and Betaflight are free software. You can redistribute
- * this software and/or modify this software under the terms of the
- * GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option)
- * any later version.
- *
- * Cleanflight and Betaflight are distributed in the hope that they
- * will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this software.
- *
- * If not, see <http://www.gnu.org/licenses/>.
- */
-// initialize function
-// read 3 axis data function
-// read temperature if available
-// scalefactor
-// gyro data after calibration and alignment
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct accDev_s {
     pub lock: pthread_mutex_t,
@@ -769,7 +746,7 @@ pub struct accDev_s {
     pub filler: [uint8_t; 2],
 }
 pub type mpuDetectionResult_t = mpuDetectionResult_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct mpuDetectionResult_s {
     pub sensor: mpuSensor_e,
@@ -823,7 +800,7 @@ pub type bufWrite_t
     =
     Option<unsafe extern "C" fn(_: *mut libc::c_void, _: *mut libc::c_void,
                                 _: libc::c_int) -> ()>;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct bufWriter_s {
     pub writer: bufWrite_t,
@@ -833,7 +810,7 @@ pub struct bufWriter_s {
     pub data: [uint8_t; 0],
 }
 pub type bufWriter_t = bufWriter_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct rxConfig_s {
     pub rcmap: [uint8_t; 8],
@@ -867,7 +844,7 @@ pub struct rxConfig_s {
     pub rc_smoothing_input_type: uint8_t,
     pub rc_smoothing_derivative_type: uint8_t,
 }
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct pilotConfig_s {
     pub name: [libc::c_char; 17],
@@ -892,7 +869,7 @@ pub struct pilotConfig_s {
  * If not, see <http://www.gnu.org/licenses/>.
  */
 pub type pilotConfig_t = pilotConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct systemConfig_s {
     pub pidProfileIndex: uint8_t,
@@ -905,7 +882,7 @@ pub struct systemConfig_s {
     pub boardIdentifier: [libc::c_char; 6],
 }
 pub type systemConfig_t = systemConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct pidProfile_s {
     pub yaw_lowpass_hz: uint16_t,
@@ -955,7 +932,7 @@ pub struct pidProfile_s {
     pub abs_control_error_limit: uint8_t,
 }
 pub type pidf_t = pidf_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct pidf_s {
     pub P: uint8_t,
@@ -963,7 +940,7 @@ pub struct pidf_s {
     pub D: uint8_t,
     pub F: uint16_t,
 }
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct controlRateConfig_s {
     pub thrMid8: uint8_t,
@@ -1025,14 +1002,14 @@ pub const BOXARM: boxId_e = 0;
 pub type modeLogic_e = libc::c_uint;
 pub const MODELOGIC_AND: modeLogic_e = 1;
 pub const MODELOGIC_OR: modeLogic_e = 0;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct channelRange_s {
     pub startStep: uint8_t,
     pub endStep: uint8_t,
 }
 pub type channelRange_t = channelRange_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct modeActivationCondition_s {
     pub modeId: boxId_e,
@@ -1077,7 +1054,7 @@ pub const ADJUSTMENT_THROTTLE_EXPO: C2RustUnnamed_2 = 3;
 pub const ADJUSTMENT_RC_EXPO: C2RustUnnamed_2 = 2;
 pub const ADJUSTMENT_RC_RATE: C2RustUnnamed_2 = 1;
 pub const ADJUSTMENT_NONE: C2RustUnnamed_2 = 0;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct adjustmentRange_s {
     pub auxChannelIndex: uint8_t,
@@ -1121,7 +1098,7 @@ pub const ARMING_DISABLED_BAD_RX_RECOVERY: armingDisableFlags_e = 8;
 pub const ARMING_DISABLED_RX_FAILSAFE: armingDisableFlags_e = 4;
 pub const ARMING_DISABLED_FAILSAFE: armingDisableFlags_e = 2;
 pub const ARMING_DISABLED_NO_GYRO: armingDisableFlags_e = 1;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct motorMixer_s {
     pub throttle: libc::c_float,
@@ -1138,7 +1115,7 @@ pub struct motorMixer_s {
 // ... via slot
 // Custom mixer data per motor
 pub type motorMixer_t = motorMixer_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct mixerConfig_s {
     pub mixerMode: uint8_t,
@@ -1147,7 +1124,7 @@ pub struct mixerConfig_s {
 }
 pub type mixerConfig_t = mixerConfig_s;
 pub type pidProfile_t = pidProfile_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct pidConfig_s {
     pub pid_process_denom: uint8_t,
@@ -1156,47 +1133,6 @@ pub struct pidConfig_s {
     pub runaway_takeoff_deactivate_throttle: uint8_t,
 }
 pub type pidConfig_t = pidConfig_s;
-// Additional yaw filter when yaw axis too noisy
-// Delta Filter in hz
-// Biquad dterm notch hz
-// Biquad dterm notch low cutoff
-// Filter selection for dterm
-// Experimental ITerm windup threshold, percent motor saturation
-// Disable/Enable pids on zero throttle. Normally even without airmode P and D would be active.
-// Max angle in degrees in level mode
-// inclination factor for Horizon mode
-// OFF or ON
-// Betaflight PID controller parameters
-// type of anti gravity method
-// max allowed throttle delta before iterm accelerated in ms
-// Iterm Accelerator Gain when itermThrottlethreshold is hit
-// yaw accel limiter for deg/sec/ms
-// accel limiter roll/pitch deg/sec/ms
-// dterm crash value
-// gyro crash value
-// setpoint must be below this value to detect crash, so flips and rolls are not interpreted as crashes
-// ms
-// ms
-// degrees
-// degree/second
-// Scale PIDsum to battery voltage
-// Feed forward weight transition
-// limits yaw errorRate, so crashes don't cause huge throttle increase
-// Extra PT1 Filter on D in hz
-// off, on, on and beeps when it is in crash recovery mode
-// how much should throttle be boosted during transient changes 0-100, 100 adds 10x hpf filtered throttle
-// Which cutoff frequency to use for throttle boost. higher cutoffs keep the boost on for shorter. Specified in hz.
-// rotates iterm to translate world errors to local coordinate system
-// takes only the larger of P and the D weight feed forward term if they have the same sign.
-// Specifies type of relax algorithm
-// This cutoff frequency specifies a low pass filter which predicts average response of the quad to setpoint
-// Enable iterm suppression during stick input
-// Acro trainer roll/pitch angle limit in degrees
-// The axis for which record debugging values are captured 0=roll, 1=pitch
-// The strength of the limiting. Raising may reduce overshoot but also lead to oscillation around the angle limit
-// The lookahead window in milliseconds used to reduce overshoot
-// How strongly should the absolute accumulated error be corrected for
-// Limit to the correction
 // Limit to the accumulated error
 // Processing denominator for PID controller vs gyro sampling rate
 // off, on - enables pidsum runaway disarm logic
@@ -1238,7 +1174,7 @@ pub const INPUT_STABILIZED_THROTTLE: C2RustUnnamed_6 = 3;
 pub const INPUT_STABILIZED_YAW: C2RustUnnamed_6 = 2;
 pub const INPUT_STABILIZED_PITCH: C2RustUnnamed_6 = 1;
 pub const INPUT_STABILIZED_ROLL: C2RustUnnamed_6 = 0;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct servoMixer_s {
     pub targetChannel: uint8_t,
@@ -1250,7 +1186,7 @@ pub struct servoMixer_s {
     pub box_0: uint8_t,
 }
 pub type servoMixer_t = servoMixer_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct servoParam_s {
     pub reversedSources: uint32_t,
@@ -1261,7 +1197,39 @@ pub struct servoParam_s {
     pub forwardFromChannel: int8_t,
 }
 pub type servoParam_t = servoParam_s;
-#[derive(Copy, Clone)]
+// servo that receives the output of the rule
+// input channel for this rule
+// range [-125;+125] ; can be used to adjust a rate 0-125% and a direction
+// reduces the speed of the rule, 0=unlimited speed
+// lower bound of rule range [0;100]% of servo max-min
+// lower bound of rule range [0;100]% of servo max-min
+// active rule if box is enabled, range [0;3], 0=no box, 1=BOXSERVO1, 2=BOXSERVO2, 3=BOXSERVO3
+// the direction of servo movement for each input source of the servo mixer, bit set=inverted
+// servo min
+// servo max
+// servo middle
+// range [-125;+125] ; can be used to adjust a rate 0-125% and a direction
+// RX channel index, 0 based.  See CHANNEL_FORWARDING_DISABLED
+/*
+ * This file is part of Cleanflight and Betaflight.
+ *
+ * Cleanflight and Betaflight are free software. You can redistribute
+ * this software and/or modify this software under the terms of the
+ * GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * Cleanflight and Betaflight are distributed in the hope that they
+ * will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this software.
+ *
+ * If not, see <http://www.gnu.org/licenses/>.
+ */
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct clivalue_s {
     pub name: *const libc::c_char,
@@ -1270,8 +1238,8 @@ pub struct clivalue_s {
     pub pgn: pgn_t,
     pub offset: uint16_t,
 }
-#[derive(Copy, Clone)]
-#[repr(C)]
+#[derive ( Copy, Clone )]
+#[repr ( C )]
 pub union cliValueConfig_t {
     pub lookup: cliLookupTableConfig_t,
     pub minmax: cliMinMaxConfig_t,
@@ -1279,20 +1247,20 @@ pub union cliValueConfig_t {
     pub bitpos: uint8_t,
 }
 pub type cliArrayLengthConfig_t = cliArrayLengthConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct cliArrayLengthConfig_s {
     pub length: uint8_t,
 }
 pub type cliMinMaxConfig_t = cliMinMaxConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct cliMinMaxConfig_s {
     pub min: int16_t,
     pub max: int16_t,
 }
 pub type cliLookupTableConfig_t = cliLookupTableConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct cliLookupTableConfig_s {
     pub tableIndex: lookupTableIndex_e,
@@ -1338,32 +1306,15 @@ pub type clivalue_t = clivalue_s;
 pub const PROFILE_RATE_VALUE: C2RustUnnamed_11 = 16;
 pub const PROFILE_VALUE: C2RustUnnamed_11 = 8;
 pub const MASTER_VALUE: C2RustUnnamed_11 = 0;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct serialConfig_s {
     pub portConfigs: [serialPortConfig_t; 8],
     pub serial_update_rate_hz: uint16_t,
     pub reboot_character: uint8_t,
 }
-// servo that receives the output of the rule
-// input channel for this rule
-// range [-125;+125] ; can be used to adjust a rate 0-125% and a direction
-// reduces the speed of the rule, 0=unlimited speed
-// lower bound of rule range [0;100]% of servo max-min
-// lower bound of rule range [0;100]% of servo max-min
-// active rule if box is enabled, range [0;3], 0=no box, 1=BOXSERVO1, 2=BOXSERVO2, 3=BOXSERVO3
-// the direction of servo movement for each input source of the servo mixer, bit set=inverted
-// servo min
-// servo max
-// servo middle
-// range [-125;+125] ; can be used to adjust a rate 0-125% and a direction
-// RX channel index, 0 based.  See CHANNEL_FORWARDING_DISABLED
-// see cliValueFlag_e
-//
-// configuration
-//
 pub type serialPortConfig_t = serialPortConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct serialPortConfig_s {
     pub functionMask: uint16_t,
@@ -1387,7 +1338,7 @@ pub const SERIAL_PORT_USART2: serialPortIdentifier_e = 1;
 pub const SERIAL_PORT_USART1: serialPortIdentifier_e = 0;
 pub const SERIAL_PORT_NONE: serialPortIdentifier_e = -1;
 pub type serialConfig_t = serialConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct clicmd_t {
     pub name: *const libc::c_char,
@@ -1395,7 +1346,7 @@ pub struct clicmd_t {
     pub args: *const libc::c_char,
     pub func: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> ()>,
 }
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct cfCheckFuncInfo_t {
     pub maxExecutionTime: timeUs_t,
@@ -1424,7 +1375,7 @@ pub const TASK_ACCEL: cfTaskId_e = 3;
 pub const TASK_GYROPID: cfTaskId_e = 2;
 pub const TASK_MAIN: cfTaskId_e = 1;
 pub const TASK_SYSTEM: cfTaskId_e = 0;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct cfTaskInfo_t {
     pub taskName: *const libc::c_char,
@@ -1438,7 +1389,7 @@ pub struct cfTaskInfo_t {
     pub averageExecutionTime: timeUs_t,
 }
 pub type acc_t = acc_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct acc_s {
     pub dev: accDev_t,
@@ -1447,14 +1398,14 @@ pub struct acc_s {
     pub isAccelUpdatedAtLeastOnce: bool,
 }
 pub const SENSOR_ACC: C2RustUnnamed_12 = 2;
-pub type serialConsumer = unsafe extern "C" fn(_: uint8_t) -> ();
 pub type rxChannelRangeConfig_t = rxChannelRangeConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct rxChannelRangeConfig_s {
     pub min: uint16_t,
     pub max: uint16_t,
 }
+pub type serialConsumer = unsafe extern "C" fn(_: uint8_t) -> ();
 pub const SENSOR_RANGEFINDER: C2RustUnnamed_12 = 16;
 pub const SENSOR_MAG: C2RustUnnamed_12 = 8;
 pub const SENSOR_BARO: C2RustUnnamed_12 = 4;
@@ -1479,7 +1430,7 @@ pub const DO_DIFF: C2RustUnnamed_13 = 16;
 pub const SHOW_DEFAULTS: C2RustUnnamed_13 = 32;
 pub const MODE_BITSET: C2RustUnnamed_11 = 96;
 pub type lookupTableEntry_t = lookupTableEntry_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct lookupTableEntry_s {
     pub values: *const *const libc::c_char,
@@ -1502,13 +1453,8 @@ pub const SERVO_ARGUMENT_COUNT: C2RustUnnamed_10 = 6;
 pub const INDEX: C2RustUnnamed_9 = 0;
 pub type C2RustUnnamed_9 = libc::c_uint;
 pub type C2RustUnnamed_10 = libc::c_uint;
-// not used for all telemetry systems, e.g. HoTT only works at 19200.
-// which byte is used to reboot. Default 'R', could be changed carefully to something else.
-//
-// runtime
-//
 pub type serialPortUsage_t = serialPortUsage_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct serialPortUsage_s {
     pub serialPort: *mut serialPort_t,
@@ -1550,7 +1496,7 @@ pub const BAUD_19200: baudRate_e = 2;
 pub const BAUD_9600: baudRate_e = 1;
 pub const BAUD_AUTO: baudRate_e = 0;
 pub type rxFailsafeChannelConfig_t = rxFailsafeChannelConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct rxFailsafeChannelConfig_s {
     pub mode: uint8_t,
@@ -1564,26 +1510,6 @@ pub const RX_FAILSAFE_MODE_AUTO: rxFailsafeChannelMode_e = 0;
 pub type rxFailsafeChannelType_e = libc::c_uint;
 pub const RX_FAILSAFE_TYPE_AUX: rxFailsafeChannelType_e = 1;
 pub const RX_FAILSAFE_TYPE_FLIGHT: rxFailsafeChannelType_e = 0;
-// See rxFailsafeChannelMode_e
-/*
- * This file is part of Cleanflight and Betaflight.
- *
- * Cleanflight and Betaflight are free software. You can redistribute
- * this software and/or modify this software under the terms of the
- * GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option)
- * any later version.
- *
- * Cleanflight and Betaflight are distributed in the hope that they
- * will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this software.
- *
- * If not, see <http://www.gnu.org/licenses/>.
- */
 pub type rxConfig_t = rxConfig_s;
 pub type beeperMode_e = libc::c_uint;
 pub const BEEPER_ALL: beeperMode_e = 24;
@@ -1614,24 +1540,8 @@ pub const BEEPER_SILENCE: beeperMode_e = 0;
 pub const DUMP_RATES: C2RustUnnamed_13 = 4;
 pub const DUMP_PROFILE: C2RustUnnamed_13 = 2;
 pub const DUMP_ALL: C2RustUnnamed_13 = 8;
-// mapping of radio channels to internal RPYTA+ order
-// type of UART-based receiver (0 = spek 10, 1 = spek 11, 2 = sbus). Must be enabled by FEATURE_RX_SERIAL first.
-// invert the serial RX protocol compared to it's default setting
-// allow rx to operate in half duplex mode on F4, ignored for F1 and F3.
-// number of bind pulses for Spektrum satellite receivers
-// whenever we will reset (exit) binding mode after hard reboot
-// Some radios have not a neutral point centered on 1500. can be changed here
-// minimum rc end
-// maximum rc end
-// Camera angle to be scaled into rc commands
-// Throttle setpoint percent where airmode gets activated
-// true to use frame drop flags in the rx protocol
-// offset applied to the RSSI value before it is returned
-// Determines the smoothing algorithm to use: INTERPOLATION or FILTER
-// Filter cutoff frequency for the input filter (0 = auto)
-// Filter cutoff frequency for the setpoint weight derivative filter (0 = auto)
-// Axis to log as debug values when debug_mode = RC_SMOOTHING
-// Input filter type (0 = PT1, 1 = BIQUAD)
+// which byte is used to reboot. Default 'R', could be changed carefully to something else.
+// See rxFailsafeChannelMode_e
 // Derivative filter type (0 = OFF, 1 = PT1, 2 = BIQUAD)
 /*
  * This file is part of Cleanflight and Betaflight.
@@ -1653,7 +1563,7 @@ pub const DUMP_ALL: C2RustUnnamed_13 = 8;
  * If not, see <http://www.gnu.org/licenses/>.
  */
 pub type box_t = box_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct box_s {
     pub boxId: uint8_t,
@@ -1661,13 +1571,13 @@ pub struct box_s {
     pub permanentId: uint8_t,
 }
 pub type C2RustUnnamed_11 = libc::c_uint;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct modeColorIndexes_s {
     pub color: [uint8_t; 6],
 }
 pub type modeColorIndexes_t = modeColorIndexes_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct specialColorIndexes_s {
     pub color: [uint8_t; 11],
@@ -1706,7 +1616,7 @@ pub static mut SystemCoreClock: uint32_t = 0;
 // FIXME remove this for targets that don't need a CLI.  Perhaps use a no-op macro when USE_CLI is not enabled
 // signal that we're in cli mode
 #[no_mangle]
-pub static mut cliMode: uint8_t = 0 as libc::c_int as uint8_t;
+pub static mut cliMode: uint8_t = 0i32 as uint8_t;
 #[no_mangle]
 pub static mut pCurrentDisplay: *mut displayPort_t =
     0 as *const displayPort_t as *mut displayPort_t;
@@ -1722,11 +1632,11 @@ unsafe extern "C" fn featureConfig() -> *const featureConfig_t {
     return &mut featureConfig_System;
 }
 #[inline]
-unsafe extern "C" fn pilotConfig() -> *const pilotConfig_t {
+unsafe extern "C" fn pilotConfigMutable() -> *mut pilotConfig_t {
     return &mut pilotConfig_System;
 }
 #[inline]
-unsafe extern "C" fn pilotConfigMutable() -> *mut pilotConfig_t {
+unsafe extern "C" fn pilotConfig() -> *const pilotConfig_t {
     return &mut pilotConfig_System;
 }
 #[inline]
@@ -1734,15 +1644,15 @@ unsafe extern "C" fn systemConfig() -> *const systemConfig_t {
     return &mut systemConfig_System;
 }
 #[inline]
-unsafe extern "C" fn adjustmentRangesMutable(mut _index: libc::c_int)
- -> *mut adjustmentRange_t {
+unsafe extern "C" fn adjustmentRanges(mut _index: libc::c_int)
+ -> *const adjustmentRange_t {
     return &mut *adjustmentRanges_SystemArray.as_mut_ptr().offset(_index as
                                                                       isize)
                as *mut adjustmentRange_t;
 }
 #[inline]
-unsafe extern "C" fn adjustmentRanges(mut _index: libc::c_int)
- -> *const adjustmentRange_t {
+unsafe extern "C" fn adjustmentRangesMutable(mut _index: libc::c_int)
+ -> *mut adjustmentRange_t {
     return &mut *adjustmentRanges_SystemArray.as_mut_ptr().offset(_index as
                                                                       isize)
                as *mut adjustmentRange_t;
@@ -1764,13 +1674,6 @@ unsafe extern "C" fn modeActivationConditionsMutable(mut _index: libc::c_int)
                as *mut modeActivationCondition_t;
 }
 #[inline]
-unsafe extern "C" fn customMotorMixerMutable(mut _index: libc::c_int)
- -> *mut motorMixer_t {
-    return &mut *customMotorMixer_SystemArray.as_mut_ptr().offset(_index as
-                                                                      isize)
-               as *mut motorMixer_t;
-}
-#[inline]
 unsafe extern "C" fn customMotorMixer(mut _index: libc::c_int)
  -> *const motorMixer_t {
     return &mut *customMotorMixer_SystemArray.as_mut_ptr().offset(_index as
@@ -1778,11 +1681,18 @@ unsafe extern "C" fn customMotorMixer(mut _index: libc::c_int)
                as *mut motorMixer_t;
 }
 #[inline]
-unsafe extern "C" fn mixerConfigMutable() -> *mut mixerConfig_t {
-    return &mut mixerConfig_System;
+unsafe extern "C" fn customMotorMixerMutable(mut _index: libc::c_int)
+ -> *mut motorMixer_t {
+    return &mut *customMotorMixer_SystemArray.as_mut_ptr().offset(_index as
+                                                                      isize)
+               as *mut motorMixer_t;
 }
 #[inline]
 unsafe extern "C" fn mixerConfig() -> *const mixerConfig_t {
+    return &mut mixerConfig_System;
+}
+#[inline]
+unsafe extern "C" fn mixerConfigMutable() -> *mut mixerConfig_t {
     return &mut mixerConfig_System;
 }
 #[inline]
@@ -1799,6 +1709,10 @@ unsafe extern "C" fn customServoMixers(mut _index: libc::c_int)
                as *mut servoMixer_t;
 }
 #[inline]
+unsafe extern "C" fn customServoMixers_array() -> *mut [servoMixer_t; 16] {
+    return &mut customServoMixers_SystemArray;
+}
+#[inline]
 unsafe extern "C" fn customServoMixersMutable(mut _index: libc::c_int)
  -> *mut servoMixer_t {
     return &mut *customServoMixers_SystemArray.as_mut_ptr().offset(_index as
@@ -1806,18 +1720,14 @@ unsafe extern "C" fn customServoMixersMutable(mut _index: libc::c_int)
                as *mut servoMixer_t;
 }
 #[inline]
-unsafe extern "C" fn customServoMixers_array() -> *mut [servoMixer_t; 16] {
-    return &mut customServoMixers_SystemArray;
-}
-#[inline]
-unsafe extern "C" fn servoParams(mut _index: libc::c_int)
- -> *const servoParam_t {
+unsafe extern "C" fn servoParamsMutable(mut _index: libc::c_int)
+ -> *mut servoParam_t {
     return &mut *servoParams_SystemArray.as_mut_ptr().offset(_index as isize)
                as *mut servoParam_t;
 }
 #[inline]
-unsafe extern "C" fn servoParamsMutable(mut _index: libc::c_int)
- -> *mut servoParam_t {
+unsafe extern "C" fn servoParams(mut _index: libc::c_int)
+ -> *const servoParam_t {
     return &mut *servoParams_SystemArray.as_mut_ptr().offset(_index as isize)
                as *mut servoParam_t;
 }
@@ -1835,11 +1745,11 @@ unsafe extern "C" fn serialConfig() -> *const serialConfig_t {
     return &mut serialConfig_System;
 }
 #[inline]
-unsafe extern "C" fn rxConfig() -> *const rxConfig_t {
+unsafe extern "C" fn rxConfigMutable() -> *mut rxConfig_t {
     return &mut rxConfig_System;
 }
 #[inline]
-unsafe extern "C" fn rxConfigMutable() -> *mut rxConfig_t {
+unsafe extern "C" fn rxConfig() -> *const rxConfig_t {
     return &mut rxConfig_System;
 }
 #[inline]
@@ -1881,12 +1791,12 @@ static mut cliWriter: *mut bufWriter_t =
     0 as *const bufWriter_t as *mut bufWriter_t;
 static mut cliWriteBuffer: [uint8_t; 88] = [0; 88];
 static mut cliBuffer: [libc::c_char; 256] = [0; 256];
-static mut bufferIndex: uint32_t = 0 as libc::c_int as uint32_t;
-static mut configIsInCopy: bool = 0 as libc::c_int != 0;
-static mut pidProfileIndexToUse: int8_t = -(1 as libc::c_int) as int8_t;
-static mut rateProfileIndexToUse: int8_t = -(1 as libc::c_int) as int8_t;
-static mut boardInformationUpdated: bool = 0 as libc::c_int != 0;
-static mut signatureUpdated: bool = 0 as libc::c_int != 0;
+static mut bufferIndex: uint32_t = 0i32 as uint32_t;
+static mut configIsInCopy: bool = 0i32 != 0;
+static mut pidProfileIndexToUse: int8_t = -1i32 as int8_t;
+static mut rateProfileIndexToUse: int8_t = -1i32 as int8_t;
+static mut boardInformationUpdated: bool = 0i32 != 0;
+static mut signatureUpdated: bool = 0i32 != 0;
 // USE_BOARD_INFO
 static mut emptyName: *const libc::c_char =
     b"-\x00" as *const u8 as *const libc::c_char;
@@ -1991,7 +1901,7 @@ unsafe extern "C" fn backupConfigs() {
         backupPgConfig(pg);
         pg = pg.offset(1)
     }
-    configIsInCopy = 1 as libc::c_int != 0;
+    configIsInCopy = 1i32 != 0;
 }
 unsafe extern "C" fn restoreConfigs() {
     let mut pg: *const pgRegistry_t = __pg_registry_start.as_ptr();
@@ -1999,7 +1909,7 @@ unsafe extern "C" fn restoreConfigs() {
         restorePgConfig(pg);
         pg = pg.offset(1)
     }
-    configIsInCopy = 0 as libc::c_int != 0;
+    configIsInCopy = 0i32 != 0;
 }
 unsafe extern "C" fn backupAndResetConfigs() {
     backupConfigs();
@@ -2047,8 +1957,8 @@ unsafe extern "C" fn cliDumpPrintLinef(mut dumpMask: uint8_t,
         va = args.clone();
         cliPrintfva(format, va.as_va_list());
         cliPrintLinefeed();
-        return 1 as libc::c_int != 0
-    } else { return 0 as libc::c_int != 0 };
+        return 1i32 != 0
+    } else { return 0i32 != 0 };
 }
 unsafe extern "C" fn cliWrite(mut ch: uint8_t) {
     bufWriterAppend(cliWriter, ch);
@@ -2064,8 +1974,8 @@ unsafe extern "C" fn cliDefaultPrintLinef(mut dumpMask: uint8_t,
         va = args.clone();
         cliPrintfva(format, va.as_va_list());
         cliPrintLinefeed();
-        return 1 as libc::c_int != 0
-    } else { return 0 as libc::c_int != 0 };
+        return 1i32 != 0
+    } else { return 0i32 != 0 };
 }
 unsafe extern "C" fn cliPrintf(mut format: *const libc::c_char,
                                mut args: ...) {
@@ -2091,11 +2001,10 @@ unsafe extern "C" fn cliPrintErrorLinef(mut format: *const libc::c_char,
 unsafe extern "C" fn printValuePointer(mut var: *const clivalue_t,
                                        mut valuePointer: *const libc::c_void,
                                        mut full: bool) {
-    if (*var).type_0 as libc::c_int & 0x60 as libc::c_int ==
-           MODE_ARRAY as libc::c_int {
-        let mut i: libc::c_int = 0 as libc::c_int;
+    if (*var).type_0 as libc::c_int & 0x60i32 == MODE_ARRAY as libc::c_int {
+        let mut i: libc::c_int = 0i32;
         while i < (*var).config.array.length as libc::c_int {
-            match (*var).type_0 as libc::c_int & 0x7 as libc::c_int {
+            match (*var).type_0 as libc::c_int & 0x7i32 {
                 1 => {
                     // int8_t array
                     cliPrintf(b"%d\x00" as *const u8 as *const libc::c_char,
@@ -2125,16 +2034,14 @@ unsafe extern "C" fn printValuePointer(mut var: *const clivalue_t,
                                   libc::c_int);
                 }
             }
-            if i <
-                   (*var).config.array.length as libc::c_int -
-                       1 as libc::c_int {
+            if i < (*var).config.array.length as libc::c_int - 1i32 {
                 cliPrint(b",\x00" as *const u8 as *const libc::c_char);
             }
             i += 1
         }
     } else {
-        let mut value: libc::c_int = 0 as libc::c_int;
-        match (*var).type_0 as libc::c_int & 0x7 as libc::c_int {
+        let mut value: libc::c_int = 0i32;
+        match (*var).type_0 as libc::c_int & 0x7i32 {
             0 => { value = *(valuePointer as *mut uint8_t) as libc::c_int }
             1 => { value = *(valuePointer as *mut int8_t) as libc::c_int }
             2 | 3 => {
@@ -2143,7 +2050,7 @@ unsafe extern "C" fn printValuePointer(mut var: *const clivalue_t,
             4 => { value = *(valuePointer as *mut uint32_t) as libc::c_int }
             _ => { }
         }
-        match (*var).type_0 as libc::c_int & 0x60 as libc::c_int {
+        match (*var).type_0 as libc::c_int & 0x60i32 {
             0 => {
                 cliPrintf(b"%d\x00" as *const u8 as *const libc::c_char,
                           value);
@@ -2162,9 +2069,7 @@ unsafe extern "C" fn printValuePointer(mut var: *const clivalue_t,
                                                                                        isize));
             }
             96 => {
-                if value &
-                       (1 as libc::c_int) <<
-                           (*var).config.bitpos as libc::c_int != 0 {
+                if value & 1i32 << (*var).config.bitpos as libc::c_int != 0 {
                     cliPrintf(b"ON\x00" as *const u8 as *const libc::c_char);
                 } else {
                     cliPrintf(b"OFF\x00" as *const u8 as *const libc::c_char);
@@ -2178,22 +2083,18 @@ unsafe extern "C" fn valuePtrEqualsDefault(mut var: *const clivalue_t,
                                            mut ptr: *const libc::c_void,
                                            mut ptrDefault:
                                                *const libc::c_void) -> bool {
-    let mut result: bool = 1 as libc::c_int != 0;
-    let mut elementCount: libc::c_int = 1 as libc::c_int;
-    let mut mask: uint32_t = 0xffffffff as libc::c_uint;
-    if (*var).type_0 as libc::c_int & 0x60 as libc::c_int ==
-           MODE_ARRAY as libc::c_int {
+    let mut result: bool = 1i32 != 0;
+    let mut elementCount: libc::c_int = 1i32;
+    let mut mask: uint32_t = 0xffffffffu32;
+    if (*var).type_0 as libc::c_int & 0x60i32 == MODE_ARRAY as libc::c_int {
         elementCount = (*var).config.array.length as libc::c_int
     }
-    if (*var).type_0 as libc::c_int & 0x60 as libc::c_int ==
-           MODE_BITSET as libc::c_int {
-        mask =
-            ((1 as libc::c_int) << (*var).config.bitpos as libc::c_int) as
-                uint32_t
+    if (*var).type_0 as libc::c_int & 0x60i32 == MODE_BITSET as libc::c_int {
+        mask = (1i32 << (*var).config.bitpos as libc::c_int) as uint32_t
     }
-    let mut i: libc::c_int = 0 as libc::c_int;
+    let mut i: libc::c_int = 0i32;
     while i < elementCount {
-        match (*var).type_0 as libc::c_int & 0x7 as libc::c_int {
+        match (*var).type_0 as libc::c_int & 0x7i32 {
             0 => {
                 result =
                     result as libc::c_int != 0 &&
@@ -2240,18 +2141,18 @@ unsafe extern "C" fn valuePtrEqualsDefault(mut var: *const clivalue_t,
     return result;
 }
 unsafe extern "C" fn getPidProfileIndexToUse() -> uint8_t {
-    return if pidProfileIndexToUse as libc::c_int == -(1 as libc::c_int) {
+    return if pidProfileIndexToUse as libc::c_int == -1i32 {
                getCurrentPidProfileIndex() as libc::c_int
            } else { pidProfileIndexToUse as libc::c_int } as uint8_t;
 }
 unsafe extern "C" fn getRateProfileIndexToUse() -> uint8_t {
-    return if rateProfileIndexToUse as libc::c_int == -(1 as libc::c_int) {
+    return if rateProfileIndexToUse as libc::c_int == -1i32 {
                getCurrentControlRateProfileIndex() as libc::c_int
            } else { rateProfileIndexToUse as libc::c_int } as uint8_t;
 }
 unsafe extern "C" fn getValueOffset(mut value: *const clivalue_t)
  -> uint16_t {
-    match (*value).type_0 as libc::c_int & 0x18 as libc::c_int {
+    match (*value).type_0 as libc::c_int & 0x18i32 {
         0 => { return (*value).offset }
         8 => {
             return ((*value).offset as
@@ -2273,27 +2174,8 @@ unsafe extern "C" fn getValueOffset(mut value: *const clivalue_t)
         }
         _ => { }
     }
-    return 0 as libc::c_int as uint16_t;
+    return 0i32 as uint16_t;
 }
-/*
- * This file is part of Cleanflight and Betaflight.
- *
- * Cleanflight and Betaflight are free software. You can redistribute
- * this software and/or modify this software under the terms of the
- * GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option)
- * any later version.
- *
- * Cleanflight and Betaflight are distributed in the hope that they
- * will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this software.
- *
- * If not, see <http://www.gnu.org/licenses/>.
- */
 #[no_mangle]
 pub unsafe extern "C" fn cliGetValuePointer(mut value: *const clivalue_t)
  -> *mut libc::c_void {
@@ -2327,31 +2209,31 @@ unsafe extern "C" fn dumpPgValue(mut value: *const clivalue_t,
                                   *const libc::c_void,
                               (*pg).address.offset(valueOffset as isize) as
                                   *const libc::c_void);
-    if dumpMask as libc::c_int & DO_DIFF as libc::c_int == 0 as libc::c_int ||
+    if dumpMask as libc::c_int & DO_DIFF as libc::c_int == 0i32 ||
            !equalsDefault {
         if dumpMask as libc::c_int & SHOW_DEFAULTS as libc::c_int != 0 &&
                !equalsDefault {
             cliPrintf(defaultFormat, (*value).name);
             printValuePointer(value,
                               (*pg).address.offset(valueOffset as isize) as
-                                  *const libc::c_void, 0 as libc::c_int != 0);
+                                  *const libc::c_void, 0i32 != 0);
             cliPrintLinefeed();
         }
         cliPrintf(format, (*value).name);
         printValuePointer(value,
                           (*pg).copy.offset(valueOffset as isize) as
-                              *const libc::c_void, 0 as libc::c_int != 0);
+                              *const libc::c_void, 0i32 != 0);
         cliPrintLinefeed();
     };
 }
 unsafe extern "C" fn dumpAllValues(mut valueSection: uint16_t,
                                    mut dumpMask: uint8_t) {
-    let mut i: uint32_t = 0 as libc::c_int as uint32_t;
+    let mut i: uint32_t = 0i32 as uint32_t;
     while i < valueTableEntryCount as libc::c_uint {
         let mut value: *const clivalue_t =
             &*valueTable.as_ptr().offset(i as isize) as *const clivalue_t;
         bufWriterFlush(cliWriter);
-        if (*value).type_0 as libc::c_int & 0x18 as libc::c_int ==
+        if (*value).type_0 as libc::c_int & 0x18i32 ==
                valueSection as libc::c_int {
             dumpPgValue(value, dumpMask);
         }
@@ -2363,7 +2245,7 @@ unsafe extern "C" fn cliPrintVar(mut var: *const clivalue_t, mut full: bool) {
     printValuePointer(var, ptr, full);
 }
 unsafe extern "C" fn cliPrintVarRange(mut var: *const clivalue_t) {
-    match (*var).type_0 as libc::c_int & 0x60 as libc::c_int {
+    match (*var).type_0 as libc::c_int & 0x60i32 {
         0 => {
             cliPrintLinef(b"Allowed range: %d - %d\x00" as *const u8 as
                               *const libc::c_char,
@@ -2377,8 +2259,8 @@ unsafe extern "C" fn cliPrintVarRange(mut var: *const clivalue_t) {
                     *const lookupTableEntry_t;
             cliPrint(b"Allowed values: \x00" as *const u8 as
                          *const libc::c_char);
-            let mut firstEntry: bool = 1 as libc::c_int != 0;
-            let mut i: libc::c_uint = 0 as libc::c_int as libc::c_uint;
+            let mut firstEntry: bool = 1i32 != 0;
+            let mut i: libc::c_uint = 0i32 as libc::c_uint;
             while i < (*tableEntry).valueCount as libc::c_uint {
                 if !(*(*tableEntry).values.offset(i as isize)).is_null() {
                     if !firstEntry {
@@ -2387,7 +2269,7 @@ unsafe extern "C" fn cliPrintVarRange(mut var: *const clivalue_t) {
                     }
                     cliPrintf(b"%s\x00" as *const u8 as *const libc::c_char,
                               *(*tableEntry).values.offset(i as isize));
-                    firstEntry = 0 as libc::c_int != 0
+                    firstEntry = 0i32 != 0
                 }
                 i = i.wrapping_add(1)
             }
@@ -2409,13 +2291,12 @@ unsafe extern "C" fn cliSetVar(mut var: *const clivalue_t, value: int16_t) {
     let mut ptr: *mut libc::c_void = cliGetValuePointer(var);
     let mut workValue: uint32_t = 0;
     let mut mask: uint32_t = 0;
-    if (*var).type_0 as libc::c_int & 0x60 as libc::c_int ==
-           MODE_BITSET as libc::c_int {
-        match (*var).type_0 as libc::c_int & 0x7 as libc::c_int {
+    if (*var).type_0 as libc::c_int & 0x60i32 == MODE_BITSET as libc::c_int {
+        match (*var).type_0 as libc::c_int & 0x7i32 {
             0 => {
                 mask =
-                    ((1 as libc::c_int) << (*var).config.bitpos as libc::c_int
-                         & 0xff as libc::c_int) as uint32_t;
+                    (1i32 << (*var).config.bitpos as libc::c_int & 0xffi32) as
+                        uint32_t;
                 if value != 0 {
                     workValue = *(ptr as *mut uint8_t) as libc::c_uint | mask
                 } else {
@@ -2425,8 +2306,8 @@ unsafe extern "C" fn cliSetVar(mut var: *const clivalue_t, value: int16_t) {
             }
             2 => {
                 mask =
-                    ((1 as libc::c_int) << (*var).config.bitpos as libc::c_int
-                         & 0xffff as libc::c_int) as uint32_t;
+                    (1i32 << (*var).config.bitpos as libc::c_int & 0xffffi32)
+                        as uint32_t;
                 if value != 0 {
                     workValue = *(ptr as *mut uint16_t) as libc::c_uint | mask
                 } else {
@@ -2437,8 +2318,7 @@ unsafe extern "C" fn cliSetVar(mut var: *const clivalue_t, value: int16_t) {
             }
             4 => {
                 mask =
-                    ((1 as libc::c_int) <<
-                         (*var).config.bitpos as libc::c_int) as uint32_t;
+                    (1i32 << (*var).config.bitpos as libc::c_int) as uint32_t;
                 if value != 0 {
                     workValue = *(ptr as *mut uint32_t) | mask
                 } else { workValue = *(ptr as *mut uint32_t) & !mask }
@@ -2447,7 +2327,7 @@ unsafe extern "C" fn cliSetVar(mut var: *const clivalue_t, value: int16_t) {
             _ => { }
         }
     } else {
-        match (*var).type_0 as libc::c_int & 0x7 as libc::c_int {
+        match (*var).type_0 as libc::c_int & 0x7i32 {
             0 => { *(ptr as *mut uint8_t) = value as uint8_t }
             1 => { *(ptr as *mut int8_t) = value as int8_t }
             2 | 3 => { *(ptr as *mut int16_t) = value }
@@ -2481,19 +2361,14 @@ unsafe extern "C" fn processChannelRangeArgs(mut ptr: *const libc::c_char,
                                              mut validArgumentCount:
                                                  *mut uint8_t)
  -> *const libc::c_char {
-    let mut argIndex: uint32_t = 0 as libc::c_int as uint32_t;
-    while argIndex < 2 as libc::c_int as libc::c_uint {
+    let mut argIndex: uint32_t = 0i32 as uint32_t;
+    while argIndex < 2i32 as libc::c_uint {
         ptr = nextArg(ptr);
         if !ptr.is_null() {
             let mut val: libc::c_int = atoi(ptr);
-            val =
-                (constrain(val, 900 as libc::c_int, 2100 as libc::c_int) -
-                     900 as libc::c_int) / 25 as libc::c_int;
-            if val >= 0 as libc::c_int &&
-                   val <=
-                       (2100 as libc::c_int - 900 as libc::c_int) /
-                           25 as libc::c_int {
-                if argIndex == 0 as libc::c_int as libc::c_uint {
+            val = (constrain(val, 900i32, 2100i32) - 900i32) / 25i32;
+            if val >= 0i32 && val <= (2100i32 - 900i32) / 25i32 {
+                if argIndex == 0i32 as libc::c_uint {
                     (*range).startStep = val as uint8_t
                 } else { (*range).endStep = val as uint8_t }
                 *validArgumentCount = (*validArgumentCount).wrapping_add(1)
@@ -2506,8 +2381,8 @@ unsafe extern "C" fn processChannelRangeArgs(mut ptr: *const libc::c_char,
 // Check if a string's length is zero
 unsafe extern "C" fn isEmpty(mut string: *const libc::c_char) -> bool {
     return if string.is_null() || *string as libc::c_int == '\u{0}' as i32 {
-               1 as libc::c_int
-           } else { 0 as libc::c_int } != 0;
+               1i32
+           } else { 0i32 } != 0;
 }
 unsafe extern "C" fn printRxFailsafe(mut dumpMask: uint8_t,
                                      mut rxFailsafeChannelConfigs_0:
@@ -2515,8 +2390,8 @@ unsafe extern "C" fn printRxFailsafe(mut dumpMask: uint8_t,
                                      mut defaultRxFailsafeChannelConfigs:
                                          *const rxFailsafeChannelConfig_t) {
     // print out rxConfig failsafe settings
-    let mut channel: uint32_t = 0 as libc::c_int as uint32_t;
-    while channel < 18 as libc::c_int as libc::c_uint {
+    let mut channel: uint32_t = 0i32 as uint32_t;
+    while channel < 18i32 as libc::c_uint {
         let mut channelFailsafeConfig: *const rxFailsafeChannelConfig_t =
             &*rxFailsafeChannelConfigs_0.offset(channel as isize) as
                 *const rxFailsafeChannelConfig_t;
@@ -2539,16 +2414,16 @@ unsafe extern "C" fn printRxFailsafe(mut dumpMask: uint8_t,
                                  rxFailsafeModeCharacters[(*defaultChannelFailsafeConfig).mode
                                                               as usize] as
                                      libc::c_int,
-                                 750 as libc::c_int +
-                                     25 as libc::c_int *
+                                 750i32 +
+                                     25i32 *
                                          (*defaultChannelFailsafeConfig).step
                                              as libc::c_int);
             cliDumpPrintLinef(dumpMask, equalsDefault, format, channel,
                               rxFailsafeModeCharacters[(*channelFailsafeConfig).mode
                                                            as usize] as
                                   libc::c_int,
-                              750 as libc::c_int +
-                                  25 as libc::c_int *
+                              750i32 +
+                                  25i32 *
                                       (*channelFailsafeConfig).step as
                                           libc::c_int);
         } else {
@@ -2571,10 +2446,10 @@ unsafe extern "C" fn cliRxFailsafe(mut cmdline: *mut libc::c_char) {
     let mut buf: [libc::c_char; 3] = [0; 3];
     if isEmpty(cmdline) {
         // print out rxConfig failsafe settings
-        channel = 0 as libc::c_int as uint8_t;
-        while (channel as libc::c_int) < 18 as libc::c_int {
+        channel = 0i32 as uint8_t;
+        while (channel as libc::c_int) < 18i32 {
             cliRxFailsafe(itoa(channel as libc::c_int, buf.as_mut_ptr(),
-                               10 as libc::c_int));
+                               10i32));
             channel = channel.wrapping_add(1)
         }
     } else {
@@ -2582,11 +2457,11 @@ unsafe extern "C" fn cliRxFailsafe(mut cmdline: *mut libc::c_char) {
         let fresh1 = ptr;
         ptr = ptr.offset(1);
         channel = atoi(fresh1) as uint8_t;
-        if (channel as libc::c_int) < 18 as libc::c_int {
+        if (channel as libc::c_int) < 18i32 {
             let mut channelFailsafeConfig: *mut rxFailsafeChannelConfig_t =
                 rxFailsafeChannelConfigsMutable(channel as libc::c_int);
             let type_0: rxFailsafeChannelType_e =
-                if (channel as libc::c_int) < 4 as libc::c_int {
+                if (channel as libc::c_int) < 4i32 {
                     RX_FAILSAFE_TYPE_FLIGHT as libc::c_int
                 } else { RX_FAILSAFE_TYPE_AUX as libc::c_int } as
                     rxFailsafeChannelType_e;
@@ -2623,12 +2498,9 @@ unsafe extern "C" fn cliRxFailsafe(mut cmdline: *mut libc::c_char) {
                     if !requireValue { cliShowParseError(); return }
                     let mut value: uint16_t = atoi(ptr) as uint16_t;
                     value =
-                        ((constrain(value as libc::c_int, 750 as libc::c_int,
-                                    2250 as libc::c_int) - 750 as libc::c_int)
-                             / 25 as libc::c_int) as uint16_t;
-                    if value as libc::c_int >
-                           (2250 as libc::c_int - 750 as libc::c_int) /
-                               25 as libc::c_int {
+                        ((constrain(value as libc::c_int, 750i32, 2250i32) -
+                              750i32) / 25i32) as uint16_t;
+                    if value as libc::c_int > (2250i32 - 750i32) / 25i32 {
                         cliPrintLine(b"Value out of range\x00" as *const u8 as
                                          *const libc::c_char);
                         return
@@ -2647,8 +2519,8 @@ unsafe extern "C" fn cliRxFailsafe(mut cmdline: *mut libc::c_char) {
                 cliPrintLinef(b"rxfail %u %c %d\x00" as *const u8 as
                                   *const libc::c_char, channel as libc::c_int,
                               modeCharacter as libc::c_int,
-                              750 as libc::c_int +
-                                  25 as libc::c_int *
+                              750i32 +
+                                  25i32 *
                                       (*channelFailsafeConfig).step as
                                           libc::c_int);
             } else {
@@ -2659,8 +2531,8 @@ unsafe extern "C" fn cliRxFailsafe(mut cmdline: *mut libc::c_char) {
         } else {
             cliShowArgumentRangeError(b"channel\x00" as *const u8 as
                                           *const libc::c_char as
-                                          *mut libc::c_char, 0 as libc::c_int,
-                                      18 as libc::c_int - 1 as libc::c_int);
+                                          *mut libc::c_char, 0i32,
+                                      18i32 - 1i32);
         }
     };
 }
@@ -2672,12 +2544,12 @@ unsafe extern "C" fn printAux(mut dumpMask: uint8_t,
     let mut format: *const libc::c_char =
         b"aux %u %u %u %u %u %u %u\x00" as *const u8 as *const libc::c_char;
     // print out aux channel settings
-    let mut i: uint32_t = 0 as libc::c_int as uint32_t;
-    while i < 20 as libc::c_int as libc::c_uint {
+    let mut i: uint32_t = 0i32 as uint32_t;
+    while i < 20i32 as libc::c_uint {
         let mut mac: *const modeActivationCondition_t =
             &*modeActivationConditions_0.offset(i as isize) as
                 *const modeActivationCondition_t;
-        let mut equalsDefault: bool = 0 as libc::c_int != 0;
+        let mut equalsDefault: bool = 0i32 != 0;
         if !defaultModeActivationConditions.is_null() {
             let mut macDefault: *const modeActivationCondition_t =
                 &*defaultModeActivationConditions.offset(i as isize) as
@@ -2696,19 +2568,19 @@ unsafe extern "C" fn printAux(mut dumpMask: uint8_t,
                                      (*box_0).permanentId as libc::c_int,
                                      (*macDefault).auxChannelIndex as
                                          libc::c_int,
-                                     900 as libc::c_int +
-                                         25 as libc::c_int *
+                                     900i32 +
+                                         25i32 *
                                              (*macDefault).range.startStep as
                                                  libc::c_int,
-                                     900 as libc::c_int +
-                                         25 as libc::c_int *
+                                     900i32 +
+                                         25i32 *
                                              (*macDefault).range.endStep as
                                                  libc::c_int,
                                      (*macDefault).modeLogic as libc::c_uint,
                                      if !linkedTo.is_null() {
                                          (*linkedTo).permanentId as
                                              libc::c_int
-                                     } else { 0 as libc::c_int });
+                                     } else { 0i32 });
             }
         }
         let mut box_1: *const box_t = findBoxByBoxId((*mac).modeId);
@@ -2717,37 +2589,36 @@ unsafe extern "C" fn printAux(mut dumpMask: uint8_t,
             cliDumpPrintLinef(dumpMask, equalsDefault, format, i,
                               (*box_1).permanentId as libc::c_int,
                               (*mac).auxChannelIndex as libc::c_int,
-                              900 as libc::c_int +
-                                  25 as libc::c_int *
+                              900i32 +
+                                  25i32 *
                                       (*mac).range.startStep as libc::c_int,
-                              900 as libc::c_int +
-                                  25 as libc::c_int *
-                                      (*mac).range.endStep as libc::c_int,
+                              900i32 +
+                                  25i32 * (*mac).range.endStep as libc::c_int,
                               (*mac).modeLogic as libc::c_uint,
                               if !linkedTo_0.is_null() {
                                   (*linkedTo_0).permanentId as libc::c_int
-                              } else { 0 as libc::c_int });
+                              } else { 0i32 });
         }
         i = i.wrapping_add(1)
     };
 }
 unsafe extern "C" fn cliAux(mut cmdline: *mut libc::c_char) {
     let mut i: libc::c_int = 0;
-    let mut val: libc::c_int = 0 as libc::c_int;
+    let mut val: libc::c_int = 0i32;
     let mut ptr: *const libc::c_char = 0 as *const libc::c_char;
     if isEmpty(cmdline) {
         printAux(DUMP_MASTER as libc::c_int as uint8_t,
-                 modeActivationConditions(0 as libc::c_int),
+                 modeActivationConditions(0i32),
                  0 as *const modeActivationCondition_t);
     } else {
         ptr = cmdline;
         let fresh2 = ptr;
         ptr = ptr.offset(1);
         i = atoi(fresh2);
-        if i < 20 as libc::c_int {
+        if i < 20i32 {
             let mut mac: *mut modeActivationCondition_t =
                 modeActivationConditionsMutable(i);
-            let mut validArgumentCount: uint8_t = 0 as libc::c_int as uint8_t;
+            let mut validArgumentCount: uint8_t = 0i32 as uint8_t;
             ptr = nextArg(ptr);
             if !ptr.is_null() {
                 val = atoi(ptr);
@@ -2761,8 +2632,7 @@ unsafe extern "C" fn cliAux(mut cmdline: *mut libc::c_char) {
             ptr = nextArg(ptr);
             if !ptr.is_null() {
                 val = atoi(ptr);
-                if val >= 0 as libc::c_int &&
-                       val < 18 as libc::c_int - 4 as libc::c_int {
+                if val >= 0i32 && val < 18i32 - 4i32 {
                     (*mac).auxChannelIndex = val as uint8_t;
                     validArgumentCount = validArgumentCount.wrapping_add(1)
                 }
@@ -2789,14 +2659,14 @@ unsafe extern "C" fn cliAux(mut cmdline: *mut libc::c_char) {
                     validArgumentCount = validArgumentCount.wrapping_add(1)
                 }
             }
-            if validArgumentCount as libc::c_int == 4 as libc::c_int {
+            if validArgumentCount as libc::c_int == 4i32 {
                 // for backwards compatibility
                 (*mac).modeLogic = MODELOGIC_OR
-            } else if validArgumentCount as libc::c_int == 5 as libc::c_int {
+            } else if validArgumentCount as libc::c_int == 5i32 {
                 // for backwards compatibility
                 (*mac).linkedTo = BOXARM
-            } else if validArgumentCount as libc::c_int != 6 as libc::c_int {
-                memset(mac as *mut libc::c_void, 0 as libc::c_int,
+            } else if validArgumentCount as libc::c_int != 6i32 {
+                memset(mac as *mut libc::c_void, 0i32,
                        ::core::mem::size_of::<modeActivationCondition_t>() as
                            libc::c_ulong);
             }
@@ -2804,19 +2674,17 @@ unsafe extern "C" fn cliAux(mut cmdline: *mut libc::c_char) {
                               *const libc::c_char, i,
                           (*mac).modeId as libc::c_uint,
                           (*mac).auxChannelIndex as libc::c_int,
-                          900 as libc::c_int +
-                              25 as libc::c_int *
-                                  (*mac).range.startStep as libc::c_int,
-                          900 as libc::c_int +
-                              25 as libc::c_int *
-                                  (*mac).range.endStep as libc::c_int,
+                          900i32 +
+                              25i32 * (*mac).range.startStep as libc::c_int,
+                          900i32 +
+                              25i32 * (*mac).range.endStep as libc::c_int,
                           (*mac).modeLogic as libc::c_uint,
                           (*mac).linkedTo as libc::c_uint);
         } else {
             cliShowArgumentRangeError(b"index\x00" as *const u8 as
                                           *const libc::c_char as
-                                          *mut libc::c_char, 0 as libc::c_int,
-                                      20 as libc::c_int - 1 as libc::c_int);
+                                          *mut libc::c_char, 0i32,
+                                      20i32 - 1i32);
         }
     };
 }
@@ -2827,12 +2695,12 @@ unsafe extern "C" fn printSerial(mut dumpMask: uint8_t,
     let mut format: *const libc::c_char =
         b"serial %d %d %ld %ld %ld %ld\x00" as *const u8 as
             *const libc::c_char;
-    let mut i: uint32_t = 0 as libc::c_int as uint32_t;
-    while i < 8 as libc::c_int as libc::c_uint {
+    let mut i: uint32_t = 0i32 as uint32_t;
+    while i < 8i32 as libc::c_uint {
         if serialIsPortAvailable((*serialConfig_0).portConfigs[i as
                                                                    usize].identifier)
            {
-            let mut equalsDefault: bool = 0 as libc::c_int != 0;
+            let mut equalsDefault: bool = 0i32 != 0;
             if !serialConfigDefault.is_null() {
                 equalsDefault =
                     memcmp(&*(*serialConfig_0).portConfigs.as_ptr().offset(i
@@ -2916,11 +2784,11 @@ unsafe extern "C" fn cliSerial(mut cmdline: *mut libc::c_char) {
                            blackbox_baudrateIndex: 0,
                            telemetry_baudrateIndex: 0,};
     memset(&mut portConfig as *mut serialPortConfig_t as *mut libc::c_void,
-           0 as libc::c_int,
+           0i32,
            ::core::mem::size_of::<serialPortConfig_t>() as libc::c_ulong);
     let mut currentConfig: *mut serialPortConfig_t =
         0 as *mut serialPortConfig_t;
-    let mut validArgumentCount: uint8_t = 0 as libc::c_int as uint8_t;
+    let mut validArgumentCount: uint8_t = 0i32 as uint8_t;
     let mut ptr: *const libc::c_char = cmdline;
     let fresh3 = ptr;
     ptr = ptr.offset(1);
@@ -2934,12 +2802,12 @@ unsafe extern "C" fn cliSerial(mut cmdline: *mut libc::c_char) {
     ptr = nextArg(ptr);
     if !ptr.is_null() {
         val = atoi(ptr);
-        portConfig.functionMask = (val & 0xffff as libc::c_int) as uint16_t;
+        portConfig.functionMask = (val & 0xffffi32) as uint16_t;
         validArgumentCount = validArgumentCount.wrapping_add(1)
     }
     let mut current_block_22: u64;
-    let mut i: libc::c_int = 0 as libc::c_int;
-    while i < 4 as libc::c_int {
+    let mut i: libc::c_int = 0i32;
+    while i < 4i32 {
         ptr = nextArg(ptr);
         if ptr.is_null() { break ; }
         val = atoi(ptr);
@@ -3003,15 +2871,15 @@ unsafe extern "C" fn cliSerial(mut cmdline: *mut libc::c_char) {
         }
         i += 1
     }
-    if (validArgumentCount as libc::c_int) < 6 as libc::c_int {
+    if (validArgumentCount as libc::c_int) < 6i32 {
         cliShowParseError();
         return
     }
     memcpy(currentConfig as *mut libc::c_void,
            &mut portConfig as *mut serialPortConfig_t as *const libc::c_void,
            ::core::mem::size_of::<serialPortConfig_t>() as libc::c_ulong);
-    cliDumpPrintLinef(0 as libc::c_int as uint8_t, 0 as libc::c_int != 0,
-                      format, portConfig.identifier as libc::c_int,
+    cliDumpPrintLinef(0i32 as uint8_t, 0i32 != 0, format,
+                      portConfig.identifier as libc::c_int,
                       portConfig.functionMask as libc::c_int,
                       *baudRates.as_ptr().offset(portConfig.msp_baudrateIndex
                                                      as isize),
@@ -3025,24 +2893,22 @@ unsafe extern "C" fn cliSerial(mut cmdline: *mut libc::c_char) {
 unsafe extern "C" fn cbCtrlLine(mut context: *mut libc::c_void,
                                 mut ctrl: uint16_t) {
     let mut pinioDtr: libc::c_int = context as libc::c_long as libc::c_int;
-    pinioSet(pinioDtr,
-             ctrl as libc::c_int & (1 as libc::c_int) << 0 as libc::c_int ==
-                 0);
+    pinioSet(pinioDtr, ctrl as libc::c_int & 1i32 << 0i32 == 0);
 }
 /* USE_PINIO */
 unsafe extern "C" fn cliSerialPassthrough(mut cmdline: *mut libc::c_char) {
     if isEmpty(cmdline) { cliShowParseError(); return }
-    let mut id: libc::c_int = -(1 as libc::c_int);
-    let mut baud: uint32_t = 0 as libc::c_int as uint32_t;
-    let mut enableBaudCb: bool = 0 as libc::c_int != 0;
-    let mut pinioDtr: libc::c_int = 0 as libc::c_int;
+    let mut id: libc::c_int = -1i32;
+    let mut baud: uint32_t = 0i32 as uint32_t;
+    let mut enableBaudCb: bool = 0i32 != 0;
+    let mut pinioDtr: libc::c_int = 0i32;
     /* USE_PINIO */
-    let mut mode: libc::c_uint = 0 as libc::c_int as libc::c_uint;
+    let mut mode: libc::c_uint = 0i32 as libc::c_uint;
     let mut saveptr: *mut libc::c_char = 0 as *mut libc::c_char;
     let mut tok: *mut libc::c_char =
         strtok_r(cmdline, b" \x00" as *const u8 as *const libc::c_char,
                  &mut saveptr);
-    let mut index: libc::c_int = 0 as libc::c_int;
+    let mut index: libc::c_int = 0i32;
     while !tok.is_null() {
         match index {
             0 => {
@@ -3077,9 +2943,7 @@ unsafe extern "C" fn cliSerialPassthrough(mut cmdline: *mut libc::c_char) {
                      b" \x00" as *const u8 as *const libc::c_char,
                      &mut saveptr)
     }
-    if baud == 0 as libc::c_int as libc::c_uint {
-        enableBaudCb = 1 as libc::c_int != 0
-    }
+    if baud == 0i32 as libc::c_uint { enableBaudCb = 1i32 != 0 }
     cliPrintf(b"Port %d \x00" as *const u8 as *const libc::c_char, id);
     let mut passThroughPort: *mut serialPort_t = 0 as *mut serialPort_t;
     let mut passThroughPortUsage: *mut serialPortUsage_t =
@@ -3088,7 +2952,7 @@ unsafe extern "C" fn cliSerialPassthrough(mut cmdline: *mut libc::c_char) {
            (*passThroughPortUsage).serialPort.is_null() {
         if enableBaudCb {
             // Set default baud
-            baud = 57600 as libc::c_int as uint32_t
+            baud = 57600i32 as uint32_t
         }
         if mode == 0 { mode = MODE_RXTX as libc::c_int as libc::c_uint }
         passThroughPort =
@@ -3155,7 +3019,7 @@ unsafe extern "C" fn cliSerialPassthrough(mut cmdline: *mut libc::c_char) {
                                                                    *mut libc::c_void,
                                                                _: uint16_t)
                                               -> ()),
-                                 (pinioDtr - 1 as libc::c_int) as intptr_t as
+                                 (pinioDtr - 1i32) as intptr_t as
                                      *mut libc::c_void);
     }
     /* USE_PINIO */
@@ -3170,12 +3034,12 @@ unsafe extern "C" fn printAdjustmentRange(mut dumpMask: uint8_t,
         b"adjrange %u %u %u %u %u %u %u %u %u\x00" as *const u8 as
             *const libc::c_char;
     // print out adjustment ranges channel settings
-    let mut i: uint32_t = 0 as libc::c_int as uint32_t;
-    while i < 15 as libc::c_int as libc::c_uint {
+    let mut i: uint32_t = 0i32 as uint32_t;
+    while i < 15i32 as libc::c_uint {
         let mut ar: *const adjustmentRange_t =
             &*adjustmentRanges_0.offset(i as isize) as
                 *const adjustmentRange_t;
-        let mut equalsDefault: bool = 0 as libc::c_int != 0;
+        let mut equalsDefault: bool = 0i32 != 0;
         if !defaultAdjustmentRanges.is_null() {
             let mut arDefault: *const adjustmentRange_t =
                 &*defaultAdjustmentRanges.offset(i as isize) as
@@ -3188,12 +3052,12 @@ unsafe extern "C" fn printAdjustmentRange(mut dumpMask: uint8_t,
             cliDefaultPrintLinef(dumpMask, equalsDefault, format, i,
                                  (*arDefault).adjustmentIndex as libc::c_int,
                                  (*arDefault).auxChannelIndex as libc::c_int,
-                                 900 as libc::c_int +
-                                     25 as libc::c_int *
+                                 900i32 +
+                                     25i32 *
                                          (*arDefault).range.startStep as
                                              libc::c_int,
-                                 900 as libc::c_int +
-                                     25 as libc::c_int *
+                                 900i32 +
+                                     25i32 *
                                          (*arDefault).range.endStep as
                                              libc::c_int,
                                  (*arDefault).adjustmentFunction as
@@ -3206,12 +3070,9 @@ unsafe extern "C" fn printAdjustmentRange(mut dumpMask: uint8_t,
         cliDumpPrintLinef(dumpMask, equalsDefault, format, i,
                           (*ar).adjustmentIndex as libc::c_int,
                           (*ar).auxChannelIndex as libc::c_int,
-                          900 as libc::c_int +
-                              25 as libc::c_int *
-                                  (*ar).range.startStep as libc::c_int,
-                          900 as libc::c_int +
-                              25 as libc::c_int *
-                                  (*ar).range.endStep as libc::c_int,
+                          900i32 +
+                              25i32 * (*ar).range.startStep as libc::c_int,
+                          900i32 + 25i32 * (*ar).range.endStep as libc::c_int,
                           (*ar).adjustmentFunction as libc::c_int,
                           (*ar).auxSwitchChannelIndex as libc::c_int,
                           (*ar).adjustmentCenter as libc::c_int,
@@ -3224,24 +3085,24 @@ unsafe extern "C" fn cliAdjustmentRange(mut cmdline: *mut libc::c_char) {
         b"adjrange %u %u %u %u %u %u %u %u %u\x00" as *const u8 as
             *const libc::c_char;
     let mut i: libc::c_int = 0;
-    let mut val: libc::c_int = 0 as libc::c_int;
+    let mut val: libc::c_int = 0i32;
     let mut ptr: *const libc::c_char = 0 as *const libc::c_char;
     if isEmpty(cmdline) {
         printAdjustmentRange(DUMP_MASTER as libc::c_int as uint8_t,
-                             adjustmentRanges(0 as libc::c_int),
+                             adjustmentRanges(0i32),
                              0 as *const adjustmentRange_t);
     } else {
         ptr = cmdline;
         let fresh4 = ptr;
         ptr = ptr.offset(1);
         i = atoi(fresh4);
-        if i < 15 as libc::c_int {
+        if i < 15i32 {
             let mut ar: *mut adjustmentRange_t = adjustmentRangesMutable(i);
-            let mut validArgumentCount: uint8_t = 0 as libc::c_int as uint8_t;
+            let mut validArgumentCount: uint8_t = 0i32 as uint8_t;
             ptr = nextArg(ptr);
             if !ptr.is_null() {
                 val = atoi(ptr);
-                if val >= 0 as libc::c_int && val < 4 as libc::c_int {
+                if val >= 0i32 && val < 4i32 {
                     (*ar).adjustmentIndex = val as uint8_t;
                     validArgumentCount = validArgumentCount.wrapping_add(1)
                 }
@@ -3249,8 +3110,7 @@ unsafe extern "C" fn cliAdjustmentRange(mut cmdline: *mut libc::c_char) {
             ptr = nextArg(ptr);
             if !ptr.is_null() {
                 val = atoi(ptr);
-                if val >= 0 as libc::c_int &&
-                       val < 18 as libc::c_int - 4 as libc::c_int {
+                if val >= 0i32 && val < 18i32 - 4i32 {
                     (*ar).auxChannelIndex = val as uint8_t;
                     validArgumentCount = validArgumentCount.wrapping_add(1)
                 }
@@ -3261,7 +3121,7 @@ unsafe extern "C" fn cliAdjustmentRange(mut cmdline: *mut libc::c_char) {
             ptr = nextArg(ptr);
             if !ptr.is_null() {
                 val = atoi(ptr);
-                if val >= 0 as libc::c_int &&
+                if val >= 0i32 &&
                        val < ADJUSTMENT_FUNCTION_COUNT as libc::c_int {
                     (*ar).adjustmentFunction = val as uint8_t;
                     validArgumentCount = validArgumentCount.wrapping_add(1)
@@ -3270,22 +3130,21 @@ unsafe extern "C" fn cliAdjustmentRange(mut cmdline: *mut libc::c_char) {
             ptr = nextArg(ptr);
             if !ptr.is_null() {
                 val = atoi(ptr);
-                if val >= 0 as libc::c_int &&
-                       val < 18 as libc::c_int - 4 as libc::c_int {
+                if val >= 0i32 && val < 18i32 - 4i32 {
                     (*ar).auxSwitchChannelIndex = val as uint8_t;
                     validArgumentCount = validArgumentCount.wrapping_add(1)
                 }
             }
-            if validArgumentCount as libc::c_int != 6 as libc::c_int {
-                memset(ar as *mut libc::c_void, 0 as libc::c_int,
+            if validArgumentCount as libc::c_int != 6i32 {
+                memset(ar as *mut libc::c_void, 0i32,
                        ::core::mem::size_of::<adjustmentRange_t>() as
                            libc::c_ulong);
                 cliShowParseError();
                 return
             }
             // Optional arguments
-            (*ar).adjustmentCenter = 0 as libc::c_int as uint16_t;
-            (*ar).adjustmentScale = 0 as libc::c_int as uint16_t;
+            (*ar).adjustmentCenter = 0i32 as uint16_t;
+            (*ar).adjustmentScale = 0i32 as uint16_t;
             ptr = nextArg(ptr);
             if !ptr.is_null() {
                 val = atoi(ptr);
@@ -3298,16 +3157,14 @@ unsafe extern "C" fn cliAdjustmentRange(mut cmdline: *mut libc::c_char) {
                 (*ar).adjustmentScale = val as uint16_t;
                 validArgumentCount = validArgumentCount.wrapping_add(1)
             }
-            cliDumpPrintLinef(0 as libc::c_int as uint8_t,
-                              0 as libc::c_int != 0, format, i,
+            cliDumpPrintLinef(0i32 as uint8_t, 0i32 != 0, format, i,
                               (*ar).adjustmentIndex as libc::c_int,
                               (*ar).auxChannelIndex as libc::c_int,
-                              900 as libc::c_int +
-                                  25 as libc::c_int *
+                              900i32 +
+                                  25i32 *
                                       (*ar).range.startStep as libc::c_int,
-                              900 as libc::c_int +
-                                  25 as libc::c_int *
-                                      (*ar).range.endStep as libc::c_int,
+                              900i32 +
+                                  25i32 * (*ar).range.endStep as libc::c_int,
                               (*ar).adjustmentFunction as libc::c_int,
                               (*ar).auxSwitchChannelIndex as libc::c_int,
                               (*ar).adjustmentCenter as libc::c_int,
@@ -3315,8 +3172,8 @@ unsafe extern "C" fn cliAdjustmentRange(mut cmdline: *mut libc::c_char) {
         } else {
             cliShowArgumentRangeError(b"index\x00" as *const u8 as
                                           *const libc::c_char as
-                                          *mut libc::c_char, 0 as libc::c_int,
-                                      15 as libc::c_int - 1 as libc::c_int);
+                                          *mut libc::c_char, 0i32,
+                                      15i32 - 1i32);
         }
     };
 }
@@ -3331,8 +3188,8 @@ unsafe extern "C" fn printMotorMix(mut dumpMask: uint8_t,
     let mut buf1: [libc::c_char; 11] = [0; 11];
     let mut buf2: [libc::c_char; 11] = [0; 11];
     let mut buf3: [libc::c_char; 11] = [0; 11];
-    let mut i: uint32_t = 0 as libc::c_int as uint32_t;
-    while i < 8 as libc::c_int as libc::c_uint {
+    let mut i: uint32_t = 0i32 as uint32_t;
+    while i < 8i32 as libc::c_uint {
         if (*customMotorMixer_0.offset(i as isize)).throttle == 0.0f32 {
             break ;
         }
@@ -3343,7 +3200,7 @@ unsafe extern "C" fn printMotorMix(mut dumpMask: uint8_t,
         let pitch: libc::c_float =
             (*customMotorMixer_0.offset(i as isize)).pitch;
         let yaw: libc::c_float = (*customMotorMixer_0.offset(i as isize)).yaw;
-        let mut equalsDefault: bool = 0 as libc::c_int != 0;
+        let mut equalsDefault: bool = 0i32 != 0;
         if !defaultCustomMotorMixer.is_null() {
             let thrDefault: libc::c_float =
                 (*defaultCustomMotorMixer.offset(i as isize)).throttle;
@@ -3372,42 +3229,37 @@ unsafe extern "C" fn printMotorMix(mut dumpMask: uint8_t,
 }
 // USE_QUAD_MIXER_ONLY
 unsafe extern "C" fn cliMotorMix(mut cmdline: *mut libc::c_char) {
-    let mut check: libc::c_int = 0 as libc::c_int;
+    let mut check: libc::c_int = 0i32;
     let mut len: uint8_t = 0;
     let mut ptr: *const libc::c_char = 0 as *const libc::c_char;
     if isEmpty(cmdline) {
         printMotorMix(DUMP_MASTER as libc::c_int as uint8_t,
-                      customMotorMixer(0 as libc::c_int),
-                      0 as *const motorMixer_t);
+                      customMotorMixer(0i32), 0 as *const motorMixer_t);
     } else if strncasecmp(cmdline,
                           b"reset\x00" as *const u8 as *const libc::c_char,
-                          5 as libc::c_int as libc::c_ulong) ==
-                  0 as libc::c_int {
+                          5i32 as libc::c_ulong) == 0i32 {
         // erase custom mixer
-        let mut i: uint32_t =
-            0 as libc::c_int as uint32_t; // get motor number
-        while i < 8 as libc::c_int as libc::c_uint {
+        let mut i: uint32_t = 0i32 as uint32_t; // get motor number
+        while i < 8i32 as libc::c_uint {
             (*customMotorMixerMutable(i as libc::c_int)).throttle = 0.0f32;
             i = i.wrapping_add(1)
         }
     } else if strncasecmp(cmdline,
                           b"load\x00" as *const u8 as *const libc::c_char,
-                          4 as libc::c_int as libc::c_ulong) ==
-                  0 as libc::c_int {
+                          4i32 as libc::c_ulong) == 0i32 {
         ptr = nextArg(cmdline);
         if !ptr.is_null() {
             len = strlen(ptr) as uint8_t;
-            let mut i_0: uint32_t = 0 as libc::c_int as uint32_t;
+            let mut i_0: uint32_t = 0i32 as uint32_t;
             loop  {
                 if mixerNames[i_0 as usize].is_null() {
                     cliPrintErrorLinef(b"Invalid name\x00" as *const u8 as
                                            *const libc::c_char);
                     break ;
                 } else if strncasecmp(ptr, mixerNames[i_0 as usize],
-                                      len as libc::c_ulong) ==
-                              0 as libc::c_int {
+                                      len as libc::c_ulong) == 0i32 {
                     mixerLoadMix(i_0 as libc::c_int,
-                                 customMotorMixerMutable(0 as libc::c_int));
+                                 customMotorMixerMutable(0i32));
                     cliPrintLinef(b"Loaded %s\x00" as *const u8 as
                                       *const libc::c_char,
                                   mixerNames[i_0 as usize]);
@@ -3420,7 +3272,7 @@ unsafe extern "C" fn cliMotorMix(mut cmdline: *mut libc::c_char) {
     } else {
         ptr = cmdline;
         let mut i_1: uint32_t = atoi(ptr) as uint32_t;
-        if i_1 < 8 as libc::c_int as libc::c_uint {
+        if i_1 < 8i32 as libc::c_uint {
             ptr = nextArg(ptr);
             if !ptr.is_null() {
                 (*customMotorMixerMutable(i_1 as libc::c_int)).throttle =
@@ -3445,18 +3297,18 @@ unsafe extern "C" fn cliMotorMix(mut cmdline: *mut libc::c_char) {
                     fastA2F(ptr);
                 check += 1
             }
-            if check != 4 as libc::c_int {
+            if check != 4i32 {
                 cliShowParseError();
             } else {
                 printMotorMix(DUMP_MASTER as libc::c_int as uint8_t,
-                              customMotorMixer(0 as libc::c_int),
+                              customMotorMixer(0i32),
                               0 as *const motorMixer_t);
             }
         } else {
             cliShowArgumentRangeError(b"index\x00" as *const u8 as
                                           *const libc::c_char as
-                                          *mut libc::c_char, 0 as libc::c_int,
-                                      8 as libc::c_int - 1 as libc::c_int);
+                                          *mut libc::c_char, 0i32,
+                                      8i32 - 1i32);
         }
     };
 }
@@ -3467,9 +3319,9 @@ unsafe extern "C" fn printRxRange(mut dumpMask: uint8_t,
                                       *const rxChannelRangeConfig_t) {
     let mut format: *const libc::c_char =
         b"rxrange %u %u %u\x00" as *const u8 as *const libc::c_char;
-    let mut i: uint32_t = 0 as libc::c_int as uint32_t;
-    while i < 4 as libc::c_int as libc::c_uint {
-        let mut equalsDefault: bool = 0 as libc::c_int != 0;
+    let mut i: uint32_t = 0i32 as uint32_t;
+    while i < 4i32 as libc::c_uint {
+        let mut equalsDefault: bool = 0i32 != 0;
         if !defaultChannelRangeConfigs.is_null() {
             equalsDefault =
                 memcmp(&*channelRangeConfigs.offset(i as isize) as
@@ -3500,23 +3352,22 @@ unsafe extern "C" fn cliRxRange(mut cmdline: *mut libc::c_char) {
     let mut format: *const libc::c_char =
         b"rxrange %u %u %u\x00" as *const u8 as *const libc::c_char;
     let mut i: libc::c_int = 0;
-    let mut validArgumentCount: libc::c_int = 0 as libc::c_int;
+    let mut validArgumentCount: libc::c_int = 0i32;
     let mut ptr: *const libc::c_char = 0 as *const libc::c_char;
     if isEmpty(cmdline) {
         printRxRange(DUMP_MASTER as libc::c_int as uint8_t,
-                     rxChannelRangeConfigs(0 as libc::c_int),
+                     rxChannelRangeConfigs(0i32),
                      0 as *const rxChannelRangeConfig_t);
     } else if strcasecmp(cmdline,
                          b"reset\x00" as *const u8 as *const libc::c_char) ==
-                  0 as libc::c_int {
-        resetAllRxChannelRangeConfigurations(rxChannelRangeConfigsMutable(0 as
-                                                                              libc::c_int));
+                  0i32 {
+        resetAllRxChannelRangeConfigurations(rxChannelRangeConfigsMutable(0i32));
     } else {
         ptr = cmdline;
         i = atoi(ptr);
-        if i >= 0 as libc::c_int && i < 4 as libc::c_int {
-            let mut rangeMin: libc::c_int = 750 as libc::c_int;
-            let mut rangeMax: libc::c_int = 2250 as libc::c_int;
+        if i >= 0i32 && i < 4i32 {
+            let mut rangeMin: libc::c_int = 750i32;
+            let mut rangeMax: libc::c_int = 2250i32;
             ptr = nextArg(ptr);
             if !ptr.is_null() {
                 rangeMin = atoi(ptr);
@@ -3527,28 +3378,25 @@ unsafe extern "C" fn cliRxRange(mut cmdline: *mut libc::c_char) {
                 rangeMax = atoi(ptr);
                 validArgumentCount += 1
             }
-            if validArgumentCount != 2 as libc::c_int {
+            if validArgumentCount != 2i32 {
                 cliShowParseError();
-            } else if rangeMin < 750 as libc::c_int ||
-                          rangeMin > 2250 as libc::c_int ||
-                          rangeMax < 750 as libc::c_int ||
-                          rangeMax > 2250 as libc::c_int {
+            } else if rangeMin < 750i32 || rangeMin > 2250i32 ||
+                          rangeMax < 750i32 || rangeMax > 2250i32 {
                 cliShowParseError();
             } else {
                 let mut channelRangeConfig: *mut rxChannelRangeConfig_t =
                     rxChannelRangeConfigsMutable(i);
                 (*channelRangeConfig).min = rangeMin as uint16_t;
                 (*channelRangeConfig).max = rangeMax as uint16_t;
-                cliDumpPrintLinef(0 as libc::c_int as uint8_t,
-                                  0 as libc::c_int != 0, format, i,
+                cliDumpPrintLinef(0i32 as uint8_t, 0i32 != 0, format, i,
                                   (*channelRangeConfig).min as libc::c_int,
                                   (*channelRangeConfig).max as libc::c_int);
             }
         } else {
             cliShowArgumentRangeError(b"channel\x00" as *const u8 as
                                           *const libc::c_char as
-                                          *mut libc::c_char, 0 as libc::c_int,
-                                      4 as libc::c_int - 1 as libc::c_int);
+                                          *mut libc::c_char, 0i32,
+                                      4i32 - 1i32);
         }
     };
 }
@@ -3558,11 +3406,11 @@ unsafe extern "C" fn printServo(mut dumpMask: uint8_t,
     // print out servo settings
     let mut format: *const libc::c_char =
         b"servo %u %d %d %d %d %d\x00" as *const u8 as *const libc::c_char;
-    let mut i: uint32_t = 0 as libc::c_int as uint32_t;
-    while i < 8 as libc::c_int as libc::c_uint {
+    let mut i: uint32_t = 0i32 as uint32_t;
+    while i < 8i32 as libc::c_uint {
         let mut servoConf: *const servoParam_t =
             &*servoParams_0.offset(i as isize) as *const servoParam_t;
-        let mut equalsDefault: bool = 0 as libc::c_int != 0;
+        let mut equalsDefault: bool = 0i32 != 0;
         if !defaultServoParams.is_null() {
             let mut defaultServoConf: *const servoParam_t =
                 &*defaultServoParams.offset(i as isize) as
@@ -3589,8 +3437,8 @@ unsafe extern "C" fn printServo(mut dumpMask: uint8_t,
         i = i.wrapping_add(1)
     }
     // print servo directions
-    let mut i_0: uint32_t = 0 as libc::c_int as uint32_t;
-    while i_0 < 8 as libc::c_int as libc::c_uint {
+    let mut i_0: uint32_t = 0i32 as uint32_t;
+    while i_0 < 8i32 as libc::c_uint {
         let mut format_0: *const libc::c_char =
             b"smix reverse %d %d r\x00" as *const u8 as *const libc::c_char;
         let mut servoConf_0: *const servoParam_t =
@@ -3601,34 +3449,33 @@ unsafe extern "C" fn printServo(mut dumpMask: uint8_t,
             let mut equalsDefault_0: bool =
                 (*servoConf_0).reversedSources ==
                     (*servoConfDefault).reversedSources;
-            let mut channel: uint32_t = 0 as libc::c_int as uint32_t;
+            let mut channel: uint32_t = 0i32 as uint32_t;
             while channel < INPUT_SOURCE_COUNT as libc::c_int as libc::c_uint
                   {
                 equalsDefault_0 =
                     !((*servoConf_0).reversedSources ^
                           (*servoConfDefault).reversedSources) &
-                        ((1 as libc::c_int) << channel) as libc::c_uint != 0;
+                        (1i32 << channel) as libc::c_uint != 0;
                 if (*servoConfDefault).reversedSources &
-                       ((1 as libc::c_int) << channel) as libc::c_uint != 0 {
+                       (1i32 << channel) as libc::c_uint != 0 {
                     cliDefaultPrintLinef(dumpMask, equalsDefault_0, format_0,
                                          i_0, channel);
                 }
                 if (*servoConf_0).reversedSources &
-                       ((1 as libc::c_int) << channel) as libc::c_uint != 0 {
+                       (1i32 << channel) as libc::c_uint != 0 {
                     cliDumpPrintLinef(dumpMask, equalsDefault_0, format_0,
                                       i_0, channel);
                 }
                 channel = channel.wrapping_add(1)
             }
         } else {
-            let mut channel_0: uint32_t = 0 as libc::c_int as uint32_t;
+            let mut channel_0: uint32_t = 0i32 as uint32_t;
             while channel_0 <
                       INPUT_SOURCE_COUNT as libc::c_int as libc::c_uint {
                 if (*servoConf_0).reversedSources &
-                       ((1 as libc::c_int) << channel_0) as libc::c_uint != 0
-                   {
-                    cliDumpPrintLinef(dumpMask, 1 as libc::c_int != 0,
-                                      format_0, i_0, channel_0);
+                       (1i32 << channel_0) as libc::c_uint != 0 {
+                    cliDumpPrintLinef(dumpMask, 1i32 != 0, format_0, i_0,
+                                      channel_0);
                 }
                 channel_0 = channel_0.wrapping_add(1)
             }
@@ -3644,10 +3491,10 @@ unsafe extern "C" fn cliServo(mut cmdline: *mut libc::c_char) {
     let mut i: libc::c_int = 0;
     let mut ptr: *mut libc::c_char = 0 as *mut libc::c_char;
     if isEmpty(cmdline) {
-        printServo(DUMP_MASTER as libc::c_int as uint8_t,
-                   servoParams(0 as libc::c_int), 0 as *const servoParam_t);
+        printServo(DUMP_MASTER as libc::c_int as uint8_t, servoParams(0i32),
+                   0 as *const servoParam_t);
     } else {
-        let mut validArgumentCount: libc::c_int = 0 as libc::c_int;
+        let mut validArgumentCount: libc::c_int = 0i32;
         ptr = cmdline;
         // Command line is integers (possibly negative) separated by spaces, no other characters allowed.
         // If command line doesn't fit the format, don't modify the config
@@ -3676,19 +3523,19 @@ unsafe extern "C" fn cliServo(mut cmdline: *mut libc::c_char) {
         i = arguments[INDEX as libc::c_int as usize] as libc::c_int;
         // Check we got the right number of args and the servo index is correct (don't validate the other values)
         if validArgumentCount != SERVO_ARGUMENT_COUNT as libc::c_int ||
-               i < 0 as libc::c_int || i >= 8 as libc::c_int {
+               i < 0i32 || i >= 8i32 {
             cliShowParseError();
             return
         }
         servo = servoParamsMutable(i);
-        if (arguments[MIN_0 as libc::c_int as usize] as libc::c_int) <
-               750 as libc::c_int ||
+        if (arguments[MIN_0 as libc::c_int as usize] as libc::c_int) < 750i32
+               ||
                arguments[MIN_0 as libc::c_int as usize] as libc::c_int >
-                   2250 as libc::c_int ||
+                   2250i32 ||
                (arguments[MAX_0 as libc::c_int as usize] as libc::c_int) <
-                   750 as libc::c_int ||
+                   750i32 ||
                arguments[MAX_0 as libc::c_int as usize] as libc::c_int >
-                   2250 as libc::c_int ||
+                   2250i32 ||
                (arguments[MIDDLE as libc::c_int as usize] as libc::c_int) <
                    arguments[MIN_0 as libc::c_int as usize] as libc::c_int ||
                arguments[MIDDLE as libc::c_int as usize] as libc::c_int >
@@ -3698,11 +3545,11 @@ unsafe extern "C" fn cliServo(mut cmdline: *mut libc::c_char) {
                (arguments[MAX_0 as libc::c_int as usize] as libc::c_int) <
                    arguments[MIN_0 as libc::c_int as usize] as libc::c_int ||
                (arguments[RATE_0 as libc::c_int as usize] as libc::c_int) <
-                   -(100 as libc::c_int) ||
+                   -100i32 ||
                arguments[RATE_0 as libc::c_int as usize] as libc::c_int >
-                   100 as libc::c_int ||
+                   100i32 ||
                arguments[FORWARD as libc::c_int as usize] as libc::c_int >=
-                   18 as libc::c_int {
+                   18i32 {
             cliShowParseError();
             return
         }
@@ -3712,8 +3559,8 @@ unsafe extern "C" fn cliServo(mut cmdline: *mut libc::c_char) {
         (*servo).rate = arguments[RATE_0 as libc::c_int as usize] as int8_t;
         (*servo).forwardFromChannel =
             arguments[FORWARD as libc::c_int as usize] as int8_t;
-        cliDumpPrintLinef(0 as libc::c_int as uint8_t, 0 as libc::c_int != 0,
-                          format, i, (*servo).min as libc::c_int,
+        cliDumpPrintLinef(0i32 as uint8_t, 0i32 != 0, format, i,
+                          (*servo).min as libc::c_int,
                           (*servo).max as libc::c_int,
                           (*servo).middle as libc::c_int,
                           (*servo).rate as libc::c_int,
@@ -3728,14 +3575,12 @@ unsafe extern "C" fn printServoMix(mut dumpMask: uint8_t,
     let mut format: *const libc::c_char =
         b"smix %d %d %d %d %d %d %d %d\x00" as *const u8 as
             *const libc::c_char;
-    let mut i: uint32_t = 0 as libc::c_int as uint32_t;
-    while i < (2 as libc::c_int * 8 as libc::c_int) as libc::c_uint {
+    let mut i: uint32_t = 0i32 as uint32_t;
+    while i < (2i32 * 8i32) as libc::c_uint {
         let customServoMixer: servoMixer_t =
             *customServoMixers_0.offset(i as isize);
-        if customServoMixer.rate as libc::c_int == 0 as libc::c_int {
-            break ;
-        }
-        let mut equalsDefault: bool = 0 as libc::c_int != 0;
+        if customServoMixer.rate as libc::c_int == 0i32 { break ; }
+        let mut equalsDefault: bool = 0i32 != 0;
         if !defaultCustomServoMixers.is_null() {
             let mut customServoMixerDefault: servoMixer_t =
                 *defaultCustomServoMixers.offset(i as isize);
@@ -3772,42 +3617,37 @@ unsafe extern "C" fn printServoMix(mut dumpMask: uint8_t,
 }
 unsafe extern "C" fn cliServoMix(mut cmdline: *mut libc::c_char) {
     let mut args: [libc::c_int; 8] = [0; 8];
-    let mut check: libc::c_int = 0 as libc::c_int;
+    let mut check: libc::c_int = 0i32;
     let mut len: libc::c_int = strlen(cmdline) as libc::c_int;
-    if len == 0 as libc::c_int {
+    if len == 0i32 {
         printServoMix(DUMP_MASTER as libc::c_int as uint8_t,
-                      customServoMixers(0 as libc::c_int),
-                      0 as *const servoMixer_t);
+                      customServoMixers(0i32), 0 as *const servoMixer_t);
     } else if strncasecmp(cmdline,
                           b"reset\x00" as *const u8 as *const libc::c_char,
-                          5 as libc::c_int as libc::c_ulong) ==
-                  0 as libc::c_int {
+                          5i32 as libc::c_ulong) == 0i32 {
         // erase custom mixer
-        memset(customServoMixers_array() as *mut libc::c_void,
-               0 as libc::c_int,
+        memset(customServoMixers_array() as *mut libc::c_void, 0i32,
                ::core::mem::size_of::<[servoMixer_t; 16]>() as libc::c_ulong);
-        let mut i: uint32_t = 0 as libc::c_int as uint32_t;
-        while i < 8 as libc::c_int as libc::c_uint {
+        let mut i: uint32_t = 0i32 as uint32_t;
+        while i < 8i32 as libc::c_uint {
             (*servoParamsMutable(i as libc::c_int)).reversedSources =
-                0 as libc::c_int as uint32_t;
+                0i32 as uint32_t;
             i = i.wrapping_add(1)
         }
     } else if strncasecmp(cmdline,
                           b"load\x00" as *const u8 as *const libc::c_char,
-                          4 as libc::c_int as libc::c_ulong) ==
-                  0 as libc::c_int {
+                          4i32 as libc::c_ulong) == 0i32 {
         let mut ptr: *const libc::c_char = nextArg(cmdline);
         if !ptr.is_null() {
             len = strlen(ptr) as libc::c_int;
-            let mut i_0: uint32_t = 0 as libc::c_int as uint32_t;
+            let mut i_0: uint32_t = 0i32 as uint32_t;
             loop  {
                 if mixerNames[i_0 as usize].is_null() {
                     cliPrintErrorLinef(b"Invalid name\x00" as *const u8 as
                                            *const libc::c_char);
                     break ;
                 } else if strncasecmp(ptr, mixerNames[i_0 as usize],
-                                      len as libc::c_ulong) ==
-                              0 as libc::c_int {
+                                      len as libc::c_ulong) == 0i32 {
                     servoMixerLoadMix(i_0 as libc::c_int);
                     cliPrintLinef(b"Loaded %s\x00" as *const u8 as
                                       *const libc::c_char,
@@ -3820,12 +3660,11 @@ unsafe extern "C" fn cliServoMix(mut cmdline: *mut libc::c_char) {
         }
     } else if strncasecmp(cmdline,
                           b"reverse\x00" as *const u8 as *const libc::c_char,
-                          7 as libc::c_int as libc::c_ulong) ==
-                  0 as libc::c_int {
+                          7i32 as libc::c_ulong) == 0i32 {
         let mut ptr_0: *mut libc::c_char = strchr(cmdline, ' ' as i32);
         if ptr_0.is_null() {
             cliPrintf(b"s\x00" as *const u8 as *const libc::c_char);
-            let mut inputSource: uint32_t = 0 as libc::c_int as uint32_t;
+            let mut inputSource: uint32_t = 0i32 as uint32_t;
             while inputSource <
                       INPUT_SOURCE_COUNT as libc::c_int as libc::c_uint {
                 cliPrintf(b"\ti%d\x00" as *const u8 as *const libc::c_char,
@@ -3833,21 +3672,19 @@ unsafe extern "C" fn cliServoMix(mut cmdline: *mut libc::c_char) {
                 inputSource = inputSource.wrapping_add(1)
             }
             cliPrintLinefeed();
-            let mut servoIndex: uint32_t = 0 as libc::c_int as uint32_t;
-            while servoIndex < 8 as libc::c_int as libc::c_uint {
+            let mut servoIndex: uint32_t = 0i32 as uint32_t;
+            while servoIndex < 8i32 as libc::c_uint {
                 cliPrintf(b"%d\x00" as *const u8 as *const libc::c_char,
                           servoIndex);
-                let mut inputSource_0: uint32_t =
-                    0 as libc::c_int as uint32_t;
+                let mut inputSource_0: uint32_t = 0i32 as uint32_t;
                 while inputSource_0 <
                           INPUT_SOURCE_COUNT as libc::c_int as libc::c_uint {
                     cliPrintf(b"\t%s  \x00" as *const u8 as
                                   *const libc::c_char,
                               if (*servoParams(servoIndex as
                                                    libc::c_int)).reversedSources
-                                     &
-                                     ((1 as libc::c_int) << inputSource_0) as
-                                         libc::c_uint != 0 {
+                                     & (1i32 << inputSource_0) as libc::c_uint
+                                     != 0 {
                                   b"r\x00" as *const u8 as *const libc::c_char
                               } else {
                                   b"n\x00" as *const u8 as *const libc::c_char
@@ -3863,8 +3700,7 @@ unsafe extern "C" fn cliServoMix(mut cmdline: *mut libc::c_char) {
         ptr_0 =
             strtok_r(ptr_0, b" \x00" as *const u8 as *const libc::c_char,
                      &mut saveptr);
-        while !ptr_0.is_null() &&
-                  check < ARGS_COUNT_0 as libc::c_int - 1 as libc::c_int {
+        while !ptr_0.is_null() && check < ARGS_COUNT_0 as libc::c_int - 1i32 {
             let fresh6 = check;
             check = check + 1;
             args[fresh6 as usize] = atoi(ptr_0);
@@ -3873,14 +3709,13 @@ unsafe extern "C" fn cliServoMix(mut cmdline: *mut libc::c_char) {
                          b" \x00" as *const u8 as *const libc::c_char,
                          &mut saveptr)
         }
-        if ptr_0.is_null() ||
-               check != ARGS_COUNT_0 as libc::c_int - 1 as libc::c_int {
+        if ptr_0.is_null() || check != ARGS_COUNT_0 as libc::c_int - 1i32 {
             cliShowParseError();
             return
         }
-        if args[SERVO as libc::c_int as usize] >= 0 as libc::c_int &&
-               args[SERVO as libc::c_int as usize] < 8 as libc::c_int &&
-               args[INPUT_0 as libc::c_int as usize] >= 0 as libc::c_int &&
+        if args[SERVO as libc::c_int as usize] >= 0i32 &&
+               args[SERVO as libc::c_int as usize] < 8i32 &&
+               args[INPUT_0 as libc::c_int as usize] >= 0i32 &&
                args[INPUT_0 as libc::c_int as usize] <
                    INPUT_SOURCE_COUNT as libc::c_int &&
                (*ptr_0 as libc::c_int == 'r' as i32 ||
@@ -3890,16 +3725,14 @@ unsafe extern "C" fn cliServoMix(mut cmdline: *mut libc::c_char) {
                     (*servoParamsMutable(args[SERVO as libc::c_int as
                                                   usize])).reversedSources;
                 *fresh7 |=
-                    ((1 as libc::c_int) <<
-                         args[INPUT_0 as libc::c_int as usize]) as
+                    (1i32 << args[INPUT_0 as libc::c_int as usize]) as
                         libc::c_uint
             } else {
                 let ref mut fresh8 =
                     (*servoParamsMutable(args[SERVO as libc::c_int as
                                                   usize])).reversedSources;
                 *fresh8 &=
-                    !((1 as libc::c_int) <<
-                          args[INPUT_0 as libc::c_int as usize]) as
+                    !(1i32 << args[INPUT_0 as libc::c_int as usize]) as
                         libc::c_uint
             }
         } else { cliShowParseError(); return }
@@ -3924,25 +3757,24 @@ unsafe extern "C" fn cliServoMix(mut cmdline: *mut libc::c_char) {
             return
         }
         let mut i_1: int32_t = args[RULE as libc::c_int as usize];
-        if i_1 >= 0 as libc::c_int &&
-               i_1 < 2 as libc::c_int * 8 as libc::c_int &&
-               args[TARGET as libc::c_int as usize] >= 0 as libc::c_int &&
-               args[TARGET as libc::c_int as usize] < 8 as libc::c_int &&
-               args[INPUT as libc::c_int as usize] >= 0 as libc::c_int &&
+        if i_1 >= 0i32 && i_1 < 2i32 * 8i32 &&
+               args[TARGET as libc::c_int as usize] >= 0i32 &&
+               args[TARGET as libc::c_int as usize] < 8i32 &&
+               args[INPUT as libc::c_int as usize] >= 0i32 &&
                args[INPUT as libc::c_int as usize] <
                    INPUT_SOURCE_COUNT as libc::c_int &&
-               args[RATE as libc::c_int as usize] >= -(100 as libc::c_int) &&
-               args[RATE as libc::c_int as usize] <= 100 as libc::c_int &&
-               args[SPEED as libc::c_int as usize] >= 0 as libc::c_int &&
-               args[SPEED as libc::c_int as usize] <= 255 as libc::c_int &&
-               args[MIN as libc::c_int as usize] >= 0 as libc::c_int &&
-               args[MIN as libc::c_int as usize] <= 100 as libc::c_int &&
-               args[MAX as libc::c_int as usize] >= 0 as libc::c_int &&
-               args[MAX as libc::c_int as usize] <= 100 as libc::c_int &&
+               args[RATE as libc::c_int as usize] >= -100i32 &&
+               args[RATE as libc::c_int as usize] <= 100i32 &&
+               args[SPEED as libc::c_int as usize] >= 0i32 &&
+               args[SPEED as libc::c_int as usize] <= 255i32 &&
+               args[MIN as libc::c_int as usize] >= 0i32 &&
+               args[MIN as libc::c_int as usize] <= 100i32 &&
+               args[MAX as libc::c_int as usize] >= 0i32 &&
+               args[MAX as libc::c_int as usize] <= 100i32 &&
                args[MIN as libc::c_int as usize] <
                    args[MAX as libc::c_int as usize] &&
-               args[BOX as libc::c_int as usize] >= 0 as libc::c_int &&
-               args[BOX as libc::c_int as usize] <= 3 as libc::c_int {
+               args[BOX as libc::c_int as usize] >= 0i32 &&
+               args[BOX as libc::c_int as usize] <= 3i32 {
             (*customServoMixersMutable(i_1)).targetChannel =
                 args[TARGET as libc::c_int as usize] as uint8_t;
             (*customServoMixersMutable(i_1)).inputSource =
@@ -3966,8 +3798,7 @@ unsafe extern "C" fn cliServoMix(mut cmdline: *mut libc::c_char) {
 unsafe extern "C" fn printName(mut dumpMask: uint8_t,
                                mut pilotConfig_0: *const pilotConfig_t) {
     let equalsDefault: bool =
-        strlen((*pilotConfig_0).name.as_ptr()) ==
-            0 as libc::c_int as libc::c_ulong;
+        strlen((*pilotConfig_0).name.as_ptr()) == 0i32 as libc::c_ulong;
     cliDumpPrintLinef(dumpMask, equalsDefault,
                       b"name %s\x00" as *const u8 as *const libc::c_char,
                       if equalsDefault as libc::c_int != 0 {
@@ -3976,9 +3807,9 @@ unsafe extern "C" fn printName(mut dumpMask: uint8_t,
 }
 unsafe extern "C" fn cliName(mut cmdline: *mut libc::c_char) {
     let len: libc::c_uint = strlen(cmdline) as libc::c_uint;
-    if len > 0 as libc::c_int as libc::c_uint {
+    if len > 0i32 as libc::c_uint {
         memset((*pilotConfigMutable()).name.as_mut_ptr() as *mut libc::c_void,
-               0 as libc::c_int,
+               0i32,
                (::core::mem::size_of::<[libc::c_char; 17]>() as
                     libc::c_ulong).wrapping_div(::core::mem::size_of::<libc::c_char>()
                                                     as libc::c_ulong));
@@ -3986,7 +3817,7 @@ unsafe extern "C" fn cliName(mut cmdline: *mut libc::c_char) {
             strncpy((*pilotConfigMutable()).name.as_mut_ptr(), cmdline,
                     ({
                          let _a: libc::c_uint = len;
-                         let mut _b: libc::c_uint = 16 as libc::c_uint;
+                         let mut _b: libc::c_uint = 16u32;
                          if _a < _b { _a } else { _b }
                      }) as libc::c_ulong);
         }
@@ -3995,7 +3826,7 @@ unsafe extern "C" fn cliName(mut cmdline: *mut libc::c_char) {
 }
 unsafe extern "C" fn cliBoardName(mut cmdline: *mut libc::c_char) {
     let len: libc::c_uint = strlen(cmdline) as libc::c_uint;
-    if len > 0 as libc::c_int as libc::c_uint &&
+    if len > 0i32 as libc::c_uint &&
            boardInformationIsSet() as libc::c_int != 0 &&
            (len as libc::c_ulong != strlen(getBoardName()) ||
                 strncmp(getBoardName(), cmdline, len as libc::c_ulong) != 0) {
@@ -4004,9 +3835,9 @@ unsafe extern "C" fn cliBoardName(mut cmdline: *mut libc::c_char) {
                            b"board_name\x00" as *const u8 as
                                *const libc::c_char, getBoardName());
     } else {
-        if len > 0 as libc::c_int as libc::c_uint {
+        if len > 0i32 as libc::c_uint {
             setBoardName(cmdline);
-            boardInformationUpdated = 1 as libc::c_int != 0
+            boardInformationUpdated = 1i32 != 0
         }
         cliPrintLinef(b"board_name %s\x00" as *const u8 as
                           *const libc::c_char, getBoardName());
@@ -4014,7 +3845,7 @@ unsafe extern "C" fn cliBoardName(mut cmdline: *mut libc::c_char) {
 }
 unsafe extern "C" fn cliManufacturerId(mut cmdline: *mut libc::c_char) {
     let len: libc::c_uint = strlen(cmdline) as libc::c_uint;
-    if len > 0 as libc::c_int as libc::c_uint &&
+    if len > 0i32 as libc::c_uint &&
            boardInformationIsSet() as libc::c_int != 0 &&
            (len as libc::c_ulong != strlen(getManufacturerId()) ||
                 strncmp(getManufacturerId(), cmdline, len as libc::c_ulong) !=
@@ -4024,9 +3855,9 @@ unsafe extern "C" fn cliManufacturerId(mut cmdline: *mut libc::c_char) {
                            b"manufacturer_id\x00" as *const u8 as
                                *const libc::c_char, getManufacturerId());
     } else {
-        if len > 0 as libc::c_int as libc::c_uint {
+        if len > 0i32 as libc::c_uint {
             setManufacturerId(cmdline);
-            boardInformationUpdated = 1 as libc::c_int != 0
+            boardInformationUpdated = 1i32 != 0
         }
         cliPrintLinef(b"manufacturer_id %s\x00" as *const u8 as
                           *const libc::c_char, getManufacturerId());
@@ -4034,9 +3865,9 @@ unsafe extern "C" fn cliManufacturerId(mut cmdline: *mut libc::c_char) {
 }
 unsafe extern "C" fn writeSignature(mut signatureStr: *mut libc::c_char,
                                     mut signature: *mut uint8_t) {
-    let mut i: libc::c_uint = 0 as libc::c_int as libc::c_uint;
-    while i < 32 as libc::c_int as libc::c_uint {
-        tfp_sprintf(&mut *signatureStr.offset((2 as libc::c_int as
+    let mut i: libc::c_uint = 0i32 as libc::c_uint;
+    while i < 32i32 as libc::c_uint {
+        tfp_sprintf(&mut *signatureStr.offset((2i32 as
                                                    libc::c_uint).wrapping_mul(i)
                                                   as isize) as
                         *mut libc::c_char,
@@ -4048,51 +3879,46 @@ unsafe extern "C" fn writeSignature(mut signatureStr: *mut libc::c_char,
 unsafe extern "C" fn cliSignature(mut cmdline: *mut libc::c_char) {
     let len: libc::c_int = strlen(cmdline) as libc::c_int;
     let mut signature: [uint8_t; 32] =
-        [0 as libc::c_int as uint8_t, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-    if len > 0 as libc::c_int {
-        if len != 2 as libc::c_int * 32 as libc::c_int {
+        [0i32 as uint8_t, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    if len > 0i32 {
+        if len != 2i32 * 32i32 {
             cliPrintErrorLinef(b"Invalid length: %d (expected: %d)\x00" as
                                    *const u8 as *const libc::c_char, len,
-                               2 as libc::c_int * 32 as libc::c_int);
+                               2i32 * 32i32);
             return
         }
-        let mut i: libc::c_uint = 0 as libc::c_int as libc::c_uint;
-        while i < 32 as libc::c_int as libc::c_uint {
+        let mut i: libc::c_uint = 0i32 as libc::c_uint;
+        while i < 32i32 as libc::c_uint {
             let mut temp: [libc::c_char; 3] = [0; 3];
             strncpy(temp.as_mut_ptr(),
-                    &mut *cmdline.offset(i.wrapping_mul(2 as libc::c_int as
-                                                            libc::c_uint) as
-                                             isize),
-                    2 as libc::c_int as libc::c_ulong);
-            temp[2 as libc::c_int as usize] = '\u{0}' as i32 as libc::c_char;
+                    &mut *cmdline.offset(i.wrapping_mul(2i32 as libc::c_uint)
+                                             as isize),
+                    2i32 as libc::c_ulong);
+            temp[2] = '\u{0}' as i32 as libc::c_char;
             let mut end: *mut libc::c_char = 0 as *mut libc::c_char;
             let mut result: libc::c_uint =
-                strtoul(temp.as_mut_ptr(), &mut end, 16 as libc::c_int) as
-                    libc::c_uint;
-            if end ==
-                   &mut *temp.as_mut_ptr().offset(2 as libc::c_int as isize)
-                       as *mut libc::c_char {
+                strtoul(temp.as_mut_ptr(), &mut end, 16i32) as libc::c_uint;
+            if end == &mut *temp.as_mut_ptr().offset(2) as *mut libc::c_char {
                 signature[i as usize] = result as uint8_t
             } else {
                 cliPrintErrorLinef(b"Invalid character found: %c\x00" as
                                        *const u8 as *const libc::c_char,
-                                   *end.offset(0 as libc::c_int as isize) as
-                                       libc::c_int);
+                                   *end.offset(0) as libc::c_int);
                 return
             }
             i = i.wrapping_add(1)
         }
     }
     let mut signatureStr: [libc::c_char; 65] =
-        [0 as libc::c_int as libc::c_char, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        [0i32 as libc::c_char, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
          0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
          0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-         0, 0, 0, 0, 0, 0];
-    if len > 0 as libc::c_int && signatureIsSet() as libc::c_int != 0 &&
+         0, 0];
+    if len > 0i32 && signatureIsSet() as libc::c_int != 0 &&
            memcmp(signature.as_mut_ptr() as *const libc::c_void,
                   getSignature() as *const libc::c_void,
-                  32 as libc::c_int as libc::c_ulong) != 0 {
+                  32i32 as libc::c_ulong) != 0 {
         writeSignature(signatureStr.as_mut_ptr(), getSignature());
         cliPrintErrorLinef(b"%s cannot be changed. Current value: \'%s\'\x00"
                                as *const u8 as *const libc::c_char,
@@ -4100,9 +3926,9 @@ unsafe extern "C" fn cliSignature(mut cmdline: *mut libc::c_char) {
                                *const libc::c_char,
                            signatureStr.as_mut_ptr());
     } else {
-        if len > 0 as libc::c_int {
+        if len > 0i32 {
             setSignature(signature.as_mut_ptr());
-            signatureUpdated = 1 as libc::c_int != 0;
+            signatureUpdated = 1i32 != 0;
             writeSignature(signatureStr.as_mut_ptr(), getSignature());
         } else if signatureUpdated as libc::c_int != 0 ||
                       signatureIsSet() as libc::c_int != 0 {
@@ -4115,8 +3941,7 @@ unsafe extern "C" fn cliSignature(mut cmdline: *mut libc::c_char) {
 // USE_BOARD_INFO
 unsafe extern "C" fn cliMcuId(mut cmdline: *mut libc::c_char) {
     cliPrintLinef(b"mcu_id %08x%08x%08x\x00" as *const u8 as
-                      *const libc::c_char, 0 as libc::c_int, 1 as libc::c_int,
-                  2 as libc::c_int);
+                      *const libc::c_char, 0i32, 1i32, 2i32);
 }
 unsafe extern "C" fn printFeature(mut dumpMask: uint8_t,
                                   mut featureConfig_0: *const featureConfig_t,
@@ -4124,46 +3949,42 @@ unsafe extern "C" fn printFeature(mut dumpMask: uint8_t,
                                       *const featureConfig_t) {
     let mask: uint32_t = (*featureConfig_0).enabledFeatures;
     let defaultMask: uint32_t = (*featureConfigDefault).enabledFeatures;
-    let mut i: uint32_t = 0 as libc::c_int as uint32_t;
+    let mut i: uint32_t = 0i32 as uint32_t;
     while !featureNames[i as usize].is_null() {
         // disabled features first
-        if strcmp(featureNames[i as usize], emptyString) != 0 as libc::c_int {
+        if strcmp(featureNames[i as usize], emptyString) != 0i32 {
             //Skip unused
             let mut format: *const libc::c_char =
                 b"feature -%s\x00" as *const u8 as *const libc::c_char;
             cliDefaultPrintLinef(dumpMask,
                                  (defaultMask | !mask) &
-                                     ((1 as libc::c_int) << i) as libc::c_uint
-                                     != 0, format, featureNames[i as usize]);
+                                     (1i32 << i) as libc::c_uint != 0, format,
+                                 featureNames[i as usize]);
             cliDumpPrintLinef(dumpMask,
                               (!defaultMask | mask) &
-                                  ((1 as libc::c_int) << i) as libc::c_uint !=
-                                  0, format, featureNames[i as usize]);
+                                  (1i32 << i) as libc::c_uint != 0, format,
+                              featureNames[i as usize]);
         }
         i = i.wrapping_add(1)
     }
-    let mut i_0: uint32_t = 0 as libc::c_int as uint32_t;
+    let mut i_0: uint32_t = 0i32 as uint32_t;
     while !featureNames[i_0 as usize].is_null() {
         // enabled features
-        if strcmp(featureNames[i_0 as usize], emptyString) != 0 as libc::c_int
-           {
+        if strcmp(featureNames[i_0 as usize], emptyString) != 0i32 {
             //Skip unused
             let mut format_0: *const libc::c_char =
                 b"feature %s\x00" as *const u8 as *const libc::c_char;
-            if defaultMask & ((1 as libc::c_int) << i_0) as libc::c_uint != 0
-               {
+            if defaultMask & (1i32 << i_0) as libc::c_uint != 0 {
                 cliDefaultPrintLinef(dumpMask,
                                      (!defaultMask | mask) &
-                                         ((1 as libc::c_int) << i_0) as
-                                             libc::c_uint != 0, format_0,
-                                     featureNames[i_0 as usize]);
+                                         (1i32 << i_0) as libc::c_uint != 0,
+                                     format_0, featureNames[i_0 as usize]);
             }
-            if mask & ((1 as libc::c_int) << i_0) as libc::c_uint != 0 {
+            if mask & (1i32 << i_0) as libc::c_uint != 0 {
                 cliDumpPrintLinef(dumpMask,
                                   (defaultMask | !mask) &
-                                      ((1 as libc::c_int) << i_0) as
-                                          libc::c_uint != 0, format_0,
-                                  featureNames[i_0 as usize]);
+                                      (1i32 << i_0) as libc::c_uint != 0,
+                                  format_0, featureNames[i_0 as usize]);
             }
         }
         i_0 = i_0.wrapping_add(1)
@@ -4172,11 +3993,11 @@ unsafe extern "C" fn printFeature(mut dumpMask: uint8_t,
 unsafe extern "C" fn cliFeature(mut cmdline: *mut libc::c_char) {
     let mut len: uint32_t = strlen(cmdline) as uint32_t;
     let mut mask: uint32_t = featureMask();
-    if len == 0 as libc::c_int as libc::c_uint {
+    if len == 0i32 as libc::c_uint {
         cliPrint(b"Enabled: \x00" as *const u8 as *const libc::c_char);
-        let mut i: uint32_t = 0 as libc::c_int as uint32_t;
+        let mut i: uint32_t = 0i32 as uint32_t;
         while !featureNames[i as usize].is_null() {
-            if mask & ((1 as libc::c_int) << i) as libc::c_uint != 0 {
+            if mask & (1i32 << i) as libc::c_uint != 0 {
                 cliPrintf(b"%s \x00" as *const u8 as *const libc::c_char,
                           featureNames[i as usize]);
             }
@@ -4185,12 +4006,11 @@ unsafe extern "C" fn cliFeature(mut cmdline: *mut libc::c_char) {
         cliPrintLinefeed();
     } else if strncasecmp(cmdline,
                           b"list\x00" as *const u8 as *const libc::c_char,
-                          len as libc::c_ulong) == 0 as libc::c_int {
+                          len as libc::c_ulong) == 0i32 {
         cliPrint(b"Available:\x00" as *const u8 as *const libc::c_char);
-        let mut i_0: uint32_t = 0 as libc::c_int as uint32_t;
+        let mut i_0: uint32_t = 0i32 as uint32_t;
         while !featureNames[i_0 as usize].is_null() {
-            if strcmp(featureNames[i_0 as usize], emptyString) !=
-                   0 as libc::c_int {
+            if strcmp(featureNames[i_0 as usize], emptyString) != 0i32 {
                 //Skip unused
                 cliPrintf(b" %s\x00" as *const u8 as *const libc::c_char,
                           featureNames[i_0 as usize]);
@@ -4200,23 +4020,22 @@ unsafe extern "C" fn cliFeature(mut cmdline: *mut libc::c_char) {
         cliPrintLinefeed();
         return
     } else {
-        let mut remove: bool = 0 as libc::c_int != 0;
-        if *cmdline.offset(0 as libc::c_int as isize) as libc::c_int ==
-               '-' as i32 {
+        let mut remove: bool = 0i32 != 0;
+        if *cmdline.offset(0) as libc::c_int == '-' as i32 {
             // remove feature
-            remove = 1 as libc::c_int != 0; // skip over -
+            remove = 1i32 != 0; // skip over -
             cmdline = cmdline.offset(1);
             len = len.wrapping_sub(1)
         }
-        let mut i_1: uint32_t = 0 as libc::c_int as uint32_t;
+        let mut i_1: uint32_t = 0i32 as uint32_t;
         loop  {
             if featureNames[i_1 as usize].is_null() {
                 cliPrintErrorLinef(b"Invalid name\x00" as *const u8 as
                                        *const libc::c_char);
                 break ;
             } else if strncasecmp(cmdline, featureNames[i_1 as usize],
-                                  len as libc::c_ulong) == 0 as libc::c_int {
-                mask = ((1 as libc::c_int) << i_1) as uint32_t;
+                                  len as libc::c_ulong) == 0i32 {
+                mask = (1i32 << i_1) as uint32_t;
                 if mask & FEATURE_RANGEFINDER as libc::c_int as libc::c_uint
                        != 0 {
                     cliPrintLine(b"unavailable\x00" as *const u8 as
@@ -4244,12 +4063,12 @@ unsafe extern "C" fn cliFeature(mut cmdline: *mut libc::c_char) {
 unsafe extern "C" fn printMap(mut dumpMask: uint8_t,
                               mut rxConfig_0: *const rxConfig_t,
                               mut defaultRxConfig: *const rxConfig_t) {
-    let mut equalsDefault: bool = 1 as libc::c_int != 0;
+    let mut equalsDefault: bool = 1i32 != 0;
     let mut buf: [libc::c_char; 9] = [0; 9];
     let mut bufDefault: [libc::c_char; 9] = [0; 9];
     let mut i: uint32_t = 0;
-    i = 0 as libc::c_int as uint32_t;
-    while i < 8 as libc::c_int as libc::c_uint {
+    i = 0i32 as uint32_t;
+    while i < 8i32 as libc::c_uint {
         buf[(*rxConfig_0).rcmap[i as usize] as usize] =
             *rcChannelLetters.as_ptr().offset(i as isize);
         if !defaultRxConfig.is_null() {
@@ -4273,38 +4092,31 @@ unsafe extern "C" fn cliMap(mut cmdline: *mut libc::c_char) {
     let mut i: uint32_t = 0;
     let mut buf: [libc::c_char; 9] = [0; 9];
     let mut len: uint32_t = strlen(cmdline) as uint32_t;
-    if len == 8 as libc::c_int as libc::c_uint {
-        i = 0 as libc::c_int as uint32_t;
-        while i < 8 as libc::c_int as libc::c_uint {
+    if len == 8i32 as libc::c_uint {
+        i = 0i32 as uint32_t;
+        while i < 8i32 as libc::c_uint {
             buf[i as usize] =
                 toupper(*cmdline.offset(i as isize) as libc::c_uchar as
                             libc::c_int) as libc::c_char;
             i = i.wrapping_add(1)
         }
         buf[i as usize] = '\u{0}' as i32 as libc::c_char;
-        i = 0 as libc::c_int as uint32_t;
-        while i < 8 as libc::c_int as libc::c_uint {
+        i = 0i32 as uint32_t;
+        while i < 8i32 as libc::c_uint {
             buf[i as usize] =
                 toupper(*cmdline.offset(i as isize) as libc::c_uchar as
                             libc::c_int) as libc::c_char;
             if !strchr(rcChannelLetters.as_ptr(),
                        buf[i as usize] as libc::c_int).is_null() &&
-                   strchr(buf.as_mut_ptr().offset(i as
-                                                      isize).offset(1 as
-                                                                        libc::c_int
-                                                                        as
-                                                                        isize),
+                   strchr(buf.as_mut_ptr().offset(i as isize).offset(1),
                           buf[i as usize] as libc::c_int).is_null() {
                 i = i.wrapping_add(1)
             } else { cliShowParseError(); return }
         }
         parseRcChannels(buf.as_mut_ptr(), rxConfigMutable());
-    } else if len > 0 as libc::c_int as libc::c_uint {
-        cliShowParseError();
-        return
-    }
-    i = 0 as libc::c_int as uint32_t;
-    while i < 8 as libc::c_int as libc::c_uint {
+    } else if len > 0i32 as libc::c_uint { cliShowParseError(); return }
+    i = 0i32 as uint32_t;
+    while i < 8i32 as libc::c_uint {
         buf[(*rxConfig()).rcmap[i as usize] as usize] =
             *rcChannelLetters.as_ptr().offset(i as isize);
         i = i.wrapping_add(1)
@@ -4325,10 +4137,8 @@ unsafe extern "C" fn checkCommand(mut cmdLine: *mut libc::c_char,
            (isspace(*cmdLine.offset(strlen(command) as isize) as libc::c_uint
                         as libc::c_int) != 0 ||
                 *cmdLine.offset(strlen(command) as isize) as libc::c_int ==
-                    0 as libc::c_int) {
-        return skipSpace(cmdLine.offset(strlen(command) as
-                                            isize).offset(1 as libc::c_int as
-                                                              isize))
+                    0i32) {
+        return skipSpace(cmdLine.offset(strlen(command) as isize).offset(1))
     } else { return 0 as *mut libc::c_char };
 }
 unsafe extern "C" fn cliRebootEx(mut bootLoader: bool) {
@@ -4339,19 +4149,19 @@ unsafe extern "C" fn cliRebootEx(mut bootLoader: bool) {
     if bootLoader { systemResetToBootloader(); return }
     systemReset();
 }
-unsafe extern "C" fn cliReboot() { cliRebootEx(0 as libc::c_int != 0); }
+unsafe extern "C" fn cliReboot() { cliRebootEx(0i32 != 0); }
 unsafe extern "C" fn cliBootloader(mut cmdLine: *mut libc::c_char) {
     cliPrintHashLine(b"restarting in bootloader mode\x00" as *const u8 as
                          *const libc::c_char);
-    cliRebootEx(1 as libc::c_int != 0);
+    cliRebootEx(1i32 != 0);
 }
 unsafe extern "C" fn cliExit(mut cmdline: *mut libc::c_char) {
     cliPrintHashLine(b"leaving CLI mode, unsaved changes lost\x00" as
                          *const u8 as *const libc::c_char);
     bufWriterFlush(cliWriter);
     *cliBuffer.as_mut_ptr() = '\u{0}' as i32 as libc::c_char;
-    bufferIndex = 0 as libc::c_int as uint32_t;
-    cliMode = 0 as libc::c_int as uint8_t;
+    bufferIndex = 0i32 as uint32_t;
+    cliMode = 0i32 as uint8_t;
     // incase a motor was left running during motortest, clear it here
     mixerResetDisarmedMotors();
     cliReboot();
@@ -4363,19 +4173,17 @@ unsafe extern "C" fn cliGpsPassthrough(mut cmdline: *mut libc::c_char) {
 unsafe extern "C" fn parseOutputIndex(mut pch: *mut libc::c_char,
                                       mut allowAllEscs: bool) -> libc::c_int {
     let mut outputIndex: libc::c_int = atoi(pch);
-    if outputIndex >= 0 as libc::c_int &&
-           outputIndex < getMotorCount() as libc::c_int {
+    if outputIndex >= 0i32 && outputIndex < getMotorCount() as libc::c_int {
         cliPrintLinef(b"Using output %d.\x00" as *const u8 as
                           *const libc::c_char, outputIndex);
-    } else if allowAllEscs as libc::c_int != 0 &&
-                  outputIndex == 255 as libc::c_int {
+    } else if allowAllEscs as libc::c_int != 0 && outputIndex == 255i32 {
         cliPrintLinef(b"Using all outputs.\x00" as *const u8 as
                           *const libc::c_char);
     } else {
         cliPrintErrorLinef(b"Invalid output number. Range: 0  %d.\x00" as
                                *const u8 as *const libc::c_char,
-                           getMotorCount() as libc::c_int - 1 as libc::c_int);
-        return -(1 as libc::c_int)
+                           getMotorCount() as libc::c_int - 1i32);
+        return -1i32
     }
     return outputIndex;
 }
@@ -4383,17 +4191,17 @@ unsafe extern "C" fn parseOutputIndex(mut pch: *mut libc::c_char,
 unsafe extern "C" fn cliMixer(mut cmdline: *mut libc::c_char) {
     let mut len: libc::c_int = 0; //index value was given
     len = strlen(cmdline) as libc::c_int; //next sound index
-    if len == 0 as libc::c_int {
+    if len == 0i32 {
         cliPrintLinef(b"Mixer: %s\x00" as *const u8 as *const libc::c_char,
                       mixerNames[((*mixerConfig()).mixerMode as libc::c_int -
-                                      1 as libc::c_int) as usize]);
+                                      1i32) as usize]);
         return
     } else {
         if strncasecmp(cmdline,
                        b"list\x00" as *const u8 as *const libc::c_char,
-                       len as libc::c_ulong) == 0 as libc::c_int {
+                       len as libc::c_ulong) == 0i32 {
             cliPrint(b"Available:\x00" as *const u8 as *const libc::c_char);
-            let mut i: uint32_t = 0 as libc::c_int as uint32_t;
+            let mut i: uint32_t = 0i32 as uint32_t;
             while !mixerNames[i as usize].is_null() {
                 cliPrintf(b" %s\x00" as *const u8 as *const libc::c_char,
                           mixerNames[i as usize]);
@@ -4403,7 +4211,7 @@ unsafe extern "C" fn cliMixer(mut cmdline: *mut libc::c_char) {
             return
         }
     }
-    let mut i_0: uint32_t = 0 as libc::c_int as uint32_t;
+    let mut i_0: uint32_t = 0i32 as uint32_t;
     loop  {
         if mixerNames[i_0 as usize].is_null() {
             cliPrintErrorLinef(b"Invalid name\x00" as *const u8 as
@@ -4411,9 +4219,9 @@ unsafe extern "C" fn cliMixer(mut cmdline: *mut libc::c_char) {
             return
         }
         if strncasecmp(cmdline, mixerNames[i_0 as usize],
-                       len as libc::c_ulong) == 0 as libc::c_int {
+                       len as libc::c_ulong) == 0i32 {
             (*mixerConfigMutable()).mixerMode =
-                i_0.wrapping_add(1 as libc::c_int as libc::c_uint) as uint8_t;
+                i_0.wrapping_add(1i32 as libc::c_uint) as uint8_t;
             break ;
         } else { i_0 = i_0.wrapping_add(1) }
     }
@@ -4422,18 +4230,18 @@ unsafe extern "C" fn cliMixer(mut cmdline: *mut libc::c_char) {
 }
 unsafe extern "C" fn cliMotor(mut cmdline: *mut libc::c_char) {
     if isEmpty(cmdline) { cliShowParseError(); return }
-    let mut motorIndex: libc::c_int = 0 as libc::c_int;
-    let mut motorValue: libc::c_int = 0 as libc::c_int;
+    let mut motorIndex: libc::c_int = 0i32;
+    let mut motorValue: libc::c_int = 0i32;
     let mut saveptr: *mut libc::c_char = 0 as *mut libc::c_char;
     let mut pch: *mut libc::c_char =
         strtok_r(cmdline, b" \x00" as *const u8 as *const libc::c_char,
                  &mut saveptr);
-    let mut index: libc::c_int = 0 as libc::c_int;
+    let mut index: libc::c_int = 0i32;
     while !pch.is_null() {
         match index {
             0 => {
-                motorIndex = parseOutputIndex(pch, 1 as libc::c_int != 0);
-                if motorIndex == -(1 as libc::c_int) { return }
+                motorIndex = parseOutputIndex(pch, 1i32 != 0);
+                if motorIndex == -1i32 { return }
             }
             1 => { motorValue = atoi(pch) }
             _ => { }
@@ -4444,25 +4252,23 @@ unsafe extern "C" fn cliMotor(mut cmdline: *mut libc::c_char) {
                      b" \x00" as *const u8 as *const libc::c_char,
                      &mut saveptr)
     }
-    if index == 2 as libc::c_int {
-        if motorValue < 1000 as libc::c_int ||
-               motorValue > 2000 as libc::c_int {
+    if index == 2i32 {
+        if motorValue < 1000i32 || motorValue > 2000i32 {
             cliShowArgumentRangeError(b"value\x00" as *const u8 as
                                           *const libc::c_char as
-                                          *mut libc::c_char,
-                                      1000 as libc::c_int,
-                                      2000 as libc::c_int);
+                                          *mut libc::c_char, 1000i32,
+                                      2000i32);
         } else {
             let mut motorOutputValue: uint32_t =
                 convertExternalToMotor(motorValue as uint16_t) as uint32_t;
-            if motorIndex != 255 as libc::c_int {
+            if motorIndex != 255i32 {
                 motor_disarmed[motorIndex as usize] =
                     motorOutputValue as libc::c_float;
                 cliPrintLinef(b"motor %d: %d\x00" as *const u8 as
                                   *const libc::c_char, motorIndex,
                               motorOutputValue);
             } else {
-                let mut i: libc::c_int = 0 as libc::c_int;
+                let mut i: libc::c_int = 0i32;
                 while i < getMotorCount() as libc::c_int {
                     motor_disarmed[i as usize] =
                         motorOutputValue as libc::c_float;
@@ -4477,20 +4283,20 @@ unsafe extern "C" fn cliMotor(mut cmdline: *mut libc::c_char) {
 unsafe extern "C" fn cliPlaySound(mut cmdline: *mut libc::c_char) {
     let mut i: libc::c_int = 0;
     let mut name: *const libc::c_char = 0 as *const libc::c_char;
-    static mut lastSoundIdx: libc::c_int = -(1 as libc::c_int);
+    static mut lastSoundIdx: libc::c_int = -1i32;
     if isEmpty(cmdline) {
-        i = lastSoundIdx + 1 as libc::c_int;
+        i = lastSoundIdx + 1i32;
         name = beeperNameForTableIndex(i);
         if name.is_null() {
             loop  {
                 //no name for index; try next one
                 i += 1; //if end then wrap around to first entry
                 if i >= beeperTableEntryCount() {
-                    i = 0 as libc::c_int
+                    i = 0i32
                 } //if name OK then play sound below
                 name = beeperNameForTableIndex(i);
                 if !name.is_null() { break ; }
-                if i == lastSoundIdx + 1 as libc::c_int {
+                if i == lastSoundIdx + 1i32 {
                     //prevent infinite loop
                     cliPrintErrorLinef(b"Error playing sound\x00" as *const u8
                                            as *const libc::c_char);
@@ -4520,7 +4326,7 @@ unsafe extern "C" fn cliProfile(mut cmdline: *mut libc::c_char) {
         return
     } else {
         let i: libc::c_int = atoi(cmdline);
-        if i >= 0 as libc::c_int && i < 3 as libc::c_int {
+        if i >= 0i32 && i < 3i32 {
             changePidProfile(i as uint8_t);
             cliProfile(b"\x00" as *const u8 as *const libc::c_char as
                            *mut libc::c_char);
@@ -4535,7 +4341,7 @@ unsafe extern "C" fn cliRateProfile(mut cmdline: *mut libc::c_char) {
         return
     } else {
         let i: libc::c_int = atoi(cmdline);
-        if i >= 0 as libc::c_int && i < 6 as libc::c_int {
+        if i >= 0i32 && i < 6i32 {
             changeControlRateProfile(i as uint8_t);
             cliRateProfile(b"\x00" as *const u8 as *const libc::c_char as
                                *mut libc::c_char);
@@ -4544,7 +4350,7 @@ unsafe extern "C" fn cliRateProfile(mut cmdline: *mut libc::c_char) {
 }
 unsafe extern "C" fn cliDumpPidProfile(mut pidProfileIndex: uint8_t,
                                        mut dumpMask: uint8_t) {
-    if pidProfileIndex as libc::c_int >= 3 as libc::c_int {
+    if pidProfileIndex as libc::c_int >= 3i32 {
         // Faulty values
         return
     }
@@ -4554,11 +4360,11 @@ unsafe extern "C" fn cliDumpPidProfile(mut pidProfileIndex: uint8_t,
                    *mut libc::c_char);
     cliPrintLinefeed();
     dumpAllValues(PROFILE_VALUE as libc::c_int as uint16_t, dumpMask);
-    pidProfileIndexToUse = -(1 as libc::c_int) as int8_t;
+    pidProfileIndexToUse = -1i32 as int8_t;
 }
 unsafe extern "C" fn cliDumpRateProfile(mut rateProfileIndex: uint8_t,
                                         mut dumpMask: uint8_t) {
-    if rateProfileIndex as libc::c_int >= 6 as libc::c_int {
+    if rateProfileIndex as libc::c_int >= 6i32 {
         // Faulty values
         return
     }
@@ -4568,7 +4374,7 @@ unsafe extern "C" fn cliDumpRateProfile(mut rateProfileIndex: uint8_t,
                        *mut libc::c_char);
     cliPrintLinefeed();
     dumpAllValues(PROFILE_RATE_VALUE as libc::c_int as uint16_t, dumpMask);
-    rateProfileIndexToUse = -(1 as libc::c_int) as int8_t;
+    rateProfileIndexToUse = -1i32 as int8_t;
 }
 unsafe extern "C" fn cliSave(mut cmdline: *mut libc::c_char) {
     cliPrintHashLine(b"saving\x00" as *const u8 as *const libc::c_char);
@@ -4581,12 +4387,11 @@ unsafe extern "C" fn cliSave(mut cmdline: *mut libc::c_char) {
 unsafe extern "C" fn cliDefaults(mut cmdline: *mut libc::c_char) {
     let mut saveConfigs: bool = false;
     if isEmpty(cmdline) {
-        saveConfigs = 1 as libc::c_int != 0
+        saveConfigs = 1i32 != 0
     } else if strncasecmp(cmdline,
                           b"nosave\x00" as *const u8 as *const libc::c_char,
-                          6 as libc::c_int as libc::c_ulong) ==
-                  0 as libc::c_int {
-        saveConfigs = 0 as libc::c_int != 0
+                          6i32 as libc::c_ulong) == 0i32 {
+        saveConfigs = 0i32 != 0
     } else { return }
     cliPrintHashLine(b"resetting to defaults\x00" as *const u8 as
                          *const libc::c_char);
@@ -4610,29 +4415,29 @@ pub unsafe extern "C" fn cliPrintVarDefault(mut value: *const clivalue_t) {
             cliPrintf(defaultFormat, (*value).name);
             printValuePointer(value,
                               (*pg).address.offset(valueOffset as isize) as
-                                  *const libc::c_void, 0 as libc::c_int != 0);
+                                  *const libc::c_void, 0i32 != 0);
             cliPrintLinefeed();
         }
     };
 }
 unsafe extern "C" fn cliGet(mut cmdline: *mut libc::c_char) {
     let mut val: *const clivalue_t = 0 as *const clivalue_t;
-    let mut matchedCommands: libc::c_int = 0 as libc::c_int;
+    let mut matchedCommands: libc::c_int = 0i32;
     pidProfileIndexToUse = getCurrentPidProfileIndex() as int8_t;
     rateProfileIndexToUse = getCurrentControlRateProfileIndex() as int8_t;
     backupAndResetConfigs();
-    let mut i: uint32_t = 0 as libc::c_int as uint32_t;
+    let mut i: uint32_t = 0i32 as uint32_t;
     while i < valueTableEntryCount as libc::c_uint {
         if !strcasestr((*valueTable.as_ptr().offset(i as isize)).name,
                        cmdline).is_null() {
             val =
                 &*valueTable.as_ptr().offset(i as isize) as *const clivalue_t;
-            if matchedCommands > 0 as libc::c_int { cliPrintLinefeed(); }
+            if matchedCommands > 0i32 { cliPrintLinefeed(); }
             cliPrintf(b"%s = \x00" as *const u8 as *const libc::c_char,
                       (*valueTable.as_ptr().offset(i as isize)).name);
-            cliPrintVar(val, 0 as libc::c_int != 0);
+            cliPrintVar(val, 0i32 != 0);
             cliPrintLinefeed();
-            match (*val).type_0 as libc::c_int & 0x18 as libc::c_int {
+            match (*val).type_0 as libc::c_int & 0x18i32 {
                 8 => {
                     cliProfile(b"\x00" as *const u8 as *const libc::c_char as
                                    *mut libc::c_char);
@@ -4650,16 +4455,15 @@ unsafe extern "C" fn cliGet(mut cmdline: *mut libc::c_char) {
         i = i.wrapping_add(1)
     }
     restoreConfigs();
-    pidProfileIndexToUse = -(1 as libc::c_int) as int8_t;
-    rateProfileIndexToUse = -(1 as libc::c_int) as int8_t;
+    pidProfileIndexToUse = -1i32 as int8_t;
+    rateProfileIndexToUse = -1i32 as int8_t;
     if matchedCommands != 0 { return }
     cliPrintErrorLinef(b"Invalid name\x00" as *const u8 as
                            *const libc::c_char);
 }
 unsafe extern "C" fn getWordLength(mut bufBegin: *mut libc::c_char,
                                    mut bufEnd: *mut libc::c_char) -> uint8_t {
-    while *bufEnd.offset(-(1 as libc::c_int as isize)) as libc::c_int ==
-              ' ' as i32 {
+    while *bufEnd.offset(-1) as libc::c_int == ' ' as i32 {
         bufEnd = bufEnd.offset(-1)
     }
     return bufEnd.wrapping_offset_from(bufBegin) as libc::c_long as uint8_t;
@@ -4667,13 +4471,12 @@ unsafe extern "C" fn getWordLength(mut bufBegin: *mut libc::c_char,
 unsafe extern "C" fn cliSet(mut cmdline: *mut libc::c_char) {
     let len: uint32_t = strlen(cmdline) as uint32_t;
     let mut eqptr: *mut libc::c_char = 0 as *mut libc::c_char;
-    if len == 0 as libc::c_int as libc::c_uint ||
-           len == 1 as libc::c_int as libc::c_uint &&
-               *cmdline.offset(0 as libc::c_int as isize) as libc::c_int ==
-                   '*' as i32 {
+    if len == 0i32 as libc::c_uint ||
+           len == 1i32 as libc::c_uint &&
+               *cmdline.offset(0) as libc::c_int == '*' as i32 {
         cliPrintLine(b"Current settings: \x00" as *const u8 as
                          *const libc::c_char);
-        let mut i: uint32_t = 0 as libc::c_int as uint32_t;
+        let mut i: uint32_t = 0i32 as uint32_t;
         while i < valueTableEntryCount as libc::c_uint {
             let mut val: *const clivalue_t =
                 &*valueTable.as_ptr().offset(i as isize) as *const clivalue_t;
@@ -4692,20 +4495,19 @@ unsafe extern "C" fn cliSet(mut cmdline: *mut libc::c_char) {
             // skip the '=' and any ' ' characters
             eqptr = eqptr.offset(1);
             eqptr = skipSpace(eqptr);
-            let mut i_0: uint32_t = 0 as libc::c_int as uint32_t;
+            let mut i_0: uint32_t = 0i32 as uint32_t;
             while i_0 < valueTableEntryCount as libc::c_uint {
                 let mut val_0: *const clivalue_t =
                     &*valueTable.as_ptr().offset(i_0 as isize) as
                         *const clivalue_t;
                 // ensure exact match when setting to prevent setting variables with shorter names
                 if strncasecmp(cmdline, (*val_0).name, strlen((*val_0).name))
-                       == 0 as libc::c_int &&
+                       == 0i32 &&
                        variableNameLength as libc::c_ulong ==
                            strlen((*val_0).name) {
-                    let mut valueChanged: bool = 0 as libc::c_int != 0;
-                    let mut value: int16_t = 0 as libc::c_int as int16_t;
-                    match (*val_0).type_0 as libc::c_int & 0x60 as libc::c_int
-                        {
+                    let mut valueChanged: bool = 0i32 != 0;
+                    let mut value: int16_t = 0i32 as int16_t;
+                    match (*val_0).type_0 as libc::c_int & 0x60i32 {
                         0 => {
                             let mut value_0: int16_t = atoi(eqptr) as int16_t;
                             if value_0 as libc::c_int >=
@@ -4715,13 +4517,12 @@ unsafe extern "C" fn cliSet(mut cmdline: *mut libc::c_char) {
                                        (*val_0).config.minmax.max as
                                            libc::c_int {
                                 cliSetVar(val_0, value_0);
-                                valueChanged = 1 as libc::c_int != 0
+                                valueChanged = 1i32 != 0
                             }
                         }
                         32 | 96 => {
                             let mut tableIndex: libc::c_int = 0;
-                            if (*val_0).type_0 as libc::c_int &
-                                   0x60 as libc::c_int ==
+                            if (*val_0).type_0 as libc::c_int & 0x60i32 ==
                                    MODE_BITSET as libc::c_int {
                                 tableIndex = TABLE_OFF_ON as libc::c_int
                             } else {
@@ -4733,9 +4534,9 @@ unsafe extern "C" fn cliSet(mut cmdline: *mut libc::c_char) {
                                 &*lookupTables.as_ptr().offset(tableIndex as
                                                                    isize) as
                                     *const lookupTableEntry_t;
-                            let mut matched: bool = 0 as libc::c_int != 0;
+                            let mut matched: bool = 0i32 != 0;
                             let mut tableValueIndex: uint32_t =
-                                0 as libc::c_int as uint32_t;
+                                0i32 as uint32_t;
                             while tableValueIndex <
                                       (*tableEntry).valueCount as libc::c_uint
                                       && !matched {
@@ -4747,11 +4548,11 @@ unsafe extern "C" fn cliSet(mut cmdline: *mut libc::c_char) {
                                         strcasecmp(*(*tableEntry).values.offset(tableValueIndex
                                                                                     as
                                                                                     isize),
-                                                   eqptr) == 0 as libc::c_int;
+                                                   eqptr) == 0i32;
                                 if matched {
                                     value = tableValueIndex as int16_t;
                                     cliSetVar(val_0, value);
-                                    valueChanged = 1 as libc::c_int != 0
+                                    valueChanged = 1i32 != 0
                                 }
                                 tableValueIndex =
                                     tableValueIndex.wrapping_add(1)
@@ -4761,7 +4562,7 @@ unsafe extern "C" fn cliSet(mut cmdline: *mut libc::c_char) {
                             let arrayLength: uint8_t =
                                 (*val_0).config.array.length;
                             let mut valPtr: *mut libc::c_char = eqptr;
-                            let mut i_1: libc::c_int = 0 as libc::c_int;
+                            let mut i_1: libc::c_int = 0i32;
                             while i_1 < arrayLength as libc::c_int &&
                                       !valPtr.is_null() {
                                 // skip spaces
@@ -4769,8 +4570,8 @@ unsafe extern "C" fn cliSet(mut cmdline: *mut libc::c_char) {
                                 // process substring starting at valPtr
                             // note: no need to copy substrings for atoi()
                             //       it stops at the first character that cannot be converted...
-                                match (*val_0).type_0 as libc::c_int &
-                                          0x7 as libc::c_int {
+                                match (*val_0).type_0 as libc::c_int & 0x7i32
+                                    {
                                     1 => {
                                         // fetch data pointer
                                         let mut data_0: *mut int8_t =
@@ -4821,22 +4622,18 @@ unsafe extern "C" fn cliSet(mut cmdline: *mut libc::c_char) {
                                     }
                                 }
                                 // find next comma (or end of string)
-                                valPtr =
-                                    strchr(valPtr,
-                                           ',' as
-                                               i32).offset(1 as libc::c_int as
-                                                               isize);
+                                valPtr = strchr(valPtr, ',' as i32).offset(1);
                                 i_1 += 1
                             }
                             // mark as changed
-                            valueChanged = 1 as libc::c_int != 0
+                            valueChanged = 1i32 != 0
                         }
                         _ => { }
                     }
                     if valueChanged {
                         cliPrintf(b"%s set to \x00" as *const u8 as
                                       *const libc::c_char, (*val_0).name);
-                        cliPrintVar(val_0, 0 as libc::c_int != 0);
+                        cliPrintVar(val_0, 0i32 != 0);
                     } else {
                         cliPrintErrorLinef(b"Invalid value\x00" as *const u8
                                                as *const libc::c_char);
@@ -4857,7 +4654,7 @@ unsafe extern "C" fn cliSet(mut cmdline: *mut libc::c_char) {
 unsafe extern "C" fn cliStatus(mut cmdline: *mut libc::c_char) {
     cliPrintLinef(b"System Uptime: %d seconds\x00" as *const u8 as
                       *const libc::c_char,
-                  millis().wrapping_div(1000 as libc::c_int as libc::c_uint));
+                  millis().wrapping_div(1000i32 as libc::c_uint));
     let mut buf: [libc::c_char; 30] = [0; 30];
     let mut dt: dateTime_t =
         dateTime_t{year: 0,
@@ -4877,12 +4674,11 @@ unsafe extern "C" fn cliStatus(mut cmdline: *mut libc::c_char) {
                   getBatteryCellCount() as libc::c_int,
                   getBatteryStateString());
     cliPrintf(b"CPU Clock=%dMHz\x00" as *const u8 as *const libc::c_char,
-              SystemCoreClock.wrapping_div(1000000 as libc::c_int as
-                                               libc::c_uint));
+              SystemCoreClock.wrapping_div(1000000i32 as libc::c_uint));
     let detectedSensorsMask: uint32_t = sensorsMask();
-    let mut i: uint32_t = 0 as libc::c_int as uint32_t;
+    let mut i: uint32_t = 0i32 as uint32_t;
     while !sensorTypeNames[i as usize].is_null() {
-        let mask: uint32_t = ((1 as libc::c_int) << i) as uint32_t;
+        let mask: uint32_t = (1i32 << i) as uint32_t;
         if detectedSensorsMask & mask != 0 &&
                mask &
                    (SENSOR_GYRO as libc::c_int | SENSOR_ACC as libc::c_int |
@@ -4906,53 +4702,49 @@ unsafe extern "C" fn cliStatus(mut cmdline: *mut libc::c_char) {
     }
     /* USE_SENSOR_NAMES */
     cliPrintLinefeed();
-    let i2cErrorCounter: uint16_t = 0 as libc::c_int as uint16_t;
+    let i2cErrorCounter: uint16_t = 0i32 as uint16_t;
     cliPrintLinef(b"Stack size: %d, Stack address: 0x%x\x00" as *const u8 as
                       *const libc::c_char, stackTotalSize(), stackHighMem());
     cliPrintLinef(b"I2C Errors: %d, config size: %d, max available config: %d\x00"
                       as *const u8 as *const libc::c_char,
                   i2cErrorCounter as libc::c_int,
-                  getEEPROMConfigSize() as libc::c_int, 32768 as libc::c_int);
+                  getEEPROMConfigSize() as libc::c_int, 32768i32);
     let gyroRate: libc::c_int =
-        if getTaskDeltaTime(TASK_GYROPID) == 0 as libc::c_int {
-            0 as libc::c_int
+        if getTaskDeltaTime(TASK_GYROPID) == 0i32 {
+            0i32
         } else {
             (1000000.0f32 / getTaskDeltaTime(TASK_GYROPID) as libc::c_float)
                 as libc::c_int
         };
     let rxRate: libc::c_int =
-        if currentRxRefreshRate as libc::c_int == 0 as libc::c_int {
-            0 as libc::c_int
+        if currentRxRefreshRate as libc::c_int == 0i32 {
+            0i32
         } else {
             (1000000.0f32 / currentRxRefreshRate as libc::c_float) as
                 libc::c_int
         };
     let systemRate: libc::c_int =
-        if getTaskDeltaTime(TASK_SYSTEM) == 0 as libc::c_int {
-            0 as libc::c_int
+        if getTaskDeltaTime(TASK_SYSTEM) == 0i32 {
+            0i32
         } else {
             (1000000.0f32 / getTaskDeltaTime(TASK_SYSTEM) as libc::c_float) as
                 libc::c_int
         };
     cliPrintLinef(b"CPU:%d%%, cycle time: %d, GYRO rate: %d, RX rate: %d, System rate: %d\x00"
                       as *const u8 as *const libc::c_char,
-                  constrain(averageSystemLoadPercent as libc::c_int,
-                            0 as libc::c_int, 100 as libc::c_int),
-                  getTaskDeltaTime(TASK_GYROPID), gyroRate, rxRate,
-                  systemRate);
+                  constrain(averageSystemLoadPercent as libc::c_int, 0i32,
+                            100i32), getTaskDeltaTime(TASK_GYROPID), gyroRate,
+                  rxRate, systemRate);
     cliPrint(b"Arming disable flags:\x00" as *const u8 as
                  *const libc::c_char);
     let mut flags: armingDisableFlags_e = getArmingDisableFlags();
     while flags as u64 != 0 {
-        let bitpos: libc::c_int =
-            ffs(flags as libc::c_int) - 1 as libc::c_int;
+        let bitpos: libc::c_int = ffs(flags as libc::c_int) - 1i32;
         flags =
             ::core::mem::transmute::<libc::c_uint,
                                      armingDisableFlags_e>(flags as
                                                                libc::c_uint &
-                                                               !((1 as
-                                                                      libc::c_int)
-                                                                     <<
+                                                               !(1i32 <<
                                                                      bitpos)
                                                                    as
                                                                    libc::c_uint);
@@ -4962,8 +4754,8 @@ unsafe extern "C" fn cliStatus(mut cmdline: *mut libc::c_char) {
     cliPrintLinefeed();
 }
 unsafe extern "C" fn cliTasks(mut cmdline: *mut libc::c_char) {
-    let mut maxLoadSum: libc::c_int = 0 as libc::c_int;
-    let mut averageLoadSum: libc::c_int = 0 as libc::c_int;
+    let mut maxLoadSum: libc::c_int = 0i32;
+    let mut averageLoadSum: libc::c_int = 0i32;
     if (*systemConfig()).task_statistics != 0 {
         cliPrintLine(b"Task list             rate/hz  max/us  avg/us maxload avgload     total/ms\x00"
                          as *const u8 as *const libc::c_char);
@@ -4986,12 +4778,12 @@ unsafe extern "C" fn cliTasks(mut cmdline: *mut libc::c_char) {
         getTaskInfo(taskId, &mut taskInfo);
         if taskInfo.isEnabled {
             let mut taskFrequency: libc::c_int = 0;
-            let mut subTaskFrequency: libc::c_int = 0 as libc::c_int;
+            let mut subTaskFrequency: libc::c_int = 0i32;
             if taskId as libc::c_uint ==
                    TASK_GYROPID as libc::c_int as libc::c_uint {
                 subTaskFrequency =
-                    if taskInfo.latestDeltaTime == 0 as libc::c_int {
-                        0 as libc::c_int
+                    if taskInfo.latestDeltaTime == 0i32 {
+                        0i32
                     } else {
                         (1000000.0f32 /
                              taskInfo.latestDeltaTime as libc::c_float) as
@@ -5000,8 +4792,7 @@ unsafe extern "C" fn cliTasks(mut cmdline: *mut libc::c_char) {
                 taskFrequency =
                     subTaskFrequency /
                         (*pidConfig()).pid_process_denom as libc::c_int;
-                if (*pidConfig()).pid_process_denom as libc::c_int >
-                       1 as libc::c_int {
+                if (*pidConfig()).pid_process_denom as libc::c_int > 1i32 {
                     cliPrintf(b"%02d - (%15s) \x00" as *const u8 as
                                   *const libc::c_char, taskId as libc::c_uint,
                               taskInfo.taskName);
@@ -5013,8 +4804,8 @@ unsafe extern "C" fn cliTasks(mut cmdline: *mut libc::c_char) {
                 }
             } else {
                 taskFrequency =
-                    if taskInfo.latestDeltaTime == 0 as libc::c_int {
-                        0 as libc::c_int
+                    if taskInfo.latestDeltaTime == 0i32 {
+                        0i32
                     } else {
                         (1000000.0f32 /
                              taskInfo.latestDeltaTime as libc::c_float) as
@@ -5025,35 +4816,25 @@ unsafe extern "C" fn cliTasks(mut cmdline: *mut libc::c_char) {
                           taskInfo.taskName);
             }
             let maxLoad: libc::c_int =
-                if taskInfo.maxExecutionTime ==
-                       0 as libc::c_int as libc::c_uint {
-                    0 as libc::c_int as libc::c_uint
+                if taskInfo.maxExecutionTime == 0i32 as libc::c_uint {
+                    0i32 as libc::c_uint
                 } else {
                     taskInfo.maxExecutionTime.wrapping_mul(taskFrequency as
-                                                               libc::c_uint).wrapping_add(5000
+                                                               libc::c_uint).wrapping_add(5000i32
                                                                                               as
-                                                                                              libc::c_int
-                                                                                              as
-                                                                                              libc::c_uint).wrapping_div(1000
-                                                                                                                             as
-                                                                                                                             libc::c_int
+                                                                                              libc::c_uint).wrapping_div(1000i32
                                                                                                                              as
                                                                                                                              libc::c_uint)
                 } as libc::c_int;
             let averageLoad: libc::c_int =
-                if taskInfo.averageExecutionTime ==
-                       0 as libc::c_int as libc::c_uint {
-                    0 as libc::c_int as libc::c_uint
+                if taskInfo.averageExecutionTime == 0i32 as libc::c_uint {
+                    0i32 as libc::c_uint
                 } else {
                     taskInfo.averageExecutionTime.wrapping_mul(taskFrequency
                                                                    as
-                                                                   libc::c_uint).wrapping_add(5000
+                                                                   libc::c_uint).wrapping_add(5000i32
                                                                                                   as
-                                                                                                  libc::c_int
-                                                                                                  as
-                                                                                                  libc::c_uint).wrapping_div(1000
-                                                                                                                                 as
-                                                                                                                                 libc::c_int
+                                                                                                  libc::c_uint).wrapping_div(1000i32
                                                                                                                                  as
                                                                                                                                  libc::c_uint)
                 } as libc::c_int;
@@ -5066,13 +4847,10 @@ unsafe extern "C" fn cliTasks(mut cmdline: *mut libc::c_char) {
                 cliPrintLinef(b"%6d %7d %7d %4d.%1d%% %4d.%1d%% %9d\x00" as
                                   *const u8 as *const libc::c_char,
                               taskFrequency, taskInfo.maxExecutionTime,
-                              taskInfo.averageExecutionTime,
-                              maxLoad / 10 as libc::c_int,
-                              maxLoad % 10 as libc::c_int,
-                              averageLoad / 10 as libc::c_int,
-                              averageLoad % 10 as libc::c_int,
-                              taskInfo.totalExecutionTime.wrapping_div(1000 as
-                                                                           libc::c_int
+                              taskInfo.averageExecutionTime, maxLoad / 10i32,
+                              maxLoad % 10i32, averageLoad / 10i32,
+                              averageLoad % 10i32,
+                              taskInfo.totalExecutionTime.wrapping_div(1000i32
                                                                            as
                                                                            libc::c_uint));
             } else {
@@ -5081,8 +4859,7 @@ unsafe extern "C" fn cliTasks(mut cmdline: *mut libc::c_char) {
             }
             if taskId as libc::c_uint ==
                    TASK_GYROPID as libc::c_int as libc::c_uint &&
-                   (*pidConfig()).pid_process_denom as libc::c_int >
-                       1 as libc::c_int {
+                   (*pidConfig()).pid_process_denom as libc::c_int > 1i32 {
                 cliPrintLinef(b"   - (%15s) %6d\x00" as *const u8 as
                                   *const libc::c_char, taskInfo.subTaskName,
                               subTaskFrequency);
@@ -5100,16 +4877,12 @@ unsafe extern "C" fn cliTasks(mut cmdline: *mut libc::c_char) {
         cliPrintLinef(b"RX Check Function %19d %7d %25d\x00" as *const u8 as
                           *const libc::c_char, checkFuncInfo.maxExecutionTime,
                       checkFuncInfo.averageExecutionTime,
-                      checkFuncInfo.totalExecutionTime.wrapping_div(1000 as
-                                                                        libc::c_int
-                                                                        as
+                      checkFuncInfo.totalExecutionTime.wrapping_div(1000i32 as
                                                                         libc::c_uint));
         cliPrintLinef(b"Total (excluding SERIAL) %25d.%1d%% %4d.%1d%%\x00" as
                           *const u8 as *const libc::c_char,
-                      maxLoadSum / 10 as libc::c_int,
-                      maxLoadSum % 10 as libc::c_int,
-                      averageLoadSum / 10 as libc::c_int,
-                      averageLoadSum % 10 as libc::c_int);
+                      maxLoadSum / 10i32, maxLoadSum % 10i32,
+                      averageLoadSum / 10i32, averageLoadSum % 10i32);
     };
 }
 unsafe extern "C" fn cliVersion(mut cmdline: *mut libc::c_char) {
@@ -5133,16 +4906,14 @@ unsafe extern "C" fn cliRcSmoothing(mut cmdline: *mut libc::c_char) {
         if rcSmoothingAutoCalculate() {
             cliPrint(b"# Detected RX frame rate: \x00" as *const u8 as
                          *const libc::c_char);
-            if avgRxFrameMs as libc::c_int == 0 as libc::c_int {
+            if avgRxFrameMs as libc::c_int == 0i32 {
                 cliPrintLine(b"NO SIGNAL\x00" as *const u8 as
                                  *const libc::c_char);
             } else {
                 cliPrintLinef(b"%d.%dms\x00" as *const u8 as
                                   *const libc::c_char,
-                              avgRxFrameMs as libc::c_int /
-                                  1000 as libc::c_int,
-                              avgRxFrameMs as libc::c_int %
-                                  1000 as libc::c_int);
+                              avgRxFrameMs as libc::c_int / 1000i32,
+                              avgRxFrameMs as libc::c_int % 1000i32);
             }
         }
         cliPrint(b"# Input filter type: \x00" as *const u8 as
@@ -5156,8 +4927,7 @@ unsafe extern "C" fn cliRcSmoothing(mut cmdline: *mut libc::c_char) {
                       *const libc::c_char,
                   rcSmoothingGetValue(RC_SMOOTHING_VALUE_INPUT_ACTIVE as
                                           libc::c_int));
-        if (*rxConfig()).rc_smoothing_input_cutoff as libc::c_int ==
-               0 as libc::c_int {
+        if (*rxConfig()).rc_smoothing_input_cutoff as libc::c_int == 0i32 {
             cliPrintLine(b"(auto)\x00" as *const u8 as *const libc::c_char);
         } else {
             cliPrintLine(b"(manual)\x00" as *const u8 as *const libc::c_char);
@@ -5177,7 +4947,7 @@ unsafe extern "C" fn cliRcSmoothing(mut cmdline: *mut libc::c_char) {
                RC_SMOOTHING_DERIVATIVE_OFF as libc::c_int {
             cliPrintLine(b"off)\x00" as *const u8 as *const libc::c_char);
         } else if (*rxConfig()).rc_smoothing_derivative_cutoff as libc::c_int
-                      == 0 as libc::c_int {
+                      == 0i32 {
             cliPrintLine(b"auto)\x00" as *const u8 as *const libc::c_char);
         } else {
             cliPrintLine(b"manual)\x00" as *const u8 as *const libc::c_char);
@@ -5272,32 +5042,29 @@ unsafe extern "C" fn printConfig(mut cmdline: *mut libc::c_char,
             b"mixer %s\x00" as *const u8 as *const libc::c_char;
         cliDefaultPrintLinef(dumpMask, equalsDefault, formatMixer,
                              mixerNames[((*mixerConfig()).mixerMode as
-                                             libc::c_int - 1 as libc::c_int)
-                                            as usize]);
+                                             libc::c_int - 1i32) as usize]);
         cliDumpPrintLinef(dumpMask, equalsDefault, formatMixer,
                           mixerNames[(mixerConfig_Copy.mixerMode as
-                                          libc::c_int - 1 as libc::c_int) as
-                                         usize]);
+                                          libc::c_int - 1i32) as usize]);
         cliDumpPrintLinef(dumpMask,
-                          (*customMotorMixer(0 as libc::c_int)).throttle ==
-                              0.0f32,
+                          (*customMotorMixer(0i32)).throttle == 0.0f32,
                           b"\r\nmmix reset\r\n\x00" as *const u8 as
                               *const libc::c_char);
         printMotorMix(dumpMask, customMotorMixer_CopyArray.as_mut_ptr(),
-                      customMotorMixer(0 as libc::c_int));
+                      customMotorMixer(0i32));
         cliPrintHashLine(b"servo\x00" as *const u8 as *const libc::c_char);
         printServo(dumpMask, servoParams_CopyArray.as_mut_ptr(),
-                   servoParams(0 as libc::c_int));
+                   servoParams(0i32));
         cliPrintHashLine(b"servo mix\x00" as *const u8 as
                              *const libc::c_char);
         // print custom servo mixer if exists
         cliDumpPrintLinef(dumpMask,
-                          (*customServoMixers(0 as libc::c_int)).rate as
-                              libc::c_int == 0 as libc::c_int,
+                          (*customServoMixers(0i32)).rate as libc::c_int ==
+                              0i32,
                           b"smix reset\r\n\x00" as *const u8 as
                               *const libc::c_char);
         printServoMix(dumpMask, customServoMixers_CopyArray.as_mut_ptr(),
-                      customServoMixers(0 as libc::c_int));
+                      customServoMixers(0i32));
         cliPrintHashLine(b"feature\x00" as *const u8 as *const libc::c_char);
         printFeature(dumpMask, &mut featureConfig_Copy, featureConfig());
         // USE_BEEPER
@@ -5307,23 +5074,23 @@ unsafe extern "C" fn printConfig(mut cmdline: *mut libc::c_char,
         printSerial(dumpMask, &mut serialConfig_Copy, serialConfig());
         cliPrintHashLine(b"aux\x00" as *const u8 as *const libc::c_char);
         printAux(dumpMask, modeActivationConditions_CopyArray.as_mut_ptr(),
-                 modeActivationConditions(0 as libc::c_int));
+                 modeActivationConditions(0i32));
         cliPrintHashLine(b"adjrange\x00" as *const u8 as *const libc::c_char);
         printAdjustmentRange(dumpMask,
                              adjustmentRanges_CopyArray.as_mut_ptr(),
-                             adjustmentRanges(0 as libc::c_int));
+                             adjustmentRanges(0i32));
         cliPrintHashLine(b"rxrange\x00" as *const u8 as *const libc::c_char);
         printRxRange(dumpMask, rxChannelRangeConfigs_CopyArray.as_mut_ptr(),
-                     rxChannelRangeConfigs(0 as libc::c_int));
+                     rxChannelRangeConfigs(0i32));
         cliPrintHashLine(b"rxfail\x00" as *const u8 as *const libc::c_char);
         printRxFailsafe(dumpMask,
                         rxFailsafeChannelConfigs_CopyArray.as_mut_ptr(),
-                        rxFailsafeChannelConfigs(0 as libc::c_int));
+                        rxFailsafeChannelConfigs(0i32));
         cliPrintHashLine(b"master\x00" as *const u8 as *const libc::c_char);
         dumpAllValues(MASTER_VALUE as libc::c_int as uint16_t, dumpMask);
         if dumpMask as libc::c_int & DUMP_ALL as libc::c_int != 0 {
-            let mut pidProfileIndex: uint32_t = 0 as libc::c_int as uint32_t;
-            while pidProfileIndex < 3 as libc::c_int as libc::c_uint {
+            let mut pidProfileIndex: uint32_t = 0i32 as uint32_t;
+            while pidProfileIndex < 3i32 as libc::c_uint {
                 cliDumpPidProfile(pidProfileIndex as uint8_t, dumpMask);
                 pidProfileIndex = pidProfileIndex.wrapping_add(1)
             }
@@ -5333,9 +5100,9 @@ unsafe extern "C" fn printConfig(mut cmdline: *mut libc::c_char,
                 systemConfig_Copy.pidProfileIndex as int8_t;
             cliProfile(b"\x00" as *const u8 as *const libc::c_char as
                            *mut libc::c_char);
-            pidProfileIndexToUse = -(1 as libc::c_int) as int8_t;
-            let mut rateIndex: uint32_t = 0 as libc::c_int as uint32_t;
-            while rateIndex < 6 as libc::c_int as libc::c_uint {
+            pidProfileIndexToUse = -1i32 as int8_t;
+            let mut rateIndex: uint32_t = 0i32 as uint32_t;
+            while rateIndex < 6i32 as libc::c_uint {
                 cliDumpRateProfile(rateIndex as uint8_t, dumpMask);
                 rateIndex = rateIndex.wrapping_add(1)
             }
@@ -5345,7 +5112,7 @@ unsafe extern "C" fn printConfig(mut cmdline: *mut libc::c_char,
                 systemConfig_Copy.activeRateProfile as int8_t;
             cliRateProfile(b"\x00" as *const u8 as *const libc::c_char as
                                *mut libc::c_char);
-            rateProfileIndexToUse = -(1 as libc::c_int) as int8_t;
+            rateProfileIndexToUse = -1i32 as int8_t;
             cliPrintHashLine(b"save configuration\x00" as *const u8 as
                                  *const libc::c_char);
             cliPrint(b"save\x00" as *const u8 as *const libc::c_char);
@@ -5364,10 +5131,10 @@ unsafe extern "C" fn printConfig(mut cmdline: *mut libc::c_char,
     restoreConfigs();
 }
 unsafe extern "C" fn cliDump(mut cmdline: *mut libc::c_char) {
-    printConfig(cmdline, 0 as libc::c_int != 0);
+    printConfig(cmdline, 0i32 != 0);
 }
 unsafe extern "C" fn cliDiff(mut cmdline: *mut libc::c_char) {
-    printConfig(cmdline, 1 as libc::c_int != 0);
+    printConfig(cmdline, 1i32 != 0);
 }
 // should be sorted a..z for bsearch()
 #[no_mangle]
@@ -5951,7 +5718,7 @@ pub static mut cmdTable: [clicmd_t; 35] =
          }]
     };
 unsafe extern "C" fn cliHelp(mut cmdline: *mut libc::c_char) {
-    let mut i: uint32_t = 0 as libc::c_int as uint32_t;
+    let mut i: uint32_t = 0i32 as uint32_t;
     while (i as libc::c_ulong) <
               (::core::mem::size_of::<[clicmd_t; 35]>() as
                    libc::c_ulong).wrapping_div(::core::mem::size_of::<clicmd_t>()
@@ -5992,8 +5759,7 @@ pub unsafe extern "C" fn cliProcess() {
                                                    as isize) {
                 if !(bufferIndex != 0 &&
                          strncasecmp(cliBuffer.as_mut_ptr(), (*cmd).name,
-                                     bufferIndex as libc::c_ulong) !=
-                             0 as libc::c_int) {
+                                     bufferIndex as libc::c_ulong) != 0i32) {
                     if pstart.is_null() { pstart = cmd }
                     pend = cmd
                 }
@@ -6009,9 +5775,7 @@ pub unsafe extern "C" fn cliProcess() {
                            (bufferIndex as libc::c_ulong) <
                                (::core::mem::size_of::<[libc::c_char; 256]>()
                                     as
-                                    libc::c_ulong).wrapping_sub(2 as
-                                                                    libc::c_int
-                                                                    as
+                                    libc::c_ulong).wrapping_sub(2i32 as
                                                                     libc::c_ulong)
                        {
                         /* Unambiguous -- append a space */
@@ -6039,18 +5803,18 @@ pub unsafe extern "C" fn cliProcess() {
                     cmd = cmd.offset(1)
                 }
                 cliPrompt();
-                i = 0 as libc::c_int as uint32_t
+                i = 0i32 as uint32_t
                 /* Redraw prompt */
             }
             while i < bufferIndex {
                 cliWrite(cliBuffer[i as usize] as uint8_t);
                 i = i.wrapping_add(1)
             }
-        } else if bufferIndex == 0 && c as libc::c_int == 4 as libc::c_int {
+        } else if bufferIndex == 0 && c as libc::c_int == 4i32 {
             // CTRL-D
             cliExit(cliBuffer.as_mut_ptr());
             return
-        } else if c as libc::c_int == 12 as libc::c_int {
+        } else if c as libc::c_int == 12i32 {
             // NewPage / CTRL-L
             // clear screen
             cliPrint(b"\x1b[2J\x1b[1;1H\x00" as *const u8 as
@@ -6070,16 +5834,15 @@ pub unsafe extern "C" fn cliProcess() {
                         libc::c_long as uint32_t
             }
             // Strip trailing whitespace
-            while bufferIndex > 0 as libc::c_int as libc::c_uint &&
-                      cliBuffer[bufferIndex.wrapping_sub(1 as libc::c_int as
-                                                             libc::c_uint) as
-                                    usize] as libc::c_int == ' ' as i32 {
+            while bufferIndex > 0i32 as libc::c_uint &&
+                      cliBuffer[bufferIndex.wrapping_sub(1i32 as libc::c_uint)
+                                    as usize] as libc::c_int == ' ' as i32 {
                 bufferIndex = bufferIndex.wrapping_sub(1)
             }
             // Process non-empty lines
-            if bufferIndex > 0 as libc::c_int as libc::c_uint {
+            if bufferIndex > 0i32 as libc::c_uint {
                 cliBuffer[bufferIndex as usize] =
-                    0 as libc::c_int as libc::c_char; // null terminate
+                    0i32 as libc::c_char; // null terminate
                 let mut cmd_0: *const clicmd_t = 0 as *const clicmd_t;
                 let mut options: *mut libc::c_char = 0 as *mut libc::c_char;
                 cmd_0 = cmdTable.as_ptr();
@@ -6107,31 +5870,28 @@ pub unsafe extern "C" fn cliProcess() {
                     cliPrint(b"Unknown command, try \'help\'\x00" as *const u8
                                  as *const libc::c_char);
                 }
-                bufferIndex = 0 as libc::c_int as uint32_t
+                bufferIndex = 0i32 as uint32_t
             }
-            memset(cliBuffer.as_mut_ptr() as *mut libc::c_void,
-                   0 as libc::c_int,
+            memset(cliBuffer.as_mut_ptr() as *mut libc::c_void, 0i32,
                    ::core::mem::size_of::<[libc::c_char; 256]>() as
                        libc::c_ulong);
             // 'exit' will reset this flag, so we don't need to print prompt again
             if cliMode == 0 { return }
             cliPrompt();
-        } else if c as libc::c_int == 127 as libc::c_int {
+        } else if c as libc::c_int == 127i32 {
             // backspace
             if bufferIndex != 0 {
                 bufferIndex =
                     bufferIndex.wrapping_sub(1); // Ignore leading spaces
-                cliBuffer[bufferIndex as usize] =
-                    0 as libc::c_int as libc::c_char;
+                cliBuffer[bufferIndex as usize] = 0i32 as libc::c_char;
                 cliPrint(b"\x08 \x08\x00" as *const u8 as
                              *const libc::c_char);
             }
         } else {
             if !((bufferIndex as libc::c_ulong) <
                      ::core::mem::size_of::<[libc::c_char; 256]>() as
-                         libc::c_ulong &&
-                     c as libc::c_int >= 32 as libc::c_int &&
-                     c as libc::c_int <= 126 as libc::c_int) {
+                         libc::c_ulong && c as libc::c_int >= 32i32 &&
+                     c as libc::c_int <= 126i32) {
                 continue ;
             }
             if bufferIndex == 0 && c as libc::c_int == ' ' as i32 {
@@ -6146,7 +5906,7 @@ pub unsafe extern "C" fn cliProcess() {
 }
 #[no_mangle]
 pub unsafe extern "C" fn cliEnter(mut serialPort: *mut serialPort_t) {
-    cliMode = 1 as libc::c_int as uint8_t;
+    cliMode = 1i32 as uint8_t;
     cliPort = serialPort;
     setPrintfSerialPort(cliPort);
     cliWriter =

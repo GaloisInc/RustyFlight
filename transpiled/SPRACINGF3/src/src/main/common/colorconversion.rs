@@ -1,24 +1,25 @@
-use ::libc;
+use core;
+use libc;
 pub type __uint8_t = libc::c_uchar;
 pub type __uint16_t = libc::c_ushort;
 pub type __uint32_t = libc::c_uint;
 pub type uint8_t = __uint8_t;
 pub type uint16_t = __uint16_t;
 pub type uint32_t = __uint32_t;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct rgbColor24bpp_s {
     pub r: uint8_t,
     pub g: uint8_t,
     pub b: uint8_t,
 }
-#[derive(Copy, Clone)]
-#[repr(C)]
+#[derive ( Copy, Clone )]
+#[repr ( C )]
 pub union rgbColor24bpp_t {
     pub rgb: rgbColor24bpp_s,
     pub raw: [uint8_t; 3],
 }
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct hsvColor_s {
     pub h: uint16_t,
@@ -76,28 +77,25 @@ pub unsafe extern "C" fn hsvToRgb24(mut c: *const hsvColor_t)
     static mut r: rgbColor24bpp_t =
         rgbColor24bpp_t{rgb: rgbColor24bpp_s{r: 0, g: 0, b: 0,},};
     let mut val: uint16_t = (*c).v as uint16_t;
-    let mut sat: uint16_t =
-        (255 as libc::c_int - (*c).s as libc::c_int) as uint16_t;
+    let mut sat: uint16_t = (255i32 - (*c).s as libc::c_int) as uint16_t;
     let mut base: uint32_t = 0;
     let mut hue: uint16_t = (*c).h;
-    if sat as libc::c_int == 0 as libc::c_int {
+    if sat as libc::c_int == 0i32 {
         // Acromatic color (gray). Hue doesn't mind.
         r.rgb.r = val as uint8_t;
         r.rgb.g = val as uint8_t;
         r.rgb.b = val as uint8_t
     } else {
         base =
-            ((255 as libc::c_int - sat as libc::c_int) * val as libc::c_int >>
-                 8 as libc::c_int) as uint32_t;
-        match hue as libc::c_int / 60 as libc::c_int {
+            ((255i32 - sat as libc::c_int) * val as libc::c_int >> 8i32) as
+                uint32_t;
+        match hue as libc::c_int / 60i32 {
             0 => {
                 r.rgb.r = val as uint8_t;
                 r.rgb.g =
                     (val as
                          libc::c_uint).wrapping_sub(base).wrapping_mul(hue as
-                                                                           libc::c_uint).wrapping_div(60
-                                                                                                          as
-                                                                                                          libc::c_int
+                                                                           libc::c_uint).wrapping_div(60i32
                                                                                                           as
                                                                                                           libc::c_uint).wrapping_add(base)
                         as uint8_t;
@@ -106,20 +104,15 @@ pub unsafe extern "C" fn hsvToRgb24(mut c: *const hsvColor_t)
             1 => {
                 r.rgb.r =
                     (val as
-                         libc::c_uint).wrapping_sub(base).wrapping_mul((60 as
-                                                                            libc::c_int
+                         libc::c_uint).wrapping_sub(base).wrapping_mul((60i32
                                                                             -
                                                                             hue
                                                                                 as
                                                                                 libc::c_int
                                                                                 %
-                                                                                60
-                                                                                    as
-                                                                                    libc::c_int)
+                                                                                60i32)
                                                                            as
-                                                                           libc::c_uint).wrapping_div(60
-                                                                                                          as
-                                                                                                          libc::c_int
+                                                                           libc::c_uint).wrapping_div(60i32
                                                                                                           as
                                                                                                           libc::c_uint).wrapping_add(base)
                         as uint8_t;
@@ -134,13 +127,9 @@ pub unsafe extern "C" fn hsvToRgb24(mut c: *const hsvColor_t)
                          libc::c_uint).wrapping_sub(base).wrapping_mul((hue as
                                                                             libc::c_int
                                                                             %
-                                                                            60
-                                                                                as
-                                                                                libc::c_int)
+                                                                            60i32)
                                                                            as
-                                                                           libc::c_uint).wrapping_div(60
-                                                                                                          as
-                                                                                                          libc::c_int
+                                                                           libc::c_uint).wrapping_div(60i32
                                                                                                           as
                                                                                                           libc::c_uint).wrapping_add(base)
                         as uint8_t
@@ -149,20 +138,15 @@ pub unsafe extern "C" fn hsvToRgb24(mut c: *const hsvColor_t)
                 r.rgb.r = base as uint8_t;
                 r.rgb.g =
                     (val as
-                         libc::c_uint).wrapping_sub(base).wrapping_mul((60 as
-                                                                            libc::c_int
+                         libc::c_uint).wrapping_sub(base).wrapping_mul((60i32
                                                                             -
                                                                             hue
                                                                                 as
                                                                                 libc::c_int
                                                                                 %
-                                                                                60
-                                                                                    as
-                                                                                    libc::c_int)
+                                                                                60i32)
                                                                            as
-                                                                           libc::c_uint).wrapping_div(60
-                                                                                                          as
-                                                                                                          libc::c_int
+                                                                           libc::c_uint).wrapping_div(60i32
                                                                                                           as
                                                                                                           libc::c_uint).wrapping_add(base)
                         as uint8_t;
@@ -174,13 +158,9 @@ pub unsafe extern "C" fn hsvToRgb24(mut c: *const hsvColor_t)
                          libc::c_uint).wrapping_sub(base).wrapping_mul((hue as
                                                                             libc::c_int
                                                                             %
-                                                                            60
-                                                                                as
-                                                                                libc::c_int)
+                                                                            60i32)
                                                                            as
-                                                                           libc::c_uint).wrapping_div(60
-                                                                                                          as
-                                                                                                          libc::c_int
+                                                                           libc::c_uint).wrapping_div(60i32
                                                                                                           as
                                                                                                           libc::c_uint).wrapping_add(base)
                         as uint8_t;
@@ -192,20 +172,15 @@ pub unsafe extern "C" fn hsvToRgb24(mut c: *const hsvColor_t)
                 r.rgb.g = base as uint8_t;
                 r.rgb.b =
                     (val as
-                         libc::c_uint).wrapping_sub(base).wrapping_mul((60 as
-                                                                            libc::c_int
+                         libc::c_uint).wrapping_sub(base).wrapping_mul((60i32
                                                                             -
                                                                             hue
                                                                                 as
                                                                                 libc::c_int
                                                                                 %
-                                                                                60
-                                                                                    as
-                                                                                    libc::c_int)
+                                                                                60i32)
                                                                            as
-                                                                           libc::c_uint).wrapping_div(60
-                                                                                                          as
-                                                                                                          libc::c_int
+                                                                           libc::c_uint).wrapping_div(60i32
                                                                                                           as
                                                                                                           libc::c_uint).wrapping_add(base)
                         as uint8_t

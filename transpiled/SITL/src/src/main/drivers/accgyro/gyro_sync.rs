@@ -1,4 +1,5 @@
-use ::libc;
+use core;
+use libc;
 pub type __uint8_t = libc::c_uchar;
 pub type __int16_t = libc::c_short;
 pub type __int32_t = libc::c_int;
@@ -7,7 +8,7 @@ pub type int16_t = __int16_t;
 pub type int32_t = __int32_t;
 pub type uint8_t = __uint8_t;
 pub type uint32_t = __uint32_t;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct SPI_TypeDef {
     pub test: *mut libc::c_void,
@@ -23,12 +24,49 @@ pub const CW90_DEG: sensor_align_e = 2;
 pub const CW0_DEG: sensor_align_e = 1;
 pub const ALIGN_DEFAULT: sensor_align_e = 0;
 pub type mpuDetectionResult_t = mpuDetectionResult_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct mpuDetectionResult_s {
     pub sensor: mpuSensor_e,
     pub resolution: mpu6050Resolution_e,
 }
+/*
+ * This file is part of Cleanflight and Betaflight.
+ *
+ * Cleanflight and Betaflight are free software. You can redistribute
+ * this software and/or modify this software under the terms of the
+ * GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * Cleanflight and Betaflight are distributed in the hope that they
+ * will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this software.
+ *
+ * If not, see <http://www.gnu.org/licenses/>.
+ */
+//#define DEBUG_MPU_DATA_READY_INTERRUPT
+// MPU6050
+// MPU3050, 6000 and 6050
+// RA = Register Address
+//[7] PWR_MODE, [6:1] XG_OFFS_TC, [0] OTP_BNK_VLD
+//[7] PWR_MODE, [6:1] YG_OFFS_TC, [0] OTP_BNK_VLD
+//[7] PWR_MODE, [6:1] ZG_OFFS_TC, [0] OTP_BNK_VLD
+//[7:0] X_FINE_GAIN
+//[7:0] Y_FINE_GAIN
+//[7:0] Z_FINE_GAIN
+//[15:0] XA_OFFS
+//[15:0] YA_OFFS
+//[15:0] ZA_OFFS
+// Product ID Register
+//[15:0] XG_OFFS_USR
+//[15:0] YG_OFFS_USR
+//[15:0] ZG_OFFS_USR
+// RF = Register Flag
 pub type mpu6050Resolution_e = libc::c_uint;
 pub const MPU_FULL_RESOLUTION: mpu6050Resolution_e = 1;
 pub const MPU_HALF_RESOLUTION: mpu6050Resolution_e = 0;
@@ -67,26 +105,26 @@ pub const MPU_NONE: mpuSensor_e = 0;
  */
 // Slave I2C on SPI master
 pub type busDevice_t = busDevice_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct busDevice_s {
     pub bustype: busType_e,
     pub busdev_u: C2RustUnnamed,
 }
-#[derive(Copy, Clone)]
-#[repr(C)]
+#[derive ( Copy, Clone )]
+#[repr ( C )]
 pub union C2RustUnnamed {
     pub spi: deviceSpi_s,
     pub i2c: deviceI2C_s,
     pub mpuSlave: deviceMpuSlave_s,
 }
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct deviceMpuSlave_s {
     pub master: *const busDevice_s,
     pub address: uint8_t,
 }
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct deviceI2C_s {
     pub device: I2CDevice,
@@ -98,7 +136,7 @@ pub const I2CDEV_3: I2CDevice = 2;
 pub const I2CDEV_2: I2CDevice = 1;
 pub const I2CDEV_1: I2CDevice = 0;
 pub const I2CINVALID: I2CDevice = -1;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct deviceSpi_s {
     pub instance: *mut SPI_TypeDef,
@@ -132,14 +170,14 @@ pub const BUSTYPE_MPU_SLAVE: busType_e = 3;
 pub const BUSTYPE_SPI: busType_e = 2;
 pub const BUSTYPE_I2C: busType_e = 1;
 pub const BUSTYPE_NONE: busType_e = 0;
-#[derive(Copy, Clone)]
-#[repr(C)]
+#[derive ( Copy, Clone )]
+#[repr ( C )]
 pub union pthread_mutex_t {
     pub __data: __pthread_mutex_s,
     pub __size: [libc::c_char; 40],
     pub __align: libc::c_long,
 }
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct __pthread_mutex_s {
     pub __lock: libc::c_int,
@@ -152,32 +190,13 @@ pub struct __pthread_mutex_s {
     pub __list: __pthread_list_t,
 }
 pub type __pthread_list_t = __pthread_internal_list;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct __pthread_internal_list {
     pub __prev: *mut __pthread_internal_list,
     pub __next: *mut __pthread_internal_list,
 }
-/*
- * This file is part of Cleanflight and Betaflight.
- *
- * Cleanflight and Betaflight are free software. You can redistribute
- * this software and/or modify this software under the terms of the
- * GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option)
- * any later version.
- *
- * Cleanflight and Betaflight are distributed in the hope that they
- * will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this software.
- *
- * If not, see <http://www.gnu.org/licenses/>.
- */
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct gyroDev_s {
     pub lock: pthread_mutex_t,
@@ -232,7 +251,7 @@ pub const GYRO_RATE_3200_Hz: gyroRateKHz_e = 2;
 pub const GYRO_RATE_1100_Hz: gyroRateKHz_e = 1;
 pub const GYRO_RATE_1_kHz: gyroRateKHz_e = 0;
 pub type mpuConfiguration_t = mpuConfiguration_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct mpuConfiguration_s {
     pub resetFn: mpuResetFnPtr,
@@ -258,10 +277,10 @@ pub type mpuResetFnPtr = Option<unsafe extern "C" fn() -> ()>;
  * If not, see <http://www.gnu.org/licenses/>.
  */
 pub type extiCallbackRec_t = extiCallbackRec_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct extiCallbackRec_s {
-    pub fn_0: Option<extiHandlerCallback>,
+    pub fn_0: Option<unsafe extern "C" fn(_: *mut extiCallbackRec_t) -> ()>,
 }
 pub type extiHandlerCallback
     =
@@ -276,38 +295,6 @@ pub type sensorGyroInitFuncPtr
     =
     Option<unsafe extern "C" fn(_: *mut gyroDev_s) -> ()>;
 pub type gyroDev_t = gyroDev_s;
-/*
- * This file is part of Cleanflight and Betaflight.
- *
- * Cleanflight and Betaflight are free software. You can redistribute
- * this software and/or modify this software under the terms of the
- * GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option)
- * any later version.
- *
- * Cleanflight and Betaflight are distributed in the hope that they
- * will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this software.
- *
- * If not, see <http://www.gnu.org/licenses/>.
- */
-// SITL (software in the loop) simulator
-// use simulatior's attitude directly
-// disable this if wants to test AHRS algorithm
-//#define SIMULATOR_ACC_SYNC
-//#define SIMULATOR_GYRO_SYNC
-//#define SIMULATOR_IMU_SYNC
-//#define SIMULATOR_GYROPID_SYNC
-// file name to save config
-//#define USE_SOFTSERIAL1
-//#define USE_SOFTSERIAL2
-// I think SITL don't need this
-// suppress 'no pins defined' warning
-// belows are internal stuff
 #[no_mangle]
 pub static mut SystemCoreClock: uint32_t = 0;
 /*
@@ -365,9 +352,9 @@ pub unsafe extern "C" fn gyroSyncCheckUpdate(mut gyro: *mut gyroDev_t)
  -> bool {
     let mut ret: bool = false;
     if (*gyro).dataReady {
-        ret = 1 as libc::c_int != 0;
-        (*gyro).dataReady = 0 as libc::c_int != 0
-    } else { ret = 0 as libc::c_int != 0 }
+        ret = 1i32 != 0;
+        (*gyro).dataReady = 0i32 != 0
+    } else { ret = 0i32 != 0 }
     return ret;
 }
 #[no_mangle]
@@ -377,8 +364,7 @@ pub unsafe extern "C" fn gyroSetSampleRate(mut gyro: *mut gyroDev_t,
                                            mut gyro_use_32khz: bool)
  -> uint32_t {
     let mut gyroSamplePeriod: libc::c_float = 0.;
-    if lpf as libc::c_int == 0 as libc::c_int ||
-           lpf as libc::c_int == 1 as libc::c_int {
+    if lpf as libc::c_int == 0i32 || lpf as libc::c_int == 1i32 {
         if gyro_use_32khz {
             (*gyro).gyroRateKHz = GYRO_RATE_32_kHz;
             gyroSamplePeriod = 31.25f32
@@ -409,12 +395,12 @@ pub unsafe extern "C" fn gyroSetSampleRate(mut gyro: *mut gyroDev_t,
                 gyroSamplePeriod = 1000.0f32
             }
         }
-        gyroSyncDenominator = 1 as libc::c_int as uint8_t
+        gyroSyncDenominator = 1i32 as uint8_t
         // Always full Sampling 1khz
     }
     // calculate gyro divider and targetLooptime (expected cycleTime)
     (*gyro).mpuDividerDrops =
-        (gyroSyncDenominator as libc::c_int - 1 as libc::c_int) as uint8_t;
+        (gyroSyncDenominator as libc::c_int - 1i32) as uint8_t;
     let targetLooptime: uint32_t =
         (gyroSyncDenominator as libc::c_int as libc::c_float *
              gyroSamplePeriod) as uint32_t;

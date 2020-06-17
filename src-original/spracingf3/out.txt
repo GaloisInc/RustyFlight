@@ -1,0 +1,2628 @@
+   Compiling SPRACINGF3 v0.0.0 (/Rustyflight/transpiled/SPRACINGF3)
+error[E0425]: cannot find function `__set_BASEPRI_MAX` in this scope
+   --> src/src/main/drivers/camera_control.rs:466:5
+    |
+466 |     __set_BASEPRI_MAX(prio as libc::c_int);
+    |     ^^^^^^^^^^^^^^^^^ not found in this scope
+
+error[E0425]: cannot find function `__get_BASEPRI` in this scope
+   --> src/src/main/drivers/camera_control.rs:869:47
+    |
+869 |             let mut __basepri_save: uint8_t = __get_BASEPRI() as uint8_t;
+    |                                               ^^^^^^^^^^^^^ not found in this scope
+
+error[E0425]: cannot find function `__set_BASEPRI_MAX` in this scope
+   --> src/src/main/drivers/serial_uart.rs:265:5
+    |
+265 |     __set_BASEPRI_MAX(prio as libc::c_int);
+    |     ^^^^^^^^^^^^^^^^^ not found in this scope
+
+error[E0425]: cannot find function `__get_BASEPRI` in this scope
+   --> src/src/main/drivers/serial_uart.rs:309:39
+    |
+309 |     let mut __basepri_save: uint8_t = __get_BASEPRI() as uint8_t;
+    |                                       ^^^^^^^^^^^^^ not found in this scope
+
+error[E0425]: cannot find function `__set_BASEPRI_MAX` in this scope
+   --> src/src/main/drivers/system.rs:108:5
+    |
+108 |     __set_BASEPRI_MAX(prio as libc::c_int);
+    |     ^^^^^^^^^^^^^^^^^ not found in this scope
+
+error[E0425]: cannot find function `__get_BASEPRI` in this scope
+   --> src/src/main/drivers/system.rs:169:39
+    |
+169 |     let mut __basepri_save: uint8_t = __get_BASEPRI() as uint8_t;
+    |                                       ^^^^^^^^^^^^^ not found in this scope
+
+error[E0425]: cannot find function `__get_BASEPRI` in this scope
+   --> src/src/main/drivers/system.rs:208:39
+    |
+208 |     let mut __basepri_save: uint8_t = __get_BASEPRI() as uint8_t;
+    |                                       ^^^^^^^^^^^^^ not found in this scope
+
+error[E0425]: cannot find function `__get_BASEPRI` in this scope
+   --> src/src/main/drivers/system.rs:259:45
+    |
+259 |            libc::c_ulong & 0x1ffu64 != 0 || __get_BASEPRI() != 0 {
+    |                                             ^^^^^^^^^^^^^ not found in this scope
+
+error[E0425]: cannot find function `__set_BASEPRI_MAX` in this scope
+   --> src/src/main/drivers/timer.rs:569:5
+    |
+569 |     __set_BASEPRI_MAX(prio as libc::c_int);
+    |     ^^^^^^^^^^^^^^^^^ not found in this scope
+
+error[E0425]: cannot find function `__get_BASEPRI` in this scope
+    --> src/src/main/drivers/timer.rs:1177:39
+     |
+1177 |     let mut __basepri_save: uint8_t = __get_BASEPRI() as uint8_t;
+     |                                       ^^^^^^^^^^^^^ not found in this scope
+
+error[E0425]: cannot find function `__get_BASEPRI` in this scope
+    --> src/src/main/drivers/timer.rs:3808:39
+     |
+3808 |     let mut __basepri_save: uint8_t = __get_BASEPRI() as uint8_t;
+     |                                       ^^^^^^^^^^^^^ not found in this scope
+
+error[E0425]: cannot find function `__set_BASEPRI_MAX` in this scope
+   --> src/src/main/telemetry/crsf.rs:380:5
+    |
+380 |     __set_BASEPRI_MAX(prio as
+    |     ^^^^^^^^^^^^^^^^^ not found in this scope
+
+error[E0425]: cannot find function `__get_BASEPRI` in this scope
+   --> src/src/main/telemetry/crsf.rs:437:43
+    |
+437 |         let mut __basepri_save: uint8_t = __get_BASEPRI() as uint8_t;
+    |                                           ^^^^^^^^^^^^^ not found in this scope
+
+warning: unused import: `core`
+ --> src/lib/main/CMSIS/DSP/Source/BasicMathFunctions/arm_mult_f32.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+  |
+  = note: `#[warn(unused_imports)]` on by default
+
+warning: unused import: `core`
+ --> src/lib/main/CMSIS/DSP/Source/CommonTables/arm_common_tables.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/lib/main/CMSIS/DSP/Source/ComplexMathFunctions/arm_cmplx_mag_f32.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/lib/main/CMSIS/DSP/Source/StatisticsFunctions/arm_max_f32.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/lib/main/CMSIS/DSP/Source/TransformFunctions/arm_cfft_f32.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/lib/main/CMSIS/DSP/Source/TransformFunctions/arm_cfft_radix8_f32.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/lib/main/CMSIS/DSP/Source/TransformFunctions/arm_rfft_fast_f32.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/lib/main/CMSIS/DSP/Source/TransformFunctions/arm_rfft_fast_init_f32.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/lib/main/STM32F3/Drivers/STM32F30x_StdPeriph_Driver/src/stm32f30x_adc.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/lib/main/STM32F3/Drivers/STM32F30x_StdPeriph_Driver/src/stm32f30x_comp.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/lib/main/STM32F3/Drivers/STM32F30x_StdPeriph_Driver/src/stm32f30x_dac.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/lib/main/STM32F3/Drivers/STM32F30x_StdPeriph_Driver/src/stm32f30x_dbgmcu.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/lib/main/STM32F3/Drivers/STM32F30x_StdPeriph_Driver/src/stm32f30x_dma.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/lib/main/STM32F3/Drivers/STM32F30x_StdPeriph_Driver/src/stm32f30x_exti.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/lib/main/STM32F3/Drivers/STM32F30x_StdPeriph_Driver/src/stm32f30x_flash.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/lib/main/STM32F3/Drivers/STM32F30x_StdPeriph_Driver/src/stm32f30x_gpio.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/lib/main/STM32F3/Drivers/STM32F30x_StdPeriph_Driver/src/stm32f30x_hrtim.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/lib/main/STM32F3/Drivers/STM32F30x_StdPeriph_Driver/src/stm32f30x_i2c.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/lib/main/STM32F3/Drivers/STM32F30x_StdPeriph_Driver/src/stm32f30x_iwdg.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/lib/main/STM32F3/Drivers/STM32F30x_StdPeriph_Driver/src/stm32f30x_misc.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/lib/main/STM32F3/Drivers/STM32F30x_StdPeriph_Driver/src/stm32f30x_opamp.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/lib/main/STM32F3/Drivers/STM32F30x_StdPeriph_Driver/src/stm32f30x_pwr.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/lib/main/STM32F3/Drivers/STM32F30x_StdPeriph_Driver/src/stm32f30x_rcc.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/lib/main/STM32F3/Drivers/STM32F30x_StdPeriph_Driver/src/stm32f30x_rtc.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/lib/main/STM32F3/Drivers/STM32F30x_StdPeriph_Driver/src/stm32f30x_spi.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/lib/main/STM32F3/Drivers/STM32F30x_StdPeriph_Driver/src/stm32f30x_syscfg.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/lib/main/STM32F3/Drivers/STM32F30x_StdPeriph_Driver/src/stm32f30x_tim.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/lib/main/STM32F3/Drivers/STM32F30x_StdPeriph_Driver/src/stm32f30x_usart.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/lib/main/STM32F3/Drivers/STM32F30x_StdPeriph_Driver/src/stm32f30x_wwdg.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/blackbox/blackbox.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/blackbox/blackbox_encoding.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/blackbox/blackbox_io.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unnecessary parentheses around assigned value
+   --> src/src/main/blackbox/blackbox_io.rs:582:9
+    |
+582 | /         ({
+583 | |              let mut _a: libc::c_int =
+584 | |                  ({
+585 | |                       let mut _a_0: int32_t = freeSpace;
+...   |
+593 | |              if _a < _b { _a } else { _b }
+594 | |          });
+    | |___________^
+    |
+    = note: `#[warn(unused_parens)]` on by default
+help: remove these parentheses
+    |
+582 |         {
+583 |              let mut _a: libc::c_int =
+584 |                  ({
+585 |                       let mut _a_0: int32_t = freeSpace;
+586 |                       let mut _b: libc::c_int =
+587 |                           blackboxHeaderBudget +
+  ...
+
+warning: unnecessary parentheses around assigned value
+   --> src/src/main/blackbox/blackbox_io.rs:584:18
+    |
+584 | /                  ({
+585 | |                       let mut _a_0: int32_t = freeSpace;
+586 | |                       let mut _b: libc::c_int =
+587 | |                           blackboxHeaderBudget +
+...   |
+590 | |                       if _a_0 < _b { _a_0 } else { _b }
+591 | |                   });
+    | |____________________^
+help: remove these parentheses
+    |
+584 |                  {
+585 |                       let mut _a_0: int32_t = freeSpace;
+586 |                       let mut _b: libc::c_int =
+587 |                           blackboxHeaderBudget +
+588 |                               blackboxMaxHeaderBytesPerIteration as
+589 |                                   libc::c_int;
+  ...
+
+warning: unused import: `core`
+ --> src/src/main/build/build_config.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `libc`
+ --> src/src/main/build/build_config.rs:2:5
+  |
+2 | use libc;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/build/debug.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/build/version.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/cms/cms.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `libc`
+ --> src/src/main/cms/cms.rs:2:5
+  |
+2 | use libc;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/cms/cms_menu_blackbox.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `libc`
+ --> src/src/main/cms/cms_menu_blackbox.rs:2:5
+  |
+2 | use libc;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/cms/cms_menu_builtin.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `libc`
+ --> src/src/main/cms/cms_menu_builtin.rs:2:5
+  |
+2 | use libc;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/cms/cms_menu_imu.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `libc`
+ --> src/src/main/cms/cms_menu_imu.rs:2:5
+  |
+2 | use libc;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/cms/cms_menu_ledstrip.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `libc`
+ --> src/src/main/cms/cms_menu_ledstrip.rs:2:5
+  |
+2 | use libc;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/cms/cms_menu_misc.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `libc`
+ --> src/src/main/cms/cms_menu_misc.rs:2:5
+  |
+2 | use libc;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/cms/cms_menu_osd.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `libc`
+ --> src/src/main/cms/cms_menu_osd.rs:2:5
+  |
+2 | use libc;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/cms/cms_menu_power.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `libc`
+ --> src/src/main/cms/cms_menu_power.rs:2:5
+  |
+2 | use libc;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/cms/cms_menu_vtx_rtc6705.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `libc`
+ --> src/src/main/cms/cms_menu_vtx_rtc6705.rs:2:5
+  |
+2 | use libc;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/cms/cms_menu_vtx_smartaudio.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `libc`
+ --> src/src/main/cms/cms_menu_vtx_smartaudio.rs:2:5
+  |
+2 | use libc;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/cms/cms_menu_vtx_tramp.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `libc`
+ --> src/src/main/cms/cms_menu_vtx_tramp.rs:2:5
+  |
+2 | use libc;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/common/bitarray.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/common/colorconversion.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/common/crc.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/common/encoding.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/common/explog_approx.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/common/filter.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/common/gps_conversion.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `libc`
+ --> src/src/main/common/gps_conversion.rs:2:5
+  |
+2 | use libc;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/common/huffman.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/common/huffman_table.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/common/maths.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unnecessary parentheses around assigned value
+   --> src/src/main/common/maths.rs:100:9
+    |
+100 | /         ({
+101 | |              let mut _a: libc::c_float = absX;
+102 | |              let mut _b: libc::c_float = absY;
+103 | |              if _a > _b { _a } else { _b }
+104 | |          });
+    | |___________^
+help: remove these parentheses
+    |
+100 |         {
+101 |              let mut _a: libc::c_float = absX;
+102 |              let mut _b: libc::c_float = absY;
+103 |              if _a > _b { _a } else { _b }
+104 |          };
+    |
+
+warning: unused import: `core`
+ --> src/src/main/common/printf.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/common/streambuf.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/common/string_light.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/common/strtol.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/common/time.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `libc`
+ --> src/src/main/common/time.rs:2:5
+  |
+2 | use libc;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/common/typeconversion.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unnecessary parentheses around function argument
+   --> src/src/main/common/typeconversion.rs:198:10
+    |
+198 |       itoa(({
+    |  __________^
+199 | |               let mut _x: int32_t =
+200 | |                   value; // Negative number, add a negative sign
+201 | |               if _x > 0i32 { _x } else { -_x }
+202 | |           }), intString1.as_mut_ptr(),
+    | |____________^
+help: remove these parentheses
+    |
+198 |     itoa({
+199 |               let mut _x: int32_t =
+200 |                   value; // Negative number, add a negative sign
+201 |               if _x > 0i32 { _x } else { -_x }
+202 |           }, intString1.as_mut_ptr(),
+    |
+
+warning: unused import: `core`
+ --> src/src/main/config/config_eeprom.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/config/config_streamer.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/config/feature.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/drivers/accgyro/accgyro_mpu.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unnecessary parentheses around assigned value
+   --> src/src/main/drivers/accgyro/accgyro_mpu.rs:504:9
+    |
+504 | /         ({
+505 | |              let mut __mptr: *const extiCallbackRec_t =
+506 | |                  cb; // TODO - maybe pullup / pulldown ?
+507 | |              (__mptr as *mut libc::c_char).offset(-24) as *mut gyroDev_t
+508 | |          });
+    | |___________^
+help: remove these parentheses
+    |
+504 |         {
+505 |              let mut __mptr: *const extiCallbackRec_t =
+506 |                  cb; // TODO - maybe pullup / pulldown ?
+507 |              (__mptr as *mut libc::c_char).offset(-24) as *mut gyroDev_t
+508 |          };
+    |
+
+warning: unused import: `core`
+ --> src/src/main/drivers/accgyro/accgyro_mpu6050.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/drivers/accgyro/gyro_sync.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/drivers/adc.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/drivers/adc_stm32f30x.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/drivers/barometer/barometer_bmp085.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/drivers/barometer/barometer_bmp280.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/drivers/barometer/barometer_ms5611.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/drivers/buf_writer.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/drivers/bus.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/drivers/bus_i2c_busdev.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/drivers/bus_i2c_config.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/drivers/bus_i2c_soft.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `libc`
+ --> src/src/main/drivers/bus_i2c_soft.rs:2:5
+  |
+2 | use libc;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/drivers/bus_i2c_stm32f30x.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/drivers/bus_spi.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/drivers/bus_spi_config.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/drivers/bus_spi_pinconfig.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/drivers/bus_spi_stdperiph.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/drivers/buttons.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `libc`
+ --> src/src/main/drivers/buttons.rs:2:5
+  |
+2 | use libc;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/drivers/camera_control.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/drivers/compass/compass_ak8975.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/drivers/compass/compass_hmc5883l.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/drivers/compass/compass_qmc5883l.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/drivers/display.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/drivers/display_ug2864hsweg01.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `libc`
+ --> src/src/main/drivers/display_ug2864hsweg01.rs:2:5
+  |
+2 | use libc;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/drivers/dma.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/drivers/exti.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/drivers/flash.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/drivers/flash_m25p16.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/drivers/flash_w25m.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `libc`
+ --> src/src/main/drivers/flash_w25m.rs:2:5
+  |
+2 | use libc;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/drivers/io.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/drivers/light_led.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/drivers/light_ws2811strip.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/drivers/light_ws2811strip_stdperiph.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/drivers/pinio.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/drivers/pwm_esc_detect.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/drivers/pwm_output.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/drivers/pwm_output_dshot.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/drivers/rangefinder/rangefinder_hcsr04.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/drivers/rangefinder/rangefinder_lidartf.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `libc`
+ --> src/src/main/drivers/rangefinder/rangefinder_lidartf.rs:2:5
+  |
+2 | use libc;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/drivers/rcc.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/drivers/resource.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/drivers/rx/rx_pwm.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unnecessary parentheses around assigned value
+   --> src/src/main/drivers/rx/rx_pwm.rs:641:9
+    |
+641 | /         ({
+642 | |              let mut __mptr: *const timerOvrHandlerRec_t = cbRec;
+643 | |              (__mptr as *mut libc::c_char).offset(-32) as *mut pwmInputPort_t
+644 | |          });
+    | |___________^
+help: remove these parentheses
+    |
+641 |         {
+642 |              let mut __mptr: *const timerOvrHandlerRec_t = cbRec;
+643 |              (__mptr as *mut libc::c_char).offset(-32) as *mut pwmInputPort_t
+644 |          };
+    |
+
+warning: unnecessary parentheses around assigned value
+   --> src/src/main/drivers/rx/rx_pwm.rs:655:9
+    |
+655 | /         ({
+656 | |              let mut __mptr: *const timerCCHandlerRec_t = cbRec;
+657 | |              (__mptr as *mut libc::c_char).offset(-24) as *mut pwmInputPort_t
+658 | |          });
+    | |___________^
+help: remove these parentheses
+    |
+655 |         {
+656 |              let mut __mptr: *const timerCCHandlerRec_t = cbRec;
+657 |              (__mptr as *mut libc::c_char).offset(-24) as *mut pwmInputPort_t
+658 |          };
+    |
+
+warning: unused import: `core`
+ --> src/src/main/drivers/rx/rx_spi.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `libc`
+ --> src/src/main/drivers/rx/rx_spi.rs:2:5
+  |
+2 | use libc;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/drivers/rx/rx_xn297.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/drivers/serial.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/drivers/serial_escserial.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unnecessary parentheses around assigned value
+    --> src/src/main/drivers/serial_escserial.rs:1288:9
+     |
+1288 | /         ({
+1289 | |              let mut __mptr: *const timerCCHandlerRec_t = cbRec;
+1290 | |              (__mptr as *mut libc::c_char).offset(-2192) as *mut escSerial_t
+1291 | |          });
+     | |___________^
+help: remove these parentheses
+     |
+1288 |         {
+1289 |              let mut __mptr: *const timerCCHandlerRec_t = cbRec;
+1290 |              (__mptr as *mut libc::c_char).offset(-2192) as *mut escSerial_t
+1291 |          };
+     |
+
+warning: unnecessary parentheses around assigned value
+    --> src/src/main/drivers/serial_escserial.rs:1332:9
+     |
+1332 | /         ({
+1333 | |              let mut __mptr: *const timerCCHandlerRec_t = cbRec;
+1334 | |              (__mptr as *mut libc::c_char).offset(-2200) as *mut escSerial_t
+1335 | |          });
+     | |___________^
+help: remove these parentheses
+     |
+1332 |         {
+1333 |              let mut __mptr: *const timerCCHandlerRec_t = cbRec;
+1334 |              (__mptr as *mut libc::c_char).offset(-2200) as *mut escSerial_t
+1335 |          };
+     |
+
+warning: unnecessary parentheses around assigned value
+    --> src/src/main/drivers/serial_escserial.rs:1496:9
+     |
+1496 | /         ({
+1497 | |              let mut __mptr: *const timerCCHandlerRec_t = cbRec;
+1498 | |              (__mptr as *mut libc::c_char).offset(-2192) as *mut escSerial_t
+1499 | |          });
+     | |___________^
+help: remove these parentheses
+     |
+1496 |         {
+1497 |              let mut __mptr: *const timerCCHandlerRec_t = cbRec;
+1498 |              (__mptr as *mut libc::c_char).offset(-2192) as *mut escSerial_t
+1499 |          };
+     |
+
+warning: unnecessary parentheses around assigned value
+    --> src/src/main/drivers/serial_escserial.rs:1563:9
+     |
+1563 | /         ({
+1564 | |              let mut __mptr: *const timerCCHandlerRec_t = cbRec;
+1565 | |              (__mptr as *mut libc::c_char).offset(-2200) as *mut escSerial_t
+1566 | |          });
+     | |___________^
+help: remove these parentheses
+     |
+1563 |         {
+1564 |              let mut __mptr: *const timerCCHandlerRec_t = cbRec;
+1565 |              (__mptr as *mut libc::c_char).offset(-2200) as *mut escSerial_t
+1566 |          };
+     |
+
+warning: unused import: `core`
+ --> src/src/main/drivers/serial_pinconfig.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/drivers/serial_softserial.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unnecessary parentheses around assigned value
+   --> src/src/main/drivers/serial_softserial.rs:954:9
+    |
+954 | /         ({
+955 | |              let mut __mptr: *const timerOvrHandlerRec_t = cbRec;
+956 | |              (__mptr as *mut libc::c_char).offset(-656) as *mut softSerial_t
+957 | |          });
+    | |___________^
+help: remove these parentheses
+    |
+954 |         {
+955 |              let mut __mptr: *const timerOvrHandlerRec_t = cbRec;
+956 |              (__mptr as *mut libc::c_char).offset(-656) as *mut softSerial_t
+957 |          };
+    |
+
+warning: unnecessary parentheses around assigned value
+   --> src/src/main/drivers/serial_softserial.rs:972:9
+    |
+972 | /         ({
+973 | |              let mut __mptr: *const timerCCHandlerRec_t = cbRec;
+974 | |              (__mptr as *mut libc::c_char).offset(-672) as *mut softSerial_t
+975 | |          });
+    | |___________^
+help: remove these parentheses
+    |
+972 |         {
+973 |              let mut __mptr: *const timerCCHandlerRec_t = cbRec;
+974 |              (__mptr as *mut libc::c_char).offset(-672) as *mut softSerial_t
+975 |          };
+    |
+
+warning: unused import: `core`
+ --> src/src/main/drivers/serial_uart.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/drivers/serial_uart_init.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/drivers/serial_uart_pinconfig.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/drivers/serial_uart_stm32f30x.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/drivers/sound_beeper.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/drivers/stack_check.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/drivers/system.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/drivers/system_stm32f30x.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/drivers/timer.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/drivers/timer_common.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/drivers/timer_stm32f30x.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/drivers/transponder_ir_arcitimer.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `libc`
+ --> src/src/main/drivers/transponder_ir_arcitimer.rs:2:5
+  |
+2 | use libc;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/drivers/transponder_ir_erlt.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `libc`
+ --> src/src/main/drivers/transponder_ir_erlt.rs:2:5
+  |
+2 | use libc;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/drivers/transponder_ir_ilap.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `libc`
+ --> src/src/main/drivers/transponder_ir_ilap.rs:2:5
+  |
+2 | use libc;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/drivers/transponder_ir_io_stdperiph.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `libc`
+ --> src/src/main/drivers/transponder_ir_io_stdperiph.rs:2:5
+  |
+2 | use libc;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/drivers/vtx_common.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/fc/board_info.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `libc`
+ --> src/src/main/fc/board_info.rs:2:5
+  |
+2 | use libc;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/fc/config.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/fc/controlrate_profile.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/fc/fc_core.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/fc/fc_dispatch.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/fc/fc_hardfaults.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/fc/fc_init.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/fc/fc_rc.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unnecessary parentheses around assigned value
+   --> src/src/main/fc/fc_rc.rs:783:9
+    |
+783 | /         ({
+784 | |              let mut _x: libc::c_float = rcCommandf;
+785 | |              if _x > 0i32 as libc::c_float { _x } else { -_x }
+786 | |          });
+    | |___________^
+help: remove these parentheses
+    |
+783 |         {
+784 |              let mut _x: libc::c_float = rcCommandf;
+785 |              if _x > 0i32 as libc::c_float { _x } else { -_x }
+786 |          };
+    |
+
+warning: unnecessary parentheses around assigned value
+    --> src/src/main/fc/fc_rc.rs:1377:13
+     |
+1377 | /             ({
+1378 | |                  let mut _a: libc::c_int =
+1379 | |                      ({
+1380 | |                           let mut _x: libc::c_int =
+...    |
+1386 | |                  if _a < _b { _a } else { _b }
+1387 | |              });
+     | |_______________^
+help: remove these parentheses
+     |
+1377 |             {
+1378 |                  let mut _a: libc::c_int =
+1379 |                      ({
+1380 |                           let mut _x: libc::c_int =
+1381 |                               rcData[axis as usize] as libc::c_int -
+1382 |                                   (*rxConfig()).midrc as libc::c_int;
+   ...
+
+warning: unnecessary parentheses around assigned value
+    --> src/src/main/fc/fc_rc.rs:1379:22
+     |
+1379 | /                      ({
+1380 | |                           let mut _x: libc::c_int =
+1381 | |                               rcData[axis as usize] as libc::c_int -
+1382 | |                                   (*rxConfig()).midrc as libc::c_int;
+1383 | |                           if _x > 0i32 { _x } else { -_x }
+1384 | |                       });
+     | |________________________^
+help: remove these parentheses
+     |
+1379 |                      {
+1380 |                           let mut _x: libc::c_int =
+1381 |                               rcData[axis as usize] as libc::c_int -
+1382 |                                   (*rxConfig()).midrc as libc::c_int;
+1383 |                           if _x > 0i32 { _x } else { -_x }
+1384 |                       };
+     |
+
+warning: unused import: `core`
+ --> src/src/main/fc/fc_tasks.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/fc/rc_adjustments.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/fc/rc_controls.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unnecessary parentheses around `return` value
+    --> src/src/main/fc/rc_controls.rs:1175:12
+     |
+1175 |       return ({
+     |  ____________^
+1176 | |                 let mut _a: libc::c_int =
+1177 | |                     ({
+1178 | |                          let mut _x: libc::c_int =
+...    |
+1184 | |                 if _a < _b { _a } else { _b }
+1185 | |             });
+     | |______________^
+help: remove these parentheses
+     |
+1175 |     return {
+1176 |                 let mut _a: libc::c_int =
+1177 |                     ({
+1178 |                          let mut _x: libc::c_int =
+1179 |                              rcData[axis as usize] as libc::c_int -
+1180 |                                  midrc as libc::c_int;
+   ...
+
+warning: unnecessary parentheses around assigned value
+    --> src/src/main/fc/rc_controls.rs:1177:21
+     |
+1177 | /                     ({
+1178 | |                          let mut _x: libc::c_int =
+1179 | |                              rcData[axis as usize] as libc::c_int -
+1180 | |                                  midrc as libc::c_int;
+1181 | |                          if _x > 0i32 { _x } else { -_x }
+1182 | |                      });
+     | |_______________________^
+help: remove these parentheses
+     |
+1177 |                     {
+1178 |                          let mut _x: libc::c_int =
+1179 |                              rcData[axis as usize] as libc::c_int -
+1180 |                                  midrc as libc::c_int;
+1181 |                          if _x > 0i32 { _x } else { -_x }
+1182 |                      };
+     |
+
+warning: unused import: `core`
+ --> src/src/main/fc/rc_modes.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/fc/runtime_config.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/flight/failsafe.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/flight/gps_rescue.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `libc`
+ --> src/src/main/flight/gps_rescue.rs:2:5
+  |
+2 | use libc;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/flight/imu.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/flight/mixer.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unnecessary parentheses around assigned value
+    --> src/src/main/flight/mixer.rs:1649:17
+     |
+1649 | /                 ({
+1650 | |                      let mut _a: libc::c_float = 1.0f32;
+1651 | |                      let mut _b: libc::c_float = flipPower * motorOutput;
+1652 | |                      if _a < _b { _a } else { _b }
+1653 | |                  });
+     | |___________________^
+help: remove these parentheses
+     |
+1649 |                 {
+1650 |                      let mut _a: libc::c_float = 1.0f32;
+1651 |                      let mut _b: libc::c_float = flipPower * motorOutput;
+1652 |                      if _a < _b { _a } else { _b }
+1653 |                  };
+     |
+
+warning: unnecessary parentheses around `return` value
+    --> src/src/main/flight/mixer.rs:1739:24
+     |
+1739 |                   return ({
+     |  ________________________^
+1740 | |                             let mut _a: libc::c_float = throttle_0;
+1741 | |                             let _b: libc::c_float = throttleLimitFactor;
+1742 | |                             if _a < _b { _a } else { _b }
+1743 | |                         })
+     | |__________________________^
+help: remove these parentheses
+     |
+1739 |                 return {
+1740 |                             let mut _a: libc::c_float = throttle_0;
+1741 |                             let _b: libc::c_float = throttleLimitFactor;
+1742 |                             if _a < _b { _a } else { _b }
+1743 |                         }
+     |
+
+warning: unused import: `core`
+ --> src/src/main/flight/mixer_tricopter.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/flight/pid.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unnecessary parentheses around assigned value
+    --> src/src/main/flight/pid.rs:1339:18
+     |
+1339 | /                  ({
+1340 | |                       let mut _x: int16_t = attitude.values.roll;
+1341 | |                       (if _x as libc::c_int > 0i32 {
+1342 | |                            _x as libc::c_int
+1343 | |                        } else { -(_x as libc::c_int) })
+1344 | |                   });
+     | |____________________^
+help: remove these parentheses
+     |
+1339 |                  {
+1340 |                       let mut _x: int16_t = attitude.values.roll;
+1341 |                       (if _x as libc::c_int > 0i32 {
+1342 |                            _x as libc::c_int
+1343 |                        } else { -(_x as libc::c_int) })
+1344 |                   };
+     |
+
+warning: unnecessary parentheses around assigned value
+    --> src/src/main/flight/pid.rs:1346:18
+     |
+1346 | /                  ({
+1347 | |                       let mut _x: int16_t = attitude.values.pitch;
+1348 | |                       (if _x as libc::c_int > 0i32 {
+1349 | |                            _x as libc::c_int
+1350 | |                        } else { -(_x as libc::c_int) })
+1351 | |                   });
+     | |____________________^
+help: remove these parentheses
+     |
+1346 |                  {
+1347 |                       let mut _x: int16_t = attitude.values.pitch;
+1348 |                       (if _x as libc::c_int > 0i32 {
+1349 |                            _x as libc::c_int
+1350 |                        } else { -(_x as libc::c_int) })
+1351 |                   };
+     |
+
+warning: unused import: `core`
+ --> src/src/main/flight/position.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/flight/servos.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/flight/servos_tricopter.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/interface/cli.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/interface/msp.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/interface/msp_box.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/interface/settings.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/interface/smartaudio_protocol.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/interface/tramp_protocol.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/io/beeper.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/io/dashboard.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `libc`
+ --> src/src/main/io/dashboard.rs:2:5
+  |
+2 | use libc;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/io/displayport_crsf.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `libc`
+ --> src/src/main/io/displayport_crsf.rs:2:5
+  |
+2 | use libc;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/io/displayport_max7456.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `libc`
+ --> src/src/main/io/displayport_max7456.rs:2:5
+  |
+2 | use libc;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/io/displayport_msp.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/io/displayport_oled.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/io/displayport_srxl.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `libc`
+ --> src/src/main/io/displayport_srxl.rs:2:5
+  |
+2 | use libc;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/io/flashfs.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/io/gps.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `libc`
+ --> src/src/main/io/gps.rs:2:5
+  |
+2 | use libc;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/io/ledstrip.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unnecessary parentheses around assigned value
+    --> src/src/main/io/ledstrip.rs:1028:13
+     |
+1028 | /             ({
+1029 | |                  let mut _a: libc::c_int = ledX;
+1030 | |                  let mut _b: libc::c_int = maxX;
+1031 | |                  if _a > _b { _a } else { _b }
+1032 | |              });
+     | |_______________^
+help: remove these parentheses
+     |
+1028 |             {
+1029 |                  let mut _a: libc::c_int = ledX;
+1030 |                  let mut _b: libc::c_int = maxX;
+1031 |                  if _a > _b { _a } else { _b }
+1032 |              };
+     |
+
+warning: unnecessary parentheses around assigned value
+    --> src/src/main/io/ledstrip.rs:1034:13
+     |
+1034 | /             ({
+1035 | |                  let mut _a: libc::c_int = ledX;
+1036 | |                  let mut _b: libc::c_int = minX;
+1037 | |                  if _a < _b { _a } else { _b }
+1038 | |              });
+     | |_______________^
+help: remove these parentheses
+     |
+1034 |             {
+1035 |                  let mut _a: libc::c_int = ledX;
+1036 |                  let mut _b: libc::c_int = minX;
+1037 |                  if _a < _b { _a } else { _b }
+1038 |              };
+     |
+
+warning: unnecessary parentheses around assigned value
+    --> src/src/main/io/ledstrip.rs:1041:13
+     |
+1041 | /             ({
+1042 | |                  let mut _a: libc::c_int = ledY;
+1043 | |                  let mut _b: libc::c_int = maxY;
+1044 | |                  if _a > _b { _a } else { _b }
+1045 | |              });
+     | |_______________^
+help: remove these parentheses
+     |
+1041 |             {
+1042 |                  let mut _a: libc::c_int = ledY;
+1043 |                  let mut _b: libc::c_int = maxY;
+1044 |                  if _a > _b { _a } else { _b }
+1045 |              };
+     |
+
+warning: unnecessary parentheses around assigned value
+    --> src/src/main/io/ledstrip.rs:1047:13
+     |
+1047 | /             ({
+1048 | |                  let mut _a: libc::c_int = ledY;
+1049 | |                  let mut _b: libc::c_int = minY;
+1050 | |                  if _a < _b { _a } else { _b }
+1051 | |              });
+     | |_______________^
+help: remove these parentheses
+     |
+1047 |             {
+1048 |                  let mut _a: libc::c_int = ledY;
+1049 |                  let mut _b: libc::c_int = minY;
+1050 |                  if _a < _b { _a } else { _b }
+1051 |              };
+     |
+
+warning: unnecessary parentheses around assigned value
+    --> src/src/main/io/ledstrip.rs:1815:26
+     |
+1815 | /                          ({
+1816 | |                               let mut _x: libc::c_float =
+1817 | |                                   rcCommand[ROLL as libc::c_int as
+1818 | |                                                 usize]; // 0 - 500
+...    |
+1821 | |                               } else { -_x }
+1822 | |                           }); // start increasing frequency right after deadband
+     | |____________________________^
+help: remove these parentheses
+     |
+1815 |                          {
+1816 |                               let mut _x: libc::c_float =
+1817 |                                   rcCommand[ROLL as libc::c_int as
+1818 |                                                 usize]; // 0 - 500
+1819 |                               if _x > 0i32 as libc::c_float {
+1820 |                                   _x
+   ...
+
+warning: unnecessary parentheses around assigned value
+    --> src/src/main/io/ledstrip.rs:1824:26
+     |
+1824 | /                          ({
+1825 | |                               let mut _x: libc::c_float =
+1826 | |                                   rcCommand[PITCH as libc::c_int as
+1827 | |                                                 usize]; // 5 - 50Hz update, 2.5 - 25Hz blink
+...    |
+1830 | |                               } else { -_x }
+1831 | |                           }); // TODO - use user color?
+     | |____________________________^
+help: remove these parentheses
+     |
+1824 |                          {
+1825 |                               let mut _x: libc::c_float =
+1826 |                                   rcCommand[PITCH as libc::c_int as
+1827 |                                                 usize]; // 5 - 50Hz update, 2.5 - 25Hz blink
+1828 |                               if _x > 0i32 as libc::c_float {
+1829 |                                   _x
+   ...
+
+warning: unused import: `core`
+ --> src/src/main/io/osd.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/io/pidaudio.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unnecessary parentheses around assigned value
+   --> src/src/main/io/pidaudio.rs:175:26
+    |
+175 | /                          ({
+176 | |                               let mut _x: libc::c_float =
+177 | |                                   pidData[FD_ROLL as libc::c_int as
+178 | |                                               usize].Sum;
+...   |
+181 | |                               } else { -_x }
+182 | |                           });
+    | |____________________________^
+help: remove these parentheses
+    |
+175 |                          {
+176 |                               let mut _x: libc::c_float =
+177 |                                   pidData[FD_ROLL as libc::c_int as
+178 |                                               usize].Sum;
+179 |                               if _x > 0i32 as libc::c_float {
+180 |                                   _x
+  ...
+
+warning: unnecessary parentheses around assigned value
+   --> src/src/main/io/pidaudio.rs:196:26
+    |
+196 | /                          ({
+197 | |                               let mut _x: libc::c_float =
+198 | |                                   pidData[FD_PITCH as libc::c_int as
+199 | |                                               usize].Sum;
+...   |
+202 | |                               } else { -_x }
+203 | |                           });
+    | |____________________________^
+help: remove these parentheses
+    |
+196 |                          {
+197 |                               let mut _x: libc::c_float =
+198 |                                   pidData[FD_PITCH as libc::c_int as
+199 |                                               usize].Sum;
+200 |                               if _x > 0i32 as libc::c_float {
+201 |                                   _x
+  ...
+
+warning: unused import: `core`
+ --> src/src/main/io/piniobox.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/io/rcdevice.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/io/rcdevice_cam.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/io/serial.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/io/serial_4way.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/io/serial_4way_avrootloader.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/io/serial_4way_stk500v2.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/io/spektrum_rssi.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/io/spektrum_vtx_control.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/io/statusindicator.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/io/transponder_ir.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `libc`
+ --> src/src/main/io/transponder_ir.rs:2:5
+  |
+2 | use libc;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/io/usb_cdc_hid.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `libc`
+ --> src/src/main/io/usb_cdc_hid.rs:2:5
+  |
+2 | use libc;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/io/usb_msc.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `libc`
+ --> src/src/main/io/usb_msc.rs:2:5
+  |
+2 | use libc;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/io/vtx.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/io/vtx_control.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/io/vtx_rtc6705.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `libc`
+ --> src/src/main/io/vtx_rtc6705.rs:2:5
+  |
+2 | use libc;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/io/vtx_smartaudio.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/io/vtx_string.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/io/vtx_tramp.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/msp/msp_serial.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/pg/adc.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/pg/beeper.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/pg/beeper_dev.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/pg/board.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `libc`
+ --> src/src/main/pg/board.rs:2:5
+  |
+2 | use libc;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/pg/bus_i2c.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/pg/bus_spi.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/pg/dashboard.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `libc`
+ --> src/src/main/pg/dashboard.rs:2:5
+  |
+2 | use libc;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/pg/flash.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/pg/max7456.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `libc`
+ --> src/src/main/pg/max7456.rs:2:5
+  |
+2 | use libc;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/pg/pg.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unnecessary parentheses around assigned value
+   --> src/src/main/pg/pg.rs:187:13
+    |
+187 | /             ({
+188 | |                  let mut _a: libc::c_int = size;
+189 | |                  let mut _b: uint16_t = pgSize(reg);
+190 | |                  if _a < _b as libc::c_int { _a } else { _b as libc::c_int }
+191 | |              });
+    | |_______________^
+help: remove these parentheses
+    |
+187 |             {
+188 |                  let mut _a: libc::c_int = size;
+189 |                  let mut _b: uint16_t = pgSize(reg);
+190 |                  if _a < _b as libc::c_int { _a } else { _b as libc::c_int }
+191 |              };
+    |
+
+warning: unnecessary parentheses around assigned value
+   --> src/src/main/pg/pg.rs:203:9
+    |
+203 | /         ({
+204 | |              let mut _a: libc::c_int = size;
+205 | |              let mut _b: uint16_t = pgSize(reg);
+206 | |              if _a < _b as libc::c_int { _a } else { _b as libc::c_int }
+207 | |          });
+    | |___________^
+help: remove these parentheses
+    |
+203 |         {
+204 |              let mut _a: libc::c_int = size;
+205 |              let mut _b: uint16_t = pgSize(reg);
+206 |              if _a < _b as libc::c_int { _a } else { _b as libc::c_int }
+207 |          };
+    |
+
+warning: unused import: `core`
+ --> src/src/main/pg/pinio.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/pg/piniobox.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/pg/rcdevice.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/pg/rx.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/pg/rx_pwm.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/pg/rx_spi.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `libc`
+ --> src/src/main/pg/rx_spi.rs:2:5
+  |
+2 | use libc;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/pg/sdcard.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `libc`
+ --> src/src/main/pg/sdcard.rs:2:5
+  |
+2 | use libc;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/pg/sdio.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `libc`
+ --> src/src/main/pg/sdio.rs:2:5
+  |
+2 | use libc;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/pg/timerio.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `libc`
+ --> src/src/main/pg/timerio.rs:2:5
+  |
+2 | use libc;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/pg/usb.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `libc`
+ --> src/src/main/pg/usb.rs:2:5
+  |
+2 | use libc;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/pg/vcd.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/rx/crsf.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unnecessary parentheses around assigned value
+   --> src/src/main/rx/crsf.rs:546:9
+    |
+546 | /         ({
+547 | |              let mut _a: libc::c_int = len;
+548 | |              let mut _b: libc::c_int =
+549 | |                  ::core::mem::size_of::<[uint8_t; 64]>() as libc::c_ulong as
+550 | |                      libc::c_int;
+551 | |              if _a < _b { _a } else { _b }
+552 | |          });
+    | |___________^
+help: remove these parentheses
+    |
+546 |         {
+547 |              let mut _a: libc::c_int = len;
+548 |              let mut _b: libc::c_int =
+549 |                  ::core::mem::size_of::<[uint8_t; 64]>() as libc::c_ulong as
+550 |                      libc::c_int;
+551 |              if _a < _b { _a } else { _b }
+  ...
+
+warning: unused import: `core`
+ --> src/src/main/rx/fport.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/rx/ibus.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/rx/jetiexbus.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/rx/msp.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `libc`
+ --> src/src/main/rx/msp.rs:2:5
+  |
+2 | use libc;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/rx/pwm.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/rx/rx.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/rx/rx_spi.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `libc`
+ --> src/src/main/rx/rx_spi.rs:2:5
+  |
+2 | use libc;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/rx/sbus.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/rx/sbus_channels.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/rx/spektrum.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unnecessary parentheses around assigned value
+   --> src/src/main/rx/spektrum.rs:970:9
+    |
+970 | /         ({
+971 | |              let mut _a: libc::c_int = len;
+972 | |              let mut _b: libc::c_int =
+973 | |                  ::core::mem::size_of::<[uint8_t; 21]>() as libc::c_ulong as
+974 | |                      libc::c_int;
+975 | |              if _a < _b { _a } else { _b }
+976 | |          });
+    | |___________^
+help: remove these parentheses
+    |
+970 |         {
+971 |              let mut _a: libc::c_int = len;
+972 |              let mut _b: libc::c_int =
+973 |                  ::core::mem::size_of::<[uint8_t; 21]>() as libc::c_ulong as
+974 |                      libc::c_int;
+975 |              if _a < _b { _a } else { _b }
+  ...
+
+warning: unused import: `core`
+ --> src/src/main/rx/sumd.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/rx/sumh.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/rx/xbus.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/scheduler/scheduler.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unnecessary parentheses around assigned value
+   --> src/src/main/scheduler/scheduler.rs:289:13
+    |
+289 | /             ({
+290 | |                  let mut _a: libc::c_int = 100i32;
+291 | |                  let mut _b: timeDelta_t = newPeriodMicros as timeDelta_t;
+292 | |                  if _a > _b { _a } else { _b }
+293 | |              })
+    | |_______________^
+help: remove these parentheses
+    |
+289 |             {
+290 |                  let mut _a: libc::c_int = 100i32;
+291 |                  let mut _b: timeDelta_t = newPeriodMicros as timeDelta_t;
+292 |                  if _a > _b { _a } else { _b }
+293 |              }
+    |
+
+warning: unnecessary parentheses around assigned value
+   --> src/src/main/scheduler/scheduler.rs:301:13
+    |
+301 | /             ({
+302 | |                  let mut _a: libc::c_int = 100i32;
+303 | |                  let mut _b: timeDelta_t = newPeriodMicros as timeDelta_t;
+304 | |                  if _a > _b { _a } else { _b }
+305 | |              })
+    | |_______________^
+help: remove these parentheses
+    |
+301 |             {
+302 |                  let mut _a: libc::c_int = 100i32;
+303 |                  let mut _b: timeDelta_t = newPeriodMicros as timeDelta_t;
+304 |                  if _a > _b { _a } else { _b }
+305 |              }
+    |
+
+warning: unnecessary parentheses around assigned value
+   --> src/src/main/scheduler/scheduler.rs:435:25
+    |
+435 | /                         ({
+436 | |                              let mut _a: timeUs_t = checkFuncMaxExecutionTime;
+437 | |                              let _b: uint32_t = checkFuncExecutionTime;
+438 | |                              if _a > _b { _a } else { _b }
+439 | |                          })
+    | |___________________________^
+help: remove these parentheses
+    |
+435 |                         {
+436 |                              let mut _a: timeUs_t = checkFuncMaxExecutionTime;
+437 |                              let _b: uint32_t = checkFuncExecutionTime;
+438 |                              if _a > _b { _a } else { _b }
+439 |                          }
+    |
+
+warning: unnecessary parentheses around assigned value
+   --> src/src/main/scheduler/scheduler.rs:510:17
+    |
+510 | /                 ({
+511 | |                      let mut _a: timeUs_t = (*selectedTask).maxExecutionTime;
+512 | |                      let _b: timeUs_t = taskExecutionTime;
+513 | |                      if _a > _b { _a } else { _b }
+514 | |                  })
+    | |___________________^
+help: remove these parentheses
+    |
+510 |                 {
+511 |                      let mut _a: timeUs_t = (*selectedTask).maxExecutionTime;
+512 |                      let _b: timeUs_t = taskExecutionTime;
+513 |                      if _a > _b { _a } else { _b }
+514 |                  }
+    |
+
+warning: unused import: `core`
+ --> src/src/main/sensors/acceleration.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/sensors/adcinternal.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/sensors/barometer.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/sensors/battery.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/sensors/boardalignment.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/sensors/compass.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/sensors/current.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/sensors/esc_sensor.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/sensors/gyro.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/sensors/gyroanalyse.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/sensors/initialisation.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/sensors/rangefinder.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/sensors/voltage.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/target/SPRACINGF3/target.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/target/config_helper.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `libc`
+ --> src/src/main/target/config_helper.rs:2:5
+  |
+2 | use libc;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/target/system_stm32f30x.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/telemetry/crsf.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/telemetry/frsky_hub.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unnecessary parentheses around assigned value
+   --> src/src/main/telemetry/frsky_hub.rs:747:9
+    |
+747 |         ({ let mut _x: int32_t = mwiigps; if _x > 0i32 { _x } else { -_x } });
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: remove these parentheses
+
+warning: unused import: `core`
+ --> src/src/main/telemetry/hott.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/telemetry/ibus.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `libc`
+ --> src/src/main/telemetry/ibus.rs:2:5
+  |
+2 | use libc;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/telemetry/ibus_shared.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/telemetry/jetiexbus.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/telemetry/ltm.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/telemetry/mavlink.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `libc`
+ --> src/src/main/telemetry/mavlink.rs:2:5
+  |
+2 | use libc;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/telemetry/msp_shared.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/telemetry/smartport.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/telemetry/srxl.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+warning: unused import: `core`
+ --> src/src/main/telemetry/telemetry.rs:1:5
+  |
+1 | use core;
+  |     ^^^^
+
+error[E0054]: cannot cast as `bool`
+   --> src/src/main/telemetry/crsf.rs:432:17
+    |
+432 | /                 (requestHandled as libc::c_int |
+433 | |                      sendMspReply(payloadSize, responseFn) as libc::c_int) as
+434 | |                     bool
+    | |________________________^
+help: compare with zero instead
+    |
+432 |                 (requestHandled as libc::c_int |
+433 |                      sendMspReply(payloadSize, responseFn) as libc::c_int) != 0
+    |
+
+error: aborting due to 14 previous errors
+
+Some errors have detailed explanations: E0054, E0425.
+For more information about an error, try `rustc --explain E0054`.
+error: could not compile `SPRACINGF3`.
+
+To learn more, run the command again with --verbose.

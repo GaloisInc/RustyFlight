@@ -1,4 +1,5 @@
-use ::libc;
+use core;
+use libc;
 extern "C" {
     #[no_mangle]
     fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong)
@@ -55,7 +56,7 @@ pub const PGR_PGN_MASK: C2RustUnnamed = 4095;
 pub type pgResetFunc
     =
     unsafe extern "C" fn(_: *mut libc::c_void, _: libc::c_int) -> ();
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct pgRegistry_s {
     pub pgn: pgn_t,
@@ -65,11 +66,12 @@ pub struct pgRegistry_s {
     pub ptr: *mut *mut uint8_t,
     pub reset: C2RustUnnamed_0,
 }
-#[derive(Copy, Clone)]
-#[repr(C)]
+#[derive ( Copy, Clone )]
+#[repr ( C )]
 pub union C2RustUnnamed_0 {
     pub ptr: *mut libc::c_void,
-    pub fn_0: Option<pgResetFunc>,
+    pub fn_0: Option<unsafe extern "C" fn(_: *mut libc::c_void,
+                                          _: libc::c_int) -> ()>,
 }
 pub type pgRegistry_t = pgRegistry_s;
 /* base */
@@ -82,7 +84,7 @@ pub const FLIGHT_LOG_EVENT_FLIGHTMODE: FlightLogEvent = 30;
 pub const FLIGHT_LOG_EVENT_LOGGING_RESUME: FlightLogEvent = 14;
 pub const FLIGHT_LOG_EVENT_INFLIGHT_ADJUSTMENT: FlightLogEvent = 13;
 pub const FLIGHT_LOG_EVENT_SYNC_BEEP: FlightLogEvent = 0;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct blackboxConfig_s {
     pub p_ratio: uint16_t,
@@ -91,8 +93,8 @@ pub struct blackboxConfig_s {
     pub mode: uint8_t,
 }
 pub type blackboxConfig_t = blackboxConfig_s;
-#[derive(Copy, Clone)]
-#[repr(C)]
+#[derive ( Copy, Clone )]
+#[repr ( C )]
 pub union flightLogEventData_u {
     pub syncBeep: flightLogEvent_syncBeep_t,
     pub flightMode: flightLogEvent_flightMode_t,
@@ -100,7 +102,7 @@ pub union flightLogEventData_u {
     pub loggingResume: flightLogEvent_loggingResume_t,
 }
 pub type flightLogEvent_loggingResume_t = flightLogEvent_loggingResume_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct flightLogEvent_loggingResume_s {
     pub logIteration: uint32_t,
@@ -109,7 +111,7 @@ pub struct flightLogEvent_loggingResume_s {
 pub type flightLogEvent_inflightAdjustment_t
     =
     flightLogEvent_inflightAdjustment_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct flightLogEvent_inflightAdjustment_s {
     pub newValue: int32_t,
@@ -118,14 +120,14 @@ pub struct flightLogEvent_inflightAdjustment_s {
     pub floatFlag: bool,
 }
 pub type flightLogEvent_flightMode_t = flightLogEvent_flightMode_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct flightLogEvent_flightMode_s {
     pub flags: uint32_t,
     pub lastFlags: uint32_t,
 }
 pub type flightLogEvent_syncBeep_t = flightLogEvent_syncBeep_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct flightLogEvent_syncBeep_s {
     pub time: uint32_t,
@@ -135,8 +137,6 @@ pub type C2RustUnnamed_1 = libc::c_uint;
 pub const FD_YAW: C2RustUnnamed_1 = 2;
 pub const FD_PITCH: C2RustUnnamed_1 = 1;
 pub const FD_ROLL: C2RustUnnamed_1 = 0;
-// New Event Data type
-// New event data
 /*
  * This file is part of Cleanflight and Betaflight.
  *
@@ -159,7 +159,7 @@ pub const FD_ROLL: C2RustUnnamed_1 = 0;
 // IO pin identification
 // make sure that ioTag_t can't be assigned into IO_t without warning
 pub type ioTag_t = uint8_t;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct rxConfig_s {
     pub rcmap: [uint8_t; 8],
@@ -220,7 +220,7 @@ pub const PID_LEVEL: C2RustUnnamed_2 = 3;
 pub const PID_YAW: C2RustUnnamed_2 = 2;
 pub const PID_PITCH: C2RustUnnamed_2 = 1;
 pub const PID_ROLL: C2RustUnnamed_2 = 0;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct pidf_s {
     pub P: uint8_t,
@@ -271,7 +271,7 @@ pub type pidf_t = pidf_s;
 // ..then apply the adjustment function to the auxSwitchChannel ...
 // ... via slot
 // enough for 4 x 3position switches / 4 aux channel
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct pidProfile_s {
     pub yaw_lowpass_hz: uint16_t,
@@ -326,7 +326,7 @@ pub const PID_AUDIO_PIDSUM_XY: C2RustUnnamed_3 = 3;
 pub const PID_AUDIO_PIDSUM_Y: C2RustUnnamed_3 = 2;
 pub const PID_AUDIO_PIDSUM_X: C2RustUnnamed_3 = 1;
 pub const PID_AUDIO_OFF: C2RustUnnamed_3 = 0;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct systemConfig_s {
     pub pidProfileIndex: uint8_t,
@@ -339,7 +339,7 @@ pub struct systemConfig_s {
     pub boardIdentifier: [libc::c_char; 6],
 }
 pub type systemConfig_t = systemConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct controlRateConfig_s {
     pub thrMid8: uint8_t,
@@ -354,7 +354,7 @@ pub struct controlRateConfig_s {
     pub throttle_limit_percent: uint8_t,
 }
 pub type controlRateConfig_t = controlRateConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct channelRange_s {
     pub startStep: uint8_t,
@@ -449,14 +449,14 @@ pub const ADJUSTMENT_NONE: adjustmentFunction_e = 0;
 pub type adjustmentMode_e = libc::c_uint;
 pub const ADJUSTMENT_MODE_SELECT: adjustmentMode_e = 1;
 pub const ADJUSTMENT_MODE_STEP: adjustmentMode_e = 0;
-#[derive(Copy, Clone)]
-#[repr(C)]
+#[derive ( Copy, Clone )]
+#[repr ( C )]
 pub union adjustmentConfig_u {
     pub step: uint8_t,
     pub switchPositions: uint8_t,
 }
 pub type adjustmentData_t = adjustmentConfig_u;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct adjustmentConfig_s {
     pub adjustmentFunction: adjustmentFunction_e,
@@ -464,7 +464,7 @@ pub struct adjustmentConfig_s {
     pub data: adjustmentData_t,
 }
 pub type adjustmentConfig_t = adjustmentConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct adjustmentRange_s {
     pub auxChannelIndex: uint8_t,
@@ -476,7 +476,7 @@ pub struct adjustmentRange_s {
     pub adjustmentScale: uint16_t,
 }
 pub type adjustmentRange_t = adjustmentRange_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct adjustmentState_s {
     pub auxChannelIndex: uint8_t,
@@ -643,14 +643,14 @@ unsafe extern "C" fn blackboxLogInflightAdjustmentEvent(mut adjustmentFunction:
                                                 floatFlag: false,};
         eventData.adjustmentFunction = adjustmentFunction as uint8_t;
         eventData.newValue = newValue;
-        eventData.floatFlag = 0 as libc::c_int != 0;
+        eventData.floatFlag = 0i32 != 0;
         blackboxLogEvent(FLIGHT_LOG_EVENT_INFLIGHT_ADJUSTMENT,
                          &mut eventData as
                              *mut flightLogEvent_inflightAdjustment_t as
                              *mut flightLogEventData_t);
     };
 }
-static mut adjustmentStateMask: uint8_t = 0 as libc::c_int as uint8_t;
+static mut adjustmentStateMask: uint8_t = 0i32 as uint8_t;
 // sync with adjustmentFunction_e
 // Initialized in run_static_initializers
 static mut defaultAdjustmentConfigs: [adjustmentConfig_t; 32] =
@@ -675,19 +675,18 @@ unsafe extern "C" fn configureAdjustment(mut index: uint8_t,
     (*adjustmentState).auxChannelIndex =
         auxSwitchChannelIndex; // FIXME magic numbers repeated in cli.c
     (*adjustmentState).config = adjustmentConfig;
-    (*adjustmentState).timeoutAt = 0 as libc::c_int as uint32_t;
+    (*adjustmentState).timeoutAt = 0i32 as uint32_t;
     adjustmentStateMask =
-        (adjustmentStateMask as libc::c_int &
-             !((1 as libc::c_int) << index as libc::c_int)) as uint8_t;
+        (adjustmentStateMask as libc::c_int & !(1i32 << index as libc::c_int))
+            as uint8_t;
 }
 unsafe extern "C" fn applyStepAdjustment(mut controlRateConfig:
                                              *mut controlRateConfig_t,
                                          mut adjustmentFunction: uint8_t,
                                          mut delta: libc::c_int)
  -> libc::c_int {
-    beeperConfirmationBeeps(if delta > 0 as libc::c_int {
-                                2 as libc::c_int
-                            } else { 1 as libc::c_int } as uint8_t);
+    beeperConfirmationBeeps(if delta > 0i32 { 2i32 } else { 1i32 } as
+                                uint8_t);
     let mut newValue: libc::c_int = 0;
     let mut current_block_82: u64;
     match adjustmentFunction as libc::c_int {
@@ -695,8 +694,7 @@ unsafe extern "C" fn applyStepAdjustment(mut controlRateConfig:
             newValue =
                 constrain((*controlRateConfig).rcRates[FD_ROLL as libc::c_int
                                                            as usize] as
-                              libc::c_int + delta, 0 as libc::c_int,
-                          255 as libc::c_int);
+                              libc::c_int + delta, 0i32, 255i32);
             (*controlRateConfig).rcRates[FD_ROLL as libc::c_int as usize] =
                 newValue as uint8_t;
             blackboxLogInflightAdjustmentEvent(ADJUSTMENT_ROLL_RC_RATE,
@@ -711,8 +709,7 @@ unsafe extern "C" fn applyStepAdjustment(mut controlRateConfig:
             newValue =
                 constrain((*controlRateConfig).rcExpo[FD_ROLL as libc::c_int
                                                           as usize] as
-                              libc::c_int + delta, 0 as libc::c_int,
-                          100 as libc::c_int);
+                              libc::c_int + delta, 0i32, 100i32);
             (*controlRateConfig).rcExpo[FD_ROLL as libc::c_int as usize] =
                 newValue as uint8_t;
             blackboxLogInflightAdjustmentEvent(ADJUSTMENT_ROLL_RC_EXPO,
@@ -726,7 +723,7 @@ unsafe extern "C" fn applyStepAdjustment(mut controlRateConfig:
         3 => {
             newValue =
                 constrain((*controlRateConfig).thrExpo8 as libc::c_int +
-                              delta, 0 as libc::c_int, 100 as libc::c_int);
+                              delta, 0i32, 100i32);
             (*controlRateConfig).thrExpo8 = newValue as uint8_t;
             initRcProcessing();
             blackboxLogInflightAdjustmentEvent(ADJUSTMENT_THROTTLE_EXPO,
@@ -737,8 +734,7 @@ unsafe extern "C" fn applyStepAdjustment(mut controlRateConfig:
             newValue =
                 constrain((*controlRateConfig).rates[FD_PITCH as libc::c_int
                                                          as usize] as
-                              libc::c_int + delta, 0 as libc::c_int,
-                          255 as libc::c_int);
+                              libc::c_int + delta, 0i32, 255i32);
             (*controlRateConfig).rates[FD_PITCH as libc::c_int as usize] =
                 newValue as uint8_t;
             blackboxLogInflightAdjustmentEvent(ADJUSTMENT_PITCH_RATE,
@@ -753,7 +749,7 @@ unsafe extern "C" fn applyStepAdjustment(mut controlRateConfig:
             newValue =
                 constrain((*controlRateConfig).rates[FD_YAW as libc::c_int as
                                                          usize] as libc::c_int
-                              + delta, 0 as libc::c_int, 255 as libc::c_int);
+                              + delta, 0i32, 255i32);
             (*controlRateConfig).rates[FD_YAW as libc::c_int as usize] =
                 newValue as uint8_t;
             blackboxLogInflightAdjustmentEvent(ADJUSTMENT_YAW_RATE, newValue);
@@ -763,7 +759,7 @@ unsafe extern "C" fn applyStepAdjustment(mut controlRateConfig:
             newValue =
                 constrain((*pidProfile).pid[PID_PITCH as libc::c_int as
                                                 usize].P as libc::c_int +
-                              delta, 0 as libc::c_int, 200 as libc::c_int);
+                              delta, 0i32, 200i32);
             (*pidProfile).pid[PID_PITCH as libc::c_int as usize].P =
                 newValue as uint8_t;
             blackboxLogInflightAdjustmentEvent(ADJUSTMENT_PITCH_P, newValue);
@@ -781,7 +777,7 @@ unsafe extern "C" fn applyStepAdjustment(mut controlRateConfig:
             newValue =
                 constrain((*pidProfile).pid[PID_PITCH as libc::c_int as
                                                 usize].I as libc::c_int +
-                              delta, 0 as libc::c_int, 200 as libc::c_int);
+                              delta, 0i32, 200i32);
             (*pidProfile).pid[PID_PITCH as libc::c_int as usize].I =
                 newValue as uint8_t;
             blackboxLogInflightAdjustmentEvent(ADJUSTMENT_PITCH_I, newValue);
@@ -799,7 +795,7 @@ unsafe extern "C" fn applyStepAdjustment(mut controlRateConfig:
             newValue =
                 constrain((*pidProfile).pid[PID_PITCH as libc::c_int as
                                                 usize].D as libc::c_int +
-                              delta, 0 as libc::c_int, 200 as libc::c_int);
+                              delta, 0i32, 200i32);
             (*pidProfile).pid[PID_PITCH as libc::c_int as usize].D =
                 newValue as uint8_t;
             blackboxLogInflightAdjustmentEvent(ADJUSTMENT_PITCH_D, newValue);
@@ -819,9 +815,8 @@ unsafe extern "C" fn applyStepAdjustment(mut controlRateConfig:
         9 => {
             newValue =
                 constrain((*pidProfile).pid[PID_YAW as libc::c_int as usize].P
-                              as libc::c_int + delta, 0 as libc::c_int,
-                          200 as
-                              libc::c_int); // FIXME magic numbers repeated in cli.c
+                              as libc::c_int + delta, 0i32,
+                          200i32); // FIXME magic numbers repeated in cli.c
             (*pidProfile).pid[PID_YAW as libc::c_int as usize].P =
                 newValue as uint8_t; // FIXME magic numbers repeated in cli.c
             blackboxLogInflightAdjustmentEvent(ADJUSTMENT_YAW_P, newValue);
@@ -830,8 +825,7 @@ unsafe extern "C" fn applyStepAdjustment(mut controlRateConfig:
         10 => {
             newValue =
                 constrain((*pidProfile).pid[PID_YAW as libc::c_int as usize].I
-                              as libc::c_int + delta, 0 as libc::c_int,
-                          200 as libc::c_int);
+                              as libc::c_int + delta, 0i32, 200i32);
             (*pidProfile).pid[PID_YAW as libc::c_int as usize].I =
                 newValue as uint8_t;
             blackboxLogInflightAdjustmentEvent(ADJUSTMENT_YAW_I, newValue);
@@ -840,8 +834,7 @@ unsafe extern "C" fn applyStepAdjustment(mut controlRateConfig:
         11 => {
             newValue =
                 constrain((*pidProfile).pid[PID_YAW as libc::c_int as usize].D
-                              as libc::c_int + delta, 0 as libc::c_int,
-                          200 as libc::c_int);
+                              as libc::c_int + delta, 0i32, 200i32);
             (*pidProfile).pid[PID_YAW as libc::c_int as usize].D =
                 newValue as uint8_t;
             blackboxLogInflightAdjustmentEvent(ADJUSTMENT_YAW_D, newValue);
@@ -851,8 +844,7 @@ unsafe extern "C" fn applyStepAdjustment(mut controlRateConfig:
             newValue =
                 constrain((*controlRateConfig).rcRates[FD_YAW as libc::c_int
                                                            as usize] as
-                              libc::c_int + delta, 0 as libc::c_int,
-                          255 as libc::c_int);
+                              libc::c_int + delta, 0i32, 255i32);
             (*controlRateConfig).rcRates[FD_YAW as libc::c_int as usize] =
                 newValue as uint8_t;
             blackboxLogInflightAdjustmentEvent(ADJUSTMENT_RC_RATE_YAW,
@@ -863,7 +855,7 @@ unsafe extern "C" fn applyStepAdjustment(mut controlRateConfig:
             newValue =
                 constrain((*pidProfile).pid[PID_PITCH as libc::c_int as
                                                 usize].F as libc::c_int +
-                              delta, 0 as libc::c_int, 2000 as libc::c_int);
+                              delta, 0i32, 2000i32);
             (*pidProfile).pid[PID_PITCH as libc::c_int as usize].F =
                 newValue as uint16_t;
             blackboxLogInflightAdjustmentEvent(ADJUSTMENT_PITCH_F, newValue);
@@ -876,8 +868,7 @@ unsafe extern "C" fn applyStepAdjustment(mut controlRateConfig:
         32 => {
             newValue =
                 constrain((*pidProfile).pid[PID_YAW as libc::c_int as usize].F
-                              as libc::c_int + delta, 0 as libc::c_int,
-                          2000 as libc::c_int);
+                              as libc::c_int + delta, 0i32, 2000i32);
             (*pidProfile).pid[PID_YAW as libc::c_int as usize].F =
                 newValue as uint16_t;
             blackboxLogInflightAdjustmentEvent(ADJUSTMENT_YAW_F, newValue);
@@ -886,16 +877,13 @@ unsafe extern "C" fn applyStepAdjustment(mut controlRateConfig:
         23 => {
             newValue =
                 constrain((*pidProfile).feedForwardTransition as libc::c_int +
-                              delta, 1 as libc::c_int, 100 as libc::c_int);
+                              delta, 1i32, 100i32);
             (*pidProfile).feedForwardTransition = newValue as uint8_t;
             blackboxLogInflightAdjustmentEvent(ADJUSTMENT_FEEDFORWARD_TRANSITION,
                                                newValue);
             current_block_82 = 15447629348493591490;
         }
-        _ => {
-            newValue = -(1 as libc::c_int);
-            current_block_82 = 15447629348493591490;
-        }
+        _ => { newValue = -1i32; current_block_82 = 15447629348493591490; }
     }
     match current_block_82 {
         3773363480161371148 =>
@@ -904,9 +892,8 @@ unsafe extern "C" fn applyStepAdjustment(mut controlRateConfig:
             newValue =
                 constrain((*pidProfile).pid[PID_ROLL as libc::c_int as
                                                 usize].F as libc::c_int +
-                              delta, 0 as libc::c_int,
-                          2000 as
-                              libc::c_int); // FIXME magic numbers repeated in cli.c
+                              delta, 0i32,
+                          2000i32); // FIXME magic numbers repeated in cli.c
             (*pidProfile).pid[PID_ROLL as libc::c_int as usize].F =
                 newValue as uint16_t; // FIXME magic numbers repeated in cli.c
             blackboxLogInflightAdjustmentEvent(ADJUSTMENT_ROLL_F,
@@ -916,7 +903,7 @@ unsafe extern "C" fn applyStepAdjustment(mut controlRateConfig:
             newValue =
                 constrain((*pidProfile).pid[PID_ROLL as libc::c_int as
                                                 usize].D as libc::c_int +
-                              delta, 0 as libc::c_int, 200 as libc::c_int);
+                              delta, 0i32, 200i32);
             (*pidProfile).pid[PID_ROLL as libc::c_int as usize].D =
                 newValue as uint8_t;
             blackboxLogInflightAdjustmentEvent(ADJUSTMENT_ROLL_D, newValue);
@@ -925,7 +912,7 @@ unsafe extern "C" fn applyStepAdjustment(mut controlRateConfig:
             newValue =
                 constrain((*pidProfile).pid[PID_ROLL as libc::c_int as
                                                 usize].I as libc::c_int +
-                              delta, 0 as libc::c_int, 200 as libc::c_int);
+                              delta, 0i32, 200i32);
             (*pidProfile).pid[PID_ROLL as libc::c_int as usize].I =
                 newValue as uint8_t;
             blackboxLogInflightAdjustmentEvent(ADJUSTMENT_ROLL_I, newValue);
@@ -934,7 +921,7 @@ unsafe extern "C" fn applyStepAdjustment(mut controlRateConfig:
             newValue =
                 constrain((*pidProfile).pid[PID_ROLL as libc::c_int as
                                                 usize].P as libc::c_int +
-                              delta, 0 as libc::c_int, 200 as libc::c_int);
+                              delta, 0i32, 200i32);
             (*pidProfile).pid[PID_ROLL as libc::c_int as usize].P =
                 newValue as uint8_t;
             blackboxLogInflightAdjustmentEvent(ADJUSTMENT_ROLL_P, newValue);
@@ -945,7 +932,7 @@ unsafe extern "C" fn applyStepAdjustment(mut controlRateConfig:
             newValue =
                 constrain((*controlRateConfig).rates[FD_ROLL as libc::c_int as
                                                          usize] as libc::c_int
-                              + delta, 0 as libc::c_int, 255 as libc::c_int);
+                              + delta, 0i32, 255i32);
             (*controlRateConfig).rates[FD_ROLL as libc::c_int as usize] =
                 newValue as uint8_t;
             blackboxLogInflightAdjustmentEvent(ADJUSTMENT_ROLL_RATE,
@@ -957,8 +944,7 @@ unsafe extern "C" fn applyStepAdjustment(mut controlRateConfig:
             newValue =
                 constrain((*controlRateConfig).rcExpo[FD_PITCH as libc::c_int
                                                           as usize] as
-                              libc::c_int + delta, 0 as libc::c_int,
-                          100 as libc::c_int);
+                              libc::c_int + delta, 0i32, 100i32);
             (*controlRateConfig).rcExpo[FD_PITCH as libc::c_int as usize] =
                 newValue as uint8_t;
             blackboxLogInflightAdjustmentEvent(ADJUSTMENT_PITCH_RC_EXPO,
@@ -970,9 +956,8 @@ unsafe extern "C" fn applyStepAdjustment(mut controlRateConfig:
             newValue =
                 constrain((*controlRateConfig).rcRates[FD_PITCH as libc::c_int
                                                            as usize] as
-                              libc::c_int + delta, 0 as libc::c_int,
-                          255 as
-                              libc::c_int); // FIXME magic numbers repeated in cli.c
+                              libc::c_int + delta, 0i32,
+                          255i32); // FIXME magic numbers repeated in cli.c
             (*controlRateConfig).rcRates[FD_PITCH as libc::c_int as usize] =
                 newValue as uint8_t; // FIXME magic numbers repeated in cli.c
             blackboxLogInflightAdjustmentEvent(ADJUSTMENT_PITCH_RC_RATE,
@@ -989,13 +974,11 @@ unsafe extern "C" fn applyAbsoluteAdjustment(mut controlRateConfig:
                                              mut value: libc::c_int)
  -> libc::c_int {
     let mut newValue: libc::c_int = 0;
-    if controlRateConfig.is_null() || pidProfile.is_null() {
-        return 0 as libc::c_int
-    }
+    if controlRateConfig.is_null() || pidProfile.is_null() { return 0i32 }
     let mut current_block_84: u64;
     match adjustmentFunction as libc::c_uint {
         1 | 25 => {
-            newValue = constrain(value, 0 as libc::c_int, 255 as libc::c_int);
+            newValue = constrain(value, 0i32, 255i32);
             (*controlRateConfig).rcRates[FD_ROLL as libc::c_int as usize] =
                 newValue as uint8_t;
             blackboxLogInflightAdjustmentEvent(ADJUSTMENT_ROLL_RC_RATE,
@@ -1007,7 +990,7 @@ unsafe extern "C" fn applyAbsoluteAdjustment(mut controlRateConfig:
         }
         26 => { current_block_84 = 13152404972814328410; }
         2 | 27 => {
-            newValue = constrain(value, 0 as libc::c_int, 100 as libc::c_int);
+            newValue = constrain(value, 0i32, 100i32);
             (*controlRateConfig).rcExpo[FD_ROLL as libc::c_int as usize] =
                 newValue as uint8_t;
             blackboxLogInflightAdjustmentEvent(ADJUSTMENT_ROLL_RC_EXPO,
@@ -1019,7 +1002,7 @@ unsafe extern "C" fn applyAbsoluteAdjustment(mut controlRateConfig:
         }
         28 => { current_block_84 = 11528884897872511888; }
         3 => {
-            newValue = constrain(value, 0 as libc::c_int, 100 as libc::c_int);
+            newValue = constrain(value, 0i32, 100i32);
             (*controlRateConfig).thrExpo8 = newValue as uint8_t;
             initRcProcessing();
             blackboxLogInflightAdjustmentEvent(ADJUSTMENT_THROTTLE_EXPO,
@@ -1027,7 +1010,7 @@ unsafe extern "C" fn applyAbsoluteAdjustment(mut controlRateConfig:
             current_block_84 = 5265702136860997526;
         }
         4 | 13 => {
-            newValue = constrain(value, 0 as libc::c_int, 255 as libc::c_int);
+            newValue = constrain(value, 0i32, 255i32);
             (*controlRateConfig).rates[FD_PITCH as libc::c_int as usize] =
                 newValue as uint8_t;
             blackboxLogInflightAdjustmentEvent(ADJUSTMENT_PITCH_RATE,
@@ -1039,14 +1022,14 @@ unsafe extern "C" fn applyAbsoluteAdjustment(mut controlRateConfig:
         }
         14 => { current_block_84 = 11030179663568450934; }
         5 => {
-            newValue = constrain(value, 0 as libc::c_int, 255 as libc::c_int);
+            newValue = constrain(value, 0i32, 255i32);
             (*controlRateConfig).rates[FD_YAW as libc::c_int as usize] =
                 newValue as uint8_t;
             blackboxLogInflightAdjustmentEvent(ADJUSTMENT_YAW_RATE, newValue);
             current_block_84 = 5265702136860997526;
         }
         6 | 15 => {
-            newValue = constrain(value, 0 as libc::c_int, 200 as libc::c_int);
+            newValue = constrain(value, 0i32, 200i32);
             (*pidProfile).pid[PID_PITCH as libc::c_int as usize].P =
                 newValue as uint8_t;
             blackboxLogInflightAdjustmentEvent(ADJUSTMENT_PITCH_P, newValue);
@@ -1061,7 +1044,7 @@ unsafe extern "C" fn applyAbsoluteAdjustment(mut controlRateConfig:
         }
         18 => { current_block_84 = 15138545843230131294; }
         7 | 16 => {
-            newValue = constrain(value, 0 as libc::c_int, 200 as libc::c_int);
+            newValue = constrain(value, 0i32, 200i32);
             (*pidProfile).pid[PID_PITCH as libc::c_int as usize].I =
                 newValue as uint8_t;
             blackboxLogInflightAdjustmentEvent(ADJUSTMENT_PITCH_I, newValue);
@@ -1076,7 +1059,7 @@ unsafe extern "C" fn applyAbsoluteAdjustment(mut controlRateConfig:
         }
         19 => { current_block_84 = 18015659002152238837; }
         8 | 17 => {
-            newValue = constrain(value, 0 as libc::c_int, 200 as libc::c_int);
+            newValue = constrain(value, 0i32, 200i32);
             (*pidProfile).pid[PID_PITCH as libc::c_int as usize].D =
                 newValue as uint8_t;
             blackboxLogInflightAdjustmentEvent(ADJUSTMENT_PITCH_D, newValue);
@@ -1095,30 +1078,29 @@ unsafe extern "C" fn applyAbsoluteAdjustment(mut controlRateConfig:
         }
         9 => {
             newValue =
-                constrain(value, 0 as libc::c_int,
-                          200 as
-                              libc::c_int); // FIXME magic numbers repeated in cli.c
+                constrain(value, 0i32,
+                          200i32); // FIXME magic numbers repeated in cli.c
             (*pidProfile).pid[PID_YAW as libc::c_int as usize].P =
                 newValue as uint8_t; // FIXME magic numbers repeated in cli.c
             blackboxLogInflightAdjustmentEvent(ADJUSTMENT_YAW_P, newValue);
             current_block_84 = 5265702136860997526;
         }
         10 => {
-            newValue = constrain(value, 0 as libc::c_int, 200 as libc::c_int);
+            newValue = constrain(value, 0i32, 200i32);
             (*pidProfile).pid[PID_YAW as libc::c_int as usize].I =
                 newValue as uint8_t;
             blackboxLogInflightAdjustmentEvent(ADJUSTMENT_YAW_I, newValue);
             current_block_84 = 5265702136860997526;
         }
         11 => {
-            newValue = constrain(value, 0 as libc::c_int, 200 as libc::c_int);
+            newValue = constrain(value, 0i32, 200i32);
             (*pidProfile).pid[PID_YAW as libc::c_int as usize].D =
                 newValue as uint8_t;
             blackboxLogInflightAdjustmentEvent(ADJUSTMENT_YAW_D, newValue);
             current_block_84 = 5265702136860997526;
         }
         21 => {
-            newValue = constrain(value, 0 as libc::c_int, 255 as libc::c_int);
+            newValue = constrain(value, 0i32, 255i32);
             (*controlRateConfig).rcRates[FD_YAW as libc::c_int as usize] =
                 newValue as uint8_t;
             blackboxLogInflightAdjustmentEvent(ADJUSTMENT_RC_RATE_YAW,
@@ -1126,8 +1108,7 @@ unsafe extern "C" fn applyAbsoluteAdjustment(mut controlRateConfig:
             current_block_84 = 5265702136860997526;
         }
         22 | 30 => {
-            newValue =
-                constrain(value, 0 as libc::c_int, 2000 as libc::c_int);
+            newValue = constrain(value, 0i32, 2000i32);
             (*pidProfile).pid[PID_PITCH as libc::c_int as usize].F =
                 newValue as uint16_t;
             blackboxLogInflightAdjustmentEvent(ADJUSTMENT_PITCH_F, newValue);
@@ -1138,52 +1119,47 @@ unsafe extern "C" fn applyAbsoluteAdjustment(mut controlRateConfig:
         }
         31 => { current_block_84 = 6405530353954840407; }
         32 => {
-            newValue =
-                constrain(value, 0 as libc::c_int, 2000 as libc::c_int);
+            newValue = constrain(value, 0i32, 2000i32);
             (*pidProfile).pid[PID_YAW as libc::c_int as usize].F =
                 newValue as uint16_t;
             blackboxLogInflightAdjustmentEvent(ADJUSTMENT_YAW_F, newValue);
             current_block_84 = 5265702136860997526;
         }
         23 => {
-            newValue = constrain(value, 1 as libc::c_int, 100 as libc::c_int);
+            newValue = constrain(value, 1i32, 100i32);
             (*pidProfile).feedForwardTransition = newValue as uint8_t;
             blackboxLogInflightAdjustmentEvent(ADJUSTMENT_FEEDFORWARD_TRANSITION,
                                                newValue);
             current_block_84 = 5265702136860997526;
         }
-        _ => {
-            newValue = -(1 as libc::c_int);
-            current_block_84 = 5265702136860997526;
-        }
+        _ => { newValue = -1i32; current_block_84 = 5265702136860997526; }
     }
     match current_block_84 {
         6405530353954840407 =>
         // fall through for combined ADJUSTMENT_PITCH_ROLL_F
         {
             newValue =
-                constrain(value, 0 as libc::c_int,
-                          2000 as
-                              libc::c_int); // FIXME magic numbers repeated in cli.c
+                constrain(value, 0i32,
+                          2000i32); // FIXME magic numbers repeated in cli.c
             (*pidProfile).pid[PID_ROLL as libc::c_int as usize].F =
                 newValue as uint16_t; // FIXME magic numbers repeated in cli.c
             blackboxLogInflightAdjustmentEvent(ADJUSTMENT_ROLL_F,
                                                newValue); // FIXME magic numbers repeated in cli.c
         }
         15516051897328206787 => {
-            newValue = constrain(value, 0 as libc::c_int, 200 as libc::c_int);
+            newValue = constrain(value, 0i32, 200i32);
             (*pidProfile).pid[PID_ROLL as libc::c_int as usize].D =
                 newValue as uint8_t;
             blackboxLogInflightAdjustmentEvent(ADJUSTMENT_ROLL_D, newValue);
         }
         18015659002152238837 => {
-            newValue = constrain(value, 0 as libc::c_int, 200 as libc::c_int);
+            newValue = constrain(value, 0i32, 200i32);
             (*pidProfile).pid[PID_ROLL as libc::c_int as usize].I =
                 newValue as uint8_t;
             blackboxLogInflightAdjustmentEvent(ADJUSTMENT_ROLL_I, newValue);
         }
         15138545843230131294 => {
-            newValue = constrain(value, 0 as libc::c_int, 200 as libc::c_int);
+            newValue = constrain(value, 0i32, 200i32);
             (*pidProfile).pid[PID_ROLL as libc::c_int as usize].P =
                 newValue as uint8_t;
             blackboxLogInflightAdjustmentEvent(ADJUSTMENT_ROLL_P, newValue);
@@ -1191,7 +1167,7 @@ unsafe extern "C" fn applyAbsoluteAdjustment(mut controlRateConfig:
         11030179663568450934 =>
         // fall through for combined ADJUSTMENT_PITCH_ROLL_RATE
         {
-            newValue = constrain(value, 0 as libc::c_int, 255 as libc::c_int);
+            newValue = constrain(value, 0i32, 255i32);
             (*controlRateConfig).rates[FD_ROLL as libc::c_int as usize] =
                 newValue as uint8_t;
             blackboxLogInflightAdjustmentEvent(ADJUSTMENT_ROLL_RATE,
@@ -1200,7 +1176,7 @@ unsafe extern "C" fn applyAbsoluteAdjustment(mut controlRateConfig:
         11528884897872511888 =>
         // fall through for combined ADJUSTMENT_RC_EXPO
         {
-            newValue = constrain(value, 0 as libc::c_int, 100 as libc::c_int);
+            newValue = constrain(value, 0i32, 100i32);
             (*controlRateConfig).rcExpo[FD_PITCH as libc::c_int as usize] =
                 newValue as uint8_t;
             blackboxLogInflightAdjustmentEvent(ADJUSTMENT_PITCH_RC_EXPO,
@@ -1210,9 +1186,8 @@ unsafe extern "C" fn applyAbsoluteAdjustment(mut controlRateConfig:
         // fall through for combined ADJUSTMENT_RC_EXPO
         {
             newValue =
-                constrain(value, 0 as libc::c_int,
-                          255 as
-                              libc::c_int); // FIXME magic numbers repeated in serial_cli.c
+                constrain(value, 0i32,
+                          255i32); // FIXME magic numbers repeated in serial_cli.c
             (*controlRateConfig).rcRates[FD_PITCH as libc::c_int as usize] =
                 newValue as uint8_t;
             blackboxLogInflightAdjustmentEvent(ADJUSTMENT_PITCH_RC_RATE,
@@ -1225,7 +1200,7 @@ unsafe extern "C" fn applyAbsoluteAdjustment(mut controlRateConfig:
 unsafe extern "C" fn applySelectAdjustment(mut adjustmentFunction:
                                                adjustmentFunction_e,
                                            mut position: uint8_t) -> uint8_t {
-    let mut beeps: uint8_t = 0 as libc::c_int as uint8_t;
+    let mut beeps: uint8_t = 0i32 as uint8_t;
     match adjustmentFunction as libc::c_uint {
         12 => {
             if getCurrentControlRateProfileIndex() as libc::c_int !=
@@ -1233,21 +1208,19 @@ unsafe extern "C" fn applySelectAdjustment(mut adjustmentFunction:
                 changeControlRateProfile(position);
                 blackboxLogInflightAdjustmentEvent(ADJUSTMENT_RATE_PROFILE,
                                                    position as int32_t);
-                beeps =
-                    (position as libc::c_int + 1 as libc::c_int) as uint8_t
+                beeps = (position as libc::c_int + 1i32) as uint8_t
             }
         }
         24 => {
             let mut newValue: uint8_t =
-                constrain(position as libc::c_int, 0 as libc::c_int,
-                          200 as libc::c_int) as uint8_t;
+                constrain(position as libc::c_int, 0i32, 200i32) as uint8_t;
             if (*pidProfile).pid[PID_LEVEL as libc::c_int as usize].D as
                    libc::c_int != newValue as libc::c_int {
                 beeps =
                     ((newValue as libc::c_int -
                           (*pidProfile).pid[PID_LEVEL as libc::c_int as
                                                 usize].D as libc::c_int) /
-                         8 as libc::c_int + 1 as libc::c_int) as uint8_t;
+                         8i32 + 1i32) as uint8_t;
                 (*pidProfile).pid[PID_LEVEL as libc::c_int as usize].D =
                     newValue;
                 blackboxLogInflightAdjustmentEvent(ADJUSTMENT_HORIZON_STRENGTH,
@@ -1263,12 +1236,12 @@ unsafe extern "C" fn applySelectAdjustment(mut adjustmentFunction:
 pub unsafe extern "C" fn processRcAdjustments(mut controlRateConfig:
                                                   *mut controlRateConfig_t) {
     let now: uint32_t = millis();
-    let mut newValue: libc::c_int = -(1 as libc::c_int);
+    let mut newValue: libc::c_int = -1i32;
     let canUseRxData: bool = rxIsReceivingSignal();
     let mut current_block_19: u64;
     // Process Increment/Decrement adjustments
-    let mut adjustmentIndex: libc::c_int = 0 as libc::c_int;
-    while adjustmentIndex < 4 as libc::c_int {
+    let mut adjustmentIndex: libc::c_int = 0i32;
+    while adjustmentIndex < 4i32 {
         let mut adjustmentState: *mut adjustmentState_t =
             &mut *adjustmentStates.as_mut_ptr().offset(adjustmentIndex as
                                                            isize) as
@@ -1278,20 +1251,16 @@ pub unsafe extern "C" fn processRcAdjustments(mut controlRateConfig:
                 (*(*adjustmentState).config).adjustmentFunction;
             if !(adjustmentFunction as libc::c_uint ==
                      ADJUSTMENT_NONE as libc::c_int as libc::c_uint) {
-                if cmp32(now, (*adjustmentState).timeoutAt) >=
-                       0 as libc::c_int {
+                if cmp32(now, (*adjustmentState).timeoutAt) >= 0i32 {
                     (*adjustmentState).timeoutAt =
-                        now.wrapping_add((1000 as libc::c_int /
-                                              2 as libc::c_int) as
-                                             libc::c_uint);
+                        now.wrapping_add((1000i32 / 2i32) as libc::c_uint);
                     adjustmentStateMask =
                         (adjustmentStateMask as libc::c_int &
-                             !((1 as libc::c_int) << adjustmentIndex)) as
-                            uint8_t
+                             !(1i32 << adjustmentIndex)) as uint8_t
                 }
                 if canUseRxData {
                     let channelIndex: uint8_t =
-                        (4 as libc::c_int +
+                        (4i32 +
                              (*adjustmentState).auxChannelIndex as
                                  libc::c_int) as uint8_t;
                     if (*(*adjustmentState).config).mode as libc::c_uint ==
@@ -1299,8 +1268,7 @@ pub unsafe extern "C" fn processRcAdjustments(mut controlRateConfig:
                        {
                         let mut delta: libc::c_int = 0;
                         if rcData[channelIndex as usize] as libc::c_int >
-                               (*rxConfig()).midrc as libc::c_int +
-                                   200 as libc::c_int {
+                               (*rxConfig()).midrc as libc::c_int + 200i32 {
                             delta =
                                 (*(*adjustmentState).config).data.step as
                                     libc::c_int;
@@ -1308,7 +1276,7 @@ pub unsafe extern "C" fn processRcAdjustments(mut controlRateConfig:
                         } else if (rcData[channelIndex as usize] as
                                        libc::c_int) <
                                       (*rxConfig()).midrc as libc::c_int -
-                                          200 as libc::c_int {
+                                          200i32 {
                             delta =
                                 -((*(*adjustmentState).config).data.step as
                                       libc::c_int);
@@ -1317,11 +1285,9 @@ pub unsafe extern "C" fn processRcAdjustments(mut controlRateConfig:
                             // returning the switch to the middle immediately resets the ready state
                             adjustmentStateMask =
                                 (adjustmentStateMask as libc::c_int &
-                                     !((1 as libc::c_int) << adjustmentIndex))
-                                    as uint8_t;
+                                     !(1i32 << adjustmentIndex)) as uint8_t;
                             (*adjustmentState).timeoutAt =
-                                now.wrapping_add((1000 as libc::c_int /
-                                                      2 as libc::c_int) as
+                                now.wrapping_add((1000i32 / 2i32) as
                                                      libc::c_uint);
                             current_block_19 = 14916268686031723178;
                         }
@@ -1329,8 +1295,7 @@ pub unsafe extern "C" fn processRcAdjustments(mut controlRateConfig:
                             14916268686031723178 => { }
                             _ => {
                                 if adjustmentStateMask as libc::c_int &
-                                       (1 as libc::c_int) << adjustmentIndex
-                                       != 0 {
+                                       1i32 << adjustmentIndex != 0 {
                                     current_block_19 = 14916268686031723178;
                                 } else {
                                     newValue =
@@ -1356,18 +1321,15 @@ pub unsafe extern "C" fn processRcAdjustments(mut controlRateConfig:
                                        libc::c_uint &&
                                    (*systemConfig()).rateProfile6PosSwitch as
                                        libc::c_int != 0 {
-                                switchPositions = 6 as libc::c_int
+                                switchPositions = 6i32
                             }
                             let rangeWidth: uint16_t =
-                                ((2100 as libc::c_int - 900 as libc::c_int) /
-                                     switchPositions) as uint16_t;
+                                ((2100i32 - 900i32) / switchPositions) as
+                                    uint16_t;
                             let position: uint8_t =
                                 ((constrain(rcData[channelIndex as usize] as
-                                                libc::c_int,
-                                            900 as libc::c_int,
-                                            2100 as libc::c_int -
-                                                1 as libc::c_int) -
-                                      900 as libc::c_int) /
+                                                libc::c_int, 900i32,
+                                            2100i32 - 1i32) - 900i32) /
                                      rangeWidth as libc::c_int) as uint8_t;
                             newValue =
                                 applySelectAdjustment(adjustmentFunction,
@@ -1380,8 +1342,7 @@ pub unsafe extern "C" fn processRcAdjustments(mut controlRateConfig:
                         _ => {
                             adjustmentStateMask =
                                 (adjustmentStateMask as libc::c_int |
-                                     (1 as libc::c_int) << adjustmentIndex) as
-                                    uint8_t
+                                     1i32 << adjustmentIndex) as uint8_t
                         }
                     }
                 }
@@ -1390,22 +1351,19 @@ pub unsafe extern "C" fn processRcAdjustments(mut controlRateConfig:
         adjustmentIndex += 1
     }
     // Process Absolute adjustments
-    let mut index: libc::c_int = 0 as libc::c_int;
-    while index < 15 as libc::c_int {
+    let mut index: libc::c_int = 0i32;
+    while index < 15i32 {
         static mut lastRcData: [int16_t; 15] =
-            [0 as libc::c_int as int16_t, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-             0, 0];
+            [0i32 as int16_t, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
         let adjustmentRange: *const adjustmentRange_t =
             adjustmentRanges(index);
         let channelIndex_0: uint8_t =
-            (4 as libc::c_int +
-                 (*adjustmentRange).auxSwitchChannelIndex as libc::c_int) as
-                uint8_t;
+            (4i32 + (*adjustmentRange).auxSwitchChannelIndex as libc::c_int)
+                as uint8_t;
         let mut adjustmentConfig: *const adjustmentConfig_t =
             &*defaultAdjustmentConfigs.as_ptr().offset(((*adjustmentRange).adjustmentFunction
                                                             as libc::c_int -
-                                                            1 as libc::c_int)
-                                                           as isize) as
+                                                            1i32) as isize) as
                 *const adjustmentConfig_t;
         // If setting is defined for step adjustment and center value has been specified, apply values directly (scaled) from aux channel
         if rcData[channelIndex_0 as usize] as libc::c_int !=
@@ -1417,13 +1375,9 @@ pub unsafe extern "C" fn processRcAdjustments(mut controlRateConfig:
                              &(*adjustmentRange).range) as libc::c_int != 0 {
             let mut value: libc::c_int =
                 (rcData[channelIndex_0 as usize] as libc::c_int -
-                     (1000 as libc::c_int +
-                          (2000 as libc::c_int - 1000 as libc::c_int) /
-                              2 as libc::c_int)) *
+                     (1000i32 + (2000i32 - 1000i32) / 2i32)) *
                     (*adjustmentRange).adjustmentScale as libc::c_int /
-                    (1000 as libc::c_int +
-                         (2000 as libc::c_int - 1000 as libc::c_int) /
-                             2 as libc::c_int - 1000 as libc::c_int) +
+                    (1000i32 + (2000i32 - 1000i32) / 2i32 - 1000i32) +
                     (*adjustmentRange).adjustmentCenter as libc::c_int;
             lastRcData[index as usize] = rcData[channelIndex_0 as usize];
             applyAbsoluteAdjustment(controlRateConfig,
@@ -1436,28 +1390,24 @@ pub unsafe extern "C" fn processRcAdjustments(mut controlRateConfig:
 }
 #[no_mangle]
 pub unsafe extern "C" fn resetAdjustmentStates() {
-    memset(adjustmentStates.as_mut_ptr() as *mut libc::c_void,
-           0 as libc::c_int,
+    memset(adjustmentStates.as_mut_ptr() as *mut libc::c_void, 0i32,
            ::core::mem::size_of::<[adjustmentState_t; 4]>() as libc::c_ulong);
 }
 #[no_mangle]
 pub unsafe extern "C" fn updateAdjustmentStates() {
-    let mut index: libc::c_int = 0 as libc::c_int;
-    while index < 15 as libc::c_int {
+    let mut index: libc::c_int = 0i32;
+    while index < 15i32 {
         let adjustmentRange: *const adjustmentRange_t =
             adjustmentRanges(index);
         // Only use slots if center value has not been specified, otherwise apply values directly (scaled) from aux channel
         if isRangeActive((*adjustmentRange).auxChannelIndex,
                          &(*adjustmentRange).range) as libc::c_int != 0 &&
-               (*adjustmentRange).adjustmentCenter as libc::c_int ==
-                   0 as libc::c_int {
+               (*adjustmentRange).adjustmentCenter as libc::c_int == 0i32 {
             let mut adjustmentConfig: *const adjustmentConfig_t =
                 &*defaultAdjustmentConfigs.as_ptr().offset(((*adjustmentRange).adjustmentFunction
                                                                 as libc::c_int
-                                                                -
-                                                                1 as
-                                                                    libc::c_int)
-                                                               as isize) as
+                                                                - 1i32) as
+                                                               isize) as
                     *const adjustmentConfig_t;
             configureAdjustment((*adjustmentRange).adjustmentIndex,
                                 (*adjustmentRange).auxSwitchChannelIndex,
@@ -1475,16 +1425,11 @@ unsafe extern "C" fn run_static_initializers() {
     adjustmentRanges_Registry =
         {
             let mut init =
-                pgRegistry_s{pgn:
-                                 (37 as libc::c_int |
-                                      (0 as libc::c_int) << 12 as libc::c_int)
-                                     as pgn_t,
+                pgRegistry_s{pgn: (37i32 | 0i32 << 12i32) as pgn_t,
                              size:
                                  ((::core::mem::size_of::<adjustmentRange_t>()
                                        as
-                                       libc::c_ulong).wrapping_mul(15 as
-                                                                       libc::c_int
-                                                                       as
+                                       libc::c_ulong).wrapping_mul(15i32 as
                                                                        libc::c_ulong)
                                       |
                                       PGR_SIZE_SYSTEM_FLAG as libc::c_int as
@@ -1511,9 +1456,7 @@ unsafe extern "C" fn run_static_initializers() {
                                     mode: ADJUSTMENT_MODE_STEP,
                                     data:
                                         adjustmentConfig_u{step:
-                                                               1 as
-                                                                   libc::c_int
-                                                                   as
+                                                               1i32 as
                                                                    uint8_t,},};
              init
          },
@@ -1523,9 +1466,7 @@ unsafe extern "C" fn run_static_initializers() {
                                     mode: ADJUSTMENT_MODE_STEP,
                                     data:
                                         adjustmentConfig_u{step:
-                                                               1 as
-                                                                   libc::c_int
-                                                                   as
+                                                               1i32 as
                                                                    uint8_t,},};
              init
          },
@@ -1536,9 +1477,7 @@ unsafe extern "C" fn run_static_initializers() {
                                     mode: ADJUSTMENT_MODE_STEP,
                                     data:
                                         adjustmentConfig_u{step:
-                                                               1 as
-                                                                   libc::c_int
-                                                                   as
+                                                               1i32 as
                                                                    uint8_t,},};
              init
          },
@@ -1549,9 +1488,7 @@ unsafe extern "C" fn run_static_initializers() {
                                     mode: ADJUSTMENT_MODE_STEP,
                                     data:
                                         adjustmentConfig_u{step:
-                                                               1 as
-                                                                   libc::c_int
-                                                                   as
+                                                               1i32 as
                                                                    uint8_t,},};
              init
          },
@@ -1561,9 +1498,7 @@ unsafe extern "C" fn run_static_initializers() {
                                     mode: ADJUSTMENT_MODE_STEP,
                                     data:
                                         adjustmentConfig_u{step:
-                                                               1 as
-                                                                   libc::c_int
-                                                                   as
+                                                               1i32 as
                                                                    uint8_t,},};
              init
          },
@@ -1574,9 +1509,7 @@ unsafe extern "C" fn run_static_initializers() {
                                     mode: ADJUSTMENT_MODE_STEP,
                                     data:
                                         adjustmentConfig_u{step:
-                                                               1 as
-                                                                   libc::c_int
-                                                                   as
+                                                               1i32 as
                                                                    uint8_t,},};
              init
          },
@@ -1587,9 +1520,7 @@ unsafe extern "C" fn run_static_initializers() {
                                     mode: ADJUSTMENT_MODE_STEP,
                                     data:
                                         adjustmentConfig_u{step:
-                                                               1 as
-                                                                   libc::c_int
-                                                                   as
+                                                               1i32 as
                                                                    uint8_t,},};
              init
          },
@@ -1600,9 +1531,7 @@ unsafe extern "C" fn run_static_initializers() {
                                     mode: ADJUSTMENT_MODE_STEP,
                                     data:
                                         adjustmentConfig_u{step:
-                                                               1 as
-                                                                   libc::c_int
-                                                                   as
+                                                               1i32 as
                                                                    uint8_t,},};
              init
          },
@@ -1612,9 +1541,7 @@ unsafe extern "C" fn run_static_initializers() {
                                     mode: ADJUSTMENT_MODE_STEP,
                                     data:
                                         adjustmentConfig_u{step:
-                                                               1 as
-                                                                   libc::c_int
-                                                                   as
+                                                               1i32 as
                                                                    uint8_t,},};
              init
          },
@@ -1624,9 +1551,7 @@ unsafe extern "C" fn run_static_initializers() {
                                     mode: ADJUSTMENT_MODE_STEP,
                                     data:
                                         adjustmentConfig_u{step:
-                                                               1 as
-                                                                   libc::c_int
-                                                                   as
+                                                               1i32 as
                                                                    uint8_t,},};
              init
          },
@@ -1636,9 +1561,7 @@ unsafe extern "C" fn run_static_initializers() {
                                     mode: ADJUSTMENT_MODE_STEP,
                                     data:
                                         adjustmentConfig_u{step:
-                                                               1 as
-                                                                   libc::c_int
-                                                                   as
+                                                               1i32 as
                                                                    uint8_t,},};
              init
          },
@@ -1649,9 +1572,7 @@ unsafe extern "C" fn run_static_initializers() {
                                     mode: ADJUSTMENT_MODE_SELECT,
                                     data:
                                         adjustmentConfig_u{switchPositions:
-                                                               3 as
-                                                                   libc::c_int
-                                                                   as
+                                                               3i32 as
                                                                    uint8_t,},};
              init
          },
@@ -1661,9 +1582,7 @@ unsafe extern "C" fn run_static_initializers() {
                                     mode: ADJUSTMENT_MODE_STEP,
                                     data:
                                         adjustmentConfig_u{step:
-                                                               1 as
-                                                                   libc::c_int
-                                                                   as
+                                                               1i32 as
                                                                    uint8_t,},};
              init
          },
@@ -1673,9 +1592,7 @@ unsafe extern "C" fn run_static_initializers() {
                                     mode: ADJUSTMENT_MODE_STEP,
                                     data:
                                         adjustmentConfig_u{step:
-                                                               1 as
-                                                                   libc::c_int
-                                                                   as
+                                                               1i32 as
                                                                    uint8_t,},};
              init
          },
@@ -1685,9 +1602,7 @@ unsafe extern "C" fn run_static_initializers() {
                                     mode: ADJUSTMENT_MODE_STEP,
                                     data:
                                         adjustmentConfig_u{step:
-                                                               1 as
-                                                                   libc::c_int
-                                                                   as
+                                                               1i32 as
                                                                    uint8_t,},};
              init
          },
@@ -1697,9 +1612,7 @@ unsafe extern "C" fn run_static_initializers() {
                                     mode: ADJUSTMENT_MODE_STEP,
                                     data:
                                         adjustmentConfig_u{step:
-                                                               1 as
-                                                                   libc::c_int
-                                                                   as
+                                                               1i32 as
                                                                    uint8_t,},};
              init
          },
@@ -1709,9 +1622,7 @@ unsafe extern "C" fn run_static_initializers() {
                                     mode: ADJUSTMENT_MODE_STEP,
                                     data:
                                         adjustmentConfig_u{step:
-                                                               1 as
-                                                                   libc::c_int
-                                                                   as
+                                                               1i32 as
                                                                    uint8_t,},};
              init
          },
@@ -1721,9 +1632,7 @@ unsafe extern "C" fn run_static_initializers() {
                                     mode: ADJUSTMENT_MODE_STEP,
                                     data:
                                         adjustmentConfig_u{step:
-                                                               1 as
-                                                                   libc::c_int
-                                                                   as
+                                                               1i32 as
                                                                    uint8_t,},};
              init
          },
@@ -1733,9 +1642,7 @@ unsafe extern "C" fn run_static_initializers() {
                                     mode: ADJUSTMENT_MODE_STEP,
                                     data:
                                         adjustmentConfig_u{step:
-                                                               1 as
-                                                                   libc::c_int
-                                                                   as
+                                                               1i32 as
                                                                    uint8_t,},};
              init
          },
@@ -1745,9 +1652,7 @@ unsafe extern "C" fn run_static_initializers() {
                                     mode: ADJUSTMENT_MODE_STEP,
                                     data:
                                         adjustmentConfig_u{step:
-                                                               1 as
-                                                                   libc::c_int
-                                                                   as
+                                                               1i32 as
                                                                    uint8_t,},};
              init
          },
@@ -1758,9 +1663,7 @@ unsafe extern "C" fn run_static_initializers() {
                                     mode: ADJUSTMENT_MODE_STEP,
                                     data:
                                         adjustmentConfig_u{step:
-                                                               1 as
-                                                                   libc::c_int
-                                                                   as
+                                                               1i32 as
                                                                    uint8_t,},};
              init
          },
@@ -1771,9 +1674,7 @@ unsafe extern "C" fn run_static_initializers() {
                                     mode: ADJUSTMENT_MODE_STEP,
                                     data:
                                         adjustmentConfig_u{step:
-                                                               1 as
-                                                                   libc::c_int
-                                                                   as
+                                                               1i32 as
                                                                    uint8_t,},};
              init
          },
@@ -1784,9 +1685,7 @@ unsafe extern "C" fn run_static_initializers() {
                                     mode: ADJUSTMENT_MODE_STEP,
                                     data:
                                         adjustmentConfig_u{step:
-                                                               1 as
-                                                                   libc::c_int
-                                                                   as
+                                                               1i32 as
                                                                    uint8_t,},};
              init
          },
@@ -1797,9 +1696,7 @@ unsafe extern "C" fn run_static_initializers() {
                                     mode: ADJUSTMENT_MODE_SELECT,
                                     data:
                                         adjustmentConfig_u{switchPositions:
-                                                               255 as
-                                                                   libc::c_int
-                                                                   as
+                                                               255i32 as
                                                                    uint8_t,},};
              init
          },
@@ -1824,9 +1721,7 @@ unsafe extern "C" fn run_static_initializers() {
                                     mode: ADJUSTMENT_MODE_STEP,
                                     data:
                                         adjustmentConfig_u{step:
-                                                               1 as
-                                                                   libc::c_int
-                                                                   as
+                                                               1i32 as
                                                                    uint8_t,},};
              init
          },
@@ -1836,9 +1731,7 @@ unsafe extern "C" fn run_static_initializers() {
                                     mode: ADJUSTMENT_MODE_STEP,
                                     data:
                                         adjustmentConfig_u{step:
-                                                               1 as
-                                                                   libc::c_int
-                                                                   as
+                                                               1i32 as
                                                                    uint8_t,},};
              init
          },
@@ -1848,9 +1741,7 @@ unsafe extern "C" fn run_static_initializers() {
                                     mode: ADJUSTMENT_MODE_STEP,
                                     data:
                                         adjustmentConfig_u{step:
-                                                               1 as
-                                                                   libc::c_int
-                                                                   as
+                                                               1i32 as
                                                                    uint8_t,},};
              init
          },
@@ -1868,7 +1759,7 @@ unsafe extern "C" fn run_static_initializers() {
                             data: adjustmentConfig_u{step: 0,},}]
 }
 #[used]
-#[cfg_attr(target_os = "linux", link_section = ".init_array")]
-#[cfg_attr(target_os = "windows", link_section = ".CRT$XIB")]
-#[cfg_attr(target_os = "macos", link_section = "__DATA,__mod_init_func")]
+#[cfg_attr ( target_os = "linux", link_section = ".init_array" )]
+#[cfg_attr ( target_os = "windows", link_section = ".CRT$XIB" )]
+#[cfg_attr ( target_os = "macos", link_section = "__DATA,__mod_init_func" )]
 static INIT_ARRAY: [unsafe extern "C" fn(); 1] = [run_static_initializers];

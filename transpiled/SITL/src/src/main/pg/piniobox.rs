@@ -1,4 +1,5 @@
-use ::libc;
+use core;
+use libc;
 pub type __uint8_t = libc::c_uchar;
 pub type __uint16_t = libc::c_ushort;
 pub type __uint32_t = libc::c_uint;
@@ -14,7 +15,7 @@ pub const PGR_PGN_MASK: C2RustUnnamed = 4095;
 pub type pgResetFunc
     =
     unsafe extern "C" fn(_: *mut libc::c_void, _: libc::c_int) -> ();
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct pgRegistry_s {
     pub pgn: pgn_t,
@@ -24,14 +25,15 @@ pub struct pgRegistry_s {
     pub ptr: *mut *mut uint8_t,
     pub reset: C2RustUnnamed_0,
 }
-#[derive(Copy, Clone)]
-#[repr(C)]
+#[derive ( Copy, Clone )]
+#[repr ( C )]
 pub union C2RustUnnamed_0 {
     pub ptr: *mut libc::c_void,
-    pub fn_0: Option<pgResetFunc>,
+    pub fn_0: Option<unsafe extern "C" fn(_: *mut libc::c_void,
+                                          _: libc::c_int) -> ()>,
 }
 pub type pgRegistry_t = pgRegistry_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct pinioBoxConfig_s {
     pub permanentId: [uint8_t; 4],
@@ -103,10 +105,7 @@ pub static mut pinioBoxConfig_Registry: pgRegistry_t =
     unsafe {
         {
             let mut init =
-                pgRegistry_s{pgn:
-                                 (530 as libc::c_int |
-                                      (1 as libc::c_int) << 12 as libc::c_int)
-                                     as pgn_t,
+                pgRegistry_s{pgn: (530i32 | 1i32 << 12i32) as pgn_t,
                              size:
                                  (::core::mem::size_of::<pinioBoxConfig_t>()
                                       as libc::c_ulong |
@@ -140,9 +139,7 @@ pub static mut pgResetTemplate_pinioBoxConfig: pinioBoxConfig_t =
     {
         let mut init =
             pinioBoxConfig_s{permanentId:
-                                 [255 as libc::c_int as uint8_t,
-                                  255 as libc::c_int as uint8_t,
-                                  255 as libc::c_int as uint8_t,
-                                  255 as libc::c_int as uint8_t],};
+                                 [255i32 as uint8_t, 255i32 as uint8_t,
+                                  255i32 as uint8_t, 255i32 as uint8_t],};
         init
     };

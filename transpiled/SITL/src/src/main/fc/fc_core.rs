@@ -1,4 +1,5 @@
-use ::libc;
+use core;
+use libc;
 extern "C" {
     #[no_mangle]
     fn ffs(__i: libc::c_int) -> libc::c_int;
@@ -73,18 +74,46 @@ extern "C" {
     fn resetYawAxis();
     #[no_mangle]
     fn rcSmoothingInitializationComplete() -> bool;
+    /*
+ * This file is part of Cleanflight and Betaflight.
+ *
+ * Cleanflight and Betaflight are free software. You can redistribute
+ * this software and/or modify this software under the terms of the
+ * GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * Cleanflight and Betaflight are distributed in the hope that they
+ * will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this software.
+ *
+ * If not, see <http://www.gnu.org/licenses/>.
+ */
+    // when aux channel is in range...
+    // ..then apply the adjustment function to the auxSwitchChannel ...
+    // ... via slot
+    // enough for 4 x 3position switches / 4 aux channel
+    #[no_mangle]
+    fn processRcAdjustments(controlRateConfig: *mut controlRateConfig_s);
+    // type to hold enough bits for CHECKBOX_ITEM_COUNT. Struct used for value-like behavior
+    // steps are 25 apart
+// a value of 0 corresponds to a channel value of 900 or less
+// a value of 48 corresponds to a channel value of 2100 or more
+// 48 steps between 900 and 2100
     #[no_mangle]
     fn isModeActivationConditionPresent(modeId: boxId_e) -> bool;
     #[no_mangle]
     fn IS_RC_MODE_ACTIVE(boxId: boxId_e) -> bool;
     #[no_mangle]
-    fn updateActivatedModes();
-    #[no_mangle]
     fn isAirmodeActive() -> bool;
     #[no_mangle]
-    fn updateAdjustmentStates();
+    fn updateActivatedModes();
     #[no_mangle]
-    fn processRcAdjustments(controlRateConfig: *mut controlRateConfig_s);
+    fn updateAdjustmentStates();
     // (Super) rates are constrained to [0, 100] for Betaflight rates, so values higher than 100 won't make a difference. Range extended for RaceFlight rates.
     #[no_mangle]
     static mut rcCommand: [libc::c_float; 4];
@@ -121,9 +150,9 @@ extern "C" {
     #[no_mangle]
     fn sensors(mask: uint32_t) -> bool;
     #[no_mangle]
-    fn mspSerialAllocatePorts();
-    #[no_mangle]
     fn mspSerialReleaseSharedTelemetryPorts();
+    #[no_mangle]
+    fn mspSerialAllocatePorts();
     /*
  * This file is part of Cleanflight and Betaflight.
  *
@@ -309,7 +338,7 @@ pub const PGR_PGN_MASK: C2RustUnnamed_0 = 4095;
 pub type pgResetFunc
     =
     unsafe extern "C" fn(_: *mut libc::c_void, _: libc::c_int) -> ();
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct pgRegistry_s {
     pub pgn: pgn_t,
@@ -319,11 +348,12 @@ pub struct pgRegistry_s {
     pub ptr: *mut *mut uint8_t,
     pub reset: C2RustUnnamed_1,
 }
-#[derive(Copy, Clone)]
-#[repr(C)]
+#[derive ( Copy, Clone )]
+#[repr ( C )]
 pub union C2RustUnnamed_1 {
     pub ptr: *mut libc::c_void,
-    pub fn_0: Option<pgResetFunc>,
+    pub fn_0: Option<unsafe extern "C" fn(_: *mut libc::c_void,
+                                          _: libc::c_int) -> ()>,
 }
 pub type pgRegistry_t = pgRegistry_s;
 pub type timeDelta_t = int32_t;
@@ -333,7 +363,7 @@ pub type BlackboxMode = libc::c_uint;
 pub const BLACKBOX_MODE_ALWAYS_ON: BlackboxMode = 2;
 pub const BLACKBOX_MODE_MOTOR_TEST: BlackboxMode = 1;
 pub const BLACKBOX_MODE_NORMAL: BlackboxMode = 0;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct blackboxConfig_s {
     pub p_ratio: uint16_t,
@@ -395,7 +425,7 @@ pub const FEATURE_RX_PPM: C2RustUnnamed_3 = 1;
 // IO pin identification
 // make sure that ioTag_t can't be assigned into IO_t without warning
 pub type ioTag_t = uint8_t;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct rxConfig_s {
     pub rcmap: [uint8_t; 8],
@@ -459,7 +489,7 @@ pub const CW180_DEG: sensor_align_e = 3;
 pub const CW90_DEG: sensor_align_e = 2;
 pub const CW0_DEG: sensor_align_e = 1;
 pub const ALIGN_DEFAULT: sensor_align_e = 0;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct int16_flightDynamicsTrims_s {
     pub roll: int16_t,
@@ -467,8 +497,8 @@ pub struct int16_flightDynamicsTrims_s {
     pub yaw: int16_t,
 }
 pub type flightDynamicsTrims_def_t = int16_flightDynamicsTrims_s;
-#[derive(Copy, Clone)]
-#[repr(C)]
+#[derive ( Copy, Clone )]
+#[repr ( C )]
 pub union flightDynamicsTrims_u {
     pub raw: [int16_t; 3],
     pub values: flightDynamicsTrims_def_t,
@@ -504,21 +534,21 @@ pub const SENSOR_BARO: C2RustUnnamed_4 = 4;
 // always present
 pub const SENSOR_ACC: C2RustUnnamed_4 = 2;
 pub const SENSOR_GYRO: C2RustUnnamed_4 = 1;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct rollAndPitchTrims_s {
     pub roll: int16_t,
     pub pitch: int16_t,
 }
 pub type rollAndPitchTrims_t_def = rollAndPitchTrims_s;
-#[derive(Copy, Clone)]
-#[repr(C)]
+#[derive ( Copy, Clone )]
+#[repr ( C )]
 pub union rollAndPitchTrims_u {
     pub raw: [int16_t; 2],
     pub values: rollAndPitchTrims_t_def,
 }
 pub type rollAndPitchTrims_t = rollAndPitchTrims_u;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct accelerometerConfig_s {
     pub acc_lpf_hz: uint16_t,
@@ -529,7 +559,7 @@ pub struct accelerometerConfig_s {
     pub accelerometerTrims: rollAndPitchTrims_t,
 }
 pub type accelerometerConfig_t = accelerometerConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct systemConfig_s {
     pub pidProfileIndex: uint8_t,
@@ -542,7 +572,7 @@ pub struct systemConfig_s {
     pub boardIdentifier: [libc::c_char; 6],
 }
 pub type systemConfig_t = systemConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct pidProfile_s {
     pub yaw_lowpass_hz: uint16_t,
@@ -592,7 +622,7 @@ pub struct pidProfile_s {
     pub abs_control_error_limit: uint8_t,
 }
 pub type pidf_t = pidf_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct pidf_s {
     pub P: uint8_t,
@@ -600,7 +630,7 @@ pub struct pidf_s {
     pub D: uint8_t,
     pub F: uint16_t,
 }
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct controlRateConfig_s {
     pub thrMid8: uint8_t,
@@ -615,7 +645,7 @@ pub struct controlRateConfig_s {
     pub throttle_limit_percent: uint8_t,
 }
 pub type controlRateConfig_t = controlRateConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct throttleCorrectionConfig_s {
     pub throttle_correction_angle: uint16_t,
@@ -695,7 +725,7 @@ pub const ARMING_DISABLED_NO_GYRO: armingDisableFlags_e = 1;
 pub const ARMED: C2RustUnnamed_6 = 1;
 pub const ARMING_DELAYED_DISARMED: C2RustUnnamed_10 = 0;
 pub type gpsSolutionData_t = gpsSolutionData_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct gpsSolutionData_s {
     pub llh: gpsLocation_t,
@@ -711,7 +741,7 @@ pub struct gpsSolutionData_s {
 // generic HDOP value (*100)
 /* LLH Location in NEU axis system */
 pub type gpsLocation_t = gpsLocation_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct gpsLocation_s {
     pub lat: int32_t,
@@ -720,7 +750,7 @@ pub struct gpsLocation_s {
 }
 pub const GPS_FIX: C2RustUnnamed_7 = 2;
 pub type armingConfig_t = armingConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct armingConfig_s {
     pub gyro_cal_on_first_arm: uint8_t,
@@ -773,7 +803,7 @@ pub const BOXANGLE: boxId_e = 1;
 pub const BOXARM: boxId_e = 0;
 pub const WAS_EVER_ARMED: C2RustUnnamed_6 = 2;
 pub type flight3DConfig_t = flight3DConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct flight3DConfig_s {
     pub deadband3d_low: uint16_t,
@@ -801,7 +831,7 @@ pub const HORIZON_MODE: flightModeFlags_e = 2;
 pub const ANGLE_MODE: flightModeFlags_e = 1;
 pub const MIXER_AIRPLANE: mixerMode = 14;
 pub type mixerConfig_t = mixerConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct mixerConfig_s {
     pub mixerMode: uint8_t,
@@ -809,15 +839,15 @@ pub struct mixerConfig_s {
     pub crashflip_motor_percent: uint8_t,
 }
 pub const MIXER_FLYING_WING: mixerMode = 8;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct C2RustUnnamed_5 {
     pub roll: int16_t,
     pub pitch: int16_t,
     pub yaw: int16_t,
 }
-#[derive(Copy, Clone)]
-#[repr(C)]
+#[derive ( Copy, Clone )]
+#[repr ( C )]
 pub union attitudeEulerAngles_t {
     pub raw: [int16_t; 3],
     pub values: C2RustUnnamed_5,
@@ -847,7 +877,7 @@ pub const TASK_SYSTEM: cfTaskId_e = 0;
 pub const THROTTLE: rc_alias = 3;
 pub const FIXED_WING: C2RustUnnamed_7 = 16;
 pub type pidConfig_t = pidConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct pidConfig_s {
     pub pid_process_denom: uint8_t,
@@ -856,7 +886,7 @@ pub struct pidConfig_s {
     pub runaway_takeoff_deactivate_throttle: uint8_t,
 }
 pub type pidAxisData_t = pidAxisData_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct pidAxisData_s {
     pub P: libc::c_float,
@@ -866,7 +896,7 @@ pub struct pidAxisData_s {
     pub Sum: libc::c_float,
 }
 pub type rcControlsConfig_t = rcControlsConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct rcControlsConfig_s {
     pub deadband: uint8_t,
@@ -882,7 +912,7 @@ pub const PID_MAG: C2RustUnnamed_8 = 4;
 pub const YAW: rc_alias = 2;
 pub type pidProfile_t = pidProfile_s;
 pub type servoConfig_t = servoConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct servoConfig_s {
     pub dev: servoDevConfig_t,
@@ -912,47 +942,6 @@ pub type servoDevConfig_t = servoDevConfig_s;
 // defines the neutral zone of throttle stick during altitude hold, default setting is +/-40
 // when disabled, turn off the althold when throttle stick is out of deadband defined with alt_hold_deadband; when enabled, altitude changes slowly proportional to stick movement
 // invert control direction of yaw
-// Additional yaw filter when yaw axis too noisy
-// Delta Filter in hz
-// Biquad dterm notch hz
-// Biquad dterm notch low cutoff
-// Filter selection for dterm
-// Experimental ITerm windup threshold, percent motor saturation
-// Disable/Enable pids on zero throttle. Normally even without airmode P and D would be active.
-// Max angle in degrees in level mode
-// inclination factor for Horizon mode
-// OFF or ON
-// Betaflight PID controller parameters
-// type of anti gravity method
-// max allowed throttle delta before iterm accelerated in ms
-// Iterm Accelerator Gain when itermThrottlethreshold is hit
-// yaw accel limiter for deg/sec/ms
-// accel limiter roll/pitch deg/sec/ms
-// dterm crash value
-// gyro crash value
-// setpoint must be below this value to detect crash, so flips and rolls are not interpreted as crashes
-// ms
-// ms
-// degrees
-// degree/second
-// Scale PIDsum to battery voltage
-// Feed forward weight transition
-// limits yaw errorRate, so crashes don't cause huge throttle increase
-// Extra PT1 Filter on D in hz
-// off, on, on and beeps when it is in crash recovery mode
-// how much should throttle be boosted during transient changes 0-100, 100 adds 10x hpf filtered throttle
-// Which cutoff frequency to use for throttle boost. higher cutoffs keep the boost on for shorter. Specified in hz.
-// rotates iterm to translate world errors to local coordinate system
-// takes only the larger of P and the D weight feed forward term if they have the same sign.
-// Specifies type of relax algorithm
-// This cutoff frequency specifies a low pass filter which predicts average response of the quad to setpoint
-// Enable iterm suppression during stick input
-// Acro trainer roll/pitch angle limit in degrees
-// The axis for which record debugging values are captured 0=roll, 1=pitch
-// The strength of the limiting. Raising may reduce overshoot but also lead to oscillation around the angle limit
-// The lookahead window in milliseconds used to reduce overshoot
-// How strongly should the absolute accumulated error be corrected for
-// Limit to the correction
 // Limit to the accumulated error
 // lowpass servo filter frequency selection; 1/1000ths of loop freq
 // send tail servo correction pulses even when unarmed
@@ -1003,7 +992,7 @@ pub type servoDevConfig_t = servoDevConfig_s;
 // The update rate of motor outputs (50-498Hz)
 // Pwm Protocol
 // Active-High vs Active-Low. Useful for brushed FCs converted for brushless operation
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct servoDevConfig_s {
     pub servoCenterPulse: uint16_t,
@@ -1191,21 +1180,19 @@ unsafe extern "C" fn servoConfig() -> *const servoConfig_t {
 // High throttle limit to accelerate deactivation (halves the deactivation delay)
 #[no_mangle]
 pub static mut magHold: int16_t = 0;
-static mut flipOverAfterCrashMode: bool = 0 as libc::c_int != 0;
+static mut flipOverAfterCrashMode: bool = 0i32 != 0;
 static mut disarmAt: uint32_t = 0;
 // Time of automatic disarm when "Don't spin the motors when armed" is enabled and auto_disarm_delay is nonzero
 #[no_mangle]
 pub static mut isRXDataNew: bool = false;
-static mut lastArmingDisabledReason: libc::c_int = 0 as libc::c_int;
+static mut lastArmingDisabledReason: libc::c_int = 0i32;
 static mut lastDisarmTimeUs: timeUs_t = 0;
 static mut tryingToArm: libc::c_int = ARMING_DELAYED_DISARMED as libc::c_int;
-static mut runawayTakeoffDeactivateUs: timeUs_t =
-    0 as libc::c_int as timeUs_t;
-static mut runawayTakeoffAccumulatedUs: timeUs_t =
-    0 as libc::c_int as timeUs_t;
-static mut runawayTakeoffCheckDisabled: bool = 0 as libc::c_int != 0;
-static mut runawayTakeoffTriggerUs: timeUs_t = 0 as libc::c_int as timeUs_t;
-static mut runawayTakeoffTemporarilyDisabled: bool = 0 as libc::c_int != 0;
+static mut runawayTakeoffDeactivateUs: timeUs_t = 0i32 as timeUs_t;
+static mut runawayTakeoffAccumulatedUs: timeUs_t = 0i32 as timeUs_t;
+static mut runawayTakeoffCheckDisabled: bool = 0i32 != 0;
+static mut runawayTakeoffTriggerUs: timeUs_t = 0i32 as timeUs_t;
+static mut runawayTakeoffTemporarilyDisabled: bool = 0i32 != 0;
 #[no_mangle]
 pub static mut throttleCorrectionConfig_System: throttleCorrectionConfig_t =
     throttleCorrectionConfig_t{throttle_correction_angle: 0,
@@ -1221,10 +1208,7 @@ pub static mut throttleCorrectionConfig_Registry: pgRegistry_t =
     unsafe {
         {
             let mut init =
-                pgRegistry_s{pgn:
-                                 (39 as libc::c_int |
-                                      (0 as libc::c_int) << 12 as libc::c_int)
-                                     as pgn_t,
+                pgRegistry_s{pgn: (39i32 | 0i32 << 12i32) as pgn_t,
                              size:
                                  (::core::mem::size_of::<throttleCorrectionConfig_t>()
                                       as libc::c_ulong |
@@ -1261,9 +1245,9 @@ pub static mut pgResetTemplate_throttleCorrectionConfig:
     {
         let mut init =
             throttleCorrectionConfig_s{throttle_correction_angle:
-                                           800 as libc::c_int as uint16_t,
+                                           800i32 as uint16_t,
                                        throttle_correction_value:
-                                           0 as libc::c_int as uint8_t,};
+                                           0i32 as uint8_t,};
         init
     };
 // could be 80.0 deg with atlhold or 45.0 for fpv
@@ -1286,7 +1270,7 @@ pub unsafe extern "C" fn applyAndSaveAccelerometerTrimsDelta(mut rollAndPitchTri
 unsafe extern "C" fn isCalibrating() -> bool {
     if sensors(SENSOR_BARO as libc::c_int as uint32_t) as libc::c_int != 0 &&
            !isBaroCalibrationComplete() {
-        return 1 as libc::c_int != 0
+        return 1i32 != 0
     }
     // Note: compass calibration is handled completely differently, outside of the main loop, see f.CALIBRATE_MAG
     return !accIsCalibrationComplete() &&
@@ -1295,7 +1279,7 @@ unsafe extern "C" fn isCalibrating() -> bool {
 }
 #[no_mangle]
 pub unsafe extern "C" fn resetArmingDisabled() {
-    lastArmingDisabledReason = 0 as libc::c_int;
+    lastArmingDisabledReason = 0i32;
 }
 #[no_mangle]
 pub unsafe extern "C" fn updateArmingStatus() {
@@ -1306,15 +1290,15 @@ pub unsafe extern "C" fn updateArmingStatus() {
                != 0 &&
                millis() >=
                    ((*systemConfig()).powerOnArmingGraceTime as libc::c_int *
-                        1000 as libc::c_int) as libc::c_uint {
+                        1000i32) as libc::c_uint {
             // If so, unset the grace time arming disable flag
             unsetArmingDisabled(ARMING_DISABLED_BOOT_GRACE_TIME);
         }
         // Clear the crash flip active status
-        flipOverAfterCrashMode = 0 as libc::c_int != 0;
+        flipOverAfterCrashMode = 0i32 != 0;
         // If switch is used for arming then check it is not defaulting to on when the RX link recovers from a fault
         if !isUsingSticksForArming() {
-            static mut hadRx: bool = 0 as libc::c_int != 0;
+            static mut hadRx: bool = 0i32 != 0;
             let haveRx: bool = rxIsReceivingSignal();
             let justGotRxBack: bool = !hadRx && haveRx as libc::c_int != 0;
             if justGotRxBack as libc::c_int != 0 &&
@@ -1339,7 +1323,7 @@ pub unsafe extern "C" fn updateArmingStatus() {
                !IS_RC_MODE_ACTIVE(BOXFLIPOVERAFTERCRASH) {
             setArmingDisabled(ARMING_DISABLED_ANGLE);
         } else { unsetArmingDisabled(ARMING_DISABLED_ANGLE); }
-        if averageSystemLoadPercent as libc::c_int > 100 as libc::c_int {
+        if averageSystemLoadPercent as libc::c_int > 100i32 {
             setArmingDisabled(ARMING_DISABLED_LOAD);
         } else { unsetArmingDisabled(ARMING_DISABLED_LOAD); }
         if isCalibrating() {
@@ -1402,7 +1386,7 @@ pub unsafe extern "C" fn disarm() {
             // Close the log upon disarm except when logging mode is ALWAYS ON
             blackboxFinish();
         }
-        flipOverAfterCrashMode = 0 as libc::c_int != 0;
+        flipOverAfterCrashMode = 0i32 != 0;
         // if ARMING_DISABLED_RUNAWAY_TAKEOFF is set then we want to play it's beep pattern instead
         if getArmingDisableFlags() as libc::c_uint &
                ARMING_DISABLED_RUNAWAY_TAKEOFF as libc::c_int as libc::c_uint
@@ -1415,7 +1399,7 @@ pub unsafe extern "C" fn disarm() {
 #[no_mangle]
 pub unsafe extern "C" fn tryArm() {
     if (*armingConfig()).gyro_cal_on_first_arm != 0 {
-        gyroStartCalibration(1 as libc::c_int != 0);
+        gyroStartCalibration(1i32 != 0);
     }
     updateArmingStatus();
     if !isArmingDisabled() {
@@ -1436,18 +1420,18 @@ pub unsafe extern "C" fn tryArm() {
         imuQuaternionHeadfreeOffsetSet();
         disarmAt =
             millis().wrapping_add(((*armingConfig()).auto_disarm_delay as
-                                       libc::c_int * 1000 as libc::c_int) as
+                                       libc::c_int * 1000i32) as
                                       libc::c_uint);
-        lastArmingDisabledReason = 0 as libc::c_int;
+        lastArmingDisabledReason = 0i32;
         //beep to indicate arming
         if feature(FEATURE_GPS as libc::c_int as uint32_t) as libc::c_int != 0
                && stateFlags as libc::c_int & GPS_FIX as libc::c_int != 0 &&
-               gpsSol.numSat as libc::c_int >= 5 as libc::c_int {
+               gpsSol.numSat as libc::c_int >= 5i32 {
             beeper(BEEPER_ARMING_GPS_FIX);
         } else { beeper(BEEPER_ARMING); }
-        runawayTakeoffDeactivateUs = 0 as libc::c_int as timeUs_t;
-        runawayTakeoffAccumulatedUs = 0 as libc::c_int as timeUs_t;
-        runawayTakeoffTriggerUs = 0 as libc::c_int as timeUs_t
+        runawayTakeoffDeactivateUs = 0i32 as timeUs_t;
+        runawayTakeoffAccumulatedUs = 0i32 as timeUs_t;
+        runawayTakeoffTriggerUs = 0i32 as timeUs_t
     } else {
         resetTryingToArm();
         if !isFirstArmingGyroCalibrationRunning() {
@@ -1462,23 +1446,21 @@ pub unsafe extern "C" fn tryArm() {
 }
 // Automatic ACC Offset Calibration
 #[no_mangle]
-pub static mut AccInflightCalibrationArmed: bool = 0 as libc::c_int != 0;
+pub static mut AccInflightCalibrationArmed: bool = 0i32 != 0;
 #[no_mangle]
-pub static mut AccInflightCalibrationMeasurementDone: bool =
-    0 as libc::c_int != 0;
+pub static mut AccInflightCalibrationMeasurementDone: bool = 0i32 != 0;
 #[no_mangle]
-pub static mut AccInflightCalibrationSavetoEEProm: bool =
-    0 as libc::c_int != 0;
+pub static mut AccInflightCalibrationSavetoEEProm: bool = 0i32 != 0;
 #[no_mangle]
-pub static mut AccInflightCalibrationActive: bool = 0 as libc::c_int != 0;
+pub static mut AccInflightCalibrationActive: bool = 0i32 != 0;
 #[no_mangle]
-pub static mut InflightcalibratingA: uint16_t = 0 as libc::c_int as uint16_t;
+pub static mut InflightcalibratingA: uint16_t = 0i32 as uint16_t;
 #[no_mangle]
 pub unsafe extern "C" fn handleInflightCalibrationStickPosition() {
     if AccInflightCalibrationMeasurementDone {
         // trigger saving into eeprom after landing
-        AccInflightCalibrationMeasurementDone = 0 as libc::c_int != 0;
-        AccInflightCalibrationSavetoEEProm = 1 as libc::c_int != 0
+        AccInflightCalibrationMeasurementDone = 0i32 != 0;
+        AccInflightCalibrationSavetoEEProm = 1i32 != 0
     } else {
         AccInflightCalibrationArmed = !AccInflightCalibrationArmed;
         if AccInflightCalibrationArmed {
@@ -1493,20 +1475,20 @@ unsafe extern "C" fn updateInflightCalibrationState() {
                (*rxConfig()).mincheck as libc::c_int &&
            !IS_RC_MODE_ACTIVE(BOXARM) {
         // Copter is airborne and you are turning it off via boxarm : start measurement
-        InflightcalibratingA = 50 as libc::c_int as uint16_t;
-        AccInflightCalibrationArmed = 0 as libc::c_int != 0
+        InflightcalibratingA = 50i32 as uint16_t;
+        AccInflightCalibrationArmed = 0i32 != 0
     }
     if IS_RC_MODE_ACTIVE(BOXCALIB) {
         // Use the Calib Option to activate : Calib = TRUE measurement started, Land and Calib = 0 measurement stored
         if !AccInflightCalibrationActive &&
                !AccInflightCalibrationMeasurementDone {
-            InflightcalibratingA = 50 as libc::c_int as uint16_t
+            InflightcalibratingA = 50i32 as uint16_t
         }
-        AccInflightCalibrationActive = 1 as libc::c_int != 0
+        AccInflightCalibrationActive = 1i32 != 0
     } else if AccInflightCalibrationMeasurementDone as libc::c_int != 0 &&
                   armingFlags as libc::c_int & ARMED as libc::c_int == 0 {
-        AccInflightCalibrationMeasurementDone = 0 as libc::c_int != 0;
-        AccInflightCalibrationSavetoEEProm = 1 as libc::c_int != 0
+        AccInflightCalibrationMeasurementDone = 0i32 != 0;
+        AccInflightCalibrationSavetoEEProm = 1i32 != 0
     };
 }
 #[no_mangle]
@@ -1514,36 +1496,34 @@ pub unsafe extern "C" fn updateMagHold() {
     if ({
             let mut _x: libc::c_float =
                 rcCommand[YAW as libc::c_int as usize];
-            (if _x > 0 as libc::c_int as libc::c_float { _x } else { -_x })
-        }) < 15 as libc::c_int as libc::c_float &&
+            (if _x > 0i32 as libc::c_float { _x } else { -_x })
+        }) < 15i32 as libc::c_float &&
            flightModeFlags as libc::c_int & MAG_MODE as libc::c_int != 0 {
         let mut dif: int16_t =
-            (attitude.values.yaw as libc::c_int / 10 as libc::c_int -
+            (attitude.values.yaw as libc::c_int / 10i32 -
                  magHold as libc::c_int) as int16_t;
-        if dif as libc::c_int <= -(180 as libc::c_int) {
-            dif = (dif as libc::c_int + 360 as libc::c_int) as int16_t
+        if dif as libc::c_int <= -180i32 {
+            dif = (dif as libc::c_int + 360i32) as int16_t
         }
-        if dif as libc::c_int >= 180 as libc::c_int {
-            dif = (dif as libc::c_int - 360 as libc::c_int) as int16_t
+        if dif as libc::c_int >= 180i32 {
+            dif = (dif as libc::c_int - 360i32) as int16_t
         }
         dif =
             (dif as libc::c_int *
                  -if (*rcControlsConfig()).yaw_control_reversed as libc::c_int
                          != 0 {
-                      -(1 as libc::c_int)
-                  } else { 1 as libc::c_int }) as int16_t;
+                      -1i32
+                  } else { 1i32 }) as int16_t;
         if stateFlags as libc::c_int & SMALL_ANGLE as libc::c_int != 0 {
             rcCommand[YAW as libc::c_int as usize] -=
                 (dif as libc::c_int *
                      (*currentPidProfile).pid[PID_MAG as libc::c_int as
                                                   usize].P as libc::c_int /
-                     30 as libc::c_int) as libc::c_float
+                     30i32) as libc::c_float
         }
         // 18 deg
     } else {
-        magHold =
-            (attitude.values.yaw as libc::c_int / 10 as libc::c_int) as
-                int16_t
+        magHold = (attitude.values.yaw as libc::c_int / 10i32) as int16_t
     };
 }
 // determine if the R/P/Y stick deflection exceeds the specified limit - integer math is good enough here.
@@ -1557,36 +1537,34 @@ pub unsafe extern "C" fn areSticksActive(mut stickPercentLimit: uint8_t)
                 (*rcControlsConfig()).yaw_deadband as libc::c_int
             } else { (*rcControlsConfig()).deadband as libc::c_int } as
                 uint8_t;
-        let mut stickPercent: uint8_t = 0 as libc::c_int as uint8_t;
-        if rcData[axis as usize] as libc::c_int >= 2000 as libc::c_int ||
-               rcData[axis as usize] as libc::c_int <= 1000 as libc::c_int {
-            stickPercent = 100 as libc::c_int as uint8_t
+        let mut stickPercent: uint8_t = 0i32 as uint8_t;
+        if rcData[axis as usize] as libc::c_int >= 2000i32 ||
+               rcData[axis as usize] as libc::c_int <= 1000i32 {
+            stickPercent = 100i32 as uint8_t
         } else if rcData[axis as usize] as libc::c_int >
                       (*rxConfig()).midrc as libc::c_int +
                           deadband as libc::c_int {
             stickPercent =
                 ((rcData[axis as usize] as libc::c_int -
                       (*rxConfig()).midrc as libc::c_int -
-                      deadband as libc::c_int) * 100 as libc::c_int /
-                     (2000 as libc::c_int - (*rxConfig()).midrc as libc::c_int
-                          - deadband as libc::c_int)) as uint8_t
+                      deadband as libc::c_int) * 100i32 /
+                     (2000i32 - (*rxConfig()).midrc as libc::c_int -
+                          deadband as libc::c_int)) as uint8_t
         } else if (rcData[axis as usize] as libc::c_int) <
                       (*rxConfig()).midrc as libc::c_int -
                           deadband as libc::c_int {
             stickPercent =
                 (((*rxConfig()).midrc as libc::c_int - deadband as libc::c_int
-                      - rcData[axis as usize] as libc::c_int) *
-                     100 as libc::c_int /
+                      - rcData[axis as usize] as libc::c_int) * 100i32 /
                      ((*rxConfig()).midrc as libc::c_int -
-                          deadband as libc::c_int - 1000 as libc::c_int)) as
-                    uint8_t
+                          deadband as libc::c_int - 1000i32)) as uint8_t
         }
         if stickPercent as libc::c_int >= stickPercentLimit as libc::c_int {
-            return 1 as libc::c_int != 0
+            return 1i32 != 0
         }
         axis += 1
     }
-    return 0 as libc::c_int != 0;
+    return 0i32 != 0;
 }
 // allow temporarily disabling runaway takeoff prevention if we are connected
 // to the configurator and the ARMING_DISABLED_MSP flag is cleared.
@@ -1598,15 +1576,15 @@ pub unsafe extern "C" fn runawayTakeoffTemporaryDisable(mut disableFlag:
 // calculate the throttle stick percent - integer math is good enough here.
 #[no_mangle]
 pub unsafe extern "C" fn calculateThrottlePercent() -> uint8_t {
-    let mut ret: uint8_t = 0 as libc::c_int as uint8_t;
+    let mut ret: uint8_t = 0i32 as uint8_t;
     if feature(FEATURE_3D as libc::c_int as uint32_t) as libc::c_int != 0 &&
            !IS_RC_MODE_ACTIVE(BOX3D) &&
            (*flight3DConfig()).switched_mode3d == 0 {
-        if rcData[THROTTLE as libc::c_int as usize] as libc::c_int >=
-               2000 as libc::c_int ||
+        if rcData[THROTTLE as libc::c_int as usize] as libc::c_int >= 2000i32
+               ||
                rcData[THROTTLE as libc::c_int as usize] as libc::c_int <=
-                   1000 as libc::c_int {
-            ret = 100 as libc::c_int as uint8_t
+                   1000i32 {
+            ret = 100i32 as uint8_t
         } else if rcData[THROTTLE as libc::c_int as usize] as libc::c_int >
                       (*rxConfig()).midrc as libc::c_int +
                           (*flight3DConfig()).deadband3d_throttle as
@@ -1615,9 +1593,8 @@ pub unsafe extern "C" fn calculateThrottlePercent() -> uint8_t {
                 ((rcData[THROTTLE as libc::c_int as usize] as libc::c_int -
                       (*rxConfig()).midrc as libc::c_int -
                       (*flight3DConfig()).deadband3d_throttle as libc::c_int)
-                     * 100 as libc::c_int /
-                     (2000 as libc::c_int - (*rxConfig()).midrc as libc::c_int
-                          -
+                     * 100i32 /
+                     (2000i32 - (*rxConfig()).midrc as libc::c_int -
                           (*flight3DConfig()).deadband3d_throttle as
                               libc::c_int)) as uint8_t
         } else if (rcData[THROTTLE as libc::c_int as usize] as libc::c_int) <
@@ -1628,19 +1605,17 @@ pub unsafe extern "C" fn calculateThrottlePercent() -> uint8_t {
                 (((*rxConfig()).midrc as libc::c_int -
                       (*flight3DConfig()).deadband3d_throttle as libc::c_int -
                       rcData[THROTTLE as libc::c_int as usize] as libc::c_int)
-                     * 100 as libc::c_int /
+                     * 100i32 /
                      ((*rxConfig()).midrc as libc::c_int -
                           (*flight3DConfig()).deadband3d_throttle as
-                              libc::c_int - 1000 as libc::c_int)) as uint8_t
+                              libc::c_int - 1000i32)) as uint8_t
         }
     } else {
         ret =
             constrain((rcData[THROTTLE as libc::c_int as usize] as libc::c_int
-                           - (*rxConfig()).mincheck as libc::c_int) *
-                          100 as libc::c_int /
-                          (2000 as libc::c_int -
-                               (*rxConfig()).mincheck as libc::c_int),
-                      0 as libc::c_int, 100 as libc::c_int) as uint8_t
+                           - (*rxConfig()).mincheck as libc::c_int) * 100i32 /
+                          (2000i32 - (*rxConfig()).mincheck as libc::c_int),
+                      0i32, 100i32) as uint8_t
     }
     return ret;
 }
@@ -1654,18 +1629,17 @@ pub unsafe extern "C" fn isAirmodeActivated() -> bool {
  */
 #[no_mangle]
 pub unsafe extern "C" fn processRx(mut currentTimeUs: timeUs_t) -> bool {
-    static mut armedBeeperOn: bool = 0 as libc::c_int != 0;
+    static mut armedBeeperOn: bool = 0i32 != 0;
     if !calculateRxChannelsAndUpdateFailsafe(currentTimeUs) {
-        return 0 as libc::c_int != 0
+        return 0i32 != 0
     }
     // in 3D mode, we need to be able to disarm by switch at any time
     if feature(FEATURE_3D as libc::c_int as uint32_t) {
         if !IS_RC_MODE_ACTIVE(BOXARM) { disarm(); }
     }
     updateRSSI(currentTimeUs);
-    if currentTimeUs >
-           (1000 as libc::c_int * 1000 as libc::c_int * 5 as libc::c_int) as
-               libc::c_uint && !failsafeIsMonitoring() {
+    if currentTimeUs > (1000i32 * 1000i32 * 5i32) as libc::c_uint &&
+           !failsafeIsMonitoring() {
         failsafeStartMonitoring();
     }
     failsafeUpdateState();
@@ -1675,10 +1649,10 @@ pub unsafe extern "C" fn processRx(mut currentTimeUs: timeUs_t) -> bool {
            armingFlags as libc::c_int & ARMED as libc::c_int != 0 {
         if throttlePercent as libc::c_int >=
                (*rxConfig()).airModeActivateThreshold as libc::c_int {
-            airmodeIsActivated = 1 as libc::c_int != 0
+            airmodeIsActivated = 1i32 != 0
             // Prevent Iterm from being reset
         }
-    } else { airmodeIsActivated = 0 as libc::c_int != 0 }
+    } else { airmodeIsActivated = 0i32 != 0 }
     /* In airmode Iterm should be prevented to grow when Low thottle and Roll + Pitch Centered.
      This is needed to prevent Iterm winding on the ground, but keep full stabilisation on 0 throttle while in air */
     if throttleStatus as libc::c_uint ==
@@ -1704,7 +1678,7 @@ pub unsafe extern "C" fn processRx(mut currentTimeUs: timeUs_t) -> bool {
         //   - throttle over runaway_takeoff_deactivate_throttle_percent
         //   - sticks are active and have deflection greater than runaway_takeoff_deactivate_stick_percent
         //   - pidSum on all axis is less then runaway_takeoff_deactivate_pidlimit
-        let mut inStableFlight: bool = 0 as libc::c_int != 0;
+        let mut inStableFlight: bool = 0i32 != 0;
         if !feature(FEATURE_MOTOR_STOP as libc::c_int as uint32_t) ||
                isAirmodeActive() as libc::c_int != 0 ||
                throttleStatus as libc::c_uint !=
@@ -1713,51 +1687,46 @@ pub unsafe extern "C" fn processRx(mut currentTimeUs: timeUs_t) -> bool {
             let lowThrottleLimit: uint8_t =
                 (*pidConfig()).runaway_takeoff_deactivate_throttle;
             let midThrottleLimit: uint8_t =
-                constrain(lowThrottleLimit as libc::c_int * 2 as libc::c_int,
-                          lowThrottleLimit as libc::c_int * 2 as libc::c_int,
-                          75 as libc::c_int) as uint8_t;
+                constrain(lowThrottleLimit as libc::c_int * 2i32,
+                          lowThrottleLimit as libc::c_int * 2i32, 75i32) as
+                    uint8_t;
             if (throttlePercent as libc::c_int >=
                     lowThrottleLimit as libc::c_int &&
-                    areSticksActive(15 as libc::c_int as uint8_t) as
-                        libc::c_int != 0 ||
+                    areSticksActive(15i32 as uint8_t) as libc::c_int != 0 ||
                     throttlePercent as libc::c_int >=
                         midThrottleLimit as libc::c_int) &&
                    fabsf(pidData[FD_PITCH as libc::c_int as usize].Sum) <
-                       100 as libc::c_int as libc::c_float &&
+                       100i32 as libc::c_float &&
                    fabsf(pidData[FD_ROLL as libc::c_int as usize].Sum) <
-                       100 as libc::c_int as libc::c_float &&
+                       100i32 as libc::c_float &&
                    fabsf(pidData[FD_YAW as libc::c_int as usize].Sum) <
-                       100 as libc::c_int as libc::c_float {
-                inStableFlight = 1 as libc::c_int != 0;
-                if runawayTakeoffDeactivateUs ==
-                       0 as libc::c_int as libc::c_uint {
+                       100i32 as libc::c_float {
+                inStableFlight = 1i32 != 0;
+                if runawayTakeoffDeactivateUs == 0i32 as libc::c_uint {
                     runawayTakeoffDeactivateUs = currentTimeUs
                 }
             }
         }
         // If we're in flight, then accumulate the time and deactivate once it exceeds runaway_takeoff_deactivate_delay milliseconds
         if inStableFlight {
-            if runawayTakeoffDeactivateUs == 0 as libc::c_int as libc::c_uint
-               {
+            if runawayTakeoffDeactivateUs == 0i32 as libc::c_uint {
                 runawayTakeoffDeactivateUs = currentTimeUs
             }
             let mut deactivateDelay: uint16_t =
                 (*pidConfig()).runaway_takeoff_deactivate_delay;
             // at high throttle levels reduce deactivation delay by 50%
-            if throttlePercent as libc::c_int >= 75 as libc::c_int {
+            if throttlePercent as libc::c_int >= 75i32 {
                 deactivateDelay =
-                    (deactivateDelay as libc::c_int / 2 as libc::c_int) as
-                        uint16_t
+                    (deactivateDelay as libc::c_int / 2i32) as uint16_t
             }
             if (cmpTimeUs(currentTimeUs, runawayTakeoffDeactivateUs) as
                     libc::c_uint).wrapping_add(runawayTakeoffAccumulatedUs) >
-                   (deactivateDelay as libc::c_int * 1000 as libc::c_int) as
-                       libc::c_uint {
-                runawayTakeoffCheckDisabled = 1 as libc::c_int != 0
+                   (deactivateDelay as libc::c_int * 1000i32) as libc::c_uint
+               {
+                runawayTakeoffCheckDisabled = 1i32 != 0
             }
         } else {
-            if runawayTakeoffDeactivateUs != 0 as libc::c_int as libc::c_uint
-               {
+            if runawayTakeoffDeactivateUs != 0i32 as libc::c_uint {
                 runawayTakeoffAccumulatedUs =
                     (runawayTakeoffAccumulatedUs as
                          libc::c_uint).wrapping_add(cmpTimeUs(currentTimeUs,
@@ -1765,34 +1734,30 @@ pub unsafe extern "C" fn processRx(mut currentTimeUs: timeUs_t) -> bool {
                                                         as libc::c_uint) as
                         timeUs_t as timeUs_t
             }
-            runawayTakeoffDeactivateUs = 0 as libc::c_int as timeUs_t
+            runawayTakeoffDeactivateUs = 0i32 as timeUs_t
         }
-        if runawayTakeoffDeactivateUs == 0 as libc::c_int as libc::c_uint {
+        if runawayTakeoffDeactivateUs == 0i32 as libc::c_uint {
             if debugMode as libc::c_int ==
                    DEBUG_RUNAWAY_TAKEOFF as libc::c_int {
-                debug[2 as libc::c_int as usize] = 0 as libc::c_int as int16_t
+                debug[2] = 0i32 as int16_t
             }
             if debugMode as libc::c_int ==
                    DEBUG_RUNAWAY_TAKEOFF as libc::c_int {
-                debug[3 as libc::c_int as usize] =
-                    runawayTakeoffAccumulatedUs.wrapping_div(1000 as
-                                                                 libc::c_int
-                                                                 as
+                debug[3] =
+                    runawayTakeoffAccumulatedUs.wrapping_div(1000i32 as
                                                                  libc::c_uint)
                         as int16_t
             }
         } else {
             if debugMode as libc::c_int ==
                    DEBUG_RUNAWAY_TAKEOFF as libc::c_int {
-                debug[2 as libc::c_int as usize] = 1 as libc::c_int as int16_t
+                debug[2] = 1i32 as int16_t
             }
             if debugMode as libc::c_int ==
                    DEBUG_RUNAWAY_TAKEOFF as libc::c_int {
-                debug[3 as libc::c_int as usize] =
+                debug[3] =
                     (cmpTimeUs(currentTimeUs, runawayTakeoffDeactivateUs) as
-                         libc::c_uint).wrapping_add(runawayTakeoffAccumulatedUs).wrapping_div(1000
-                                                                                                  as
-                                                                                                  libc::c_int
+                         libc::c_uint).wrapping_add(runawayTakeoffAccumulatedUs).wrapping_div(1000i32
                                                                                                   as
                                                                                                   libc::c_uint)
                         as int16_t
@@ -1800,10 +1765,10 @@ pub unsafe extern "C" fn processRx(mut currentTimeUs: timeUs_t) -> bool {
         }
     } else {
         if debugMode as libc::c_int == DEBUG_RUNAWAY_TAKEOFF as libc::c_int {
-            debug[2 as libc::c_int as usize] = 0 as libc::c_int as int16_t
+            debug[2] = 0i32 as int16_t
         }
         if debugMode as libc::c_int == DEBUG_RUNAWAY_TAKEOFF as libc::c_int {
-            debug[3 as libc::c_int as usize] = 0 as libc::c_int as int16_t
+            debug[3] = 0i32 as int16_t
         }
     }
     // When armed and motors aren't spinning, do beeps and then disarm
@@ -1818,42 +1783,37 @@ pub unsafe extern "C" fn processRx(mut currentTimeUs: timeUs_t) -> bool {
         if isUsingSticksForArming() {
             if throttleStatus as libc::c_uint ==
                    THROTTLE_LOW as libc::c_int as libc::c_uint {
-                if (*armingConfig()).auto_disarm_delay as libc::c_int !=
-                       0 as libc::c_int &&
-                       (disarmAt.wrapping_sub(millis()) as int32_t) <
-                           0 as libc::c_int {
+                if (*armingConfig()).auto_disarm_delay as libc::c_int != 0i32
+                       && (disarmAt.wrapping_sub(millis()) as int32_t) < 0i32
+                   {
                     // auto-disarm configured and delay is over
                     disarm();
-                    armedBeeperOn = 0 as libc::c_int != 0
+                    armedBeeperOn = 0i32 != 0
                 } else {
                     // still armed; do warning beeps while armed
                     beeper(BEEPER_ARMED);
-                    armedBeeperOn = 1 as libc::c_int != 0
+                    armedBeeperOn = 1i32 != 0
                 }
             } else {
                 // throttle is not low
-                if (*armingConfig()).auto_disarm_delay as libc::c_int !=
-                       0 as libc::c_int {
+                if (*armingConfig()).auto_disarm_delay as libc::c_int != 0i32
+                   {
                     // extend disarm time
                     disarmAt =
                         millis().wrapping_add(((*armingConfig()).auto_disarm_delay
-                                                   as libc::c_int *
-                                                   1000 as libc::c_int) as
-                                                  libc::c_uint)
+                                                   as libc::c_int * 1000i32)
+                                                  as libc::c_uint)
                 }
                 if armedBeeperOn {
                     beeperSilence();
-                    armedBeeperOn = 0 as libc::c_int != 0
+                    armedBeeperOn = 0i32 != 0
                 }
             }
         } else if throttleStatus as libc::c_uint ==
                       THROTTLE_LOW as libc::c_int as libc::c_uint {
             beeper(BEEPER_ARMED);
-            armedBeeperOn = 1 as libc::c_int != 0
-        } else if armedBeeperOn {
-            beeperSilence();
-            armedBeeperOn = 0 as libc::c_int != 0
-        }
+            armedBeeperOn = 1i32 != 0
+        } else if armedBeeperOn { beeperSilence(); armedBeeperOn = 0i32 != 0 }
     }
     processRcStickPositions();
     if feature(FEATURE_INFLIGHT_ACC_CAL as libc::c_int as uint32_t) {
@@ -1864,14 +1824,14 @@ pub unsafe extern "C" fn processRx(mut currentTimeUs: timeUs_t) -> bool {
         updateAdjustmentStates();
         processRcAdjustments(currentControlRateProfile);
     }
-    let mut canUseHorizonMode: bool = 1 as libc::c_int != 0;
+    let mut canUseHorizonMode: bool = 1i32 != 0;
     if (IS_RC_MODE_ACTIVE(BOXANGLE) as libc::c_int != 0 ||
             failsafeIsActive() as libc::c_int != 0) &&
            sensors(SENSOR_ACC as libc::c_int as uint32_t) as libc::c_int != 0
        {
         // arming is via AUX switch; beep while throttle low
         // bumpless transfer to Level mode
-        canUseHorizonMode = 0 as libc::c_int != 0;
+        canUseHorizonMode = 0i32 != 0;
         if flightModeFlags as libc::c_int & ANGLE_MODE as libc::c_int == 0 {
             enableFlightMode(ANGLE_MODE);
         }
@@ -1889,13 +1849,9 @@ pub unsafe extern "C" fn processRx(mut currentTimeUs: timeUs_t) -> bool {
     if flightModeFlags as libc::c_int & ANGLE_MODE as libc::c_int != 0 ||
            flightModeFlags as libc::c_int & HORIZON_MODE as libc::c_int != 0 {
         // increase frequency of attitude task to reduce drift when in angle or horizon mode
-        rescheduleTask(TASK_ATTITUDE,
-                       (1000000 as libc::c_int / 500 as libc::c_int) as
-                           uint32_t);
+        rescheduleTask(TASK_ATTITUDE, (1000000i32 / 500i32) as uint32_t);
     } else {
-        rescheduleTask(TASK_ATTITUDE,
-                       (1000000 as libc::c_int / 100 as libc::c_int) as
-                           uint32_t);
+        rescheduleTask(TASK_ATTITUDE, (1000000i32 / 100i32) as uint32_t);
     }
     if !IS_RC_MODE_ACTIVE(BOXPREARM) &&
            armingFlags as libc::c_int & WAS_ARMED_WITH_PREARM as libc::c_int
@@ -1911,8 +1867,7 @@ pub unsafe extern "C" fn processRx(mut currentTimeUs: timeUs_t) -> bool {
             if flightModeFlags as libc::c_int & MAG_MODE as libc::c_int == 0 {
                 enableFlightMode(MAG_MODE);
                 magHold =
-                    (attitude.values.yaw as libc::c_int / 10 as libc::c_int)
-                        as int16_t
+                    (attitude.values.yaw as libc::c_int / 10i32) as int16_t
             }
         } else { disableFlightMode(MAG_MODE); }
         if IS_RC_MODE_ACTIVE(BOXHEADFREE) {
@@ -1934,7 +1889,7 @@ pub unsafe extern "C" fn processRx(mut currentTimeUs: timeUs_t) -> bool {
                MIXER_AIRPLANE as libc::c_int {
         disableFlightMode(HEADFREE_MODE);
     }
-    static mut sharedPortTelemetryEnabled: bool = 0 as libc::c_int != 0;
+    static mut sharedPortTelemetryEnabled: bool = 0i32 != 0;
     if feature(FEATURE_TELEMETRY as libc::c_int as uint32_t) {
         let mut enableSharedPortTelemetry: bool =
             !isModeActivationConditionPresent(BOXTELEMETRY) &&
@@ -1946,13 +1901,13 @@ pub unsafe extern "C" fn processRx(mut currentTimeUs: timeUs_t) -> bool {
                !sharedPortTelemetryEnabled {
             mspSerialReleaseSharedTelemetryPorts();
             telemetryCheckState();
-            sharedPortTelemetryEnabled = 1 as libc::c_int != 0
+            sharedPortTelemetryEnabled = 1i32 != 0
         } else if !enableSharedPortTelemetry &&
                       sharedPortTelemetryEnabled as libc::c_int != 0 {
             // the telemetry state must be checked immediately so that shared serial ports are released.
             telemetryCheckState();
             mspSerialAllocatePorts();
-            sharedPortTelemetryEnabled = 0 as libc::c_int != 0
+            sharedPortTelemetryEnabled = 0i32 != 0
         }
     }
     pidSetAcroTrainerState(IS_RC_MODE_ACTIVE(BOXACROTRAINER) as libc::c_int !=
@@ -1968,10 +1923,10 @@ pub unsafe extern "C" fn processRx(mut currentTimeUs: timeUs_t) -> bool {
                                0 ||
                                feature(FEATURE_ANTI_GRAVITY as libc::c_int as
                                            uint32_t) as libc::c_int != 0);
-    return 1 as libc::c_int != 0;
+    return 1i32 != 0;
 }
 unsafe extern "C" fn subTaskPidController(mut currentTimeUs: timeUs_t) {
-    let mut startTime: uint32_t = 0 as libc::c_int as uint32_t;
+    let mut startTime: uint32_t = 0i32 as uint32_t;
     if debugMode as libc::c_int == DEBUG_PIDLOOP as libc::c_int {
         startTime = micros()
     }
@@ -1983,8 +1938,7 @@ unsafe extern "C" fn subTaskPidController(mut currentTimeUs: timeUs_t) {
                                   *const accelerometerConfig_t)()).accelerometerTrims,
                   currentTimeUs);
     if debugMode as libc::c_int == DEBUG_PIDLOOP as libc::c_int {
-        debug[1 as libc::c_int as usize] =
-            micros().wrapping_sub(startTime) as int16_t
+        debug[1] = micros().wrapping_sub(startTime) as int16_t
     }
     // Check to see if runaway takeoff detection is active (anti-taz), the pidSum is over the threshold,
     // and gyro rate for any axis is above the limit for at least the activate delay period.
@@ -1999,63 +1953,61 @@ unsafe extern "C" fn subTaskPidController(mut currentTimeUs: timeUs_t) {
                 calculateThrottleStatus() as libc::c_uint !=
                     THROTTLE_LOW as libc::c_int as libc::c_uint) {
         if (fabsf(pidData[FD_PITCH as libc::c_int as usize].Sum) >=
-                600 as libc::c_int as libc::c_float ||
+                600i32 as libc::c_float ||
                 fabsf(pidData[FD_ROLL as libc::c_int as usize].Sum) >=
-                    600 as libc::c_int as libc::c_float ||
+                    600i32 as libc::c_float ||
                 fabsf(pidData[FD_YAW as libc::c_int as usize].Sum) >=
-                    600 as libc::c_int as libc::c_float) &&
+                    600i32 as libc::c_float) &&
                (({
                      let mut _x: uint16_t =
                          gyroAbsRateDps(FD_PITCH as libc::c_int);
-                     (if _x as libc::c_int > 0 as libc::c_int {
+                     (if _x as libc::c_int > 0i32 {
                           _x as libc::c_int
                       } else { -(_x as libc::c_int) })
-                 }) > 15 as libc::c_int ||
+                 }) > 15i32 ||
                     ({
                          let mut _x: uint16_t =
                              gyroAbsRateDps(FD_ROLL as libc::c_int);
-                         (if _x as libc::c_int > 0 as libc::c_int {
+                         (if _x as libc::c_int > 0i32 {
                               _x as libc::c_int
                           } else { -(_x as libc::c_int) })
-                     }) > 15 as libc::c_int ||
+                     }) > 15i32 ||
                     ({
                          let mut _x: uint16_t =
                              gyroAbsRateDps(FD_YAW as libc::c_int);
-                         (if _x as libc::c_int > 0 as libc::c_int {
+                         (if _x as libc::c_int > 0i32 {
                               _x as libc::c_int
                           } else { -(_x as libc::c_int) })
-                     }) > 50 as libc::c_int) {
-            if runawayTakeoffTriggerUs == 0 as libc::c_int as libc::c_uint {
+                     }) > 50i32) {
+            if runawayTakeoffTriggerUs == 0i32 as libc::c_uint {
                 runawayTakeoffTriggerUs =
-                    currentTimeUs.wrapping_add(75000 as libc::c_int as
-                                                   libc::c_uint)
+                    currentTimeUs.wrapping_add(75000i32 as libc::c_uint)
             } else if currentTimeUs > runawayTakeoffTriggerUs {
                 setArmingDisabled(ARMING_DISABLED_RUNAWAY_TAKEOFF);
                 disarm();
             }
-        } else { runawayTakeoffTriggerUs = 0 as libc::c_int as timeUs_t }
+        } else { runawayTakeoffTriggerUs = 0i32 as timeUs_t }
         if debugMode as libc::c_int == DEBUG_RUNAWAY_TAKEOFF as libc::c_int {
-            debug[0 as libc::c_int as usize] = 1 as libc::c_int as int16_t
+            debug[0] = 1i32 as int16_t
         }
         if debugMode as libc::c_int == DEBUG_RUNAWAY_TAKEOFF as libc::c_int {
-            debug[1 as libc::c_int as usize] =
-                if runawayTakeoffTriggerUs == 0 as libc::c_int as libc::c_uint
-                   {
-                    0 as libc::c_int
-                } else { 1 as libc::c_int } as int16_t
+            debug[1] =
+                if runawayTakeoffTriggerUs == 0i32 as libc::c_uint {
+                    0i32
+                } else { 1i32 } as int16_t
         }
     } else {
-        runawayTakeoffTriggerUs = 0 as libc::c_int as timeUs_t;
+        runawayTakeoffTriggerUs = 0i32 as timeUs_t;
         if debugMode as libc::c_int == DEBUG_RUNAWAY_TAKEOFF as libc::c_int {
-            debug[0 as libc::c_int as usize] = 0 as libc::c_int as int16_t
+            debug[0] = 0i32 as int16_t
         }
         if debugMode as libc::c_int == DEBUG_RUNAWAY_TAKEOFF as libc::c_int {
-            debug[1 as libc::c_int as usize] = 0 as libc::c_int as int16_t
+            debug[1] = 0i32 as int16_t
         }
     };
 }
 unsafe extern "C" fn subTaskPidSubprocesses(mut currentTimeUs: timeUs_t) {
-    let mut startTime: uint32_t = 0 as libc::c_int as uint32_t;
+    let mut startTime: uint32_t = 0i32 as uint32_t;
     if debugMode as libc::c_int == DEBUG_PIDLOOP as libc::c_int {
         startTime = micros()
     }
@@ -2064,8 +2016,7 @@ unsafe extern "C" fn subTaskPidSubprocesses(mut currentTimeUs: timeUs_t) {
         blackboxUpdate(currentTimeUs);
     }
     if debugMode as libc::c_int == DEBUG_PIDLOOP as libc::c_int {
-        debug[3 as libc::c_int as usize] =
-            micros().wrapping_sub(startTime) as int16_t
+        debug[3] = micros().wrapping_sub(startTime) as int16_t
     };
 }
 #[no_mangle]
@@ -2075,14 +2026,14 @@ pub unsafe extern "C" fn subTaskTelemetryPollSensors(mut currentTimeUs:
     gyroReadTemperature();
 }
 unsafe extern "C" fn subTaskMotorUpdate(mut currentTimeUs: timeUs_t) {
-    let mut startTime: uint32_t = 0 as libc::c_int as uint32_t;
+    let mut startTime: uint32_t = 0i32 as uint32_t;
     if debugMode as libc::c_int == DEBUG_CYCLETIME as libc::c_int {
         startTime = micros();
         static mut previousMotorUpdateTime: uint32_t = 0;
         let currentDeltaTime: uint32_t =
             startTime.wrapping_sub(previousMotorUpdateTime);
-        debug[2 as libc::c_int as usize] = currentDeltaTime as int16_t;
-        debug[3 as libc::c_int as usize] =
+        debug[2] = currentDeltaTime as int16_t;
+        debug[3] =
             currentDeltaTime.wrapping_sub(targetPidLooptime) as int16_t;
         previousMotorUpdateTime = startTime
     } else if debugMode as libc::c_int == DEBUG_PIDLOOP as libc::c_int {
@@ -2093,8 +2044,7 @@ unsafe extern "C" fn subTaskMotorUpdate(mut currentTimeUs: timeUs_t) {
     if isMixerUsingServos() { writeServos(); }
     writeMotors();
     if debugMode as libc::c_int == DEBUG_PIDLOOP as libc::c_int {
-        debug[2 as libc::c_int as usize] =
-            micros().wrapping_sub(startTime) as int16_t
+        debug[2] = micros().wrapping_sub(startTime) as int16_t
     };
 }
 unsafe extern "C" fn subTaskRcCommand(mut currentTimeUs: timeUs_t) {
@@ -2121,7 +2071,7 @@ unsafe extern "C" fn subTaskRcCommand(mut currentTimeUs: timeUs_t) {
 // Function for loop trigger
 #[no_mangle]
 pub unsafe extern "C" fn taskMainPidLoop(mut currentTimeUs: timeUs_t) {
-    static mut pidUpdateCounter: uint32_t = 0 as libc::c_int as uint32_t;
+    static mut pidUpdateCounter: uint32_t = 0i32 as uint32_t;
     // DEBUG_PIDLOOP, timings for:
     // 0 - gyroUpdate()
     // 1 - subTaskPidController()
@@ -2129,22 +2079,20 @@ pub unsafe extern "C" fn taskMainPidLoop(mut currentTimeUs: timeUs_t) {
     // 3 - subTaskPidSubprocesses()
     gyroUpdate(currentTimeUs);
     if debugMode as libc::c_int == DEBUG_PIDLOOP as libc::c_int {
-        debug[0 as libc::c_int as usize] =
-            micros().wrapping_sub(currentTimeUs) as int16_t
+        debug[0] = micros().wrapping_sub(currentTimeUs) as int16_t
     }
     let fresh2 = pidUpdateCounter;
     pidUpdateCounter = pidUpdateCounter.wrapping_add(1);
     if fresh2.wrapping_rem((*pidConfig()).pid_process_denom as libc::c_uint)
-           == 0 as libc::c_int as libc::c_uint {
+           == 0i32 as libc::c_uint {
         subTaskRcCommand(currentTimeUs);
         subTaskPidController(currentTimeUs);
         subTaskMotorUpdate(currentTimeUs);
         subTaskPidSubprocesses(currentTimeUs);
     }
     if debugMode as libc::c_int == DEBUG_CYCLETIME as libc::c_int {
-        debug[0 as libc::c_int as usize] =
-            getTaskDeltaTime(TASK_SELF) as int16_t;
-        debug[1 as libc::c_int as usize] = averageSystemLoadPercent as int16_t
+        debug[0] = getTaskDeltaTime(TASK_SELF) as int16_t;
+        debug[1] = averageSystemLoadPercent as int16_t
     };
 }
 #[no_mangle]

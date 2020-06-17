@@ -1,4 +1,5 @@
-use ::libc;
+use core;
+use libc;
 extern "C" {
     #[no_mangle]
     fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong)
@@ -15,7 +16,7 @@ pub type __uint32_t = libc::c_uint;
 pub type uint8_t = __uint8_t;
 pub type uint16_t = __uint16_t;
 pub type uint32_t = __uint32_t;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct sbuf_s {
     pub ptr: *mut uint8_t,
@@ -79,29 +80,29 @@ pub unsafe extern "C" fn sbufWriteU8(mut dst: *mut sbuf_t, mut val: uint8_t) {
 #[no_mangle]
 pub unsafe extern "C" fn sbufWriteU16(mut dst: *mut sbuf_t,
                                       mut val: uint16_t) {
-    sbufWriteU8(dst, (val as libc::c_int >> 0 as libc::c_int) as uint8_t);
-    sbufWriteU8(dst, (val as libc::c_int >> 8 as libc::c_int) as uint8_t);
+    sbufWriteU8(dst, (val as libc::c_int >> 0i32) as uint8_t);
+    sbufWriteU8(dst, (val as libc::c_int >> 8i32) as uint8_t);
 }
 #[no_mangle]
 pub unsafe extern "C" fn sbufWriteU32(mut dst: *mut sbuf_t,
                                       mut val: uint32_t) {
-    sbufWriteU8(dst, (val >> 0 as libc::c_int) as uint8_t);
-    sbufWriteU8(dst, (val >> 8 as libc::c_int) as uint8_t);
-    sbufWriteU8(dst, (val >> 16 as libc::c_int) as uint8_t);
-    sbufWriteU8(dst, (val >> 24 as libc::c_int) as uint8_t);
+    sbufWriteU8(dst, (val >> 0i32) as uint8_t);
+    sbufWriteU8(dst, (val >> 8i32) as uint8_t);
+    sbufWriteU8(dst, (val >> 16i32) as uint8_t);
+    sbufWriteU8(dst, (val >> 24i32) as uint8_t);
 }
 #[no_mangle]
 pub unsafe extern "C" fn sbufWriteU16BigEndian(mut dst: *mut sbuf_t,
                                                mut val: uint16_t) {
-    sbufWriteU8(dst, (val as libc::c_int >> 8 as libc::c_int) as uint8_t);
+    sbufWriteU8(dst, (val as libc::c_int >> 8i32) as uint8_t);
     sbufWriteU8(dst, val as uint8_t);
 }
 #[no_mangle]
 pub unsafe extern "C" fn sbufWriteU32BigEndian(mut dst: *mut sbuf_t,
                                                mut val: uint32_t) {
-    sbufWriteU8(dst, (val >> 24 as libc::c_int) as uint8_t);
-    sbufWriteU8(dst, (val >> 16 as libc::c_int) as uint8_t);
-    sbufWriteU8(dst, (val >> 8 as libc::c_int) as uint8_t);
+    sbufWriteU8(dst, (val >> 24i32) as uint8_t);
+    sbufWriteU8(dst, (val >> 16i32) as uint8_t);
+    sbufWriteU8(dst, (val >> 8i32) as uint8_t);
     sbufWriteU8(dst, val as uint8_t);
 }
 #[no_mangle]
@@ -130,8 +131,7 @@ pub unsafe extern "C" fn sbufWriteStringWithZeroTerminator(mut dst:
                                                            mut string:
                                                                *const libc::c_char) {
     sbufWriteData(dst, string as *const libc::c_void,
-                  strlen(string).wrapping_add(1 as libc::c_int as
-                                                  libc::c_ulong) as
+                  strlen(string).wrapping_add(1i32 as libc::c_ulong) as
                       libc::c_int);
 }
 #[no_mangle]
@@ -145,8 +145,7 @@ pub unsafe extern "C" fn sbufReadU16(mut src: *mut sbuf_t) -> uint16_t {
     let mut ret: uint16_t = 0;
     ret = sbufReadU8(src) as uint16_t;
     ret =
-        (ret as libc::c_int |
-             (sbufReadU8(src) as libc::c_int) << 8 as libc::c_int) as
+        (ret as libc::c_int | (sbufReadU8(src) as libc::c_int) << 8i32) as
             uint16_t;
     return ret;
 }
@@ -154,15 +153,9 @@ pub unsafe extern "C" fn sbufReadU16(mut src: *mut sbuf_t) -> uint16_t {
 pub unsafe extern "C" fn sbufReadU32(mut src: *mut sbuf_t) -> uint32_t {
     let mut ret: uint32_t = 0;
     ret = sbufReadU8(src) as uint32_t;
-    ret |=
-        ((sbufReadU8(src) as libc::c_int) << 8 as libc::c_int) as
-            libc::c_uint;
-    ret |=
-        ((sbufReadU8(src) as libc::c_int) << 16 as libc::c_int) as
-            libc::c_uint;
-    ret |=
-        ((sbufReadU8(src) as libc::c_int) << 24 as libc::c_int) as
-            libc::c_uint;
+    ret |= ((sbufReadU8(src) as libc::c_int) << 8i32) as libc::c_uint;
+    ret |= ((sbufReadU8(src) as libc::c_int) << 16i32) as libc::c_uint;
+    ret |= ((sbufReadU8(src) as libc::c_int) << 24i32) as libc::c_uint;
     return ret;
 }
 #[no_mangle]

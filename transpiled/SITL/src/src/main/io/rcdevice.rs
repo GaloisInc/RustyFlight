@@ -1,4 +1,5 @@
-use ::libc;
+use core;
+use libc;
 extern "C" {
     #[no_mangle]
     fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong)
@@ -49,12 +50,6 @@ pub type __uint32_t = libc::c_uint;
 pub type uint8_t = __uint8_t;
 pub type uint16_t = __uint16_t;
 pub type uint32_t = __uint32_t;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct sbuf_s {
-    pub ptr: *mut uint8_t,
-    pub end: *mut uint8_t,
-}
 /*
  * This file is part of Cleanflight and Betaflight.
  *
@@ -74,7 +69,12 @@ pub struct sbuf_s {
  *
  * If not, see <http://www.gnu.org/licenses/>.
  */
-// simple buffer-based serializer/deserializer without implicit size check
+#[derive ( Copy, Clone )]
+#[repr(C)]
+pub struct sbuf_s {
+    pub ptr: *mut uint8_t,
+    pub end: *mut uint8_t,
+}
 pub type sbuf_t = sbuf_s;
 pub type timeMs_t = uint32_t;
 pub type timeUs_t = uint32_t;
@@ -94,12 +94,11 @@ pub const SERIAL_STOPBITS_2: portOptions_e = 2;
 pub const SERIAL_STOPBITS_1: portOptions_e = 0;
 pub const SERIAL_INVERTED: portOptions_e = 1;
 pub const SERIAL_NOT_INVERTED: portOptions_e = 0;
-// data pointer must be first (sbuf_t* is equivalent to uint8_t **)
 // Define known line control states which may be passed up by underlying serial driver callback
 pub type serialReceiveCallbackPtr
     =
     Option<unsafe extern "C" fn(_: uint16_t, _: *mut libc::c_void) -> ()>;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct serialPort_s {
     pub vTable: *const serialPortVTable,
@@ -118,7 +117,7 @@ pub struct serialPort_s {
     pub rxCallbackData: *mut libc::c_void,
     pub identifier: uint8_t,
 }
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct serialPortVTable {
     pub serialWrite: Option<unsafe extern "C" fn(_: *mut serialPort_t,
@@ -193,7 +192,7 @@ pub const SERIAL_PORT_USART3: serialPortIdentifier_e = 2;
 pub const SERIAL_PORT_USART2: serialPortIdentifier_e = 1;
 pub const SERIAL_PORT_USART1: serialPortIdentifier_e = 0;
 pub const SERIAL_PORT_NONE: serialPortIdentifier_e = -1;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct serialPortConfig_s {
     pub functionMask: uint16_t,
@@ -204,7 +203,7 @@ pub struct serialPortConfig_s {
     pub telemetry_baudrateIndex: uint8_t,
 }
 pub type serialPortConfig_t = serialPortConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct rcdeviceConfig_s {
     pub initDeviceAttempts: uint8_t,
@@ -244,7 +243,7 @@ pub type rcdevice_protocol_version_e = libc::c_uint;
 pub const RCDEVICE_PROTOCOL_UNKNOWN: rcdevice_protocol_version_e = 2;
 pub const RCDEVICE_PROTOCOL_VERSION_1_0: rcdevice_protocol_version_e = 1;
 pub const RCDEVICE_PROTOCOL_RCSPLIT_VERSION: rcdevice_protocol_version_e = 0;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct runcamDeviceInfo_s {
     pub protocolVersion: rcdevice_protocol_version_e,
@@ -252,7 +251,7 @@ pub struct runcamDeviceInfo_s {
 }
 // end of Runcam Device definition
 pub type runcamDeviceInfo_t = runcamDeviceInfo_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct runcamDevice_s {
     pub serialPort: *mut serialPort_t,
@@ -265,7 +264,7 @@ pub type rcdeviceResponseStatus_e = libc::c_uint;
 pub const RCDEVICE_RESP_TIMEOUT: rcdeviceResponseStatus_e = 2;
 pub const RCDEVICE_RESP_INCORRECT_CRC: rcdeviceResponseStatus_e = 1;
 pub const RCDEVICE_RESP_SUCCESS: rcdeviceResponseStatus_e = 0;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct rcdeviceResponseParseContext_s {
     pub command: uint8_t,
@@ -288,7 +287,7 @@ pub type rcdeviceRespParseFunc
     Option<unsafe extern "C" fn(_: *mut rcdeviceResponseParseContext_t)
                -> ()>;
 pub type rcdeviceResponseParseContext_t = rcdeviceResponseParseContext_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct rcdeviceWaitingResponseQueue {
     pub headPos: uint8_t,
@@ -319,7 +318,7 @@ pub struct rcdeviceWaitingResponseQueue {
 pub type runcamDeviceExpectedResponseLength_t
     =
     runcamDeviceExpectedResponseLength_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct runcamDeviceExpectedResponseLength_s {
     pub command: uint8_t,
@@ -335,42 +334,30 @@ static mut expectedResponsesLength: [runcamDeviceExpectedResponseLength_t; 4]
        =
     [{
          let mut init =
-             runcamDeviceExpectedResponseLength_s{command:
-                                                      0 as libc::c_int as
-                                                          uint8_t,
+             runcamDeviceExpectedResponseLength_s{command: 0i32 as uint8_t,
                                                   reponseLength:
-                                                      5 as libc::c_int as
-                                                          uint8_t,};
+                                                      5i32 as uint8_t,};
          init
      },
      {
          let mut init =
-             runcamDeviceExpectedResponseLength_s{command:
-                                                      0x2 as libc::c_int as
-                                                          uint8_t,
+             runcamDeviceExpectedResponseLength_s{command: 0x2i32 as uint8_t,
                                                   reponseLength:
-                                                      2 as libc::c_int as
-                                                          uint8_t,};
+                                                      2i32 as uint8_t,};
          init
      },
      {
          let mut init =
-             runcamDeviceExpectedResponseLength_s{command:
-                                                      0x3 as libc::c_int as
-                                                          uint8_t,
+             runcamDeviceExpectedResponseLength_s{command: 0x3i32 as uint8_t,
                                                   reponseLength:
-                                                      2 as libc::c_int as
-                                                          uint8_t,};
+                                                      2i32 as uint8_t,};
          init
      },
      {
          let mut init =
-             runcamDeviceExpectedResponseLength_s{command:
-                                                      0x4 as libc::c_int as
-                                                          uint8_t,
+             runcamDeviceExpectedResponseLength_s{command: 0x4i32 as uint8_t,
                                                   reponseLength:
-                                                      3 as libc::c_int as
-                                                          uint8_t,};
+                                                      3i32 as uint8_t,};
          init
      }];
 #[no_mangle]
@@ -422,7 +409,7 @@ pub static mut watingResponseQueue: rcdeviceWaitingResponseQueue =
 static mut recvBuf: [uint8_t; 64] = [0; 64];
 // all the response contexts using same recv buffer
 unsafe extern "C" fn runcamDeviceGetRespLen(mut command: uint8_t) -> uint8_t {
-    let mut i: libc::c_uint = 0 as libc::c_int as libc::c_uint;
+    let mut i: libc::c_uint = 0i32 as libc::c_uint;
     while (i as libc::c_ulong) <
               (::core::mem::size_of::<[runcamDeviceExpectedResponseLength_t; 4]>()
                    as
@@ -434,32 +421,28 @@ unsafe extern "C" fn runcamDeviceGetRespLen(mut command: uint8_t) -> uint8_t {
         }
         i = i.wrapping_add(1)
     }
-    return 0 as libc::c_int as uint8_t;
+    return 0i32 as uint8_t;
 }
 unsafe extern "C" fn rcdeviceRespCtxQueuePushRespCtx(mut queue:
                                                          *mut rcdeviceWaitingResponseQueue,
                                                      mut respCtx:
                                                          *mut rcdeviceResponseParseContext_t)
  -> bool {
-    if queue.is_null() ||
-           (*queue).itemCount as libc::c_int + 1 as libc::c_int >
-               5 as libc::c_int {
-        return 0 as libc::c_int != 0
+    if queue.is_null() || (*queue).itemCount as libc::c_int + 1i32 > 5i32 {
+        return 0i32 != 0
     }
     (*queue).buffer[(*queue).tailPos as usize] = *respCtx;
-    let mut newTailPos: libc::c_int =
-        (*queue).tailPos as libc::c_int + 1 as libc::c_int;
-    if newTailPos >= 5 as libc::c_int { newTailPos = 0 as libc::c_int }
+    let mut newTailPos: libc::c_int = (*queue).tailPos as libc::c_int + 1i32;
+    if newTailPos >= 5i32 { newTailPos = 0i32 }
     (*queue).itemCount =
-        ((*queue).itemCount as libc::c_int + 1 as libc::c_int) as uint8_t;
+        ((*queue).itemCount as libc::c_int + 1i32) as uint8_t;
     (*queue).tailPos = newTailPos as uint8_t;
-    return 1 as libc::c_int != 0;
+    return 1i32 != 0;
 }
 unsafe extern "C" fn rcdeviceRespCtxQueuePeekFront(mut queue:
                                                        *mut rcdeviceWaitingResponseQueue)
  -> *mut rcdeviceResponseParseContext_t {
-    if queue.is_null() ||
-           (*queue).itemCount as libc::c_int == 0 as libc::c_int {
+    if queue.is_null() || (*queue).itemCount as libc::c_int == 0i32 {
         return 0 as *mut rcdeviceResponseParseContext_t
     }
     let mut ctx: *mut rcdeviceResponseParseContext_t =
@@ -470,18 +453,16 @@ unsafe extern "C" fn rcdeviceRespCtxQueuePeekFront(mut queue:
 unsafe extern "C" fn rcdeviceRespCtxQueueShift(mut queue:
                                                    *mut rcdeviceWaitingResponseQueue)
  -> *mut rcdeviceResponseParseContext_t {
-    if queue.is_null() ||
-           (*queue).itemCount as libc::c_int == 0 as libc::c_int {
+    if queue.is_null() || (*queue).itemCount as libc::c_int == 0i32 {
         return 0 as *mut rcdeviceResponseParseContext_t
     }
     let mut ctx: *mut rcdeviceResponseParseContext_t =
         &mut *(*queue).buffer.as_mut_ptr().offset((*queue).headPos as isize)
             as *mut rcdeviceResponseParseContext_t;
-    let mut newHeadPos: libc::c_int =
-        (*queue).headPos as libc::c_int + 1 as libc::c_int;
-    if newHeadPos >= 5 as libc::c_int { newHeadPos = 0 as libc::c_int }
+    let mut newHeadPos: libc::c_int = (*queue).headPos as libc::c_int + 1i32;
+    if newHeadPos >= 5i32 { newHeadPos = 0i32 }
     (*queue).itemCount =
-        ((*queue).itemCount as libc::c_int - 1 as libc::c_int) as uint8_t;
+        ((*queue).itemCount as libc::c_int - 1i32) as uint8_t;
     (*queue).headPos = newHeadPos as uint8_t;
     return ctx;
 }
@@ -491,8 +472,7 @@ unsafe extern "C" fn rcdeviceRespCtxQueueShift(mut queue:
 // failed.
 unsafe extern "C" fn runcamDeviceFlushRxBuffer(mut device:
                                                    *mut runcamDevice_t) {
-    while serialRxBytesWaiting((*device).serialPort) >
-              0 as libc::c_int as libc::c_uint {
+    while serialRxBytesWaiting((*device).serialPort) > 0i32 as libc::c_uint {
         serialRead((*device).serialPort);
     };
 }
@@ -515,7 +495,7 @@ unsafe extern "C" fn runcamDeviceSendPacket(mut device: *mut runcamDevice_t,
                                                                                         libc::c_ulong)
                                                        as isize) as
             *mut uint8_t;
-    sbufWriteU8(&mut buf, 0xcc as libc::c_int as uint8_t);
+    sbufWriteU8(&mut buf, 0xcci32 as uint8_t);
     sbufWriteU8(&mut buf, command);
     if !paramData.is_null() {
         sbufWriteData(&mut buf, paramData as *const libc::c_void,
@@ -569,7 +549,7 @@ unsafe extern "C" fn runcamDeviceSendRequestAndWaitingResp(mut device:
                                                *mut libc::c_void,
                                        result: RCDEVICE_RESP_SUCCESS,};
     memset(&mut responseCtx as *mut rcdeviceResponseParseContext_t as
-               *mut libc::c_void, 0 as libc::c_int,
+               *mut libc::c_void, 0i32,
            ::core::mem::size_of::<rcdeviceResponseParseContext_t>() as
                libc::c_ulong);
     responseCtx.recvBuf = recvBuf.as_mut_ptr();
@@ -596,29 +576,25 @@ unsafe extern "C" fn runcamDeviceParseV2DeviceInfo(mut ctx:
                                                        *mut rcdeviceResponseParseContext_t) {
     if (*ctx).result as libc::c_uint !=
            RCDEVICE_RESP_SUCCESS as libc::c_int as libc::c_uint {
-        (*(*ctx).device).isReady = 0 as libc::c_int != 0;
+        (*(*ctx).device).isReady = 0i32 != 0;
         return
     }
     let mut device: *mut runcamDevice_t = (*ctx).device;
     (*device).info.protocolVersion =
-        *(*ctx).recvBuf.offset(1 as libc::c_int as isize) as
-            rcdevice_protocol_version_e;
-    let mut featureLowBits: uint8_t =
-        *(*ctx).recvBuf.offset(2 as libc::c_int as isize);
-    let mut featureHighBits: uint8_t =
-        *(*ctx).recvBuf.offset(3 as libc::c_int as isize);
+        *(*ctx).recvBuf.offset(1) as rcdevice_protocol_version_e;
+    let mut featureLowBits: uint8_t = *(*ctx).recvBuf.offset(2);
+    let mut featureHighBits: uint8_t = *(*ctx).recvBuf.offset(3);
     (*device).info.features =
-        ((featureHighBits as libc::c_int) << 8 as libc::c_int |
+        ((featureHighBits as libc::c_int) << 8i32 |
              featureLowBits as libc::c_int) as uint16_t;
-    (*device).isReady = 1 as libc::c_int != 0;
+    (*device).isReady = 1i32 != 0;
 }
 // get the device info(firmware version, protocol version and features, see the
 // definition of runcamDeviceInfo_t to know more)
 unsafe extern "C" fn runcamDeviceGetDeviceInfo(mut device:
                                                    *mut runcamDevice_t) {
-    runcamDeviceSendRequestAndWaitingResp(device, 0 as libc::c_int as uint8_t,
-                                          0 as *mut uint8_t,
-                                          0 as libc::c_int as uint8_t,
+    runcamDeviceSendRequestAndWaitingResp(device, 0i32 as uint8_t,
+                                          0 as *mut uint8_t, 0i32 as uint8_t,
                                           (*rcdeviceConfig()).initDeviceAttemptInterval,
                                           (*rcdeviceConfig()).initDeviceAttempts
                                               as libc::c_int,
@@ -635,16 +611,15 @@ unsafe extern "C" fn runcamDeviceGetDeviceInfo(mut device:
 // and then we can send/receive from it.
 #[no_mangle]
 pub unsafe extern "C" fn runcamDeviceInit(mut device: *mut runcamDevice_t) {
-    (*device).isReady = 0 as libc::c_int != 0;
+    (*device).isReady = 0i32 != 0;
     let mut portID: serialPortFunction_e = FUNCTION_RCDEVICE;
     let mut portConfig: *mut serialPortConfig_t =
         findSerialPortConfig(portID);
     if !portConfig.is_null() {
         (*device).serialPort =
             openSerialPort((*portConfig).identifier, portID, None,
-                           0 as *mut libc::c_void,
-                           115200 as libc::c_int as uint32_t, MODE_RXTX,
-                           SERIAL_NOT_INVERTED);
+                           0 as *mut libc::c_void, 115200i32 as uint32_t,
+                           MODE_RXTX, SERIAL_NOT_INVERTED);
         if !(*device).serialPort.is_null() {
             // send RCDEVICE_PROTOCOL_COMMAND_GET_DEVICE_INFO to device to retrive
             // device info, e.g protocol version, supported features
@@ -661,12 +636,11 @@ pub unsafe extern "C" fn runcamDeviceSimulateCameraButton(mut device:
  -> bool {
     if (*device).info.protocolVersion as libc::c_uint ==
            RCDEVICE_PROTOCOL_VERSION_1_0 as libc::c_int as libc::c_uint {
-        runcamDeviceSendPacket(device, 0x1 as libc::c_int as uint8_t,
-                               &mut operation,
+        runcamDeviceSendPacket(device, 0x1i32 as uint8_t, &mut operation,
                                ::core::mem::size_of::<uint8_t>() as
                                    libc::c_ulong as libc::c_int);
-    } else { return 0 as libc::c_int != 0 }
-    return 1 as libc::c_int != 0;
+    } else { return 0i32 != 0 }
+    return 1i32 != 0;
 }
 // 5 key osd cable simulation
 // every time start to control the OSD menu of camera, must call this method to
@@ -678,13 +652,11 @@ pub unsafe extern "C" fn runcamDeviceOpen5KeyOSDCableConnection(mut device:
                                                                     rcdeviceRespParseFunc) {
     let mut operation: uint8_t =
         RCDEVICE_PROTOCOL_5KEY_CONNECTION_OPEN as libc::c_int as uint8_t;
-    runcamDeviceSendRequestAndWaitingResp(device,
-                                          0x4 as libc::c_int as uint8_t,
+    runcamDeviceSendRequestAndWaitingResp(device, 0x4i32 as uint8_t,
                                           &mut operation,
                                           ::core::mem::size_of::<uint8_t>() as
                                               libc::c_ulong as uint8_t,
-                                          200 as libc::c_int as timeMs_t,
-                                          0 as libc::c_int,
+                                          200i32 as timeMs_t, 0i32,
                                           0 as *mut libc::c_void, parseFunc);
 }
 // when the control was stop, must call this method to the camera to disconnect
@@ -696,13 +668,11 @@ pub unsafe extern "C" fn runcamDeviceClose5KeyOSDCableConnection(mut device:
                                                                      rcdeviceRespParseFunc) {
     let mut operation: uint8_t =
         RCDEVICE_PROTOCOL_5KEY_CONNECTION_CLOSE as libc::c_int as uint8_t;
-    runcamDeviceSendRequestAndWaitingResp(device,
-                                          0x4 as libc::c_int as uint8_t,
+    runcamDeviceSendRequestAndWaitingResp(device, 0x4i32 as uint8_t,
                                           &mut operation,
                                           ::core::mem::size_of::<uint8_t>() as
                                               libc::c_ulong as uint8_t,
-                                          200 as libc::c_int as timeMs_t,
-                                          0 as libc::c_int,
+                                          200i32 as timeMs_t, 0i32,
                                           0 as *mut libc::c_void, parseFunc);
 }
 // simulate button press event of 5 key osd cable with special button
@@ -717,13 +687,11 @@ pub unsafe extern "C" fn runcamDeviceSimulate5KeyOSDCableButtonPress(mut device:
            RCDEVICE_PROTOCOL_5KEY_SIMULATION_NONE as libc::c_int {
         return
     }
-    runcamDeviceSendRequestAndWaitingResp(device,
-                                          0x2 as libc::c_int as uint8_t,
+    runcamDeviceSendRequestAndWaitingResp(device, 0x2i32 as uint8_t,
                                           &mut operation,
                                           ::core::mem::size_of::<uint8_t>() as
                                               libc::c_ulong as uint8_t,
-                                          200 as libc::c_int as timeMs_t,
-                                          0 as libc::c_int,
+                                          200i32 as timeMs_t, 0i32,
                                           0 as *mut libc::c_void, parseFunc);
 }
 // simulate button release event of 5 key osd cable
@@ -732,12 +700,9 @@ pub unsafe extern "C" fn runcamDeviceSimulate5KeyOSDCableButtonRelease(mut devic
                                                                            *mut runcamDevice_t,
                                                                        mut parseFunc:
                                                                            rcdeviceRespParseFunc) {
-    runcamDeviceSendRequestAndWaitingResp(device,
-                                          0x3 as libc::c_int as uint8_t,
-                                          0 as *mut uint8_t,
-                                          0 as libc::c_int as uint8_t,
-                                          200 as libc::c_int as timeMs_t,
-                                          0 as libc::c_int,
+    runcamDeviceSendRequestAndWaitingResp(device, 0x3i32 as uint8_t,
+                                          0 as *mut uint8_t, 0i32 as uint8_t,
+                                          200i32 as timeMs_t, 0i32,
                                           0 as *mut libc::c_void, parseFunc);
 }
 unsafe extern "C" fn getWaitingResponse(mut currentTimeMs: timeMs_t)
@@ -745,15 +710,15 @@ unsafe extern "C" fn getWaitingResponse(mut currentTimeMs: timeMs_t)
     let mut respCtx: *mut rcdeviceResponseParseContext_t =
         rcdeviceRespCtxQueuePeekFront(&mut watingResponseQueue);
     while !respCtx.is_null() &&
-              (*respCtx).timeoutTimestamp != 0 as libc::c_int as libc::c_uint
-              && currentTimeMs > (*respCtx).timeoutTimestamp {
-        if (*respCtx).maxRetryTimes > 0 as libc::c_int {
+              (*respCtx).timeoutTimestamp != 0i32 as libc::c_uint &&
+              currentTimeMs > (*respCtx).timeoutTimestamp {
+        if (*respCtx).maxRetryTimes > 0i32 {
             runcamDeviceSendPacket((*respCtx).device, (*respCtx).command,
                                    (*respCtx).paramData.as_mut_ptr(),
                                    (*respCtx).paramDataLen as libc::c_int);
             (*respCtx).timeoutTimestamp =
                 currentTimeMs.wrapping_add((*respCtx).timeout);
-            (*respCtx).maxRetryTimes -= 1 as libc::c_int;
+            (*respCtx).maxRetryTimes -= 1i32;
             respCtx = 0 as *mut rcdeviceResponseParseContext_t;
             break ;
         } else {
@@ -781,16 +746,15 @@ pub unsafe extern "C" fn rcdeviceReceive(mut currentTimeUs: timeUs_t) {
         let c: uint8_t = serialRead((*(*respCtx).device).serialPort);
         *(*respCtx).recvBuf.offset((*respCtx).recvRespLen as isize) = c;
         (*respCtx).recvRespLen =
-            ((*respCtx).recvRespLen as libc::c_int + 1 as libc::c_int) as
-                uint8_t;
+            ((*respCtx).recvRespLen as libc::c_int + 1i32) as uint8_t;
         // if data received done, trigger callback to parse response data, and update rcdevice state
         if (*respCtx).recvRespLen as libc::c_int ==
                (*respCtx).expectedRespLen as libc::c_int {
             // verify the crc value
             if (*respCtx).protocolVer as libc::c_int ==
                    RCDEVICE_PROTOCOL_VERSION_1_0 as libc::c_int {
-                let mut crc: uint8_t = 0 as libc::c_int as uint8_t;
-                let mut i: libc::c_int = 0 as libc::c_int;
+                let mut crc: uint8_t = 0i32 as uint8_t;
+                let mut i: libc::c_int = 0i32;
                 while i < (*respCtx).recvRespLen as libc::c_int {
                     crc =
                         crc8_dvb_s2(crc,
@@ -798,7 +762,7 @@ pub unsafe extern "C" fn rcdeviceReceive(mut currentTimeUs: timeUs_t) {
                     i += 1
                 }
                 (*respCtx).result =
-                    if crc as libc::c_int == 0 as libc::c_int {
+                    if crc as libc::c_int == 0i32 {
                         RCDEVICE_RESP_SUCCESS as libc::c_int
                     } else { RCDEVICE_RESP_INCORRECT_CRC as libc::c_int } as
                         rcdeviceResponseStatus_e

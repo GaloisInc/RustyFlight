@@ -1,4 +1,5 @@
-use ::libc;
+use core;
+use libc;
 extern "C" {
     #[no_mangle]
     fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong)
@@ -18,7 +19,7 @@ pub type __uint32_t = libc::c_uint;
 pub type uint8_t = __uint8_t;
 pub type uint16_t = __uint16_t;
 pub type uint32_t = __uint32_t;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct biquadFilter_s {
     pub b0: libc::c_float,
@@ -62,7 +63,7 @@ pub const PGR_PGN_MASK: C2RustUnnamed = 4095;
 pub type pgResetFunc
     =
     unsafe extern "C" fn(_: *mut libc::c_void, _: libc::c_int) -> ();
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct pgRegistry_s {
     pub pgn: pgn_t,
@@ -72,11 +73,12 @@ pub struct pgRegistry_s {
     pub ptr: *mut *mut uint8_t,
     pub reset: C2RustUnnamed_0,
 }
-#[derive(Copy, Clone)]
-#[repr(C)]
+#[derive ( Copy, Clone )]
+#[repr ( C )]
 pub union C2RustUnnamed_0 {
     pub ptr: *mut libc::c_void,
-    pub fn_0: Option<pgResetFunc>,
+    pub fn_0: Option<unsafe extern "C" fn(_: *mut libc::c_void,
+                                          _: libc::c_int) -> ()>,
 }
 pub type pgRegistry_t = pgRegistry_s;
 pub type C2RustUnnamed_1 = libc::c_uint;
@@ -117,7 +119,7 @@ pub const VOLTAGE_METER_ID_BATTERY_10: voltageMeterId_e = 19;
 pub const VOLTAGE_METER_ID_BATTERY_2: voltageMeterId_e = 11;
 pub const VOLTAGE_METER_ID_BATTERY_1: voltageMeterId_e = 10;
 pub const VOLTAGE_METER_ID_NONE: voltageMeterId_e = 0;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct voltageMeter_s {
     pub filtered: uint16_t,
@@ -140,7 +142,7 @@ pub const VOLTAGE_SENSOR_ADC_5V: voltageSensorADC_e = 3;
 pub const VOLTAGE_SENSOR_ADC_9V: voltageSensorADC_e = 2;
 pub const VOLTAGE_SENSOR_ADC_12V: voltageSensorADC_e = 1;
 pub const VOLTAGE_SENSOR_ADC_VBAT: voltageSensorADC_e = 0;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct voltageSensorADCConfig_s {
     pub vbatscale: uint8_t,
@@ -158,7 +160,7 @@ pub type voltageSensorADCConfig_t = voltageSensorADCConfig_s;
 // ADC
 //
 pub type voltageMeterADCState_t = voltageMeterADCState_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct voltageMeterADCState_s {
     pub voltageFiltered: uint16_t,
@@ -239,8 +241,8 @@ pub static mut supportedVoltageMeterCount: uint8_t = 0;
 //
 #[no_mangle]
 pub unsafe extern "C" fn voltageMeterReset(mut meter: *mut voltageMeter_t) {
-    (*meter).filtered = 0 as libc::c_int as uint16_t;
-    (*meter).unfiltered = 0 as libc::c_int as uint16_t;
+    (*meter).filtered = 0i32 as uint16_t;
+    (*meter).unfiltered = 0i32 as uint16_t;
 }
 #[no_mangle]
 pub static mut voltageMeterADCStates: [voltageMeterADCState_t; 1] =
@@ -291,19 +293,15 @@ pub static mut voltageSensorADCConfig_CopyArray: [voltageSensorADCConfig_t; 1]
 #[no_mangle]
 pub unsafe extern "C" fn pgResetFn_voltageSensorADCConfig(mut instance:
                                                               *mut voltageSensorADCConfig_t) {
-    let mut i: libc::c_int = 0 as libc::c_int;
-    while i < 1 as libc::c_int {
+    let mut i: libc::c_int = 0i32;
+    while i < 1i32 {
         static mut _reset_template_127: voltageSensorADCConfig_t =
             {
                 let mut init =
-                    voltageSensorADCConfig_s{vbatscale:
-                                                 110 as libc::c_int as
-                                                     uint8_t,
-                                             vbatresdivval:
-                                                 10 as libc::c_int as uint8_t,
+                    voltageSensorADCConfig_s{vbatscale: 110i32 as uint8_t,
+                                             vbatresdivval: 10i32 as uint8_t,
                                              vbatresdivmultiplier:
-                                                 1 as libc::c_int as
-                                                     uint8_t,};
+                                                 1i32 as uint8_t,};
                 init
             };
         memcpy(&mut *instance.offset(i as isize) as
@@ -327,21 +325,13 @@ unsafe extern "C" fn voltageAdcToVoltage(src: uint16_t,
                 uint32_t).wrapping_mul((*config).vbatscale as
                                            libc::c_uint).wrapping_mul(getVrefMv()
                                                                           as
-                                                                          libc::c_uint).wrapping_div(100
+                                                                          libc::c_uint).wrapping_div(100i32
                                                                                                          as
-                                                                                                         libc::c_int
-                                                                                                         as
-                                                                                                         libc::c_uint).wrapping_add((0xfff
-                                                                                                                                         as
-                                                                                                                                         libc::c_int
+                                                                                                         libc::c_uint).wrapping_add((0xfffi32
                                                                                                                                          *
-                                                                                                                                         5
-                                                                                                                                             as
-                                                                                                                                             libc::c_int)
+                                                                                                                                         5i32)
                                                                                                                                         as
-                                                                                                                                        libc::c_uint).wrapping_div((0xfff
-                                                                                                                                                                        as
-                                                                                                                                                                        libc::c_int
+                                                                                                                                        libc::c_uint).wrapping_div((0xfffi32
                                                                                                                                                                         *
                                                                                                                                                                         (*config).vbatresdivval
                                                                                                                                                                             as
@@ -354,8 +344,8 @@ unsafe extern "C" fn voltageAdcToVoltage(src: uint16_t,
 }
 #[no_mangle]
 pub unsafe extern "C" fn voltageMeterADCRefresh() {
-    let mut i: uint8_t = 0 as libc::c_int as uint8_t;
-    while (i as libc::c_int) < 1 as libc::c_int &&
+    let mut i: uint8_t = 0i32 as uint8_t;
+    while (i as libc::c_int) < 1i32 &&
               (i as libc::c_ulong) <
                   (::core::mem::size_of::<[uint8_t; 1]>() as
                        libc::c_ulong).wrapping_div(::core::mem::size_of::<uint8_t>()
@@ -363,8 +353,8 @@ pub unsafe extern "C" fn voltageMeterADCRefresh() {
         let mut state: *mut voltageMeterADCState_t =
             &mut *voltageMeterADCStates.as_mut_ptr().offset(i as isize) as
                 *mut voltageMeterADCState_t;
-        (*state).voltageFiltered = 0 as libc::c_int as uint16_t;
-        (*state).voltageUnfiltered = 0 as libc::c_int as uint16_t;
+        (*state).voltageFiltered = 0i32 as uint16_t;
+        (*state).voltageUnfiltered = 0i32 as uint16_t;
         i = i.wrapping_add(1)
     };
 }
@@ -381,8 +371,8 @@ pub unsafe extern "C" fn voltageMeterADCRead(mut adcChannel:
 }
 #[no_mangle]
 pub unsafe extern "C" fn voltageMeterADCInit() {
-    let mut i: uint8_t = 0 as libc::c_int as uint8_t;
-    while (i as libc::c_int) < 1 as libc::c_int &&
+    let mut i: uint8_t = 0i32 as uint8_t;
+    while (i as libc::c_int) < 1i32 &&
               (i as libc::c_ulong) <
                   (::core::mem::size_of::<[uint8_t; 1]>() as
                        libc::c_ulong).wrapping_div(::core::mem::size_of::<uint8_t>()
@@ -391,12 +381,11 @@ pub unsafe extern "C" fn voltageMeterADCInit() {
         let mut state: *mut voltageMeterADCState_t =
             &mut *voltageMeterADCStates.as_mut_ptr().offset(i as isize) as
                 *mut voltageMeterADCState_t;
-        memset(state as *mut libc::c_void, 0 as libc::c_int,
+        memset(state as *mut libc::c_void, 0i32,
                ::core::mem::size_of::<voltageMeterADCState_t>() as
                    libc::c_ulong);
         biquadFilterInitLPF(&mut (*state).filter, 0.1f32,
-                            (1000000 as libc::c_int / 50 as libc::c_int) as
-                                uint32_t);
+                            (1000000i32 / 50i32) as uint32_t);
         i = i.wrapping_add(1)
     };
 }
@@ -446,16 +435,11 @@ unsafe extern "C" fn run_static_initializers() {
     voltageSensorADCConfig_Registry =
         {
             let mut init =
-                pgRegistry_s{pgn:
-                                 (258 as libc::c_int |
-                                      (0 as libc::c_int) << 12 as libc::c_int)
-                                     as pgn_t,
+                pgRegistry_s{pgn: (258i32 | 0i32 << 12i32) as pgn_t,
                              size:
                                  ((::core::mem::size_of::<voltageSensorADCConfig_t>()
                                        as
-                                       libc::c_ulong).wrapping_mul(1 as
-                                                                       libc::c_int
-                                                                       as
+                                       libc::c_ulong).wrapping_mul(1i32 as
                                                                        libc::c_ulong)
                                       |
                                       PGR_SIZE_SYSTEM_FLAG as libc::c_int as
@@ -475,17 +459,22 @@ unsafe extern "C" fn run_static_initializers() {
                                                                                                               *mut voltageSensorADCConfig_t)
                                                                                          ->
                                                                                              ()>,
-                                                                              Option<pgResetFunc>>(Some(pgResetFn_voltageSensorADCConfig
-                                                                                                            as
-                                                                                                            unsafe extern "C" fn(_:
-                                                                                                                                     *mut voltageSensorADCConfig_t)
-                                                                                                                ->
-                                                                                                                    ())),},};
+                                                                              Option<unsafe extern "C" fn(_:
+                                                                                                              *mut libc::c_void,
+                                                                                                          _:
+                                                                                                              libc::c_int)
+                                                                                         ->
+                                                                                             ()>>(Some(pgResetFn_voltageSensorADCConfig
+                                                                                                           as
+                                                                                                           unsafe extern "C" fn(_:
+                                                                                                                                    *mut voltageSensorADCConfig_t)
+                                                                                                               ->
+                                                                                                                   ())),},};
             init
         }
 }
 #[used]
-#[cfg_attr(target_os = "linux", link_section = ".init_array")]
-#[cfg_attr(target_os = "windows", link_section = ".CRT$XIB")]
-#[cfg_attr(target_os = "macos", link_section = "__DATA,__mod_init_func")]
+#[cfg_attr ( target_os = "linux", link_section = ".init_array" )]
+#[cfg_attr ( target_os = "windows", link_section = ".CRT$XIB" )]
+#[cfg_attr ( target_os = "macos", link_section = "__DATA,__mod_init_func" )]
 static INIT_ARRAY: [unsafe extern "C" fn(); 1] = [run_static_initializers];

@@ -1,4 +1,5 @@
-use ::libc;
+use core;
+use libc;
 extern "C" {
     #[no_mangle]
     fn IOWrite(io: IO_t, value: bool);
@@ -55,26 +56,7 @@ pub type IO_t = *mut libc::c_void;
 // IOCFG_x macros are defined for common combinations for all CPUs; this
 //  helps masking CPU differences
 pub type ioConfig_t = uint8_t;
-/*
- * This file is part of Cleanflight and Betaflight.
- *
- * Cleanflight and Betaflight are free software. You can redistribute
- * this software and/or modify this software under the terms of the
- * GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option)
- * any later version.
- *
- * Cleanflight and Betaflight are distributed in the hope that they
- * will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this software.
- *
- * If not, see <http://www.gnu.org/licenses/>.
- */
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct pinioConfig_s {
     pub ioTag: [ioTag_t; 4],
@@ -101,7 +83,7 @@ pub type pinioConfig_t = pinioConfig_s;
  * If not, see <http://www.gnu.org/licenses/>.
  */
 pub type pinioRuntime_t = pinioRuntime_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct pinioRuntime_s {
     pub io: IO_t,
@@ -192,26 +174,25 @@ static mut pinioRuntime: [pinioRuntime_t; 4] =
  */
 #[no_mangle]
 pub unsafe extern "C" fn pinioInit(mut pinioConfig: *const pinioConfig_t) {
-    let mut i: libc::c_int = 0 as libc::c_int;
-    while i < 4 as libc::c_int {
+    let mut i: libc::c_int = 0i32;
+    while i < 4i32 {
         let mut io: IO_t = IOGetByTag((*pinioConfig).ioTag[i as usize]);
         if !io.is_null() {
-            IOInit(io, OWNER_PINIO, (i + 1 as libc::c_int) as uint8_t);
-            match (*pinioConfig).config[i as usize] as libc::c_int &
-                      0x7f as libc::c_int {
-                1 => { IOConfigGPIO(io, 0 as libc::c_int as ioConfig_t); }
+            IOInit(io, OWNER_PINIO, (i + 1i32) as uint8_t);
+            match (*pinioConfig).config[i as usize] as libc::c_int & 0x7fi32 {
+                1 => { IOConfigGPIO(io, 0i32 as ioConfig_t); }
                 _ => { }
             }
-            if (*pinioConfig).config[i as usize] as libc::c_int &
-                   0x80 as libc::c_int != 0 {
-                pinioRuntime[i as usize].inverted = 1 as libc::c_int != 0;
+            if (*pinioConfig).config[i as usize] as libc::c_int & 0x80i32 != 0
+               {
+                pinioRuntime[i as usize].inverted = 1i32 != 0;
                 IOHi(io);
             } else {
-                pinioRuntime[i as usize].inverted = 0 as libc::c_int != 0;
+                pinioRuntime[i as usize].inverted = 0i32 != 0;
                 IOLo(io);
             }
             pinioRuntime[i as usize].io = io;
-            pinioRuntime[i as usize].state = 0 as libc::c_int != 0
+            pinioRuntime[i as usize].state = 0i32 != 0
         }
         i += 1
     };

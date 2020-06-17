@@ -1,4 +1,5 @@
-use ::libc;
+use core;
+use libc;
 extern "C" {
     #[no_mangle]
     fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong)
@@ -82,7 +83,7 @@ pub const PGR_PGN_MASK: C2RustUnnamed = 4095;
 pub type pgResetFunc
     =
     unsafe extern "C" fn(_: *mut libc::c_void, _: libc::c_int) -> ();
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct pgRegistry_s {
     pub pgn: pgn_t,
@@ -92,11 +93,12 @@ pub struct pgRegistry_s {
     pub ptr: *mut *mut uint8_t,
     pub reset: C2RustUnnamed_0,
 }
-#[derive(Copy, Clone)]
-#[repr(C)]
+#[derive ( Copy, Clone )]
+#[repr ( C )]
 pub union C2RustUnnamed_0 {
     pub ptr: *mut libc::c_void,
-    pub fn_0: Option<pgResetFunc>,
+    pub fn_0: Option<unsafe extern "C" fn(_: *mut libc::c_void,
+                                          _: libc::c_int) -> ()>,
 }
 pub type pgRegistry_t = pgRegistry_s;
 pub type boxId_e = libc::c_uint;
@@ -146,20 +148,20 @@ pub const BOXARM: boxId_e = 0;
 pub type modeLogic_e = libc::c_uint;
 pub const MODELOGIC_AND: modeLogic_e = 1;
 pub const MODELOGIC_OR: modeLogic_e = 0;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct boxBitmask_s {
     pub bits: [uint32_t; 2],
 }
 pub type boxBitmask_t = boxBitmask_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct channelRange_s {
     pub startStep: uint8_t,
     pub endStep: uint8_t,
 }
 pub type channelRange_t = channelRange_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct modeActivationCondition_s {
     pub modeId: boxId_e,
@@ -349,18 +351,15 @@ pub unsafe extern "C" fn isRangeActive(mut auxChannelIndex: uint8_t,
  -> bool {
     if !(((*range).startStep as libc::c_int) <
              (*range).endStep as libc::c_int) {
-        return 0 as libc::c_int != 0
+        return 0i32 != 0
     }
     let channelValue: uint16_t =
-        constrain(rcData[(auxChannelIndex as libc::c_int + 4 as libc::c_int)
-                             as usize] as libc::c_int, 900 as libc::c_int,
-                  2100 as libc::c_int - 1 as libc::c_int) as uint16_t;
+        constrain(rcData[(auxChannelIndex as libc::c_int + 4i32) as usize] as
+                      libc::c_int, 900i32, 2100i32 - 1i32) as uint16_t;
     return channelValue as libc::c_int >=
-               900 as libc::c_int +
-                   (*range).startStep as libc::c_int * 25 as libc::c_int &&
+               900i32 + (*range).startStep as libc::c_int * 25i32 &&
                (channelValue as libc::c_int) <
-                   900 as libc::c_int +
-                       (*range).endStep as libc::c_int * 25 as libc::c_int;
+                   900i32 + (*range).endStep as libc::c_int * 25i32;
 }
 #[no_mangle]
 pub unsafe extern "C" fn updateMasksForMac(mut mac:
@@ -409,20 +408,17 @@ pub unsafe extern "C" fn updateActivatedModes() {
     let mut newMask: boxBitmask_t = boxBitmask_t{bits: [0; 2],};
     let mut andMask: boxBitmask_t = boxBitmask_t{bits: [0; 2],};
     let mut stickyModes: boxBitmask_t = boxBitmask_t{bits: [0; 2],};
-    memset(&mut andMask as *mut boxBitmask_t as *mut libc::c_void,
-           0 as libc::c_int,
+    memset(&mut andMask as *mut boxBitmask_t as *mut libc::c_void, 0i32,
            ::core::mem::size_of::<boxBitmask_t>() as libc::c_ulong);
-    memset(&mut newMask as *mut boxBitmask_t as *mut libc::c_void,
-           0 as libc::c_int,
+    memset(&mut newMask as *mut boxBitmask_t as *mut libc::c_void, 0i32,
            ::core::mem::size_of::<boxBitmask_t>() as libc::c_ulong);
-    memset(&mut stickyModes as *mut boxBitmask_t as *mut libc::c_void,
-           0 as libc::c_int,
+    memset(&mut stickyModes as *mut boxBitmask_t as *mut libc::c_void, 0i32,
            ::core::mem::size_of::<boxBitmask_t>() as libc::c_ulong);
     bitArraySet(&mut stickyModes as *mut boxBitmask_t as *mut libc::c_void,
                 BOXPARALYZE as libc::c_int as libc::c_uint);
     // determine which conditions set/clear the mode
-    let mut i: libc::c_int = 0 as libc::c_int;
-    while i < 20 as libc::c_int {
+    let mut i: libc::c_int = 0i32;
+    while i < 20i32 {
         let mut mac: *const modeActivationCondition_t =
             modeActivationConditions(i);
         // Skip linked macs for now to fully determine target states
@@ -443,8 +439,8 @@ pub unsafe extern "C" fn updateActivatedModes() {
                 &mut newMask as *mut boxBitmask_t as *mut libc::c_void,
                 &mut andMask as *mut boxBitmask_t as *mut libc::c_void);
     // Update linked modes
-    let mut i_0: libc::c_int = 0 as libc::c_int;
-    while i_0 < 20 as libc::c_int {
+    let mut i_0: libc::c_int = 0i32;
+    while i_0 < 20i32 {
         let mut mac_0: *const modeActivationCondition_t =
             modeActivationConditions(i_0);
         if !((*mac_0).linkedTo as u64 == 0) {
@@ -460,25 +456,25 @@ pub unsafe extern "C" fn updateActivatedModes() {
 #[no_mangle]
 pub unsafe extern "C" fn isModeActivationConditionPresent(mut modeId: boxId_e)
  -> bool {
-    let mut i: libc::c_int = 0 as libc::c_int;
-    while i < 20 as libc::c_int {
+    let mut i: libc::c_int = 0i32;
+    while i < 20i32 {
         let mut mac: *const modeActivationCondition_t =
             modeActivationConditions(i);
         if (*mac).modeId as libc::c_uint == modeId as libc::c_uint &&
                (((*mac).range.startStep as libc::c_int) <
                     (*mac).range.endStep as libc::c_int ||
                     (*mac).linkedTo as libc::c_uint != 0) {
-            return 1 as libc::c_int != 0
+            return 1i32 != 0
         }
         i += 1
     }
-    return 0 as libc::c_int != 0;
+    return 0i32 != 0;
 }
 #[no_mangle]
 pub unsafe extern "C" fn removeModeActivationCondition(modeId: boxId_e) {
-    let mut offset: libc::c_uint = 0 as libc::c_int as libc::c_uint;
-    let mut i: libc::c_uint = 0 as libc::c_int as libc::c_uint;
-    while i < 20 as libc::c_int as libc::c_uint {
+    let mut offset: libc::c_uint = 0i32 as libc::c_uint;
+    let mut i: libc::c_uint = 0i32 as libc::c_uint;
+    while i < 20i32 as libc::c_uint {
         let mut mac: *mut modeActivationCondition_t =
             modeActivationConditionsMutable(i as libc::c_int);
         if (*mac).modeId as libc::c_uint == modeId as libc::c_uint &&
@@ -486,14 +482,13 @@ pub unsafe extern "C" fn removeModeActivationCondition(modeId: boxId_e) {
             offset = offset.wrapping_add(1)
         }
         if offset != 0 {
-            while i.wrapping_add(offset) < 20 as libc::c_int as libc::c_uint
-                      &&
+            while i.wrapping_add(offset) < 20i32 as libc::c_uint &&
                       (*modeActivationConditions(i.wrapping_add(offset) as
                                                      libc::c_int)).modeId as
                           libc::c_uint == modeId as libc::c_uint {
                 offset = offset.wrapping_add(1)
             }
-            if i.wrapping_add(offset) < 20 as libc::c_int as libc::c_uint {
+            if i.wrapping_add(offset) < 20i32 as libc::c_uint {
                 memcpy(mac as *mut libc::c_void,
                        modeActivationConditions(i.wrapping_add(offset) as
                                                     libc::c_int) as
@@ -501,7 +496,7 @@ pub unsafe extern "C" fn removeModeActivationCondition(modeId: boxId_e) {
                        ::core::mem::size_of::<modeActivationCondition_t>() as
                            libc::c_ulong);
             } else {
-                memset(mac as *mut libc::c_void, 0 as libc::c_int,
+                memset(mac as *mut libc::c_void, 0i32,
                        ::core::mem::size_of::<modeActivationCondition_t>() as
                            libc::c_ulong);
             }
@@ -513,16 +508,11 @@ unsafe extern "C" fn run_static_initializers() {
     modeActivationConditions_Registry =
         {
             let mut init =
-                pgRegistry_s{pgn:
-                                 (41 as libc::c_int |
-                                      (1 as libc::c_int) << 12 as libc::c_int)
-                                     as pgn_t,
+                pgRegistry_s{pgn: (41i32 | 1i32 << 12i32) as pgn_t,
                              size:
                                  ((::core::mem::size_of::<modeActivationCondition_t>()
                                        as
-                                       libc::c_ulong).wrapping_mul(20 as
-                                                                       libc::c_int
-                                                                       as
+                                       libc::c_ulong).wrapping_mul(20i32 as
                                                                        libc::c_ulong)
                                       |
                                       PGR_SIZE_SYSTEM_FLAG as libc::c_int as
@@ -544,7 +534,7 @@ unsafe extern "C" fn run_static_initializers() {
         }
 }
 #[used]
-#[cfg_attr(target_os = "linux", link_section = ".init_array")]
-#[cfg_attr(target_os = "windows", link_section = ".CRT$XIB")]
-#[cfg_attr(target_os = "macos", link_section = "__DATA,__mod_init_func")]
+#[cfg_attr ( target_os = "linux", link_section = ".init_array" )]
+#[cfg_attr ( target_os = "windows", link_section = ".CRT$XIB" )]
+#[cfg_attr ( target_os = "macos", link_section = "__DATA,__mod_init_func" )]
 static INIT_ARRAY: [unsafe extern "C" fn(); 1] = [run_static_initializers];

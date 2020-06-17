@@ -1,9 +1,8 @@
 #![allow(dead_code, mutable_transmutes, non_camel_case_types, non_snake_case,
          non_upper_case_globals, unused_assignments, unused_mut)]
-#![register_tool(c2rust)]
-#![feature(main, register_tool)]
+#![feature(main)]
 #![no_std]
-use ::SITL::*;
+use SITL::*;
 extern "C" {
     #[no_mangle]
     fn delayMicroseconds_real(us: uint32_t);
@@ -18,7 +17,7 @@ pub type __uint32_t = libc::c_uint;
 pub type uint32_t = __uint32_t;
 #[no_mangle]
 pub static mut SystemCoreClock: uint32_t = 0;
-unsafe fn main_0() -> libc::c_int { init(); run(); return 0 as libc::c_int; }
+unsafe fn main_0() -> libc::c_int { init(); run(); return 0i32; }
 /*
  * This file is part of Cleanflight and Betaflight.
  *
@@ -43,7 +42,7 @@ pub unsafe extern "C" fn run() {
     loop  {
         scheduler();
         processLoopback();
-        delayMicroseconds_real(50 as libc::c_int as uint32_t);
+        delayMicroseconds_real(50i32 as uint32_t);
         // max rate 20kHz
     };
 }

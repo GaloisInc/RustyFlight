@@ -1,9 +1,10 @@
-use ::libc;
+use core;
+use libc;
 pub type __uint8_t = libc::c_uchar;
 pub type __uint32_t = libc::c_uint;
 pub type uint8_t = __uint8_t;
 pub type uint32_t = __uint32_t;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct SPI_TypeDef {
     pub test: *mut libc::c_void,
@@ -42,32 +43,32 @@ pub const BUSTYPE_MPU_SLAVE: busType_e = 3;
 pub const BUSTYPE_SPI: busType_e = 2;
 pub const BUSTYPE_I2C: busType_e = 1;
 pub const BUSTYPE_NONE: busType_e = 0;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct busDevice_s {
     pub bustype: busType_e,
     pub busdev_u: C2RustUnnamed,
 }
-#[derive(Copy, Clone)]
-#[repr(C)]
+#[derive ( Copy, Clone )]
+#[repr ( C )]
 pub union C2RustUnnamed {
     pub spi: deviceSpi_s,
     pub i2c: deviceI2C_s,
     pub mpuSlave: deviceMpuSlave_s,
 }
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct deviceMpuSlave_s {
     pub master: *const busDevice_s,
     pub address: uint8_t,
 }
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct deviceI2C_s {
     pub device: I2CDevice,
     pub address: uint8_t,
 }
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct deviceSpi_s {
     pub instance: *mut SPI_TypeDef,
@@ -100,7 +101,7 @@ pub unsafe extern "C" fn busWriteRegister(mut busdev: *const busDevice_t,
                                           mut reg: uint8_t, mut data: uint8_t)
  -> bool {
     match (*busdev).bustype as libc::c_uint { _ => { } }
-    return 0 as libc::c_int != 0;
+    return 0i32 != 0;
 }
 /*
  * This file is part of Cleanflight and Betaflight.
@@ -128,10 +129,10 @@ pub unsafe extern "C" fn busReadRegisterBuffer(mut busdev: *const busDevice_t,
                                                mut data: *mut uint8_t,
                                                mut length: uint8_t) -> bool {
     match (*busdev).bustype as libc::c_uint { _ => { } }
-    return 0 as libc::c_int != 0;
+    return 0i32 != 0;
 }
 #[no_mangle]
 pub unsafe extern "C" fn busReadRegister(mut busdev: *const busDevice_t,
                                          mut reg: uint8_t) -> uint8_t {
-    return 0 as libc::c_int as uint8_t;
+    return 0i32 as uint8_t;
 }

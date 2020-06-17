@@ -2,3 +2,5 @@ log*
 *.json
 
 .DS_Store
+c2rust-logs/*
+*/Cargo.lock

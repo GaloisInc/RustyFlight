@@ -1,4 +1,5 @@
-use ::libc;
+use core;
+use libc;
 extern "C" {
     pub type sockaddr_x25;
     pub type sockaddr_un;
@@ -99,7 +100,7 @@ extern "C" {
     fn __errno_location() -> *mut libc::c_int;
 }
 pub type __builtin_va_list = [__va_list_tag; 1];
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct __va_list_tag {
     pub gp_offset: libc::c_uint,
@@ -122,14 +123,14 @@ pub type socklen_t = __socklen_t;
 pub type uint8_t = __uint8_t;
 pub type uint16_t = __uint16_t;
 pub type uint32_t = __uint32_t;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct timeval {
     pub tv_sec: __time_t,
     pub tv_usec: __suseconds_t,
 }
 pub type __fd_mask = libc::c_long;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct fd_set {
     pub fds_bits: [__fd_mask; 16],
@@ -145,21 +146,21 @@ pub const SOCK_RAW: __socket_type = 3;
 pub const SOCK_DGRAM: __socket_type = 2;
 pub const SOCK_STREAM: __socket_type = 1;
 pub type sa_family_t = libc::c_ushort;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct sockaddr {
     pub sa_family: sa_family_t,
     pub sa_data: [libc::c_char; 14],
 }
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct sockaddr_storage {
     pub ss_family: sa_family_t,
     pub __ss_padding: [libc::c_char; 118],
     pub __ss_align: libc::c_ulong,
 }
-#[derive(Copy, Clone)]
-#[repr(C)]
+#[derive ( Copy, Clone )]
+#[repr ( C )]
 pub union __SOCKADDR_ARG {
     pub __sockaddr__: *mut sockaddr,
     pub __sockaddr_at__: *mut sockaddr_at,
@@ -175,7 +176,7 @@ pub union __SOCKADDR_ARG {
     pub __sockaddr_un__: *mut sockaddr_un,
     pub __sockaddr_x25__: *mut sockaddr_x25,
 }
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct sockaddr_in6 {
     pub sin6_family: sa_family_t,
@@ -184,20 +185,20 @@ pub struct sockaddr_in6 {
     pub sin6_addr: in6_addr,
     pub sin6_scope_id: uint32_t,
 }
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct in6_addr {
     pub __in6_u: C2RustUnnamed,
 }
-#[derive(Copy, Clone)]
-#[repr(C)]
+#[derive ( Copy, Clone )]
+#[repr ( C )]
 pub union C2RustUnnamed {
     pub __u6_addr8: [uint8_t; 16],
     pub __u6_addr16: [uint16_t; 8],
     pub __u6_addr32: [uint32_t; 4],
 }
 pub type in_port_t = uint16_t;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct sockaddr_in {
     pub sin_family: sa_family_t,
@@ -205,14 +206,14 @@ pub struct sockaddr_in {
     pub sin_addr: in_addr,
     pub sin_zero: [libc::c_uchar; 8],
 }
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct in_addr {
     pub s_addr: in_addr_t,
 }
 pub type in_addr_t = uint32_t;
-#[derive(Copy, Clone)]
-#[repr(C)]
+#[derive ( Copy, Clone )]
+#[repr ( C )]
 pub union __CONST_SOCKADDR_ARG {
     pub __sockaddr__: *const sockaddr,
     pub __sockaddr_at__: *const sockaddr_at,
@@ -255,7 +256,7 @@ pub const IPPROTO_IPIP: C2RustUnnamed_0 = 4;
 pub const IPPROTO_IGMP: C2RustUnnamed_0 = 2;
 pub const IPPROTO_ICMP: C2RustUnnamed_0 = 1;
 pub const IPPROTO_IP: C2RustUnnamed_0 = 0;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct addrinfo {
     pub ai_flags: libc::c_int,
@@ -267,7 +268,7 @@ pub struct addrinfo {
     pub ai_canonname: *mut libc::c_char,
     pub ai_next: *mut addrinfo,
 }
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct timezone {
     pub tz_minuteswest: libc::c_int,
@@ -275,7 +276,7 @@ pub struct timezone {
 }
 pub type __timezone_ptr_t = *mut timezone;
 pub type va_list = __builtin_va_list;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct _IO_FILE {
     pub _flags: libc::c_int,
@@ -318,7 +319,7 @@ pub type __sighandler_t = Option<unsafe extern "C" fn(_: libc::c_int) -> ()>;
  * under the terms of the MIT license. See LICENSE for details.
  */
 pub type dyad_Socket = libc::c_int;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct dyad_Stream {
     pub state: libc::c_int,
@@ -335,28 +336,28 @@ pub struct dyad_Stream {
     pub writeBuffer: C2RustUnnamed_1,
     pub next: *mut dyad_Stream,
 }
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct C2RustUnnamed_1 {
     pub data: *mut libc::c_char,
     pub length: libc::c_int,
     pub capacity: libc::c_int,
 }
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct C2RustUnnamed_2 {
     pub data: *mut libc::c_char,
     pub length: libc::c_int,
     pub capacity: libc::c_int,
 }
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct C2RustUnnamed_3 {
     pub data: *mut Listener,
     pub length: libc::c_int,
     pub capacity: libc::c_int,
 }
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct Listener {
     pub event: libc::c_int,
@@ -366,7 +367,7 @@ pub struct Listener {
 pub type dyad_Callback
     =
     Option<unsafe extern "C" fn(_: *mut dyad_Event) -> ()>;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct dyad_Event {
     pub type_0: libc::c_int,
@@ -399,8 +400,8 @@ pub const DYAD_STATE_CONNECTED: C2RustUnnamed_5 = 3;
 pub const DYAD_STATE_CONNECTING: C2RustUnnamed_5 = 2;
 pub const DYAD_STATE_CLOSING: C2RustUnnamed_5 = 1;
 pub const DYAD_STATE_CLOSED: C2RustUnnamed_5 = 0;
-#[derive(Copy, Clone)]
-#[repr(C)]
+#[derive ( Copy, Clone )]
+#[repr ( C )]
 pub union C2RustUnnamed_6 {
     pub sa: sockaddr,
     pub sas: sockaddr_storage,
@@ -408,7 +409,7 @@ pub union C2RustUnnamed_6 {
     pub sai6: sockaddr_in6,
 }
 pub const SELECT_READ: C2RustUnnamed_7 = 0;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct SelectSet {
     pub capacity: libc::c_int,
@@ -418,49 +419,27 @@ pub struct SelectSet {
 pub const SELECT_EXCEPT: C2RustUnnamed_7 = 2;
 pub const SELECT_WRITE: C2RustUnnamed_7 = 1;
 pub const SELECT_MAX: C2RustUnnamed_7 = 3;
-/*===========================================================================*/
-/* SelectSet                                                                 */
-/*===========================================================================*/
-/* A wrapper around the three fd_sets used for select(). The fd_sets' allocated
- * memory is automatically expanded to accommodate fds as they are added.
- *
- * On Windows fd_sets are implemented as arrays; the FD_xxx macros are not used
- * by the wrapper and instead the fd_set struct is manipulated directly. The
- * wrapper should perform better than the normal FD_xxx macros, given that we
- * don't bother with the linear search which FD_SET would perform to check for
- * duplicates.
- *
- * On non-Windows platforms the sets are assumed to be bit arrays. The FD_xxx
- * macros are not used in case their implementation attempts to do bounds
- * checking; instead we manipulate the fd_sets' bits directly.
- */
 pub type C2RustUnnamed_7 = libc::c_uint;
 #[inline]
 unsafe extern "C" fn __bswap_16(mut __bsx: __uint16_t) -> __uint16_t {
-    return (__bsx as libc::c_int >> 8 as libc::c_int & 0xff as libc::c_int |
-                (__bsx as libc::c_int & 0xff as libc::c_int) <<
-                    8 as libc::c_int) as __uint16_t;
+    return (__bsx as libc::c_int >> 8i32 & 0xffi32 |
+                (__bsx as libc::c_int & 0xffi32) << 8i32) as __uint16_t;
 }
 unsafe extern "C" fn dyad_realloc(mut ptr: *mut libc::c_void,
                                   mut n: libc::c_int) -> *mut libc::c_void {
     ptr = realloc(ptr, n as libc::c_ulong);
-    if ptr.is_null() && n != 0 as libc::c_int {
+    if ptr.is_null() && n != 0i32 {
         panic(b"out of memory\x00" as *const u8 as *const libc::c_char);
     }
     return ptr;
 }
 unsafe extern "C" fn dyad_free(mut ptr: *mut libc::c_void) { free(ptr); }
-/*===========================================================================*/
-/* Vec (dynamic array)                                                       */
-/*===========================================================================*/
 unsafe extern "C" fn vec_expand(mut data: *mut *mut libc::c_char,
                                 mut length: *mut libc::c_int,
                                 mut capacity: *mut libc::c_int,
                                 mut memsz: libc::c_int) {
-    if *length + 1 as libc::c_int > *capacity {
-        if *capacity == 0 as libc::c_int {
-            *capacity = 1 as libc::c_int
-        } else { *capacity <<= 1 as libc::c_int }
+    if *length + 1i32 > *capacity {
+        if *capacity == 0i32 { *capacity = 1i32 } else { *capacity <<= 1i32 }
         *data =
             dyad_realloc(*data as *mut libc::c_void, *capacity * memsz) as
                 *mut libc::c_char
@@ -479,22 +458,20 @@ unsafe extern "C" fn vec_splice(mut data: *mut *mut libc::c_char,
 }
 unsafe extern "C" fn select_deinit(mut s: *mut SelectSet) {
     let mut i: libc::c_int = 0;
-    i = 0 as libc::c_int;
+    i = 0i32;
     while i < SELECT_MAX as libc::c_int {
         dyad_free((*s).fds[i as usize] as *mut libc::c_void);
         (*s).fds[i as usize] = 0 as *mut fd_set;
         i += 1
     }
-    (*s).capacity = 0 as libc::c_int;
+    (*s).capacity = 0i32;
 }
 unsafe extern "C" fn select_grow(mut s: *mut SelectSet) {
     let mut i: libc::c_int = 0;
     let mut oldCapacity: libc::c_int = (*s).capacity;
     (*s).capacity =
-        if (*s).capacity != 0 {
-            ((*s).capacity) << 1 as libc::c_int
-        } else { 1 as libc::c_int };
-    i = 0 as libc::c_int;
+        if (*s).capacity != 0 { ((*s).capacity) << 1i32 } else { 1i32 };
+    i = 0i32;
     while i < SELECT_MAX as libc::c_int {
         (*s).fds[i as usize] =
             dyad_realloc((*s).fds[i as usize] as *mut libc::c_void,
@@ -504,7 +481,7 @@ unsafe extern "C" fn select_grow(mut s: *mut SelectSet) {
                                                               libc::c_ulong)
                              as libc::c_int) as *mut fd_set;
         memset((*s).fds[i as usize].offset(oldCapacity as isize) as
-                   *mut libc::c_void, 0 as libc::c_int,
+                   *mut libc::c_void, 0i32,
                (((*s).capacity - oldCapacity) as
                     libc::c_ulong).wrapping_mul(::core::mem::size_of::<fd_set>()
                                                     as libc::c_ulong));
@@ -513,11 +490,11 @@ unsafe extern "C" fn select_grow(mut s: *mut SelectSet) {
 }
 unsafe extern "C" fn select_zero(mut s: *mut SelectSet) {
     let mut i: libc::c_int = 0;
-    if (*s).capacity == 0 as libc::c_int { return }
-    (*s).maxfd = 0 as libc::c_int;
-    i = 0 as libc::c_int;
+    if (*s).capacity == 0i32 { return }
+    (*s).maxfd = 0i32;
+    i = 0i32;
     while i < SELECT_MAX as libc::c_int {
-        memset((*s).fds[i as usize] as *mut libc::c_void, 0 as libc::c_int,
+        memset((*s).fds[i as usize] as *mut libc::c_void, 0i32,
                ((*s).capacity as
                     libc::c_ulong).wrapping_mul(::core::mem::size_of::<fd_set>()
                                                     as libc::c_ulong));
@@ -527,24 +504,20 @@ unsafe extern "C" fn select_zero(mut s: *mut SelectSet) {
 unsafe extern "C" fn select_add(mut s: *mut SelectSet, mut set: libc::c_int,
                                 mut fd: dyad_Socket) {
     let mut p: *mut libc::c_uint = 0 as *mut libc::c_uint;
-    while ((*s).capacity * 1024 as libc::c_int) < fd { select_grow(s); }
+    while (*s).capacity * 1024i32 < fd { select_grow(s); }
     p = (*s).fds[set as usize] as *mut libc::c_uint;
     *p.offset((fd as
                    libc::c_ulong).wrapping_div((::core::mem::size_of::<libc::c_uint>()
                                                     as
-                                                    libc::c_ulong).wrapping_mul(8
-                                                                                    as
-                                                                                    libc::c_int
+                                                    libc::c_ulong).wrapping_mul(8i32
                                                                                     as
                                                                                     libc::c_ulong))
                   as isize) |=
-        ((1 as libc::c_int) <<
+        (1i32 <<
              (fd as
                   libc::c_ulong).wrapping_rem((::core::mem::size_of::<libc::c_uint>()
                                                    as
-                                                   libc::c_ulong).wrapping_mul(8
-                                                                                   as
-                                                                                   libc::c_int
+                                                   libc::c_ulong).wrapping_mul(8i32
                                                                                    as
                                                                                    libc::c_ulong)))
             as libc::c_uint;
@@ -553,24 +526,20 @@ unsafe extern "C" fn select_add(mut s: *mut SelectSet, mut set: libc::c_int,
 unsafe extern "C" fn select_has(mut s: *mut SelectSet, mut set: libc::c_int,
                                 mut fd: dyad_Socket) -> libc::c_int {
     let mut p: *mut libc::c_uint = 0 as *mut libc::c_uint;
-    if (*s).maxfd < fd { return 0 as libc::c_int }
+    if (*s).maxfd < fd { return 0i32 }
     p = (*s).fds[set as usize] as *mut libc::c_uint;
     return (*p.offset((fd as
                            libc::c_ulong).wrapping_div((::core::mem::size_of::<libc::c_uint>()
                                                             as
-                                                            libc::c_ulong).wrapping_mul(8
-                                                                                            as
-                                                                                            libc::c_int
+                                                            libc::c_ulong).wrapping_mul(8i32
                                                                                             as
                                                                                             libc::c_ulong))
                           as isize) &
-                ((1 as libc::c_int) <<
+                (1i32 <<
                      (fd as
                           libc::c_ulong).wrapping_rem((::core::mem::size_of::<libc::c_uint>()
                                                            as
-                                                           libc::c_ulong).wrapping_mul(8
-                                                                                           as
-                                                                                           libc::c_int
+                                                           libc::c_ulong).wrapping_mul(8i32
                                                                                            as
                                                                                            libc::c_ulong)))
                     as libc::c_uint) as libc::c_int;
@@ -584,14 +553,9 @@ static mut dyad_selectSet: SelectSet =
     SelectSet{capacity: 0,
               maxfd: 0,
               fds: [0 as *const fd_set as *mut fd_set; 3],};
-static mut dyad_updateTimeout: libc::c_double =
-    1 as libc::c_int as libc::c_double;
-static mut dyad_tickInterval: libc::c_double =
-    1 as libc::c_int as libc::c_double;
-static mut dyad_lastTick: libc::c_double = 0 as libc::c_int as libc::c_double;
-/*===========================================================================*/
-/* Memory                                                                    */
-/*===========================================================================*/
+static mut dyad_updateTimeout: libc::c_double = 1i32 as libc::c_double;
+static mut dyad_tickInterval: libc::c_double = 1i32 as libc::c_double;
+static mut dyad_lastTick: libc::c_double = 0i32 as libc::c_double;
 unsafe extern "C" fn panic(mut fmt: *const libc::c_char, mut args: ...) {
     let mut args_0: ::core::ffi::VaListImpl;
     args_0 = args.clone();
@@ -602,7 +566,7 @@ unsafe extern "C" fn panic(mut fmt: *const libc::c_char, mut args: ...) {
         printf(b"dyad panic: %s\n\x00" as *const u8 as *const libc::c_char,
                dyad_panicMsgBuffer.as_mut_ptr());
     }
-    exit(1 as libc::c_int);
+    exit(1i32);
 }
 unsafe extern "C" fn createEvent(mut type_0: libc::c_int) -> dyad_Event {
     let mut e: dyad_Event =
@@ -613,7 +577,7 @@ unsafe extern "C" fn createEvent(mut type_0: libc::c_int) -> dyad_Event {
                    msg: 0 as *const libc::c_char,
                    data: 0 as *mut libc::c_char,
                    size: 0,};
-    memset(&mut e as *mut dyad_Event as *mut libc::c_void, 0 as libc::c_int,
+    memset(&mut e as *mut dyad_Event as *mut libc::c_void, 0i32,
            ::core::mem::size_of::<dyad_Event>() as libc::c_ulong);
     e.type_0 = type_0;
     return e;
@@ -630,7 +594,7 @@ unsafe extern "C" fn destroyClosedStreams() {
 }
 unsafe extern "C" fn updateTickTimer() {
     /* Update tick timer */
-    if dyad_lastTick == 0 as libc::c_int as libc::c_double {
+    if dyad_lastTick == 0i32 as libc::c_double {
         dyad_lastTick = dyad_getTime()
     }
     while dyad_lastTick < dyad_getTime() {
@@ -676,7 +640,7 @@ unsafe extern "C" fn stream_destroy(mut stream: *mut dyad_Stream) {
                    size: 0,};
     let mut next: *mut *mut dyad_Stream = 0 as *mut *mut dyad_Stream;
     /* Close socket */
-    if (*stream).sockfd != -(1 as libc::c_int) { close((*stream).sockfd); }
+    if (*stream).sockfd != -1i32 { close((*stream).sockfd); }
     /* Emit destroy event */
     e = createEvent(DYAD_EVENT_DESTROY as libc::c_int);
     e.msg =
@@ -699,7 +663,7 @@ unsafe extern "C" fn stream_emitEvent(mut stream: *mut dyad_Stream,
                                       mut e: *mut dyad_Event) {
     let mut i: libc::c_int = 0;
     (*e).stream = stream;
-    i = 0 as libc::c_int;
+    i = 0i32;
     while i < (*stream).listeners.length {
         let mut listener: *mut Listener =
             &mut *(*stream).listeners.data.offset(i as isize) as
@@ -736,8 +700,7 @@ unsafe extern "C" fn stream_initAddress(mut stream: *mut dyad_Stream) {
     let mut addr: C2RustUnnamed_6 =
         C2RustUnnamed_6{sa: sockaddr{sa_family: 0, sa_data: [0; 14],},};
     let mut size: socklen_t = 0;
-    memset(&mut addr as *mut C2RustUnnamed_6 as *mut libc::c_void,
-           0 as libc::c_int,
+    memset(&mut addr as *mut C2RustUnnamed_6 as *mut libc::c_void, 0i32,
            ::core::mem::size_of::<C2RustUnnamed_6>() as libc::c_ulong);
     size =
         ::core::mem::size_of::<C2RustUnnamed_6>() as libc::c_ulong as
@@ -747,46 +710,42 @@ unsafe extern "C" fn stream_initAddress(mut stream: *mut dyad_Stream) {
     if getpeername((*stream).sockfd,
                    __SOCKADDR_ARG{__sockaddr__:
                                       &mut addr.sa as *mut sockaddr,},
-                   &mut size) == -(1 as libc::c_int) {
+                   &mut size) == -1i32 {
         if getsockname((*stream).sockfd,
                        __SOCKADDR_ARG{__sockaddr__:
                                           &mut addr.sa as *mut sockaddr,},
-                       &mut size) == -(1 as libc::c_int) {
+                       &mut size) == -1i32 {
             return
         }
     }
-    if addr.sas.ss_family as libc::c_int == 10 as libc::c_int {
+    if addr.sas.ss_family as libc::c_int == 10i32 {
         (*stream).address =
-            dyad_realloc(0 as *mut libc::c_void, 46 as libc::c_int) as
-                *mut libc::c_char;
-        inet_ntop(10 as libc::c_int,
+            dyad_realloc(0 as *mut libc::c_void, 46i32) as *mut libc::c_char;
+        inet_ntop(10i32,
                   &mut addr.sai6.sin6_addr as *mut in6_addr as
                       *const libc::c_void, (*stream).address,
-                  46 as libc::c_int as socklen_t);
+                  46i32 as socklen_t);
         (*stream).port = __bswap_16(addr.sai6.sin6_port) as libc::c_int
     } else {
         (*stream).address =
-            dyad_realloc(0 as *mut libc::c_void, 16 as libc::c_int) as
-                *mut libc::c_char;
-        inet_ntop(2 as libc::c_int,
+            dyad_realloc(0 as *mut libc::c_void, 16i32) as *mut libc::c_char;
+        inet_ntop(2i32,
                   &mut addr.sai.sin_addr as *mut in_addr as
                       *const libc::c_void, (*stream).address,
-                  16 as libc::c_int as socklen_t);
+                  16i32 as socklen_t);
         (*stream).port = __bswap_16(addr.sai.sin_port) as libc::c_int
     };
 }
 unsafe extern "C" fn stream_setSocketNonBlocking(mut stream: *mut dyad_Stream,
                                                  mut opt: libc::c_int) {
-    let mut flags: libc::c_int = fcntl((*stream).sockfd, 3 as libc::c_int);
-    fcntl((*stream).sockfd, 4 as libc::c_int,
-          if opt != 0 {
-              (flags) | 0o4000 as libc::c_int
-          } else { (flags) & !(0o4000 as libc::c_int) });
+    let mut flags: libc::c_int = fcntl((*stream).sockfd, 3i32);
+    fcntl((*stream).sockfd, 4i32,
+          if opt != 0 { (flags) | 0o4000i32 } else { (flags) & !0o4000i32 });
 }
 unsafe extern "C" fn stream_setSocket(mut stream: *mut dyad_Stream,
                                       mut sockfd: dyad_Socket) {
     (*stream).sockfd = sockfd;
-    stream_setSocketNonBlocking(stream, 1 as libc::c_int);
+    stream_setSocketNonBlocking(stream, 1i32);
     stream_initAddress(stream);
 }
 unsafe extern "C" fn stream_initSocket(mut stream: *mut dyad_Stream,
@@ -795,28 +754,28 @@ unsafe extern "C" fn stream_initSocket(mut stream: *mut dyad_Stream,
                                        mut protocol: libc::c_int)
  -> libc::c_int {
     (*stream).sockfd = socket(domain, type_0, protocol);
-    if (*stream).sockfd == -(1 as libc::c_int) {
+    if (*stream).sockfd == -1i32 {
         stream_error(stream,
                      b"could not create socket\x00" as *const u8 as
                          *const libc::c_char, *__errno_location());
-        return -(1 as libc::c_int)
+        return -1i32
     }
     stream_setSocket(stream, (*stream).sockfd);
-    return 0 as libc::c_int;
+    return 0i32;
 }
 unsafe extern "C" fn stream_hasListenerForEvent(mut stream: *mut dyad_Stream,
                                                 mut event: libc::c_int)
  -> libc::c_int {
     let mut i: libc::c_int = 0;
-    i = 0 as libc::c_int;
+    i = 0i32;
     while i < (*stream).listeners.length {
         let mut listener: *mut Listener =
             &mut *(*stream).listeners.data.offset(i as isize) as
                 *mut Listener;
-        if (*listener).event == event { return 1 as libc::c_int }
+        if (*listener).event == event { return 1i32 }
         i += 1
     }
-    return 0 as libc::c_int;
+    return 0i32;
 }
 unsafe extern "C" fn stream_handleReceivedData(mut stream: *mut dyad_Stream) {
     loop  {
@@ -833,12 +792,10 @@ unsafe extern "C" fn stream_handleReceivedData(mut stream: *mut dyad_Stream) {
         let mut size: libc::c_int =
             recv((*stream).sockfd, data.as_mut_ptr() as *mut libc::c_void,
                  (::core::mem::size_of::<[libc::c_char; 8192]>() as
-                      libc::c_ulong).wrapping_sub(1 as libc::c_int as
-                                                      libc::c_ulong),
-                 0 as libc::c_int) as libc::c_int;
-        if size <= 0 as libc::c_int {
-            if size == 0 as libc::c_int ||
-                   *__errno_location() != 11 as libc::c_int {
+                      libc::c_ulong).wrapping_sub(1i32 as libc::c_ulong),
+                 0i32) as libc::c_int;
+        if size <= 0i32 {
+            if size == 0i32 || *__errno_location() != 11i32 {
                 /* Handle disconnect */
                 dyad_close(stream);
                 return
@@ -847,7 +804,7 @@ unsafe extern "C" fn stream_handleReceivedData(mut stream: *mut dyad_Stream) {
                 return
             }
         }
-        data[size as usize] = 0 as libc::c_int as libc::c_char;
+        data[size as usize] = 0i32 as libc::c_char;
         /* Update status */
         (*stream).bytesReceived += size;
         (*stream).lastActivity = dyad_getTime();
@@ -866,7 +823,7 @@ unsafe extern "C" fn stream_handleReceivedData(mut stream: *mut dyad_Stream) {
             let mut i: libc::c_int = 0;
             let mut start: libc::c_int = 0;
             let mut buf: *mut libc::c_char = 0 as *mut libc::c_char;
-            i = 0 as libc::c_int;
+            i = 0i32;
             while i < size {
                 vec_expand(&mut (*stream).lineBuffer.data as
                                *mut *mut libc::c_char,
@@ -880,9 +837,9 @@ unsafe extern "C" fn stream_handleReceivedData(mut stream: *mut dyad_Stream) {
                     data[i as usize];
                 i += 1
             }
-            start = 0 as libc::c_int;
+            start = 0i32;
             buf = (*stream).lineBuffer.data;
-            i = 0 as libc::c_int;
+            i = 0i32;
             while i < (*stream).lineBuffer.length {
                 if *buf.offset(i as isize) as libc::c_int == '\n' as i32 {
                     let mut e_0: dyad_Event =
@@ -902,16 +859,15 @@ unsafe extern "C" fn stream_handleReceivedData(mut stream: *mut dyad_Stream) {
                         &mut *buf.offset(start as isize) as *mut libc::c_char;
                     e_0.size = i - start;
                     /* Check and strip carriage return */
-                    if e_0.size > 0 as libc::c_int &&
-                           *e_0.data.offset((e_0.size - 1 as libc::c_int) as
-                                                isize) as libc::c_int ==
-                               '\r' as i32 {
+                    if e_0.size > 0i32 &&
+                           *e_0.data.offset((e_0.size - 1i32) as isize) as
+                               libc::c_int == '\r' as i32 {
                         e_0.size -= 1;
                         *e_0.data.offset(e_0.size as isize) =
                             '\u{0}' as i32 as libc::c_char
                     }
                     stream_emitEvent(stream, &mut e_0);
-                    start = i + 1 as libc::c_int;
+                    start = i + 1i32;
                     /* Check stream state in case it was closed during one of the line
            * event handlers. */
                     if (*stream).state != DYAD_STATE_CONNECTED as libc::c_int
@@ -922,15 +878,14 @@ unsafe extern "C" fn stream_handleReceivedData(mut stream: *mut dyad_Stream) {
                 i += 1
             }
             if start == (*stream).lineBuffer.length {
-                (*stream).lineBuffer.length = 0 as libc::c_int
+                (*stream).lineBuffer.length = 0i32
             } else {
                 vec_splice(&mut (*stream).lineBuffer.data as
                                *mut *mut libc::c_char,
                            &mut (*stream).lineBuffer.length,
                            &mut (*stream).lineBuffer.capacity,
                            ::core::mem::size_of::<libc::c_char>() as
-                               libc::c_ulong as libc::c_int, 0 as libc::c_int,
-                           start);
+                               libc::c_ulong as libc::c_int, 0i32, start);
                 (*stream).lineBuffer.length -= start
             }
         }
@@ -948,16 +903,16 @@ unsafe extern "C" fn stream_acceptPendingConnections(mut stream:
                        msg: 0 as *const libc::c_char,
                        data: 0 as *mut libc::c_char,
                        size: 0,};
-        let mut err: libc::c_int = 0 as libc::c_int;
+        let mut err: libc::c_int = 0i32;
         let mut sockfd: dyad_Socket =
             accept((*stream).sockfd,
                    __SOCKADDR_ARG{__sockaddr__:
                                       0 as *mut libc::c_void as
                                           *mut sockaddr,},
                    0 as *mut socklen_t);
-        if sockfd == -(1 as libc::c_int) {
+        if sockfd == -1i32 {
             err = *__errno_location();
-            if err == 11 as libc::c_int {
+            if err == 11i32 {
                 /* No more waiting sockets */
                 return
             }
@@ -975,7 +930,7 @@ unsafe extern "C" fn stream_acceptPendingConnections(mut stream:
         stream_emitEvent(stream, &mut e);
         /* Handle invalid socket -- the stream is still made and the ACCEPT event
      * is still emitted, but its shut immediately with an error */
-        if (*remote).sockfd == -(1 as libc::c_int) {
+        if (*remote).sockfd == -1i32 {
             stream_error(remote,
                          b"failed to create socket on accept\x00" as *const u8
                              as *const libc::c_char, err);
@@ -985,40 +940,39 @@ unsafe extern "C" fn stream_acceptPendingConnections(mut stream:
 }
 unsafe extern "C" fn stream_flushWriteBuffer(mut stream: *mut dyad_Stream)
  -> libc::c_int {
-    (*stream).flags &= !((1 as libc::c_int) << 1 as libc::c_int);
-    if (*stream).writeBuffer.length > 0 as libc::c_int {
+    (*stream).flags &= !(1i32 << 1i32);
+    if (*stream).writeBuffer.length > 0i32 {
         /* Send data */
         let mut size: libc::c_int =
             send((*stream).sockfd,
                  (*stream).writeBuffer.data as *const libc::c_void,
-                 (*stream).writeBuffer.length as size_t, 0 as libc::c_int) as
-                libc::c_int;
-        if size <= 0 as libc::c_int {
-            if *__errno_location() == 11 as libc::c_int {
+                 (*stream).writeBuffer.length as size_t, 0i32) as libc::c_int;
+        if size <= 0i32 {
+            if *__errno_location() == 11i32 {
                 /* No more data can be written */
-                return 0 as libc::c_int
+                return 0i32
             } else {
                 /* Handle disconnect */
                 dyad_close(stream);
-                return 0 as libc::c_int
+                return 0i32
             }
         }
         if size == (*stream).writeBuffer.length {
-            (*stream).writeBuffer.length = 0 as libc::c_int
+            (*stream).writeBuffer.length = 0i32
         } else {
             vec_splice(&mut (*stream).writeBuffer.data as
                            *mut *mut libc::c_char,
                        &mut (*stream).writeBuffer.length,
                        &mut (*stream).writeBuffer.capacity,
                        ::core::mem::size_of::<libc::c_char>() as libc::c_ulong
-                           as libc::c_int, 0 as libc::c_int, size);
+                           as libc::c_int, 0i32, size);
             (*stream).writeBuffer.length -= size
         }
         /* Update status */
         (*stream).bytesSent += size;
         (*stream).lastActivity = dyad_getTime()
     }
-    if (*stream).writeBuffer.length == 0 as libc::c_int {
+    if (*stream).writeBuffer.length == 0i32 {
         let mut e: dyad_Event =
             dyad_Event{type_0: 0,
                        udata: 0 as *mut libc::c_void,
@@ -1030,10 +984,10 @@ unsafe extern "C" fn stream_flushWriteBuffer(mut stream: *mut dyad_Stream)
         /* If this is a 'closing' stream we can properly close it now */
         if (*stream).state == DYAD_STATE_CLOSING as libc::c_int {
             dyad_close(stream);
-            return 0 as libc::c_int
+            return 0i32
         }
         /* Set ready flag and emit 'ready for data' event */
-        (*stream).flags |= (1 as libc::c_int) << 0 as libc::c_int;
+        (*stream).flags |= 1i32 << 0i32;
         e = createEvent(DYAD_EVENT_READY as libc::c_int);
         e.msg =
             b"stream is ready for more data\x00" as *const u8 as
@@ -1042,7 +996,7 @@ unsafe extern "C" fn stream_flushWriteBuffer(mut stream: *mut dyad_Stream)
     }
     /* Return 1 to indicate that more data can immediately be written to the
    * stream's socket */
-    return 1 as libc::c_int;
+    return 1i32;
 }
 /*===========================================================================*/
 /* API                                                                       */
@@ -1065,8 +1019,8 @@ pub unsafe extern "C" fn dyad_update() {
             3 => {
                 select_add(&mut dyad_selectSet, SELECT_READ as libc::c_int,
                            (*stream).sockfd);
-                if (*stream).flags & (1 as libc::c_int) << 0 as libc::c_int ==
-                       0 || (*stream).writeBuffer.length != 0 as libc::c_int {
+                if (*stream).flags & 1i32 << 0i32 == 0 ||
+                       (*stream).writeBuffer.length != 0i32 {
                     select_add(&mut dyad_selectSet,
                                SELECT_WRITE as libc::c_int, (*stream).sockfd);
                 }
@@ -1094,7 +1048,7 @@ pub unsafe extern "C" fn dyad_update() {
     tv.tv_usec =
         ((dyad_updateTimeout - tv.tv_sec as libc::c_double) * 1e6f64) as
             __suseconds_t;
-    select(dyad_selectSet.maxfd + 1 as libc::c_int,
+    select(dyad_selectSet.maxfd + 1i32,
            dyad_selectSet.fds[SELECT_READ as libc::c_int as usize],
            dyad_selectSet.fds[SELECT_WRITE as libc::c_int as usize],
            dyad_selectSet.fds[SELECT_EXCEPT as libc::c_int as usize],
@@ -1110,17 +1064,17 @@ pub unsafe extern "C" fn dyad_update() {
                     stream_handleReceivedData(stream);
                     if (*stream).state == DYAD_STATE_CLOSED as libc::c_int {
                         current_block_36 = 11793792312832361944;
-                    } else { current_block_36 = 6982086587540509401; }
-                } else { current_block_36 = 6982086587540509401; }
+                    } else { current_block_36 = 11000567119642394172; }
+                } else { current_block_36 = 11000567119642394172; }
             }
-            1 => { current_block_36 = 6982086587540509401; }
+            1 => { current_block_36 = 11000567119642394172; }
             2 => {
                 let mut current_block_32: u64;
                 if select_has(&mut dyad_selectSet,
                               SELECT_WRITE as libc::c_int, (*stream).sockfd)
                        != 0 {
                     /* Check socket for error */
-                    let mut optval: libc::c_int = 0 as libc::c_int;
+                    let mut optval: libc::c_int = 0i32;
                     let mut optlen: socklen_t =
                         ::core::mem::size_of::<libc::c_int>() as libc::c_ulong
                             as socklen_t;
@@ -1132,12 +1086,11 @@ pub unsafe extern "C" fn dyad_update() {
                                    msg: 0 as *const libc::c_char,
                                    data: 0 as *mut libc::c_char,
                                    size: 0,};
-                    getsockopt((*stream).sockfd, 1 as libc::c_int,
-                               4 as libc::c_int,
+                    getsockopt((*stream).sockfd, 1i32, 4i32,
                                &mut optval as *mut libc::c_int as
                                    *mut libc::c_void, &mut optlen);
-                    if optval != 0 as libc::c_int {
-                        current_block_32 = 12394798392460186783;
+                    if optval != 0i32 {
+                        current_block_32 = 9979783880681039505;
                     } else {
                         /* Handle succeselful connection */
                         (*stream).state = DYAD_STATE_CONNECTED as libc::c_int;
@@ -1154,16 +1107,16 @@ pub unsafe extern "C" fn dyad_update() {
                 } else if select_has(&mut dyad_selectSet,
                                      SELECT_EXCEPT as libc::c_int,
                                      (*stream).sockfd) != 0 {
-                    current_block_32 = 12394798392460186783;
+                    current_block_32 = 9979783880681039505;
                 } else { current_block_32 = 6717214610478484138; }
                 match current_block_32 {
-                    12394798392460186783 =>
+                    9979783880681039505 =>
                     /* Handle failed connection */
                     {
                         stream_error(stream,
                                      b"could not connect to server\x00" as
                                          *const u8 as *const libc::c_char,
-                                     0 as libc::c_int);
+                                     0i32);
                     }
                     _ => { }
                 }
@@ -1179,7 +1132,7 @@ pub unsafe extern "C" fn dyad_update() {
             _ => { current_block_36 = 11793792312832361944; }
         }
         match current_block_36 {
-            6982086587540509401 =>
+            11000567119642394172 =>
             /* Fall through */
             {
                 if select_has(&mut dyad_selectSet,
@@ -1192,7 +1145,7 @@ pub unsafe extern "C" fn dyad_update() {
         }
         /* If data was just now written to the stream we should immediately try to
      * send it */
-        if (*stream).flags & (1 as libc::c_int) << 1 as libc::c_int != 0 &&
+        if (*stream).flags & 1i32 << 1i32 != 0 &&
                (*stream).state != DYAD_STATE_CLOSED as libc::c_int {
             stream_flushWriteBuffer(stream);
         }
@@ -1202,10 +1155,9 @@ pub unsafe extern "C" fn dyad_update() {
 #[no_mangle]
 pub unsafe extern "C" fn dyad_init() {
     /* Stops the SIGPIPE signal being raised when writing to a closed socket */
-    signal(13 as libc::c_int,
+    signal(13i32,
            ::core::mem::transmute::<libc::intptr_t,
-                                    __sighandler_t>(1 as libc::c_int as
-                                                        libc::intptr_t));
+                                    __sighandler_t>(1i32 as libc::intptr_t));
 }
 #[no_mangle]
 pub unsafe extern "C" fn dyad_shutdown() {
@@ -1256,10 +1208,10 @@ pub unsafe extern "C" fn dyad_newStream() -> *mut dyad_Stream {
         dyad_realloc(0 as *mut libc::c_void,
                      ::core::mem::size_of::<dyad_Stream>() as libc::c_ulong as
                          libc::c_int) as *mut dyad_Stream;
-    memset(stream as *mut libc::c_void, 0 as libc::c_int,
+    memset(stream as *mut libc::c_void, 0i32,
            ::core::mem::size_of::<dyad_Stream>() as libc::c_ulong);
     (*stream).state = DYAD_STATE_CLOSED as libc::c_int;
-    (*stream).sockfd = -(1 as libc::c_int);
+    (*stream).sockfd = -1i32;
     (*stream).lastActivity = dyad_getTime();
     /* Add to list and increment count */
     (*stream).next = dyad_streams;
@@ -1306,8 +1258,8 @@ pub unsafe extern "C" fn dyad_removeListener(mut stream: *mut dyad_Stream,
                        &mut (*stream).listeners.length,
                        &mut (*stream).listeners.capacity,
                        ::core::mem::size_of::<Listener>() as libc::c_ulong as
-                           libc::c_int, i, 1 as libc::c_int);
-            (*stream).listeners.length -= 1 as libc::c_int
+                           libc::c_int, i, 1i32);
+            (*stream).listeners.length -= 1i32
         }
     };
 }
@@ -1315,7 +1267,7 @@ pub unsafe extern "C" fn dyad_removeListener(mut stream: *mut dyad_Stream,
 pub unsafe extern "C" fn dyad_removeAllListeners(mut stream: *mut dyad_Stream,
                                                  mut event: libc::c_int) {
     if event == DYAD_EVENT_NULL as libc::c_int {
-        (*stream).listeners.length = 0 as libc::c_int
+        (*stream).listeners.length = 0i32
     } else {
         let mut i: libc::c_int = (*stream).listeners.length;
         loop  {
@@ -1328,8 +1280,8 @@ pub unsafe extern "C" fn dyad_removeAllListeners(mut stream: *mut dyad_Stream,
                            &mut (*stream).listeners.length,
                            &mut (*stream).listeners.capacity,
                            ::core::mem::size_of::<Listener>() as libc::c_ulong
-                               as libc::c_int, i, 1 as libc::c_int);
-                (*stream).listeners.length -= 1 as libc::c_int
+                               as libc::c_int, i, 1i32);
+                (*stream).listeners.length -= 1i32
             }
         }
     };
@@ -1347,22 +1299,22 @@ pub unsafe extern "C" fn dyad_close(mut stream: *mut dyad_Stream) {
     if (*stream).state == DYAD_STATE_CLOSED as libc::c_int { return }
     (*stream).state = DYAD_STATE_CLOSED as libc::c_int;
     /* Close socket */
-    if (*stream).sockfd != -(1 as libc::c_int) {
+    if (*stream).sockfd != -1i32 {
         close((*stream).sockfd);
-        (*stream).sockfd = -(1 as libc::c_int)
+        (*stream).sockfd = -1i32
     }
     /* Emit event */
     e = createEvent(DYAD_EVENT_CLOSE as libc::c_int);
     e.msg = b"stream closed\x00" as *const u8 as *const libc::c_char;
     stream_emitEvent(stream, &mut e);
     /* Clear buffers */
-    (*stream).lineBuffer.length = 0 as libc::c_int;
-    (*stream).writeBuffer.length = 0 as libc::c_int;
+    (*stream).lineBuffer.length = 0i32;
+    (*stream).writeBuffer.length = 0i32;
 }
 #[no_mangle]
 pub unsafe extern "C" fn dyad_end(mut stream: *mut dyad_Stream) {
     if (*stream).state == DYAD_STATE_CLOSED as libc::c_int { return }
-    if (*stream).writeBuffer.length > 0 as libc::c_int {
+    if (*stream).writeBuffer.length > 0i32 {
         (*stream).state = DYAD_STATE_CLOSING as libc::c_int
     } else { dyad_close(stream); };
 }
@@ -1394,11 +1346,11 @@ pub unsafe extern "C" fn dyad_listenEx(mut stream: *mut dyad_Stream,
                    data: 0 as *mut libc::c_char,
                    size: 0,};
     /* Get addrinfo */
-    memset(&mut hints as *mut addrinfo as *mut libc::c_void, 0 as libc::c_int,
+    memset(&mut hints as *mut addrinfo as *mut libc::c_void, 0i32,
            ::core::mem::size_of::<addrinfo>() as libc::c_ulong);
-    hints.ai_family = 0 as libc::c_int;
+    hints.ai_family = 0i32;
     hints.ai_socktype = SOCK_STREAM as libc::c_int;
-    hints.ai_flags = 0x1 as libc::c_int;
+    hints.ai_flags = 0x1i32;
     sprintf(buf.as_mut_ptr(), b"%d\x00" as *const u8 as *const libc::c_char,
             port);
     err = getaddrinfo(host, buf.as_mut_ptr(), &mut hints, &mut ai);
@@ -1414,8 +1366,8 @@ pub unsafe extern "C" fn dyad_listenEx(mut stream: *mut dyad_Stream,
         if !(err != 0) {
             /* Set SO_REUSEADDR so that the socket can be immediately bound without
    * having to wait for any closed socket on the same port to timeout */
-            optval = 1 as libc::c_int;
-            setsockopt((*stream).sockfd, 1 as libc::c_int, 2 as libc::c_int,
+            optval = 1i32;
+            setsockopt((*stream).sockfd, 1i32, 2i32,
                        &mut optval as *mut libc::c_int as *const libc::c_void,
                        ::core::mem::size_of::<libc::c_int>() as libc::c_ulong
                            as socklen_t);
@@ -1446,19 +1398,18 @@ pub unsafe extern "C" fn dyad_listenEx(mut stream: *mut dyad_Stream,
                             *const libc::c_char;
                     stream_emitEvent(stream, &mut e);
                     freeaddrinfo(ai);
-                    return 0 as libc::c_int
+                    return 0i32
                 }
             }
         }
     }
     if !ai.is_null() { freeaddrinfo(ai); }
-    return -(1 as libc::c_int);
+    return -1i32;
 }
 #[no_mangle]
 pub unsafe extern "C" fn dyad_listen(mut stream: *mut dyad_Stream,
                                      mut port: libc::c_int) -> libc::c_int {
-    return dyad_listenEx(stream, 0 as *const libc::c_char, port,
-                         511 as libc::c_int);
+    return dyad_listenEx(stream, 0 as *const libc::c_char, port, 511i32);
 }
 #[no_mangle]
 pub unsafe extern "C" fn dyad_connect(mut stream: *mut dyad_Stream,
@@ -1477,9 +1428,9 @@ pub unsafe extern "C" fn dyad_connect(mut stream: *mut dyad_Stream,
     let mut err: libc::c_int = 0;
     let mut buf: [libc::c_char; 64] = [0; 64];
     /* Resolve host */
-    memset(&mut hints as *mut addrinfo as *mut libc::c_void, 0 as libc::c_int,
+    memset(&mut hints as *mut addrinfo as *mut libc::c_void, 0i32,
            ::core::mem::size_of::<addrinfo>() as libc::c_ulong);
-    hints.ai_family = 0 as libc::c_int;
+    hints.ai_family = 0i32;
     hints.ai_socktype = SOCK_STREAM as libc::c_int;
     sprintf(buf.as_mut_ptr(), b"%d\x00" as *const u8 as *const libc::c_char,
             port);
@@ -1487,7 +1438,7 @@ pub unsafe extern "C" fn dyad_connect(mut stream: *mut dyad_Stream,
     if err != 0 {
         stream_error(stream,
                      b"could not resolve host\x00" as *const u8 as
-                         *const libc::c_char, 0 as libc::c_int);
+                         *const libc::c_char, 0i32);
     } else {
         /* Start connecting */
         err =
@@ -1499,11 +1450,11 @@ pub unsafe extern "C" fn dyad_connect(mut stream: *mut dyad_Stream,
                     (*ai).ai_addrlen);
             (*stream).state = DYAD_STATE_CONNECTING as libc::c_int;
             freeaddrinfo(ai);
-            return 0 as libc::c_int
+            return 0i32
         }
     }
     if !ai.is_null() { freeaddrinfo(ai); }
-    return -(1 as libc::c_int);
+    return -1i32;
 }
 #[no_mangle]
 pub unsafe extern "C" fn dyad_write(mut stream: *mut dyad_Stream,
@@ -1525,7 +1476,7 @@ pub unsafe extern "C" fn dyad_write(mut stream: *mut dyad_Stream,
         (*stream).writeBuffer.length = (*stream).writeBuffer.length + 1;
         *(*stream).writeBuffer.data.offset(fresh6 as isize) = *fresh5
     }
-    (*stream).flags |= (1 as libc::c_int) << 1 as libc::c_int;
+    (*stream).flags |= 1i32 << 1i32;
 }
 #[no_mangle]
 pub unsafe extern "C" fn dyad_vwritef(mut stream: *mut dyad_Stream,
@@ -1544,16 +1495,16 @@ pub unsafe extern "C" fn dyad_vwritef(mut stream: *mut dyad_Stream,
             fmt = fmt.offset(1);
             match *fmt as libc::c_int {
                 114 => {
-                    fp = args.as_va_list().arg::<*mut FILE>();
+                    fp = args.arg::<*mut FILE>();
                     if fp.is_null() {
                         str =
                             b"(null)\x00" as *const u8 as *const libc::c_char
                                 as *mut libc::c_char;
-                        current_block = 9073052227520596202;
+                        current_block = 3805594055242509767;
                     } else {
                         loop  {
                             c = fgetc(fp);
-                            if !(c != -(1 as libc::c_int)) { break ; }
+                            if !(c != -1i32) { break ; }
                             vec_expand(&mut (*stream).writeBuffer.data as
                                            *mut *mut libc::c_char,
                                        &mut (*stream).writeBuffer.length,
@@ -1581,22 +1532,21 @@ pub unsafe extern "C" fn dyad_vwritef(mut stream: *mut dyad_Stream,
                     (*stream).writeBuffer.length =
                         (*stream).writeBuffer.length + 1;
                     *(*stream).writeBuffer.data.offset(fresh8 as isize) =
-                        args.as_va_list().arg::<libc::c_int>() as
-                            libc::c_char;
+                        args.arg::<libc::c_int>() as libc::c_char;
                     current_block = 3938820862080741272;
                 }
                 115 => {
-                    str = args.as_va_list().arg::<*mut libc::c_char>();
+                    str = args.arg::<*mut libc::c_char>();
                     if str.is_null() {
                         str =
                             b"(null)\x00" as *const u8 as *const libc::c_char
                                 as *mut libc::c_char
                     }
-                    current_block = 9073052227520596202;
+                    current_block = 3805594055242509767;
                 }
                 98 => {
-                    str = args.as_va_list().arg::<*mut libc::c_char>();
-                    c = args.as_va_list().arg::<libc::c_int>();
+                    str = args.arg::<*mut libc::c_char>();
+                    c = args.arg::<libc::c_int>();
                     loop  {
                         let fresh11 = c;
                         c = c - 1;
@@ -1618,32 +1568,31 @@ pub unsafe extern "C" fn dyad_vwritef(mut stream: *mut dyad_Stream,
                     current_block = 3938820862080741272;
                 }
                 _ => {
-                    f[1 as libc::c_int as usize] = *fmt;
+                    f[1] = *fmt;
                     match *fmt as libc::c_int {
                         102 | 103 => {
                             sprintf(buf.as_mut_ptr(), f.as_mut_ptr(),
-                                    args.as_va_list().arg::<libc::c_double>());
+                                    args.arg::<libc::c_double>());
                         }
                         100 | 105 => {
                             sprintf(buf.as_mut_ptr(), f.as_mut_ptr(),
-                                    args.as_va_list().arg::<libc::c_int>());
+                                    args.arg::<libc::c_int>());
                         }
                         120 | 88 => {
                             sprintf(buf.as_mut_ptr(), f.as_mut_ptr(),
-                                    args.as_va_list().arg::<libc::c_uint>());
+                                    args.arg::<libc::c_uint>());
                         }
                         112 => {
                             sprintf(buf.as_mut_ptr(), f.as_mut_ptr(),
-                                    args.as_va_list().arg::<*mut libc::c_void>());
+                                    args.arg::<*mut libc::c_void>());
                         }
                         _ => {
-                            buf[0 as libc::c_int as usize] = *fmt;
-                            buf[1 as libc::c_int as usize] =
-                                '\u{0}' as i32 as libc::c_char
+                            buf[0] = *fmt;
+                            buf[1] = '\u{0}' as i32 as libc::c_char
                         }
                     }
                     str = buf.as_mut_ptr();
-                    current_block = 9073052227520596202;
+                    current_block = 3805594055242509767;
                 }
             }
             match current_block {
@@ -1679,7 +1628,7 @@ pub unsafe extern "C" fn dyad_vwritef(mut stream: *mut dyad_Stream,
         }
         fmt = fmt.offset(1)
     }
-    (*stream).flags |= (1 as libc::c_int) << 1 as libc::c_int;
+    (*stream).flags |= 1i32 << 1i32;
 }
 #[no_mangle]
 pub unsafe extern "C" fn dyad_writef(mut stream: *mut dyad_Stream,
@@ -1698,7 +1647,7 @@ pub unsafe extern "C" fn dyad_setTimeout(mut stream: *mut dyad_Stream,
 pub unsafe extern "C" fn dyad_setNoDelay(mut stream: *mut dyad_Stream,
                                          mut opt: libc::c_int) {
     opt = (opt != 0) as libc::c_int;
-    setsockopt((*stream).sockfd, IPPROTO_TCP as libc::c_int, 1 as libc::c_int,
+    setsockopt((*stream).sockfd, IPPROTO_TCP as libc::c_int, 1i32,
                &mut opt as *mut libc::c_int as *const libc::c_void,
                ::core::mem::size_of::<libc::c_int>() as libc::c_ulong as
                    socklen_t);

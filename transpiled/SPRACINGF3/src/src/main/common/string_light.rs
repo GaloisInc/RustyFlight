@@ -1,4 +1,5 @@
-use ::libc;
+use core;
+use libc;
 extern "C" {
     #[no_mangle]
     fn strlen(_: *const libc::c_char) -> libc::c_ulong;
@@ -81,7 +82,7 @@ pub unsafe extern "C" fn toupper(mut c: libc::c_int) -> libc::c_int {
 pub unsafe extern "C" fn strcasecmp(mut s1: *const libc::c_char,
                                     mut s2: *const libc::c_char)
  -> libc::c_int {
-    return strncasecmp(s1, s2, -(1 as libc::c_int) as size_t);
+    return strncasecmp(s1, s2, -1i32 as size_t);
 }
 #[no_mangle]
 pub unsafe extern "C" fn strncasecmp(mut s1: *const libc::c_char,
@@ -89,8 +90,8 @@ pub unsafe extern "C" fn strncasecmp(mut s1: *const libc::c_char,
                                      mut n: size_t) -> libc::c_int {
     let mut ucs1: *const libc::c_uchar = s1 as *const libc::c_uchar;
     let mut ucs2: *const libc::c_uchar = s2 as *const libc::c_uchar;
-    let mut d: libc::c_int = 0 as libc::c_int;
-    while n != 0 as libc::c_int as libc::c_ulong {
+    let mut d: libc::c_int = 0i32;
+    while n != 0i32 as libc::c_ulong {
         let fresh0 = ucs1;
         ucs1 = ucs1.offset(1);
         let c1: libc::c_int = tolower(*fresh0 as libc::c_int);
@@ -98,7 +99,7 @@ pub unsafe extern "C" fn strncasecmp(mut s1: *const libc::c_char,
         ucs2 = ucs2.offset(1);
         let c2: libc::c_int = tolower(*fresh1 as libc::c_int);
         d = c1 - c2;
-        if d != 0 as libc::c_int || c2 == '\u{0}' as i32 { break ; }
+        if d != 0i32 || c2 == '\u{0}' as i32 { break ; }
         n = n.wrapping_sub(1)
     }
     return d;

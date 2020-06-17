@@ -1,4 +1,5 @@
-use ::libc;
+use core;
+use libc;
 pub type __uint8_t = libc::c_uchar;
 pub type __uint16_t = libc::c_ushort;
 pub type __uint32_t = libc::c_uint;
@@ -53,7 +54,7 @@ pub type serialReceiveCallbackPtr
 // disable pulls in BIDIR RX mode
 // Define known line control states which may be passed up by underlying serial driver callback
 // used by serial drivers to return frames to app
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct serialPort_s {
     pub vTable: *const serialPortVTable,
@@ -72,7 +73,7 @@ pub struct serialPort_s {
     pub rxCallbackData: *mut libc::c_void,
     pub identifier: uint8_t,
 }
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct serialPortVTable {
     pub serialWrite: Option<unsafe extern "C" fn(_: *mut serialPort_t,
@@ -145,7 +146,7 @@ pub unsafe extern "C" fn serialPrint(mut instance: *mut serialPort_t,
         let fresh0 = str;
         str = str.offset(1);
         ch = *fresh0 as uint8_t;
-        if !(ch as libc::c_int != 0 as libc::c_int) { break ; }
+        if !(ch as libc::c_int != 0i32) { break ; }
         serialWrite(instance, ch);
     };
 }
@@ -172,7 +173,7 @@ pub unsafe extern "C" fn serialWriteBuf(mut instance: *mut serialPort_t,
                                                                            count);
     } else {
         let mut p: *const uint8_t = data;
-        while count > 0 as libc::c_int {
+        while count > 0i32 {
             while serialTxBytesFree(instance) == 0 { }
             serialWrite(instance, *p);
             count -= 1;

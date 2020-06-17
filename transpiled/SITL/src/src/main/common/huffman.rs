@@ -1,11 +1,12 @@
-use ::libc;
+use core;
+use libc;
 pub type __uint8_t = libc::c_uchar;
 pub type __uint16_t = libc::c_ushort;
 pub type __uint32_t = libc::c_uint;
 pub type uint8_t = __uint8_t;
 pub type uint16_t = __uint16_t;
 pub type uint32_t = __uint32_t;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct huffmanTable_s {
     pub codeLen: uint8_t,
@@ -32,7 +33,7 @@ pub struct huffmanTable_s {
  */
 // 256 characters plus EOF
 pub type huffmanTable_t = huffmanTable_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct huffmanState_s {
     pub bytesWritten: uint16_t,
@@ -70,42 +71,41 @@ pub unsafe extern "C" fn huffmanEncodeBuf(mut outBuf: *mut uint8_t,
                                           mut huffmanTable:
                                               *const huffmanTable_t)
  -> libc::c_int {
-    let mut ret: libc::c_int = 0 as libc::c_int;
+    let mut ret: libc::c_int = 0i32;
     let mut outByte: *mut uint8_t = outBuf;
-    *outByte = 0 as libc::c_int as uint8_t;
-    let mut outBit: uint8_t = 0x80 as libc::c_int as uint8_t;
-    let mut ii: libc::c_int = 0 as libc::c_int;
+    *outByte = 0i32 as uint8_t;
+    let mut outBit: uint8_t = 0x80i32 as uint8_t;
+    let mut ii: libc::c_int = 0i32;
     while ii < inLen {
         let huffCodeLen: libc::c_int =
             (*huffmanTable.offset(*inBuf as isize)).codeLen as libc::c_int;
         let huffCode: uint16_t = (*huffmanTable.offset(*inBuf as isize)).code;
         inBuf = inBuf.offset(1);
-        let mut testBit: uint16_t = 0x8000 as libc::c_int as uint16_t;
-        let mut jj: libc::c_int = 0 as libc::c_int;
+        let mut testBit: uint16_t = 0x8000i32 as uint16_t;
+        let mut jj: libc::c_int = 0i32;
         while jj < huffCodeLen {
             if huffCode as libc::c_int & testBit as libc::c_int != 0 {
                 *outByte =
                     (*outByte as libc::c_int | outBit as libc::c_int) as
                         uint8_t
             }
-            testBit =
-                (testBit as libc::c_int >> 1 as libc::c_int) as uint16_t;
-            outBit = (outBit as libc::c_int >> 1 as libc::c_int) as uint8_t;
-            if outBit as libc::c_int == 0 as libc::c_int {
-                outBit = 0x80 as libc::c_int as uint8_t;
+            testBit = (testBit as libc::c_int >> 1i32) as uint16_t;
+            outBit = (outBit as libc::c_int >> 1i32) as uint8_t;
+            if outBit as libc::c_int == 0i32 {
+                outBit = 0x80i32 as uint8_t;
                 outByte = outByte.offset(1);
-                *outByte = 0 as libc::c_int as uint8_t;
+                *outByte = 0i32 as uint8_t;
                 ret += 1
             }
-            if ret >= outBufLen && ii < inLen - 1 as libc::c_int &&
-                   jj < huffCodeLen - 1 as libc::c_int {
-                return -(1 as libc::c_int)
+            if ret >= outBufLen && ii < inLen - 1i32 &&
+                   jj < huffCodeLen - 1i32 {
+                return -1i32
             }
             jj += 1
         }
         ii += 1
     }
-    if outBit as libc::c_int != 0x80 as libc::c_int {
+    if outBit as libc::c_int != 0x80i32 {
         // ensure last character in output buffer is counted
         ret += 1
     }
@@ -127,37 +127,34 @@ pub unsafe extern "C" fn huffmanEncodeBufStreaming(mut state:
         let huffCodeLen: libc::c_int =
             (*huffmanTable.offset(*pos as isize)).codeLen as libc::c_int;
         let huffCode: uint16_t = (*huffmanTable.offset(*pos as isize)).code;
-        let mut testBit: uint16_t = 0x8000 as libc::c_int as uint16_t;
-        let mut jj: libc::c_int = 0 as libc::c_int;
+        let mut testBit: uint16_t = 0x8000i32 as uint16_t;
+        let mut jj: libc::c_int = 0i32;
         while jj < huffCodeLen {
             if huffCode as libc::c_int & testBit as libc::c_int != 0 {
                 *(*state).outByte =
                     (*(*state).outByte as libc::c_int |
                          (*state).outBit as libc::c_int) as uint8_t
             }
-            testBit =
-                (testBit as libc::c_int >> 1 as libc::c_int) as uint16_t;
+            testBit = (testBit as libc::c_int >> 1i32) as uint16_t;
             (*state).outBit =
-                ((*state).outBit as libc::c_int >> 1 as libc::c_int) as
-                    uint8_t;
-            if (*state).outBit as libc::c_int == 0 as libc::c_int {
-                (*state).outBit = 0x80 as libc::c_int as uint8_t;
+                ((*state).outBit as libc::c_int >> 1i32) as uint8_t;
+            if (*state).outBit as libc::c_int == 0i32 {
+                (*state).outBit = 0x80i32 as uint8_t;
                 (*state).outByte = (*state).outByte.offset(1);
-                *(*state).outByte = 0 as libc::c_int as uint8_t;
+                *(*state).outByte = 0i32 as uint8_t;
                 (*state).bytesWritten = (*state).bytesWritten.wrapping_add(1)
             }
             // if buffer is filled and we haven't finished compressing
             if (*state).bytesWritten as libc::c_int >=
                    (*state).outBufLen as libc::c_int &&
-                   (pos < end.offset(-(1 as libc::c_int as isize)) ||
-                        jj < huffCodeLen - 1 as libc::c_int) {
+                   (pos < end.offset(-1) || jj < huffCodeLen - 1i32) {
                 // restore savedOutByte
                 *savedOutBytePtr = savedOutByte;
-                return -(1 as libc::c_int)
+                return -1i32
             }
             jj += 1
         }
         pos = pos.offset(1)
     }
-    return 0 as libc::c_int;
+    return 0i32;
 }

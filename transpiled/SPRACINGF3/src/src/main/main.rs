@@ -1,9 +1,8 @@
 #![allow(dead_code, mutable_transmutes, non_camel_case_types, non_snake_case,
          non_upper_case_globals, unused_assignments, unused_mut)]
-#![register_tool(c2rust)]
-#![feature(main, register_tool)]
+#![feature(main)]
 #![no_std]
-use ::SPRACINGF3::*;
+use SPRACINGF3::*;
 extern "C" {
     #[no_mangle]
     fn init();
@@ -12,7 +11,7 @@ extern "C" {
     #[no_mangle]
     fn scheduler();
 }
-unsafe fn main_0() -> libc::c_int { init(); run(); return 0 as libc::c_int; }
+unsafe fn main_0() -> libc::c_int { init(); run(); return 0i32; }
 /*
  * This file is part of Cleanflight and Betaflight.
  *

@@ -1,4 +1,5 @@
-use ::libc;
+use core;
+use libc;
 extern "C" {
     #[no_mangle]
     static mut blackboxConfig_System: blackboxConfig_t;
@@ -80,7 +81,7 @@ pub type uint32_t = __uint32_t;
 pub type BlackboxDevice = libc::c_uint;
 pub const BLACKBOX_DEVICE_SERIAL: BlackboxDevice = 3;
 pub const BLACKBOX_DEVICE_NONE: BlackboxDevice = 0;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct blackboxConfig_s {
     pub p_ratio: uint16_t,
@@ -96,7 +97,7 @@ pub const BLACKBOX_RESERVE_TEMPORARY_FAILURE: blackboxBufferReserveStatus_e =
     1;
 pub const BLACKBOX_RESERVE_SUCCESS: blackboxBufferReserveStatus_e = 0;
 pub type serialPort_t = serialPort_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct serialPort_s {
     pub vTable: *const serialPortVTable,
@@ -154,7 +155,7 @@ pub type portMode_e = libc::c_uint;
 pub const MODE_RXTX: portMode_e = 3;
 pub const MODE_TX: portMode_e = 2;
 pub const MODE_RX: portMode_e = 1;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct serialPortVTable {
     pub serialWrite: Option<unsafe extern "C" fn(_: *mut serialPort_t,
@@ -248,7 +249,7 @@ pub const SERIAL_PORT_NONE: serialPortIdentifier_e = -1;
 // configuration
 //
 pub type serialPortConfig_t = serialPortConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct serialPortConfig_s {
     pub functionMask: uint16_t,
@@ -371,7 +372,7 @@ pub unsafe extern "C" fn blackboxDeviceFlushForce() -> bool {
         _ => {
             // USE_FLASHFS
             // USE_SDCARD
-            return 0 as libc::c_int != 0
+            return 0i32 != 0
         }
     };
 }
@@ -388,13 +389,13 @@ pub unsafe extern "C" fn blackboxDeviceOpen() -> bool {
             let mut portOptions: portOptions_e =
                 (SERIAL_PARITY_NO as libc::c_int |
                      SERIAL_NOT_INVERTED as libc::c_int) as portOptions_e;
-            if portConfig.is_null() { return 0 as libc::c_int != 0 }
+            if portConfig.is_null() { return 0i32 != 0 }
             blackboxPortSharing =
                 determinePortSharing(portConfig, FUNCTION_BLACKBOX);
             baudRateIndex =
                 (*portConfig).blackbox_baudrateIndex as baudRate_e;
             if *baudRates.as_ptr().offset(baudRateIndex as isize) ==
-                   230400 as libc::c_int as libc::c_uint {
+                   230400i32 as libc::c_uint {
                 /*
                  * OpenLog's 230400 baud rate is very inaccurate, so it requires a larger inter-character gap in
                  * order to maintain synchronization.
@@ -442,21 +443,15 @@ pub unsafe extern "C" fn blackboxDeviceOpen() -> bool {
             match baudRateIndex as libc::c_uint {
                 12 | 13 | 14 | 15 => {
                     // assume OpenLager in use, so do not constrain writes
-                    blackboxMaxHeaderBytesPerIteration =
-                        64 as libc::c_int as uint8_t
+                    blackboxMaxHeaderBytesPerIteration = 64i32 as uint8_t
                 }
                 _ => {
                     blackboxMaxHeaderBytesPerIteration =
-                        constrain(targetPidLooptime.wrapping_mul(3 as
-                                                                     libc::c_int
-                                                                     as
-                                                                     libc::c_uint).wrapping_div(500
-                                                                                                    as
-                                                                                                    libc::c_int
+                        constrain(targetPidLooptime.wrapping_mul(3i32 as
+                                                                     libc::c_uint).wrapping_div(500i32
                                                                                                     as
                                                                                                     libc::c_uint)
-                                      as libc::c_int, 1 as libc::c_int,
-                                  64 as libc::c_int) as uint8_t
+                                      as libc::c_int, 1i32, 64i32) as uint8_t
                 }
             }
             return !blackboxPort.is_null()
@@ -464,7 +459,7 @@ pub unsafe extern "C" fn blackboxDeviceOpen() -> bool {
         _ => {
             // USE_FLASHFS
             // USE_SDCARD
-            return 0 as libc::c_int != 0
+            return 0i32 != 0
         }
     };
 }
@@ -504,7 +499,7 @@ pub unsafe extern "C" fn blackboxDeviceClose() {
 pub unsafe extern "C" fn blackboxDeviceBeginLog() -> bool {
     match (*blackboxConfig()).device as libc::c_int { _ => { } }
     // USE_SDCARD
-    return 1 as libc::c_int != 0;
+    return 1i32 != 0;
 }
 /* *
  * Terminate the current log (for devices which support separations between the logs of multiple flights).
@@ -517,22 +512,22 @@ pub unsafe extern "C" fn blackboxDeviceBeginLog() -> bool {
 pub unsafe extern "C" fn blackboxDeviceEndLog(mut retainLog: bool) -> bool {
     match (*blackboxConfig()).device as libc::c_int { _ => { } }
     // USE_SDCARD
-    return 1 as libc::c_int != 0;
+    return 1i32 != 0;
 }
 #[no_mangle]
 pub unsafe extern "C" fn isBlackboxDeviceFull() -> bool {
     match (*blackboxConfig()).device as libc::c_int {
-        3 => { return 0 as libc::c_int != 0 }
+        3 => { return 0i32 != 0 }
         _ => {
             // USE_FLASHFS
             // USE_SDCARD
-            return 0 as libc::c_int != 0
+            return 0i32 != 0
         }
     };
 }
 #[no_mangle]
 pub unsafe extern "C" fn blackboxGetLogNumber() -> libc::c_uint {
-    return 0 as libc::c_int as libc::c_uint;
+    return 0i32 as libc::c_uint;
 }
 /* *
  * Call once every loop iteration in order to maintain the global blackboxHeaderBudget with the number of bytes we can
@@ -543,7 +538,7 @@ pub unsafe extern "C" fn blackboxReplenishHeaderBudget() {
     let mut freeSpace: int32_t = 0;
     match (*blackboxConfig()).device as libc::c_int {
         3 => { freeSpace = serialTxBytesFree(blackboxPort) as int32_t }
-        _ => { freeSpace = 0 as libc::c_int }
+        _ => { freeSpace = 0i32 }
     }
     blackboxHeaderBudget =
         ({
@@ -556,7 +551,7 @@ pub unsafe extern "C" fn blackboxReplenishHeaderBudget() {
                                   libc::c_int;
                       if _a_0 < _b { _a_0 } else { _b }
                   });
-             let mut _b: libc::c_int = 256 as libc::c_int;
+             let mut _b: libc::c_int = 256i32;
              if _a < _b { _a } else { _b }
          });
 }
@@ -590,9 +585,7 @@ pub unsafe extern "C" fn blackboxDeviceReserveBufferSpace(mut bytes: int32_t)
          * hence the -1. Note that the USB VCP implementation doesn't use a buffer and has txBufferSize set to zero.
          */
             if (*blackboxPort).txBufferSize != 0 &&
-                   bytes >
-                       (*blackboxPort).txBufferSize as int32_t -
-                           1 as libc::c_int {
+                   bytes > (*blackboxPort).txBufferSize as int32_t - 1i32 {
                 return BLACKBOX_RESERVE_PERMANENT_FAILURE
             }
             return BLACKBOX_RESERVE_TEMPORARY_FAILURE

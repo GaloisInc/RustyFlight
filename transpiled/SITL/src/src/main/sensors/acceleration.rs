@@ -1,4 +1,5 @@
-use ::libc;
+use core;
+use libc;
 extern "C" {
     #[no_mangle]
     fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong)
@@ -70,7 +71,7 @@ pub type int32_t = __int32_t;
 pub type uint8_t = __uint8_t;
 pub type uint16_t = __uint16_t;
 pub type uint32_t = __uint32_t;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct SPI_TypeDef {
     pub test: *mut libc::c_void,
@@ -125,7 +126,7 @@ pub type C2RustUnnamed_0 = libc::c_uint;
 pub const Z: C2RustUnnamed_0 = 2;
 pub const Y: C2RustUnnamed_0 = 1;
 pub const X: C2RustUnnamed_0 = 0;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct biquadFilter_s {
     pub b0: libc::c_float,
@@ -169,7 +170,7 @@ pub const PGR_PGN_MASK: C2RustUnnamed_1 = 4095;
 pub type pgResetFunc
     =
     unsafe extern "C" fn(_: *mut libc::c_void, _: libc::c_int) -> ();
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct pgRegistry_s {
     pub pgn: pgn_t,
@@ -179,11 +180,12 @@ pub struct pgRegistry_s {
     pub ptr: *mut *mut uint8_t,
     pub reset: C2RustUnnamed_2,
 }
-#[derive(Copy, Clone)]
-#[repr(C)]
+#[derive ( Copy, Clone )]
+#[repr ( C )]
 pub union C2RustUnnamed_2 {
     pub ptr: *mut libc::c_void,
-    pub fn_0: Option<pgResetFunc>,
+    pub fn_0: Option<unsafe extern "C" fn(_: *mut libc::c_void,
+                                          _: libc::c_int) -> ()>,
 }
 pub type pgRegistry_t = pgRegistry_s;
 pub type C2RustUnnamed_3 = libc::c_uint;
@@ -254,32 +256,32 @@ pub const BUSTYPE_MPU_SLAVE: busType_e = 3;
 pub const BUSTYPE_SPI: busType_e = 2;
 pub const BUSTYPE_I2C: busType_e = 1;
 pub const BUSTYPE_NONE: busType_e = 0;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct busDevice_s {
     pub bustype: busType_e,
     pub busdev_u: C2RustUnnamed_4,
 }
-#[derive(Copy, Clone)]
-#[repr(C)]
+#[derive ( Copy, Clone )]
+#[repr ( C )]
 pub union C2RustUnnamed_4 {
     pub spi: deviceSpi_s,
     pub i2c: deviceI2C_s,
     pub mpuSlave: deviceMpuSlave_s,
 }
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct deviceMpuSlave_s {
     pub master: *const busDevice_s,
     pub address: uint8_t,
 }
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct deviceI2C_s {
     pub device: I2CDevice,
     pub address: uint8_t,
 }
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct deviceSpi_s {
     pub instance: *mut SPI_TypeDef,
@@ -315,7 +317,7 @@ pub const ALIGN_DEFAULT: sensor_align_e = 0;
  *
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct accDev_s {
     pub lock: pthread_mutex_t,
@@ -332,7 +334,7 @@ pub struct accDev_s {
     pub filler: [uint8_t; 2],
 }
 pub type mpuDetectionResult_t = mpuDetectionResult_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct mpuDetectionResult_s {
     pub sensor: mpuSensor_e,
@@ -395,37 +397,17 @@ pub const MPU_NONE: mpuSensor_e = 0;
 pub type sensorAccReadFuncPtr
     =
     Option<unsafe extern "C" fn(_: *mut accDev_s) -> bool>;
-/*
- * This file is part of Cleanflight and Betaflight.
- *
- * Cleanflight and Betaflight are free software. You can redistribute
- * this software and/or modify this software under the terms of the
- * GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option)
- * any later version.
- *
- * Cleanflight and Betaflight are distributed in the hope that they
- * will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this software.
- *
- * If not, see <http://www.gnu.org/licenses/>.
- */
-// driver-provided alignment
 pub type sensorAccInitFuncPtr
     =
     Option<unsafe extern "C" fn(_: *mut accDev_s) -> ()>;
-#[derive(Copy, Clone)]
-#[repr(C)]
+#[derive ( Copy, Clone )]
+#[repr ( C )]
 pub union pthread_mutex_t {
     pub __data: __pthread_mutex_s,
     pub __size: [libc::c_char; 40],
     pub __align: libc::c_long,
 }
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct __pthread_mutex_s {
     pub __lock: libc::c_int,
@@ -438,7 +420,7 @@ pub struct __pthread_mutex_s {
     pub __list: __pthread_list_t,
 }
 pub type __pthread_list_t = __pthread_internal_list;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct __pthread_internal_list {
     pub __prev: *mut __pthread_internal_list,
@@ -479,7 +461,7 @@ pub const SENSOR_INDEX_MAG: C2RustUnnamed_5 = 3;
 pub const SENSOR_INDEX_BARO: C2RustUnnamed_5 = 2;
 pub const SENSOR_INDEX_ACC: C2RustUnnamed_5 = 1;
 pub const SENSOR_INDEX_GYRO: C2RustUnnamed_5 = 0;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct int16_flightDynamicsTrims_s {
     pub roll: int16_t,
@@ -487,8 +469,8 @@ pub struct int16_flightDynamicsTrims_s {
     pub yaw: int16_t,
 }
 pub type flightDynamicsTrims_def_t = int16_flightDynamicsTrims_s;
-#[derive(Copy, Clone)]
-#[repr(C)]
+#[derive ( Copy, Clone )]
+#[repr ( C )]
 pub union flightDynamicsTrims_u {
     pub raw: [int16_t; 3],
     pub values: flightDynamicsTrims_def_t,
@@ -521,7 +503,7 @@ pub const ACC_MPU6050: accelerationSensor_e = 3;
 pub const ACC_ADXL345: accelerationSensor_e = 2;
 pub const ACC_NONE: accelerationSensor_e = 1;
 pub const ACC_DEFAULT: accelerationSensor_e = 0;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct acc_s {
     pub dev: accDev_t,
@@ -530,21 +512,21 @@ pub struct acc_s {
     pub isAccelUpdatedAtLeastOnce: bool,
 }
 pub type acc_t = acc_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct rollAndPitchTrims_s {
     pub roll: int16_t,
     pub pitch: int16_t,
 }
 pub type rollAndPitchTrims_t_def = rollAndPitchTrims_s;
-#[derive(Copy, Clone)]
-#[repr(C)]
+#[derive ( Copy, Clone )]
+#[repr ( C )]
 pub union rollAndPitchTrims_u {
     pub raw: [int16_t; 2],
     pub values: rollAndPitchTrims_t_def,
 }
 pub type rollAndPitchTrims_t = rollAndPitchTrims_u;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct accelerometerConfig_s {
     pub acc_lpf_hz: uint16_t,
@@ -680,10 +662,10 @@ pub static mut acc: acc_t =
 // acc access functions
 static mut accumulatedMeasurements: [libc::c_float; 3] = [0.; 3];
 static mut accumulatedMeasurementCount: libc::c_int = 0;
-static mut calibratingA: uint16_t = 0 as libc::c_int as uint16_t;
+static mut calibratingA: uint16_t = 0i32 as uint16_t;
 static mut accelerationTrims: *mut flightDynamicsTrims_t =
     0 as *const flightDynamicsTrims_t as *mut flightDynamicsTrims_t;
-static mut accLpfCutHz: uint16_t = 0 as libc::c_int as uint16_t;
+static mut accLpfCutHz: uint16_t = 0i32 as uint16_t;
 static mut accFilter: [biquadFilter_t; 3] =
     [biquadFilter_t{b0: 0.,
                     b1: 0.,
@@ -719,10 +701,7 @@ pub static mut accelerometerConfig_Registry: pgRegistry_t =
     unsafe {
         {
             let mut init =
-                pgRegistry_s{pgn:
-                                 (35 as libc::c_int |
-                                      (0 as libc::c_int) << 12 as libc::c_int)
-                                     as pgn_t,
+                pgRegistry_s{pgn: (35i32 | 0i32 << 12i32) as pgn_t,
                              size:
                                  (::core::mem::size_of::<accelerometerConfig_t>()
                                       as libc::c_ulong |
@@ -747,12 +726,17 @@ pub static mut accelerometerConfig_Registry: pgRegistry_t =
                                                                                                               *mut accelerometerConfig_t)
                                                                                          ->
                                                                                              ()>,
-                                                                              Option<pgResetFunc>>(Some(pgResetFn_accelerometerConfig
-                                                                                                            as
-                                                                                                            unsafe extern "C" fn(_:
-                                                                                                                                     *mut accelerometerConfig_t)
-                                                                                                                ->
-                                                                                                                    ())),},};
+                                                                              Option<unsafe extern "C" fn(_:
+                                                                                                              *mut libc::c_void,
+                                                                                                          _:
+                                                                                                              libc::c_int)
+                                                                                         ->
+                                                                                             ()>>(Some(pgResetFn_accelerometerConfig
+                                                                                                           as
+                                                                                                           unsafe extern "C" fn(_:
+                                                                                                                                    *mut accelerometerConfig_t)
+                                                                                                               ->
+                                                                                                                   ())),},};
             init
         }
     };
@@ -764,14 +748,10 @@ pub unsafe extern "C" fn resetRollAndPitchTrims(mut rollAndPitchTrims:
                                 {
                                     let mut init =
                                         rollAndPitchTrims_s{roll:
-                                                                0 as
-                                                                    libc::c_int
-                                                                    as
+                                                                0i32 as
                                                                     int16_t,
                                                             pitch:
-                                                                0 as
-                                                                    libc::c_int
-                                                                    as
+                                                                0i32 as
                                                                     int16_t,};
                                     init
                                 },};
@@ -785,9 +765,9 @@ pub unsafe extern "C" fn accResetRollAndPitchTrims() {
 }
 unsafe extern "C" fn resetFlightDynamicsTrims(mut accZero:
                                                   *mut flightDynamicsTrims_t) {
-    (*accZero).values.roll = 0 as libc::c_int as int16_t;
-    (*accZero).values.pitch = 0 as libc::c_int as int16_t;
-    (*accZero).values.yaw = 0 as libc::c_int as int16_t;
+    (*accZero).values.roll = 0i32 as int16_t;
+    (*accZero).values.pitch = 0i32 as int16_t;
+    (*accZero).values.yaw = 0i32 as int16_t;
 }
 #[no_mangle]
 pub unsafe extern "C" fn accResetFlightDynamicsTrims() {
@@ -802,13 +782,12 @@ pub unsafe extern "C" fn pgResetFn_accelerometerConfig(mut instance:
     *instance =
         {
             let mut init =
-                accelerometerConfig_s{acc_lpf_hz:
-                                          10 as libc::c_int as uint16_t,
+                accelerometerConfig_s{acc_lpf_hz: 10i32 as uint16_t,
                                       acc_align: ALIGN_DEFAULT,
                                       acc_hardware:
                                           ACC_DEFAULT as libc::c_int as
                                               uint8_t,
-                                      acc_high_fsr: 0 as libc::c_int != 0,
+                                      acc_high_fsr: 0i32 != 0,
                                       accZero:
                                           flightDynamicsTrims_u{raw: [0; 3],},
                                       accelerometerTrims:
@@ -855,16 +834,16 @@ pub unsafe extern "C" fn accDetect(mut dev: *mut accDev_t,
     }
     if accHardware as libc::c_uint == ACC_NONE as libc::c_int as libc::c_uint
        {
-        return 0 as libc::c_int != 0
+        return 0i32 != 0
     }
     detectedSensors[SENSOR_INDEX_ACC as libc::c_int as usize] =
         accHardware as uint8_t;
     sensorsSet(SENSOR_ACC as libc::c_int as uint32_t);
-    return 1 as libc::c_int != 0;
+    return 1i32 != 0;
 }
 #[no_mangle]
 pub unsafe extern "C" fn accInit(mut gyroSamplingInverval: uint32_t) -> bool {
-    memset(&mut acc as *mut acc_t as *mut libc::c_void, 0 as libc::c_int,
+    memset(&mut acc as *mut acc_t as *mut libc::c_void, 0i32,
            ::core::mem::size_of::<acc_t>() as libc::c_ulong);
     // copy over the common gyro mpu settings
     acc.dev.bus = *gyroSensorBus(); // set default
@@ -875,23 +854,21 @@ pub unsafe extern "C" fn accInit(mut gyroSamplingInverval: uint32_t) -> bool {
     if !accDetect(&mut acc.dev,
                   (*accelerometerConfig()).acc_hardware as
                       accelerationSensor_e) {
-        return 0 as libc::c_int != 0
+        return 0i32 != 0
     }
-    acc.dev.acc_1G = 256 as libc::c_int as uint16_t;
+    acc.dev.acc_1G = 256i32 as uint16_t;
     acc.dev.initFn.expect("non-null function pointer")(&mut acc.dev);
     // set the acc sampling interval according to the gyro sampling interval
     match gyroSamplingInverval {
         500 | 375 | 250 | 125 => {
             // Switch statement kept in place to change acc sampling interval in the future
-            acc.accSamplingInterval = 1000 as libc::c_int as uint32_t
+            acc.accSamplingInterval = 1000i32 as uint32_t
         }
-        1000 | _ => {
-            acc.accSamplingInterval = 1000 as libc::c_int as uint32_t
-        }
+        1000 | _ => { acc.accSamplingInterval = 1000i32 as uint32_t }
     }
     if accLpfCutHz != 0 {
-        let mut axis: libc::c_int = 0 as libc::c_int;
-        while axis < 3 as libc::c_int {
+        let mut axis: libc::c_int = 0i32;
+        while axis < 3i32 {
             biquadFilterInitLPF(&mut *accFilter.as_mut_ptr().offset(axis as
                                                                         isize),
                                 accLpfCutHz as libc::c_float,
@@ -903,7 +880,7 @@ pub unsafe extern "C" fn accInit(mut gyroSamplingInverval: uint32_t) -> bool {
            ALIGN_DEFAULT as libc::c_int as libc::c_uint {
         acc.dev.accAlign = (*accelerometerConfig()).acc_align
     }
-    return 1 as libc::c_int != 0;
+    return 1i32 != 0;
 }
 #[no_mangle]
 pub unsafe extern "C" fn accSetCalibrationCycles(mut calibrationCyclesRequired:
@@ -912,46 +889,41 @@ pub unsafe extern "C" fn accSetCalibrationCycles(mut calibrationCyclesRequired:
 }
 #[no_mangle]
 pub unsafe extern "C" fn accIsCalibrationComplete() -> bool {
-    return calibratingA as libc::c_int == 0 as libc::c_int;
+    return calibratingA as libc::c_int == 0i32;
 }
 unsafe extern "C" fn isOnFinalAccelerationCalibrationCycle() -> bool {
-    return calibratingA as libc::c_int == 1 as libc::c_int;
+    return calibratingA as libc::c_int == 1i32;
 }
 unsafe extern "C" fn isOnFirstAccelerationCalibrationCycle() -> bool {
-    return calibratingA as libc::c_int == 400 as libc::c_int;
+    return calibratingA as libc::c_int == 400i32;
 }
 unsafe extern "C" fn performAcclerationCalibration(mut rollAndPitchTrims:
                                                        *mut rollAndPitchTrims_t) {
     static mut a: [int32_t; 3] = [0; 3];
-    let mut axis: libc::c_int = 0 as libc::c_int;
-    while axis < 3 as libc::c_int {
+    let mut axis: libc::c_int = 0i32;
+    while axis < 3i32 {
         // Reset a[axis] at start of calibration
-        if isOnFirstAccelerationCalibrationCycle() {
-            a[axis as usize] = 0 as libc::c_int
-        }
+        if isOnFirstAccelerationCalibrationCycle() { a[axis as usize] = 0i32 }
         // Sum up CALIBRATING_ACC_CYCLES readings
         a[axis as usize] =
             (a[axis as usize] as libc::c_float + acc.accADC[axis as usize]) as
                 int32_t;
         // Reset global variables to prevent other code from using un-calibrated data
-        acc.accADC[axis as usize] = 0 as libc::c_int as libc::c_float;
-        (*accelerationTrims).raw[axis as usize] = 0 as libc::c_int as int16_t;
+        acc.accADC[axis as usize] = 0i32 as libc::c_float;
+        (*accelerationTrims).raw[axis as usize] = 0i32 as int16_t;
         axis += 1
     }
     if isOnFinalAccelerationCalibrationCycle() {
         // Calculate average, shift Z down by acc_1G and store values in EEPROM at end of calibration
         (*accelerationTrims).raw[X as libc::c_int as usize] =
-            ((a[X as libc::c_int as usize] +
-                  400 as libc::c_int / 2 as libc::c_int) / 400 as libc::c_int)
-                as int16_t;
+            ((a[X as libc::c_int as usize] + 400i32 / 2i32) / 400i32) as
+                int16_t;
         (*accelerationTrims).raw[Y as libc::c_int as usize] =
-            ((a[Y as libc::c_int as usize] +
-                  400 as libc::c_int / 2 as libc::c_int) / 400 as libc::c_int)
-                as int16_t;
+            ((a[Y as libc::c_int as usize] + 400i32 / 2i32) / 400i32) as
+                int16_t;
         (*accelerationTrims).raw[Z as libc::c_int as usize] =
-            ((a[Z as libc::c_int as usize] +
-                  400 as libc::c_int / 2 as libc::c_int) / 400 as libc::c_int
-                 - acc.dev.acc_1G as libc::c_int) as int16_t;
+            ((a[Z as libc::c_int as usize] + 400i32 / 2i32) / 400i32 -
+                 acc.dev.acc_1G as libc::c_int) as int16_t;
         resetRollAndPitchTrims(rollAndPitchTrims);
         saveConfigAndNotify();
     }
@@ -961,14 +933,11 @@ unsafe extern "C" fn performInflightAccelerationCalibration(mut rollAndPitchTrim
                                                                 *mut rollAndPitchTrims_t) {
     static mut b: [int32_t; 3] = [0; 3];
     static mut accZero_saved: [int16_t; 3] =
-        [0 as libc::c_int as int16_t, 0 as libc::c_int as int16_t,
-         0 as libc::c_int as int16_t];
+        [0i32 as int16_t, 0i32 as int16_t, 0i32 as int16_t];
     static mut angleTrim_saved: rollAndPitchTrims_t =
-        rollAndPitchTrims_u{raw:
-                                [0 as libc::c_int as int16_t,
-                                 0 as libc::c_int as int16_t],};
+        rollAndPitchTrims_u{raw: [0i32 as int16_t, 0i32 as int16_t],};
     // Saving old zeropoints before measurement
-    if InflightcalibratingA as libc::c_int == 50 as libc::c_int {
+    if InflightcalibratingA as libc::c_int == 50i32 {
         accZero_saved[X as libc::c_int as usize] =
             (*accelerationTrims).raw[X as libc::c_int as usize];
         accZero_saved[Y as libc::c_int as usize] =
@@ -978,28 +947,27 @@ unsafe extern "C" fn performInflightAccelerationCalibration(mut rollAndPitchTrim
         angleTrim_saved.values.roll = (*rollAndPitchTrims).values.roll;
         angleTrim_saved.values.pitch = (*rollAndPitchTrims).values.pitch
     }
-    if InflightcalibratingA as libc::c_int > 0 as libc::c_int {
-        let mut axis: libc::c_int = 0 as libc::c_int;
-        while axis < 3 as libc::c_int {
+    if InflightcalibratingA as libc::c_int > 0i32 {
+        let mut axis: libc::c_int = 0i32;
+        while axis < 3i32 {
             // Reset a[axis] at start of calibration
-            if InflightcalibratingA as libc::c_int == 50 as libc::c_int {
-                b[axis as usize] = 0 as libc::c_int
+            if InflightcalibratingA as libc::c_int == 50i32 {
+                b[axis as usize] = 0i32
             }
             // Sum up 50 readings
             b[axis as usize] =
                 (b[axis as usize] as libc::c_float +
                      acc.accADC[axis as usize]) as int32_t;
             // Clear global variables for next reading
-            acc.accADC[axis as usize] = 0 as libc::c_int as libc::c_float;
-            (*accelerationTrims).raw[axis as usize] =
-                0 as libc::c_int as int16_t;
+            acc.accADC[axis as usize] = 0i32 as libc::c_float;
+            (*accelerationTrims).raw[axis as usize] = 0i32 as int16_t;
             axis += 1
         }
         // all values are measured
-        if InflightcalibratingA as libc::c_int == 1 as libc::c_int {
+        if InflightcalibratingA as libc::c_int == 1i32 {
             AccInflightCalibrationActive =
-                0 as libc::c_int != 0; // indicate end of calibration
-            AccInflightCalibrationMeasurementDone = 1 as libc::c_int != 0;
+                0i32 != 0; // indicate end of calibration
+            AccInflightCalibrationMeasurementDone = 1i32 != 0;
             beeper(BEEPER_ACC_CALIBRATION);
             // recover saved values to maintain current flight behaviour until new values are transferred
             (*accelerationTrims).raw[X as libc::c_int as usize] =
@@ -1016,14 +984,13 @@ unsafe extern "C" fn performInflightAccelerationCalibration(mut rollAndPitchTrim
     // Calculate average, shift Z down by acc_1G and store values in EEPROM at end of calibration
     if AccInflightCalibrationSavetoEEProm {
         // the aircraft is landed, disarmed and the combo has been done again
-        AccInflightCalibrationSavetoEEProm =
-            0 as libc::c_int != 0; // for nunchuck 200=1G
+        AccInflightCalibrationSavetoEEProm = 0i32 != 0; // for nunchuck 200=1G
         (*accelerationTrims).raw[X as libc::c_int as usize] =
-            (b[X as libc::c_int as usize] / 50 as libc::c_int) as int16_t;
+            (b[X as libc::c_int as usize] / 50i32) as int16_t;
         (*accelerationTrims).raw[Y as libc::c_int as usize] =
-            (b[Y as libc::c_int as usize] / 50 as libc::c_int) as int16_t;
+            (b[Y as libc::c_int as usize] / 50i32) as int16_t;
         (*accelerationTrims).raw[Z as libc::c_int as usize] =
-            (b[Z as libc::c_int as usize] / 50 as libc::c_int -
+            (b[Z as libc::c_int as usize] / 50i32 -
                  acc.dev.acc_1G as libc::c_int) as int16_t;
         resetRollAndPitchTrims(rollAndPitchTrims);
         saveConfigAndNotify();
@@ -1048,9 +1015,9 @@ pub unsafe extern "C" fn accUpdate(mut currentTimeUs: timeUs_t,
     if !acc.dev.readFn.expect("non-null function pointer")(&mut acc.dev) {
         return
     }
-    acc.isAccelUpdatedAtLeastOnce = 1 as libc::c_int != 0;
-    let mut axis: libc::c_int = 0 as libc::c_int;
-    while axis < 3 as libc::c_int {
+    acc.isAccelUpdatedAtLeastOnce = 1i32 != 0;
+    let mut axis: libc::c_int = 0i32;
+    while axis < 3i32 {
         if debugMode as libc::c_int == DEBUG_ACCELEROMETER as libc::c_int {
             debug[axis as usize] = acc.dev.ADCRaw[axis as usize]
         }
@@ -1059,8 +1026,8 @@ pub unsafe extern "C" fn accUpdate(mut currentTimeUs: timeUs_t,
         axis += 1
     }
     if accLpfCutHz != 0 {
-        let mut axis_0: libc::c_int = 0 as libc::c_int;
-        while axis_0 < 3 as libc::c_int {
+        let mut axis_0: libc::c_int = 0i32;
+        while axis_0 < 3i32 {
             acc.accADC[axis_0 as usize] =
                 biquadFilterApply(&mut *accFilter.as_mut_ptr().offset(axis_0
                                                                           as
@@ -1078,8 +1045,8 @@ pub unsafe extern "C" fn accUpdate(mut currentTimeUs: timeUs_t,
     }
     applyAccelerationTrims(accelerationTrims);
     accumulatedMeasurementCount += 1;
-    let mut axis_1: libc::c_int = 0 as libc::c_int;
-    while axis_1 < 3 as libc::c_int {
+    let mut axis_1: libc::c_int = 0i32;
+    while axis_1 < 3i32 {
         accumulatedMeasurements[axis_1 as usize] +=
             acc.accADC[axis_1 as usize];
         axis_1 += 1
@@ -1089,25 +1056,25 @@ pub unsafe extern "C" fn accUpdate(mut currentTimeUs: timeUs_t,
 pub unsafe extern "C" fn accGetAccumulationAverage(mut accumulationAverage:
                                                        *mut libc::c_float)
  -> bool {
-    if accumulatedMeasurementCount > 0 as libc::c_int {
+    if accumulatedMeasurementCount > 0i32 {
         // If we have gyro data accumulated, calculate average rate that will yield the same rotation
-        let mut axis: libc::c_int = 0 as libc::c_int;
-        while axis < 3 as libc::c_int {
+        let mut axis: libc::c_int = 0i32;
+        while axis < 3i32 {
             *accumulationAverage.offset(axis as isize) =
                 accumulatedMeasurements[axis as usize] /
                     accumulatedMeasurementCount as libc::c_float;
             accumulatedMeasurements[axis as usize] = 0.0f32;
             axis += 1
         }
-        accumulatedMeasurementCount = 0 as libc::c_int;
-        return 1 as libc::c_int != 0
+        accumulatedMeasurementCount = 0i32;
+        return 1i32 != 0
     } else {
-        let mut axis_0: libc::c_int = 0 as libc::c_int;
-        while axis_0 < 3 as libc::c_int {
+        let mut axis_0: libc::c_int = 0i32;
+        while axis_0 < 3i32 {
             *accumulationAverage.offset(axis_0 as isize) = 0.0f32;
             axis_0 += 1
         }
-        return 0 as libc::c_int != 0
+        return 0i32 != 0
     };
 }
 #[no_mangle]
@@ -1119,8 +1086,8 @@ pub unsafe extern "C" fn setAccelerationTrims(mut accelerationTrimsToUse:
 pub unsafe extern "C" fn accInitFilters() {
     accLpfCutHz = (*accelerometerConfig()).acc_lpf_hz;
     if acc.accSamplingInterval != 0 {
-        let mut axis: libc::c_int = 0 as libc::c_int;
-        while axis < 3 as libc::c_int {
+        let mut axis: libc::c_int = 0i32;
+        while axis < 3i32 {
             biquadFilterInitLPF(&mut *accFilter.as_mut_ptr().offset(axis as
                                                                         isize),
                                 accLpfCutHz as libc::c_float,

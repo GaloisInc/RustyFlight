@@ -1,4 +1,5 @@
-use ::libc;
+use core;
+use libc;
 extern "C" {
     #[no_mangle]
     fn lrintf(_: libc::c_float) -> libc::c_long;
@@ -19,7 +20,7 @@ pub type int32_t = __int32_t;
 pub type uint8_t = __uint8_t;
 pub type uint16_t = __uint16_t;
 pub type uint32_t = __uint32_t;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct SPI_TypeDef {
     pub test: *mut libc::c_void,
@@ -53,7 +54,7 @@ pub const PGR_PGN_MASK: C2RustUnnamed = 4095;
 pub type pgResetFunc
     =
     unsafe extern "C" fn(_: *mut libc::c_void, _: libc::c_int) -> ();
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct pgRegistry_s {
     pub pgn: pgn_t,
@@ -63,11 +64,12 @@ pub struct pgRegistry_s {
     pub ptr: *mut *mut uint8_t,
     pub reset: C2RustUnnamed_0,
 }
-#[derive(Copy, Clone)]
-#[repr(C)]
+#[derive ( Copy, Clone )]
+#[repr ( C )]
 pub union C2RustUnnamed_0 {
     pub ptr: *mut libc::c_void,
-    pub fn_0: Option<pgResetFunc>,
+    pub fn_0: Option<unsafe extern "C" fn(_: *mut libc::c_void,
+                                          _: libc::c_int) -> ()>,
 }
 pub type pgRegistry_t = pgRegistry_s;
 pub type ioTag_t = uint8_t;
@@ -83,32 +85,32 @@ pub const BUSTYPE_MPU_SLAVE: busType_e = 3;
 pub const BUSTYPE_SPI: busType_e = 2;
 pub const BUSTYPE_I2C: busType_e = 1;
 pub const BUSTYPE_NONE: busType_e = 0;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct busDevice_s {
     pub bustype: busType_e,
     pub busdev_u: C2RustUnnamed_1,
 }
-#[derive(Copy, Clone)]
-#[repr(C)]
+#[derive ( Copy, Clone )]
+#[repr ( C )]
 pub union C2RustUnnamed_1 {
     pub spi: deviceSpi_s,
     pub i2c: deviceI2C_s,
     pub mpuSlave: deviceMpuSlave_s,
 }
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct deviceMpuSlave_s {
     pub master: *const busDevice_s,
     pub address: uint8_t,
 }
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct deviceI2C_s {
     pub device: I2CDevice,
     pub address: uint8_t,
 }
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct deviceSpi_s {
     pub instance: *mut SPI_TypeDef,
@@ -149,22 +151,7 @@ pub const SPIINVALID: SPIDevice = -1;
  *
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct baroDev_s {
-    pub busdev: busDevice_t,
-    pub ut_delay: uint16_t,
-    pub up_delay: uint16_t,
-    pub start_ut: baroOpFuncPtr,
-    pub get_ut: baroOpFuncPtr,
-    pub start_up: baroOpFuncPtr,
-    pub get_up: baroOpFuncPtr,
-    pub calculate: baroCalculateFuncPtr,
-}
-// baro start operation
-pub type baroCalculateFuncPtr
-    =
-    Option<unsafe extern "C" fn(_: *mut int32_t, _: *mut int32_t) -> ()>;
+// XXX
 /*
  * This file is part of Cleanflight and Betaflight.
  *
@@ -184,11 +171,24 @@ pub type baroCalculateFuncPtr
  *
  * If not, see <http://www.gnu.org/licenses/>.
  */
-// XXX
+#[derive ( Copy, Clone )]
+#[repr(C)]
+pub struct baroDev_s {
+    pub busdev: busDevice_t,
+    pub ut_delay: uint16_t,
+    pub up_delay: uint16_t,
+    pub start_ut: baroOpFuncPtr,
+    pub get_ut: baroOpFuncPtr,
+    pub start_up: baroOpFuncPtr,
+    pub get_up: baroOpFuncPtr,
+    pub calculate: baroCalculateFuncPtr,
+}
+pub type baroCalculateFuncPtr
+    =
+    Option<unsafe extern "C" fn(_: *mut int32_t, _: *mut int32_t) -> ()>;
 pub type baroOpFuncPtr
     =
     Option<unsafe extern "C" fn(_: *mut baroDev_s) -> ()>;
-// baro calculation (filled params are pressure and temperature)
 pub type baroDev_t = baroDev_s;
 pub type baroSensor_e = libc::c_uint;
 pub const BARO_QMP6988: baroSensor_e = 6;
@@ -198,7 +198,7 @@ pub const BARO_MS5611: baroSensor_e = 3;
 pub const BARO_BMP085: baroSensor_e = 2;
 pub const BARO_NONE: baroSensor_e = 1;
 pub const BARO_DEFAULT: baroSensor_e = 0;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct barometerConfig_s {
     pub baro_bustype: uint8_t,
@@ -213,7 +213,7 @@ pub struct barometerConfig_s {
     pub baro_cf_alt: uint16_t,
 }
 pub type barometerConfig_t = barometerConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct baro_s {
     pub dev: baroDev_t,
@@ -323,10 +323,7 @@ pub static mut barometerConfig_Registry: pgRegistry_t =
     unsafe {
         {
             let mut init =
-                pgRegistry_s{pgn:
-                                 (38 as libc::c_int |
-                                      (0 as libc::c_int) << 12 as libc::c_int)
-                                     as pgn_t,
+                pgRegistry_s{pgn: (38i32 | 0i32 << 12i32) as pgn_t,
                              size:
                                  (::core::mem::size_of::<barometerConfig_t>()
                                       as libc::c_ulong |
@@ -349,12 +346,17 @@ pub static mut barometerConfig_Registry: pgRegistry_t =
                                                                                                               *mut barometerConfig_t)
                                                                                          ->
                                                                                              ()>,
-                                                                              Option<pgResetFunc>>(Some(pgResetFn_barometerConfig
-                                                                                                            as
-                                                                                                            unsafe extern "C" fn(_:
-                                                                                                                                     *mut barometerConfig_t)
-                                                                                                                ->
-                                                                                                                    ())),},};
+                                                                              Option<unsafe extern "C" fn(_:
+                                                                                                              *mut libc::c_void,
+                                                                                                          _:
+                                                                                                              libc::c_int)
+                                                                                         ->
+                                                                                             ()>>(Some(pgResetFn_barometerConfig
+                                                                                                           as
+                                                                                                           unsafe extern "C" fn(_:
+                                                                                                                                    *mut barometerConfig_t)
+                                                                                                               ->
+                                                                                                                   ())),},};
             init
         }
     };
@@ -373,10 +375,10 @@ pub static mut barometerConfig_Copy: barometerConfig_t =
 #[no_mangle]
 pub unsafe extern "C" fn pgResetFn_barometerConfig(mut barometerConfig_0:
                                                        *mut barometerConfig_t) {
-    (*barometerConfig_0).baro_sample_count = 21 as libc::c_int as uint8_t;
-    (*barometerConfig_0).baro_noise_lpf = 600 as libc::c_int as uint16_t;
-    (*barometerConfig_0).baro_cf_vel = 985 as libc::c_int as uint16_t;
-    (*barometerConfig_0).baro_cf_alt = 965 as libc::c_int as uint16_t;
+    (*barometerConfig_0).baro_sample_count = 21i32 as uint8_t;
+    (*barometerConfig_0).baro_noise_lpf = 600i32 as uint16_t;
+    (*barometerConfig_0).baro_cf_vel = 985i32 as uint16_t;
+    (*barometerConfig_0).baro_cf_alt = 965i32 as uint16_t;
     (*barometerConfig_0).baro_hardware =
         BARO_DEFAULT as libc::c_int as uint8_t;
     // For backward compatibility; ceate a valid default value for bus parameters
@@ -389,20 +391,19 @@ pub unsafe extern "C" fn pgResetFn_barometerConfig(mut barometerConfig_0:
     (*barometerConfig_0).baro_bustype =
         BUSTYPE_NONE as libc::c_int as uint8_t;
     (*barometerConfig_0).baro_i2c_device =
-        (I2CINVALID as libc::c_int + 1 as libc::c_int) as uint8_t;
-    (*barometerConfig_0).baro_i2c_address = 0 as libc::c_int as uint8_t;
+        (I2CINVALID as libc::c_int + 1i32) as uint8_t;
+    (*barometerConfig_0).baro_i2c_address = 0i32 as uint8_t;
     (*barometerConfig_0).baro_spi_device =
-        (SPIINVALID as libc::c_int + 1 as libc::c_int) as uint8_t;
-    (*barometerConfig_0).baro_spi_csn = 0 as libc::c_int as ioTag_t;
+        (SPIINVALID as libc::c_int + 1i32) as uint8_t;
+    (*barometerConfig_0).baro_spi_csn = 0i32 as ioTag_t;
 }
-static mut calibratingB: uint16_t = 0 as libc::c_int as uint16_t;
+static mut calibratingB: uint16_t = 0i32 as uint16_t;
 // baro calibration = get new ground pressure value
-static mut baroPressure: int32_t = 0 as libc::c_int;
-static mut baroTemperature: int32_t = 0 as libc::c_int;
-static mut baroGroundAltitude: int32_t = 0 as libc::c_int;
-static mut baroGroundPressure: int32_t =
-    8 as libc::c_int * 101325 as libc::c_int;
-static mut baroPressureSum: uint32_t = 0 as libc::c_int as uint32_t;
+static mut baroPressure: int32_t = 0i32;
+static mut baroTemperature: int32_t = 0i32;
+static mut baroGroundAltitude: int32_t = 0i32;
+static mut baroGroundPressure: int32_t = 8i32 * 101325i32;
+static mut baroPressureSum: uint32_t = 0i32 as uint32_t;
 #[no_mangle]
 pub unsafe extern "C" fn baroDetect(mut dev: *mut baroDev_t,
                                     mut baroHardwareToUse: baroSensor_e)
@@ -411,7 +412,7 @@ pub unsafe extern "C" fn baroDetect(mut dev: *mut baroDev_t,
     let mut baroHardware: baroSensor_e = baroHardwareToUse;
     match (*barometerConfig()).baro_bustype as libc::c_int {
         1 | 2 => { }
-        _ => { return 0 as libc::c_int != 0 }
+        _ => { return 0i32 != 0 }
     }
     match baroHardware as libc::c_uint {
         0 | 2 | 3 | 5 | 4 | 6 | 1 => { baroHardware = BARO_NONE }
@@ -419,33 +420,33 @@ pub unsafe extern "C" fn baroDetect(mut dev: *mut baroDev_t,
     }
     if baroHardware as libc::c_uint ==
            BARO_NONE as libc::c_int as libc::c_uint {
-        return 0 as libc::c_int != 0
+        return 0i32 != 0
     }
     detectedSensors[SENSOR_INDEX_BARO as libc::c_int as usize] =
         baroHardware as uint8_t;
     sensorsSet(SENSOR_BARO as libc::c_int as uint32_t);
-    return 1 as libc::c_int != 0;
+    return 1i32 != 0;
 }
 #[no_mangle]
 pub unsafe extern "C" fn isBaroCalibrationComplete() -> bool {
-    return calibratingB as libc::c_int == 0 as libc::c_int;
+    return calibratingB as libc::c_int == 0i32;
 }
 #[no_mangle]
 pub unsafe extern "C" fn baroSetCalibrationCycles(mut calibrationCyclesRequired:
                                                       uint16_t) {
     calibratingB = calibrationCyclesRequired;
 }
-static mut baroReady: bool = 0 as libc::c_int != 0;
+static mut baroReady: bool = 0i32 != 0;
 unsafe extern "C" fn applyBarometerMedianFilter(mut newPressureReading:
                                                     int32_t) -> int32_t {
     static mut barometerFilterSamples: [int32_t; 3] = [0; 3];
-    static mut currentFilterSampleIndex: libc::c_int = 0 as libc::c_int;
-    static mut medianFilterReady: bool = 0 as libc::c_int != 0;
+    static mut currentFilterSampleIndex: libc::c_int = 0i32;
+    static mut medianFilterReady: bool = 0i32 != 0;
     let mut nextSampleIndex: libc::c_int = 0;
-    nextSampleIndex = currentFilterSampleIndex + 1 as libc::c_int;
-    if nextSampleIndex == 3 as libc::c_int {
-        nextSampleIndex = 0 as libc::c_int;
-        medianFilterReady = 1 as libc::c_int != 0
+    nextSampleIndex = currentFilterSampleIndex + 1i32;
+    if nextSampleIndex == 3i32 {
+        nextSampleIndex = 0i32;
+        medianFilterReady = 1i32 != 0
     }
     barometerFilterSamples[currentFilterSampleIndex as usize] =
         newPressureReading;
@@ -459,13 +460,13 @@ unsafe extern "C" fn recalculateBarometerTotal(mut baroSampleCount: uint8_t,
                                                mut newPressureReading:
                                                    int32_t) -> uint32_t {
     static mut barometerSamples: [int32_t; 48] = [0; 48];
-    static mut currentSampleIndex: libc::c_int = 0 as libc::c_int;
+    static mut currentSampleIndex: libc::c_int = 0i32;
     let mut nextSampleIndex: libc::c_int = 0;
     // store current pressure in barometerSamples
-    nextSampleIndex = currentSampleIndex + 1 as libc::c_int;
+    nextSampleIndex = currentSampleIndex + 1i32;
     if nextSampleIndex == baroSampleCount as libc::c_int {
-        nextSampleIndex = 0 as libc::c_int;
-        baroReady = 1 as libc::c_int != 0
+        nextSampleIndex = 0i32;
+        baroReady = 1i32 != 0
     }
     barometerSamples[currentSampleIndex as usize] =
         applyBarometerMedianFilter(newPressureReading);
@@ -524,9 +525,7 @@ pub unsafe extern "C" fn baroCalculateAltitude() -> int32_t {
                         pow_approx(baroPressureSum.wrapping_div(((*barometerConfig()).baro_sample_count
                                                                      as
                                                                      libc::c_int
-                                                                     -
-                                                                     1 as
-                                                                         libc::c_int)
+                                                                     - 1i32)
                                                                     as
                                                                     libc::c_uint)
                                        as libc::c_float / 101325.0f32,
@@ -544,31 +543,30 @@ pub unsafe extern "C" fn baroCalculateAltitude() -> int32_t {
                                         libc::c_int as libc::c_float)) as
                 int32_t // in cm
         // additional LPF to reduce baro noise
-    } else { baro.BaroAlt = 0 as libc::c_int }
+    } else { baro.BaroAlt = 0i32 }
     return baro.BaroAlt;
 }
 #[no_mangle]
 pub unsafe extern "C" fn performBaroCalibrationCycle() {
-    static mut savedGroundPressure: int32_t = 0 as libc::c_int;
-    baroGroundPressure -= baroGroundPressure / 8 as libc::c_int;
+    static mut savedGroundPressure: int32_t = 0i32;
+    baroGroundPressure -= baroGroundPressure / 8i32;
     baroGroundPressure =
         (baroGroundPressure as
              libc::c_uint).wrapping_add(baroPressureSum.wrapping_div(((*barometerConfig()).baro_sample_count
                                                                           as
                                                                           libc::c_int
                                                                           -
-                                                                          1 as
-                                                                              libc::c_int)
+                                                                          1i32)
                                                                          as
                                                                          libc::c_uint))
             as int32_t as int32_t;
     baroGroundAltitude =
         ((1.0f32 -
-              pow_approx((baroGroundPressure / 8 as libc::c_int) as
-                             libc::c_float / 101325.0f32, 0.190295f32)) *
-             4433000.0f32) as int32_t;
+              pow_approx((baroGroundPressure / 8i32) as libc::c_float /
+                             101325.0f32, 0.190295f32)) * 4433000.0f32) as
+            int32_t;
     if baroGroundPressure == savedGroundPressure {
-        calibratingB = 0 as libc::c_int as uint16_t
+        calibratingB = 0i32 as uint16_t
     } else {
         calibratingB = calibratingB.wrapping_sub(1);
         savedGroundPressure = baroGroundPressure

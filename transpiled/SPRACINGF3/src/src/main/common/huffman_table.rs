@@ -1,9 +1,10 @@
-use ::libc;
+use core;
+use libc;
 pub type __uint8_t = libc::c_uchar;
 pub type __uint16_t = libc::c_ushort;
 pub type uint8_t = __uint8_t;
 pub type uint16_t = __uint16_t;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct huffmanTable_s {
     pub codeLen: uint8_t,
@@ -56,1543 +57,1543 @@ pub type huffmanTable_t = huffmanTable_s;
 pub static mut huffmanTable: [huffmanTable_t; 257] =
     [{
          let mut init =
-             huffmanTable_s{codeLen: 2 as libc::c_int as uint8_t,
-                            code: 0xc000 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 2i32 as uint8_t,
+                            code: 0xc000i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 3 as libc::c_int as uint8_t,
-                            code: 0xa000 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 3i32 as uint8_t,
+                            code: 0xa000i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 4 as libc::c_int as uint8_t,
-                            code: 0x9000 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 4i32 as uint8_t,
+                            code: 0x9000i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 5 as libc::c_int as uint8_t,
-                            code: 0x8800 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 5i32 as uint8_t,
+                            code: 0x8800i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 5 as libc::c_int as uint8_t,
-                            code: 0x8000 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 5i32 as uint8_t,
+                            code: 0x8000i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 6 as libc::c_int as uint8_t,
-                            code: 0x7400 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 6i32 as uint8_t,
+                            code: 0x7400i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 6 as libc::c_int as uint8_t,
-                            code: 0x7000 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 6i32 as uint8_t,
+                            code: 0x7000i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 6 as libc::c_int as uint8_t,
-                            code: 0x6c00 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 6i32 as uint8_t,
+                            code: 0x6c00i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 6 as libc::c_int as uint8_t,
-                            code: 0x6800 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 6i32 as uint8_t,
+                            code: 0x6800i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 7 as libc::c_int as uint8_t,
-                            code: 0x6200 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 7i32 as uint8_t,
+                            code: 0x6200i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 7 as libc::c_int as uint8_t,
-                            code: 0x6000 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 7i32 as uint8_t,
+                            code: 0x6000i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 7 as libc::c_int as uint8_t,
-                            code: 0x5e00 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 7i32 as uint8_t,
+                            code: 0x5e00i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 7 as libc::c_int as uint8_t,
-                            code: 0x5c00 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 7i32 as uint8_t,
+                            code: 0x5c00i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 7 as libc::c_int as uint8_t,
-                            code: 0x5a00 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 7i32 as uint8_t,
+                            code: 0x5a00i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 7 as libc::c_int as uint8_t,
-                            code: 0x5800 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 7i32 as uint8_t,
+                            code: 0x5800i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 7 as libc::c_int as uint8_t,
-                            code: 0x5600 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 7i32 as uint8_t,
+                            code: 0x5600i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 6 as libc::c_int as uint8_t,
-                            code: 0x6400 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 6i32 as uint8_t,
+                            code: 0x6400i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 7 as libc::c_int as uint8_t,
-                            code: 0x5400 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 7i32 as uint8_t,
+                            code: 0x5400i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 7 as libc::c_int as uint8_t,
-                            code: 0x5200 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 7i32 as uint8_t,
+                            code: 0x5200i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 8 as libc::c_int as uint8_t,
-                            code: 0x5100 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 8i32 as uint8_t,
+                            code: 0x5100i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 8 as libc::c_int as uint8_t,
-                            code: 0x5000 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 8i32 as uint8_t,
+                            code: 0x5000i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 8 as libc::c_int as uint8_t,
-                            code: 0x4f00 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 8i32 as uint8_t,
+                            code: 0x4f00i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 8 as libc::c_int as uint8_t,
-                            code: 0x4e00 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 8i32 as uint8_t,
+                            code: 0x4e00i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 8 as libc::c_int as uint8_t,
-                            code: 0x4d00 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 8i32 as uint8_t,
+                            code: 0x4d00i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 8 as libc::c_int as uint8_t,
-                            code: 0x4c00 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 8i32 as uint8_t,
+                            code: 0x4c00i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 8 as libc::c_int as uint8_t,
-                            code: 0x4b00 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 8i32 as uint8_t,
+                            code: 0x4b00i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 8 as libc::c_int as uint8_t,
-                            code: 0x4a00 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 8i32 as uint8_t,
+                            code: 0x4a00i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 8 as libc::c_int as uint8_t,
-                            code: 0x4900 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 8i32 as uint8_t,
+                            code: 0x4900i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 8 as libc::c_int as uint8_t,
-                            code: 0x4800 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 8i32 as uint8_t,
+                            code: 0x4800i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 8 as libc::c_int as uint8_t,
-                            code: 0x4700 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 8i32 as uint8_t,
+                            code: 0x4700i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 8 as libc::c_int as uint8_t,
-                            code: 0x4600 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 8i32 as uint8_t,
+                            code: 0x4600i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 8 as libc::c_int as uint8_t,
-                            code: 0x4500 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 8i32 as uint8_t,
+                            code: 0x4500i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 8 as libc::c_int as uint8_t,
-                            code: 0x4400 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 8i32 as uint8_t,
+                            code: 0x4400i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 8 as libc::c_int as uint8_t,
-                            code: 0x4300 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 8i32 as uint8_t,
+                            code: 0x4300i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 8 as libc::c_int as uint8_t,
-                            code: 0x4200 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 8i32 as uint8_t,
+                            code: 0x4200i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 8 as libc::c_int as uint8_t,
-                            code: 0x4100 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 8i32 as uint8_t,
+                            code: 0x4100i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 8 as libc::c_int as uint8_t,
-                            code: 0x4000 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 8i32 as uint8_t,
+                            code: 0x4000i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 9 as libc::c_int as uint8_t,
-                            code: 0x3c80 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 9i32 as uint8_t,
+                            code: 0x3c80i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 9 as libc::c_int as uint8_t,
-                            code: 0x3c00 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 9i32 as uint8_t,
+                            code: 0x3c00i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 9 as libc::c_int as uint8_t,
-                            code: 0x3b80 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 9i32 as uint8_t,
+                            code: 0x3b80i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 9 as libc::c_int as uint8_t,
-                            code: 0x3b00 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 9i32 as uint8_t,
+                            code: 0x3b00i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 9 as libc::c_int as uint8_t,
-                            code: 0x3a80 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 9i32 as uint8_t,
+                            code: 0x3a80i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 9 as libc::c_int as uint8_t,
-                            code: 0x3a00 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 9i32 as uint8_t,
+                            code: 0x3a00i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 9 as libc::c_int as uint8_t,
-                            code: 0x3980 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 9i32 as uint8_t,
+                            code: 0x3980i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 9 as libc::c_int as uint8_t,
-                            code: 0x3900 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 9i32 as uint8_t,
+                            code: 0x3900i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 9 as libc::c_int as uint8_t,
-                            code: 0x3880 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 9i32 as uint8_t,
+                            code: 0x3880i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 9 as libc::c_int as uint8_t,
-                            code: 0x3800 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 9i32 as uint8_t,
+                            code: 0x3800i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 9 as libc::c_int as uint8_t,
-                            code: 0x3780 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 9i32 as uint8_t,
+                            code: 0x3780i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 8 as libc::c_int as uint8_t,
-                            code: 0x3f00 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 8i32 as uint8_t,
+                            code: 0x3f00i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 9 as libc::c_int as uint8_t,
-                            code: 0x3700 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 9i32 as uint8_t,
+                            code: 0x3700i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 9 as libc::c_int as uint8_t,
-                            code: 0x3680 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 9i32 as uint8_t,
+                            code: 0x3680i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 9 as libc::c_int as uint8_t,
-                            code: 0x3600 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 9i32 as uint8_t,
+                            code: 0x3600i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 9 as libc::c_int as uint8_t,
-                            code: 0x3580 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 9i32 as uint8_t,
+                            code: 0x3580i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 9 as libc::c_int as uint8_t,
-                            code: 0x3500 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 9i32 as uint8_t,
+                            code: 0x3500i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 9 as libc::c_int as uint8_t,
-                            code: 0x3480 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 9i32 as uint8_t,
+                            code: 0x3480i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 9 as libc::c_int as uint8_t,
-                            code: 0x3400 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 9i32 as uint8_t,
+                            code: 0x3400i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 9 as libc::c_int as uint8_t,
-                            code: 0x3380 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 9i32 as uint8_t,
+                            code: 0x3380i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 9 as libc::c_int as uint8_t,
-                            code: 0x3300 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 9i32 as uint8_t,
+                            code: 0x3300i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 9 as libc::c_int as uint8_t,
-                            code: 0x3280 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 9i32 as uint8_t,
+                            code: 0x3280i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 9 as libc::c_int as uint8_t,
-                            code: 0x3200 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 9i32 as uint8_t,
+                            code: 0x3200i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 9 as libc::c_int as uint8_t,
-                            code: 0x3180 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 9i32 as uint8_t,
+                            code: 0x3180i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 9 as libc::c_int as uint8_t,
-                            code: 0x3100 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 9i32 as uint8_t,
+                            code: 0x3100i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 9 as libc::c_int as uint8_t,
-                            code: 0x3080 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 9i32 as uint8_t,
+                            code: 0x3080i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 9 as libc::c_int as uint8_t,
-                            code: 0x3000 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 9i32 as uint8_t,
+                            code: 0x3000i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 8 as libc::c_int as uint8_t,
-                            code: 0x3e00 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 8i32 as uint8_t,
+                            code: 0x3e00i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 9 as libc::c_int as uint8_t,
-                            code: 0x2f80 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 9i32 as uint8_t,
+                            code: 0x2f80i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 9 as libc::c_int as uint8_t,
-                            code: 0x2f00 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 9i32 as uint8_t,
+                            code: 0x2f00i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 9 as libc::c_int as uint8_t,
-                            code: 0x2e80 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 9i32 as uint8_t,
+                            code: 0x2e80i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 9 as libc::c_int as uint8_t,
-                            code: 0x2e00 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 9i32 as uint8_t,
+                            code: 0x2e00i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 9 as libc::c_int as uint8_t,
-                            code: 0x2d80 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 9i32 as uint8_t,
+                            code: 0x2d80i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 9 as libc::c_int as uint8_t,
-                            code: 0x2d00 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 9i32 as uint8_t,
+                            code: 0x2d00i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 9 as libc::c_int as uint8_t,
-                            code: 0x2c80 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 9i32 as uint8_t,
+                            code: 0x2c80i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 9 as libc::c_int as uint8_t,
-                            code: 0x2c00 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 9i32 as uint8_t,
+                            code: 0x2c00i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 9 as libc::c_int as uint8_t,
-                            code: 0x2b80 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 9i32 as uint8_t,
+                            code: 0x2b80i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x27c0 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x27c0i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x2780 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x2780i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 9 as libc::c_int as uint8_t,
-                            code: 0x2b00 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 9i32 as uint8_t,
+                            code: 0x2b00i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x2740 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x2740i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x2700 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x2700i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 9 as libc::c_int as uint8_t,
-                            code: 0x2a80 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 9i32 as uint8_t,
+                            code: 0x2a80i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 5 as libc::c_int as uint8_t,
-                            code: 0x7800 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 5i32 as uint8_t,
+                            code: 0x7800i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 9 as libc::c_int as uint8_t,
-                            code: 0x2a00 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 9i32 as uint8_t,
+                            code: 0x2a00i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x26c0 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x26c0i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x2680 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x2680i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x2640 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x2640i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x2600 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x2600i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x25c0 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x25c0i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x2580 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x2580i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x2540 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x2540i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x2500 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x2500i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x24c0 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x24c0i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x2480 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x2480i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x2440 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x2440i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x2400 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x2400i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x23c0 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x23c0i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x2380 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x2380i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x2340 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x2340i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x2300 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x2300i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x22c0 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x22c0i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x2280 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x2280i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x2240 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x2240i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x2200 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x2200i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x21c0 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x21c0i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x2180 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x2180i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x2140 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x2140i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x2100 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x2100i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x20c0 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x20c0i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x2080 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x2080i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x2040 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x2040i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x2000 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x2000i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x1fc0 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x1fc0i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x1f80 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x1f80i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x1f40 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x1f40i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x1f00 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x1f00i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x1ec0 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x1ec0i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x1e80 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x1e80i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x1e40 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x1e40i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x1e00 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x1e00i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x1dc0 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x1dc0i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x1d80 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x1d80i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x1d40 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x1d40i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x1d00 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x1d00i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x1cc0 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x1cc0i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x1c80 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x1c80i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x1c40 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x1c40i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x1c00 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x1c00i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x1bc0 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x1bc0i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x1b80 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x1b80i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 9 as libc::c_int as uint8_t,
-                            code: 0x2980 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 9i32 as uint8_t,
+                            code: 0x2980i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x1b40 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x1b40i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x1b00 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x1b00i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x1ac0 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x1ac0i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x1a80 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x1a80i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x1a40 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x1a40i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x1a00 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x1a00i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x19c0 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x19c0i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x1980 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x1980i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x1940 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x1940i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x1900 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x1900i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x18c0 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x18c0i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x1880 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x1880i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x1840 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x1840i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x1800 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x1800i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x17c0 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x17c0i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x1780 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x1780i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x1740 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x1740i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x1700 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x1700i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x16c0 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x16c0i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x1680 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x1680i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x1640 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x1640i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x1600 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x1600i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x15c0 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x15c0i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x1580 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x1580i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x1540 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x1540i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x1500 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x1500i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x14c0 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x14c0i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x1480 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x1480i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x1440 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x1440i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x1400 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x1400i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x13c0 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x13c0i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x1380 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x1380i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x1340 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x1340i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x1300 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x1300i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x12c0 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x12c0i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x1280 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x1280i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x1240 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x1240i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x1200 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x1200i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x11c0 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x11c0i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x1180 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x1180i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x1140 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x1140i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x1100 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x1100i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x10c0 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x10c0i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x1080 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x1080i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x1040 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x1040i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x1000 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x1000i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0xfc0 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0xfc0i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0xf80 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0xf80i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0xf40 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0xf40i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0xf00 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0xf00i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0xec0 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0xec0i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0xe80 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0xe80i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0xe40 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0xe40i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0xe00 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0xe00i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0xdc0 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0xdc0i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0xd80 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0xd80i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0xd40 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0xd40i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0xd00 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0xd00i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0xcc0 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0xcc0i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0xc80 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0xc80i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0xc40 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0xc40i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0xc00 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0xc00i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0xbc0 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0xbc0i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0xb80 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0xb80i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0xb40 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0xb40i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0xb00 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0xb00i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0xac0 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0xac0i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0xa80 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0xa80i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0xa40 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0xa40i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0xa00 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0xa00i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x9c0 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x9c0i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x980 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x980i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x940 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x940i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x900 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x900i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x8c0 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x8c0i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x880 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x880i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x840 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x840i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x800 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x800i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x7c0 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x7c0i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x780 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x780i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x740 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x740i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x700 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x700i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x6c0 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x6c0i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x680 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x680i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 11 as libc::c_int as uint8_t,
-                            code: 0x320 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 11i32 as uint8_t,
+                            code: 0x320i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x640 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x640i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x600 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x600i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x5c0 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x5c0i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x580 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x580i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x540 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x540i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x500 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x500i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x4c0 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x4c0i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 11 as libc::c_int as uint8_t,
-                            code: 0x300 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 11i32 as uint8_t,
+                            code: 0x300i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x480 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x480i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x440 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x440i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 9 as libc::c_int as uint8_t,
-                            code: 0x2900 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 9i32 as uint8_t,
+                            code: 0x2900i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x400 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x400i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x3c0 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x3c0i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 11 as libc::c_int as uint8_t,
-                            code: 0x2e0 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 11i32 as uint8_t,
+                            code: 0x2e0i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x380 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x380i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 11 as libc::c_int as uint8_t,
-                            code: 0x2c0 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 11i32 as uint8_t,
+                            code: 0x2c0i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 11 as libc::c_int as uint8_t,
-                            code: 0x2a0 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 11i32 as uint8_t,
+                            code: 0x2a0i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 11 as libc::c_int as uint8_t,
-                            code: 0x280 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 11i32 as uint8_t,
+                            code: 0x280i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 11 as libc::c_int as uint8_t,
-                            code: 0x260 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 11i32 as uint8_t,
+                            code: 0x260i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 11 as libc::c_int as uint8_t,
-                            code: 0x240 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 11i32 as uint8_t,
+                            code: 0x240i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 11 as libc::c_int as uint8_t,
-                            code: 0x220 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 11i32 as uint8_t,
+                            code: 0x220i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 11 as libc::c_int as uint8_t,
-                            code: 0x200 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 11i32 as uint8_t,
+                            code: 0x200i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 11 as libc::c_int as uint8_t,
-                            code: 0x1e0 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 11i32 as uint8_t,
+                            code: 0x1e0i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 11 as libc::c_int as uint8_t,
-                            code: 0x1c0 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 11i32 as uint8_t,
+                            code: 0x1c0i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 11 as libc::c_int as uint8_t,
-                            code: 0x1a0 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 11i32 as uint8_t,
+                            code: 0x1a0i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 10 as libc::c_int as uint8_t,
-                            code: 0x340 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 10i32 as uint8_t,
+                            code: 0x340i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 8 as libc::c_int as uint8_t,
-                            code: 0x3d00 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 8i32 as uint8_t,
+                            code: 0x3d00i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 9 as libc::c_int as uint8_t,
-                            code: 0x2880 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 9i32 as uint8_t,
+                            code: 0x2880i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 11 as libc::c_int as uint8_t,
-                            code: 0x180 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 11i32 as uint8_t,
+                            code: 0x180i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 11 as libc::c_int as uint8_t,
-                            code: 0x160 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 11i32 as uint8_t,
+                            code: 0x160i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 11 as libc::c_int as uint8_t,
-                            code: 0x140 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 11i32 as uint8_t,
+                            code: 0x140i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 11 as libc::c_int as uint8_t,
-                            code: 0x120 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 11i32 as uint8_t,
+                            code: 0x120i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 11 as libc::c_int as uint8_t,
-                            code: 0x100 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 11i32 as uint8_t,
+                            code: 0x100i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 11 as libc::c_int as uint8_t,
-                            code: 0xe0 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 11i32 as uint8_t,
+                            code: 0xe0i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 11 as libc::c_int as uint8_t,
-                            code: 0xc0 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 11i32 as uint8_t,
+                            code: 0xc0i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 12 as libc::c_int as uint8_t,
-                            code: 0x10 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 12i32 as uint8_t,
+                            code: 0x10i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 11 as libc::c_int as uint8_t,
-                            code: 0xa0 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 11i32 as uint8_t,
+                            code: 0xa0i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 11 as libc::c_int as uint8_t,
-                            code: 0x80 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 11i32 as uint8_t,
+                            code: 0x80i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 11 as libc::c_int as uint8_t,
-                            code: 0x60 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 11i32 as uint8_t,
+                            code: 0x60i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 11 as libc::c_int as uint8_t,
-                            code: 0x40 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 11i32 as uint8_t,
+                            code: 0x40i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 11 as libc::c_int as uint8_t,
-                            code: 0x20 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 11i32 as uint8_t,
+                            code: 0x20i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 9 as libc::c_int as uint8_t,
-                            code: 0x2800 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 9i32 as uint8_t,
+                            code: 0x2800i32 as uint16_t,};
          init
      },
      {
          let mut init =
-             huffmanTable_s{codeLen: 12 as libc::c_int as uint8_t,
-                            code: 0 as libc::c_int as uint16_t,};
+             huffmanTable_s{codeLen: 12i32 as uint8_t,
+                            code: 0i32 as uint16_t,};
          init
      }];

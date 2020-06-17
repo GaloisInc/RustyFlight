@@ -1,4 +1,5 @@
-use ::libc;
+use core;
+use libc;
 extern "C" {
     #[no_mangle]
     fn serialWrite(instance: *mut serialPort_t, ch: uint8_t);
@@ -38,7 +39,7 @@ extern "C" {
            nump: *mut libc::c_int) -> libc::c_char;
 }
 pub type __builtin_va_list = [__va_list_tag; 1];
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct __va_list_tag {
     pub gp_offset: libc::c_uint,
@@ -72,7 +73,7 @@ pub const SERIAL_NOT_INVERTED: portOptions_e = 0;
 pub type serialReceiveCallbackPtr
     =
     Option<unsafe extern "C" fn(_: uint16_t, _: *mut libc::c_void) -> ()>;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct serialPort_s {
     pub vTable: *const serialPortVTable,
@@ -91,7 +92,7 @@ pub struct serialPort_s {
     pub rxCallbackData: *mut libc::c_void,
     pub identifier: uint8_t,
 }
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct serialPortVTable {
     pub serialWrite: Option<unsafe extern "C" fn(_: *mut serialPort_t,
@@ -180,7 +181,7 @@ static mut stdout_putp: *mut libc::c_void =
 unsafe extern "C" fn putchw(mut putp: *mut libc::c_void, mut putf: putcf,
                             mut n: libc::c_int, mut z: libc::c_char,
                             mut bf: *mut libc::c_char) -> libc::c_int {
-    let mut written: libc::c_int = 0 as libc::c_int;
+    let mut written: libc::c_int = 0i32;
     let mut fc: libc::c_char =
         if z as libc::c_int != 0 { '0' as i32 } else { ' ' as i32 } as
             libc::c_char;
@@ -189,13 +190,13 @@ unsafe extern "C" fn putchw(mut putp: *mut libc::c_void, mut putf: putcf,
     loop  {
         let fresh0 = p;
         p = p.offset(1);
-        if !(*fresh0 as libc::c_int != 0 && n > 0 as libc::c_int) { break ; }
+        if !(*fresh0 as libc::c_int != 0 && n > 0i32) { break ; }
         n -= 1
     }
     loop  {
         let fresh1 = n;
         n = n - 1;
-        if !(fresh1 > 0 as libc::c_int) { break ; }
+        if !(fresh1 > 0i32) { break ; }
         putf.expect("non-null function pointer")(putp, fc);
         written += 1
     }
@@ -217,7 +218,7 @@ pub unsafe extern "C" fn tfp_format(mut putp: *mut libc::c_void,
                                     mut va: ::core::ffi::VaList)
  -> libc::c_int {
     let mut bf: [libc::c_char; 12] = [0; 12];
-    let mut written: libc::c_int = 0 as libc::c_int;
+    let mut written: libc::c_int = 0i32;
     let mut ch: libc::c_char = 0;
     loop  {
         let fresh3 = fmt;
@@ -228,9 +229,9 @@ pub unsafe extern "C" fn tfp_format(mut putp: *mut libc::c_void,
             putf.expect("non-null function pointer")(putp, ch);
             written += 1
         } else {
-            let mut lz: libc::c_char = 0 as libc::c_int as libc::c_char;
-            let mut lng: libc::c_char = 0 as libc::c_int as libc::c_char;
-            let mut w: libc::c_int = 0 as libc::c_int;
+            let mut lz: libc::c_char = 0i32 as libc::c_char;
+            let mut lng: libc::c_char = 0i32 as libc::c_char;
+            let mut w: libc::c_int = 0i32;
             let fresh4 = fmt;
             fmt = fmt.offset(1);
             ch = *fresh4;
@@ -238,51 +239,45 @@ pub unsafe extern "C" fn tfp_format(mut putp: *mut libc::c_void,
                 let fresh5 = fmt;
                 fmt = fmt.offset(1);
                 ch = *fresh5;
-                lz = 1 as libc::c_int as libc::c_char
+                lz = 1i32 as libc::c_char
             }
             if ch as libc::c_int >= '0' as i32 &&
                    ch as libc::c_int <= '9' as i32 {
-                ch = a2i(ch, &mut fmt, 10 as libc::c_int, &mut w)
+                ch = a2i(ch, &mut fmt, 10i32, &mut w)
             }
             if ch as libc::c_int == 'l' as i32 {
                 let fresh6 = fmt;
                 fmt = fmt.offset(1);
                 ch = *fresh6;
-                lng = 1 as libc::c_int as libc::c_char
+                lng = 1i32 as libc::c_char
             }
             match ch as libc::c_int {
                 0 => { break ; }
                 117 => {
                     if lng != 0 {
-                        uli2a(va.as_va_list().arg::<libc::c_ulong>(),
-                              10 as libc::c_int as libc::c_uint,
-                              0 as libc::c_int, bf.as_mut_ptr());
+                        uli2a(va.arg::<libc::c_ulong>(),
+                              10i32 as libc::c_uint, 0i32, bf.as_mut_ptr());
                     } else {
-                        ui2a(va.as_va_list().arg::<libc::c_uint>(),
-                             10 as libc::c_int as libc::c_uint,
-                             0 as libc::c_int, bf.as_mut_ptr());
+                        ui2a(va.arg::<libc::c_uint>(), 10i32 as libc::c_uint,
+                             0i32, bf.as_mut_ptr());
                     }
                     written += putchw(putp, putf, w, lz, bf.as_mut_ptr())
                 }
                 100 => {
                     if lng != 0 {
-                        li2a(va.as_va_list().arg::<libc::c_ulong>() as
-                                 libc::c_long, bf.as_mut_ptr());
-                    } else {
-                        i2a(va.as_va_list().arg::<libc::c_int>(),
-                            bf.as_mut_ptr());
-                    }
+                        li2a(va.arg::<libc::c_ulong>() as libc::c_long,
+                             bf.as_mut_ptr());
+                    } else { i2a(va.arg::<libc::c_int>(), bf.as_mut_ptr()); }
                     written += putchw(putp, putf, w, lz, bf.as_mut_ptr())
                 }
                 120 | 88 => {
                     if lng != 0 {
-                        uli2a(va.as_va_list().arg::<libc::c_ulong>(),
-                              16 as libc::c_int as libc::c_uint,
+                        uli2a(va.arg::<libc::c_ulong>(),
+                              16i32 as libc::c_uint,
                               (ch as libc::c_int == 'X' as i32) as
                                   libc::c_int, bf.as_mut_ptr());
                     } else {
-                        ui2a(va.as_va_list().arg::<libc::c_uint>(),
-                             16 as libc::c_int as libc::c_uint,
+                        ui2a(va.arg::<libc::c_uint>(), 16i32 as libc::c_uint,
                              (ch as libc::c_int == 'X' as i32) as libc::c_int,
                              bf.as_mut_ptr());
                     }
@@ -290,24 +285,21 @@ pub unsafe extern "C" fn tfp_format(mut putp: *mut libc::c_void,
                 }
                 99 => {
                     putf.expect("non-null function pointer")(putp,
-                                                             va.as_va_list().arg::<libc::c_int>()
+                                                             va.arg::<libc::c_int>()
                                                                  as
                                                                  libc::c_char);
                     written += 1
                 }
                 115 => {
                     written +=
-                        putchw(putp, putf, w,
-                               0 as libc::c_int as libc::c_char,
-                               va.as_va_list().arg::<*mut libc::c_char>())
+                        putchw(putp, putf, w, 0i32 as libc::c_char,
+                               va.arg::<*mut libc::c_char>())
                 }
                 37 => {
                     putf.expect("non-null function pointer")(putp, ch);
                     written += 1
                 }
-                110 => {
-                    *va.as_va_list().arg::<*mut libc::c_int>() = written
-                }
+                110 => { *va.arg::<*mut libc::c_int>() = written }
                 _ => { }
             }
         }
@@ -459,7 +451,7 @@ pub unsafe extern "C" fn tfp_sprintf(mut s: *mut libc::c_char,
                                                  _: libc::c_char) -> ()), fmt,
                    va.as_va_list());
     putcp(&mut s as *mut *mut libc::c_char as *mut libc::c_void,
-          0 as libc::c_int as libc::c_char);
+          0i32 as libc::c_char);
     return written;
 }
 unsafe extern "C" fn _putc(mut p: *mut libc::c_void, mut c: libc::c_char) {

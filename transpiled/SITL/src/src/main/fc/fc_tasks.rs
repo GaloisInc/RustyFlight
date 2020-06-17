@@ -1,4 +1,5 @@
-use ::libc;
+use core;
+use libc;
 extern "C" {
     #[no_mangle]
     fn feature(mask: uint32_t) -> bool;
@@ -53,6 +54,9 @@ extern "C" {
     static mut cliMode: uint8_t;
     #[no_mangle]
     fn cliProcess();
+    // return positive for ACK, negative on error, zero for no reply
+    // don't know how to process command, try next handler
+    // msp post process function, used for gracefully handling reboots, etc.
     #[no_mangle]
     fn mspFcProcessCommand(cmd: *mut mspPacket_t, reply: *mut mspPacket_t,
                            mspPostProcessFn: *mut mspPostProcessFnPtr)
@@ -85,9 +89,9 @@ extern "C" {
     #[no_mangle]
     static mut serialConfig_System: serialConfig_t;
     #[no_mangle]
-    fn rcdeviceIsEnabled() -> bool;
-    #[no_mangle]
     fn rcdeviceUpdate(currentTimeUs: timeUs_t);
+    #[no_mangle]
+    fn rcdeviceIsEnabled() -> bool;
     #[no_mangle]
     fn mspSerialProcess(evaluateNonMspData: mspEvaluateNonMspData_e,
                         mspProcessCommandFn: mspProcessCommandFnPtr,
@@ -140,14 +144,14 @@ pub type __uint32_t = libc::c_uint;
 pub type int8_t = __int8_t;
 pub type int16_t = __int16_t;
 pub type int32_t = __int32_t;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct __pthread_internal_list {
     pub __prev: *mut __pthread_internal_list,
     pub __next: *mut __pthread_internal_list,
 }
 pub type __pthread_list_t = __pthread_internal_list;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct __pthread_mutex_s {
     pub __lock: libc::c_int,
@@ -159,8 +163,8 @@ pub struct __pthread_mutex_s {
     pub __elision: libc::c_short,
     pub __list: __pthread_list_t,
 }
-#[derive(Copy, Clone)]
-#[repr(C)]
+#[derive ( Copy, Clone )]
+#[repr ( C )]
 pub union pthread_mutex_t {
     pub __data: __pthread_mutex_s,
     pub __size: [libc::c_char; 40],
@@ -169,12 +173,12 @@ pub union pthread_mutex_t {
 pub type uint8_t = __uint8_t;
 pub type uint16_t = __uint16_t;
 pub type uint32_t = __uint32_t;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct SPI_TypeDef {
     pub test: *mut libc::c_void,
 }
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct displayPortVTable_s {
     pub grab: Option<unsafe extern "C" fn(_: *mut displayPort_t)
@@ -206,7 +210,7 @@ pub struct displayPortVTable_s {
                                 -> uint32_t>,
 }
 pub type displayPort_t = displayPort_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct displayPort_s {
     pub vTable: *const displayPortVTable_s,
@@ -221,7 +225,7 @@ pub struct displayPort_s {
 }
 pub type timeDelta_t = int32_t;
 pub type timeUs_t = uint32_t;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct hsvColor_s {
     pub h: uint16_t,
@@ -267,32 +271,32 @@ pub const BUSTYPE_MPU_SLAVE: busType_e = 3;
 pub const BUSTYPE_SPI: busType_e = 2;
 pub const BUSTYPE_I2C: busType_e = 1;
 pub const BUSTYPE_NONE: busType_e = 0;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct busDevice_s {
     pub bustype: busType_e,
     pub busdev_u: C2RustUnnamed_0,
 }
-#[derive(Copy, Clone)]
-#[repr(C)]
+#[derive ( Copy, Clone )]
+#[repr ( C )]
 pub union C2RustUnnamed_0 {
     pub spi: deviceSpi_s,
     pub i2c: deviceI2C_s,
     pub mpuSlave: deviceMpuSlave_s,
 }
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct deviceMpuSlave_s {
     pub master: *const busDevice_s,
     pub address: uint8_t,
 }
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct deviceI2C_s {
     pub device: I2CDevice,
     pub address: uint8_t,
 }
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct deviceSpi_s {
     pub instance: *mut SPI_TypeDef,
@@ -331,12 +335,8 @@ pub const ALIGN_DEFAULT: sensor_align_e = 0;
  *
  * If not, see <http://www.gnu.org/licenses/>.
  */
-// initialize function
-// read 3 axis data function
-// read temperature if available
-// scalefactor
-// gyro data after calibration and alignment
-#[derive(Copy, Clone)]
+// driver-provided alignment
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct accDev_s {
     pub lock: pthread_mutex_t,
@@ -353,12 +353,15 @@ pub struct accDev_s {
     pub filler: [uint8_t; 2],
 }
 pub type mpuDetectionResult_t = mpuDetectionResult_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct mpuDetectionResult_s {
     pub sensor: mpuSensor_e,
     pub resolution: mpu6050Resolution_e,
 }
+pub type mpu6050Resolution_e = libc::c_uint;
+pub const MPU_FULL_RESOLUTION: mpu6050Resolution_e = 1;
+pub const MPU_HALF_RESOLUTION: mpu6050Resolution_e = 0;
 /*
  * This file is part of Cleanflight and Betaflight.
  *
@@ -396,9 +399,6 @@ pub struct mpuDetectionResult_s {
 //[15:0] YG_OFFS_USR
 //[15:0] ZG_OFFS_USR
 // RF = Register Flag
-pub type mpu6050Resolution_e = libc::c_uint;
-pub const MPU_FULL_RESOLUTION: mpu6050Resolution_e = 1;
-pub const MPU_HALF_RESOLUTION: mpu6050Resolution_e = 0;
 pub type mpuSensor_e = libc::c_uint;
 pub const BMI_160_SPI: mpuSensor_e = 12;
 pub const ICM_20689_SPI: mpuSensor_e = 11;
@@ -419,7 +419,7 @@ pub type sensorAccReadFuncPtr
 pub type sensorAccInitFuncPtr
     =
     Option<unsafe extern "C" fn(_: *mut accDev_s) -> ()>;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct gyro_s {
     pub targetLooptime: uint32_t,
@@ -447,7 +447,7 @@ pub const SERIAL_NOT_INVERTED: portOptions_e = 0;
 pub type serialReceiveCallbackPtr
     =
     Option<unsafe extern "C" fn(_: uint16_t, _: *mut libc::c_void) -> ()>;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct serialPort_s {
     pub vTable: *const serialPortVTable,
@@ -466,7 +466,7 @@ pub struct serialPort_s {
     pub rxCallbackData: *mut libc::c_void,
     pub identifier: uint8_t,
 }
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct serialPortVTable {
     pub serialWrite: Option<unsafe extern "C" fn(_: *mut serialPort_t,
@@ -511,14 +511,14 @@ pub struct serialPortVTable {
 }
 // used by serial drivers to return frames to app
 pub type serialPort_t = serialPort_s;
-#[derive(Copy, Clone)]
-#[repr(C)]
+#[derive ( Copy, Clone )]
+#[repr ( C )]
 pub union rollAndPitchTrims_u {
     pub raw: [int16_t; 2],
     pub values: rollAndPitchTrims_t_def,
 }
 pub type rollAndPitchTrims_t_def = rollAndPitchTrims_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct rollAndPitchTrims_s {
     pub roll: int16_t,
@@ -528,7 +528,7 @@ pub type C2RustUnnamed_1 = libc::c_uint;
 pub const WAS_ARMED_WITH_PREARM: C2RustUnnamed_1 = 4;
 pub const WAS_EVER_ARMED: C2RustUnnamed_1 = 2;
 pub const ARMED: C2RustUnnamed_1 = 1;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct rxConfig_s {
     pub rcmap: [uint8_t; 8],
@@ -562,18 +562,15 @@ pub struct rxConfig_s {
     pub rc_smoothing_input_type: uint8_t,
     pub rc_smoothing_derivative_type: uint8_t,
 }
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct serialConfig_s {
     pub portConfigs: [serialPortConfig_t; 8],
     pub serial_update_rate_hz: uint16_t,
     pub reboot_character: uint8_t,
 }
-//
-// configuration
-//
 pub type serialPortConfig_t = serialPortConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct serialPortConfig_s {
     pub functionMask: uint16_t,
@@ -596,13 +593,12 @@ pub const SERIAL_PORT_USART3: serialPortIdentifier_e = 2;
 pub const SERIAL_PORT_USART2: serialPortIdentifier_e = 1;
 pub const SERIAL_PORT_USART1: serialPortIdentifier_e = 0;
 pub const SERIAL_PORT_NONE: serialPortIdentifier_e = -1;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct sbuf_s {
     pub ptr: *mut uint8_t,
     pub end: *mut uint8_t,
 }
-// not used for all telemetry systems, e.g. HoTT only works at 19200.
 /*
  * This file is part of Cleanflight and Betaflight.
  *
@@ -629,7 +625,7 @@ pub const MSP_RESULT_CMD_UNKNOWN: mspResult_e = -2;
 pub const MSP_RESULT_NO_REPLY: mspResult_e = 0;
 pub const MSP_RESULT_ERROR: mspResult_e = -1;
 pub const MSP_RESULT_ACK: mspResult_e = 1;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct mspPacket_s {
     pub buf: sbuf_t,
@@ -638,33 +634,10 @@ pub struct mspPacket_s {
     pub result: int16_t,
     pub direction: uint8_t,
 }
-// data pointer must be first (sbuf_t* is equivalent to uint8_t **)
-/*
- * This file is part of Cleanflight and Betaflight.
- *
- * Cleanflight and Betaflight are free software. You can redistribute
- * this software and/or modify this software under the terms of the
- * GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option)
- * any later version.
- *
- * Cleanflight and Betaflight are distributed in the hope that they
- * will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this software.
- *
- * If not, see <http://www.gnu.org/licenses/>.
- */
-// return positive for ACK, negative on error, zero for no reply
-// don't know how to process command, try next handler
 pub type mspPacket_t = mspPacket_s;
 pub type mspPostProcessFnPtr
     =
     Option<unsafe extern "C" fn(_: *mut serialPort_s) -> ()>;
-// msp post process function, used for gracefully handling reboots, etc.
 pub type mspProcessCommandFnPtr
     =
     Option<unsafe extern "C" fn(_: *mut mspPacket_t, _: *mut mspPacket_t,
@@ -672,24 +645,25 @@ pub type mspProcessCommandFnPtr
 pub type mspProcessReplyFnPtr
     =
     Option<unsafe extern "C" fn(_: *mut mspPacket_t) -> ()>;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct modeColorIndexes_s {
     pub color: [uint8_t; 6],
 }
 pub type modeColorIndexes_t = modeColorIndexes_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct specialColorIndexes_s {
     pub color: [uint8_t; 11],
 }
 pub type specialColorIndexes_t = specialColorIndexes_s;
 pub type serialConfig_t = serialConfig_s;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct rcdeviceSwitchState_s {
     pub isActivated: bool,
 }
+// data pointer must be first (sbuf_t* is equivalent to uint8_t **)
 // which byte is used to reboot. Default 'R', could be changed carefully to something else.
 /*
  * This file is part of Cleanflight and Betaflight.
@@ -714,25 +688,6 @@ pub type rcdeviceSwitchState_t = rcdeviceSwitchState_s;
 pub type mspEvaluateNonMspData_e = libc::c_uint;
 pub const MSP_SKIP_NON_MSP_DATA: mspEvaluateNonMspData_e = 1;
 pub const MSP_EVALUATE_NON_MSP_DATA: mspEvaluateNonMspData_e = 0;
-/*
- * This file is part of Cleanflight and Betaflight.
- *
- * Cleanflight and Betaflight are free software. You can redistribute
- * this software and/or modify this software under the terms of the
- * GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option)
- * any later version.
- *
- * Cleanflight and Betaflight are distributed in the hope that they
- * will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this software.
- *
- * If not, see <http://www.gnu.org/licenses/>.
- */
 pub type rxConfig_t = rxConfig_s;
 pub type C2RustUnnamed_2 = libc::c_uint;
 pub const SERIALRX_FPORT: C2RustUnnamed_2 = 12;
@@ -748,7 +703,7 @@ pub const SERIALRX_SUMD: C2RustUnnamed_2 = 3;
 pub const SERIALRX_SBUS: C2RustUnnamed_2 = 2;
 pub const SERIALRX_SPEKTRUM2048: C2RustUnnamed_2 = 1;
 pub const SERIALRX_SPEKTRUM1024: C2RustUnnamed_2 = 0;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct int16_flightDynamicsTrims_s {
     pub roll: int16_t,
@@ -756,8 +711,8 @@ pub struct int16_flightDynamicsTrims_s {
     pub yaw: int16_t,
 }
 pub type flightDynamicsTrims_def_t = int16_flightDynamicsTrims_s;
-#[derive(Copy, Clone)]
-#[repr(C)]
+#[derive ( Copy, Clone )]
+#[repr ( C )]
 pub union flightDynamicsTrims_u {
     pub raw: [int16_t; 3],
     pub values: flightDynamicsTrims_def_t,
@@ -772,7 +727,7 @@ pub const SENSOR_MAG: C2RustUnnamed_3 = 8;
 pub const SENSOR_BARO: C2RustUnnamed_3 = 4;
 pub const SENSOR_ACC: C2RustUnnamed_3 = 2;
 pub const SENSOR_GYRO: C2RustUnnamed_3 = 1;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct acc_s {
     pub dev: accDev_t,
@@ -782,7 +737,7 @@ pub struct acc_s {
 }
 pub type acc_t = acc_s;
 pub type rollAndPitchTrims_t = rollAndPitchTrims_u;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct accelerometerConfig_s {
     pub acc_lpf_hz: uint16_t,
@@ -805,24 +760,6 @@ pub const VOLTAGE_METER_COUNT: voltageMeterSource_e = 3;
 pub const VOLTAGE_METER_ESC: voltageMeterSource_e = 2;
 pub const VOLTAGE_METER_ADC: voltageMeterSource_e = 1;
 pub const VOLTAGE_METER_NONE: voltageMeterSource_e = 0;
-// mapping of radio channels to internal RPYTA+ order
-// type of UART-based receiver (0 = spek 10, 1 = spek 11, 2 = sbus). Must be enabled by FEATURE_RX_SERIAL first.
-// invert the serial RX protocol compared to it's default setting
-// allow rx to operate in half duplex mode on F4, ignored for F1 and F3.
-// number of bind pulses for Spektrum satellite receivers
-// whenever we will reset (exit) binding mode after hard reboot
-// Some radios have not a neutral point centered on 1500. can be changed here
-// minimum rc end
-// maximum rc end
-// Camera angle to be scaled into rc commands
-// Throttle setpoint percent where airmode gets activated
-// true to use frame drop flags in the rx protocol
-// offset applied to the RSSI value before it is returned
-// Determines the smoothing algorithm to use: INTERPOLATION or FILTER
-// Filter cutoff frequency for the input filter (0 = auto)
-// Filter cutoff frequency for the setpoint weight derivative filter (0 = auto)
-// Axis to log as debug values when debug_mode = RC_SMOOTHING
-// Input filter type (0 = PT1, 1 = BIQUAD)
 // Derivative filter type (0 = OFF, 1 = PT1, 2 = BIQUAD)
 // cutoff frequency for the low pass filter used on the acc z-axis for althold in Hz
 // acc alignment
@@ -846,7 +783,7 @@ pub const VOLTAGE_METER_NONE: voltageMeterSource_e = 0;
  *
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct batteryConfig_s {
     pub vbatmaxcellvoltage: uint8_t,
@@ -862,6 +799,7 @@ pub struct batteryConfig_s {
     pub consumptionWarningPercentage: uint8_t,
     pub vbathysteresis: uint8_t,
     pub vbatfullcellvoltage: uint8_t,
+    // Cell voltage at which the battery is deemed to be "full" 0.1V units, default is 41 (4.1V)
 }
 pub type batteryConfig_t = batteryConfig_s;
 pub type C2RustUnnamed_4 = libc::c_uint;
@@ -894,7 +832,7 @@ pub const TASK_ACCEL: cfTaskId_e = 3;
 pub const TASK_GYROPID: cfTaskId_e = 2;
 pub const TASK_MAIN: cfTaskId_e = 1;
 pub const TASK_SYSTEM: cfTaskId_e = 0;
-#[derive(Copy, Clone)]
+#[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct cfTask_t {
     pub taskName: *const libc::c_char,
@@ -938,6 +876,7 @@ pub static mut specialColors: specialColorIndexes_t =
 unsafe extern "C" fn serialConfig() -> *const serialConfig_t {
     return &mut serialConfig_System;
 }
+// used for unit test
 #[no_mangle]
 pub static mut switchStates: [rcdeviceSwitchState_t; 3] =
     [rcdeviceSwitchState_t{isActivated: false,}; 3];
@@ -954,7 +893,6 @@ unsafe extern "C" fn accelerometerConfigMutable()
 unsafe extern "C" fn batteryConfig() -> *const batteryConfig_t {
     return &mut batteryConfig_System;
 }
-// Cell voltage at which the battery is deemed to be "full" 0.1V units, default is 41 (4.1V)
 /*
  * This file is part of Cleanflight and Betaflight.
  *
@@ -1013,9 +951,9 @@ unsafe extern "C" fn taskUpdateRxMain(mut currentTimeUs: timeUs_t) {
     static mut lastRxTimeUs: timeUs_t = 0;
     currentRxRefreshRate =
         constrain(currentTimeUs.wrapping_sub(lastRxTimeUs) as libc::c_int,
-                  1000 as libc::c_int, 30000 as libc::c_int) as uint16_t;
+                  1000i32, 30000i32) as uint16_t;
     lastRxTimeUs = currentTimeUs;
-    isRXDataNew = 1 as libc::c_int != 0;
+    isRXDataNew = 1i32 != 0;
     // updateRcCommands sets rcCommand, which is needed by updateAltHoldState and updateSonarAltHoldState
     updateRcCommands();
     updateArmingStatus();
@@ -1023,7 +961,7 @@ unsafe extern "C" fn taskUpdateRxMain(mut currentTimeUs: timeUs_t) {
 unsafe extern "C" fn taskUpdateBaro(mut currentTimeUs: timeUs_t) {
     if sensors(SENSOR_BARO as libc::c_int as uint32_t) {
         let newDeadline: uint32_t = baroUpdate();
-        if newDeadline != 0 as libc::c_int as libc::c_uint {
+        if newDeadline != 0i32 as libc::c_uint {
             rescheduleTask(TASK_SELF, newDeadline);
         }
     };
@@ -1063,10 +1001,10 @@ unsafe extern "C" fn taskTelemetry(mut currentTimeUs: timeUs_t) {
 #[no_mangle]
 pub unsafe extern "C" fn fcTasksInit() {
     schedulerInit();
-    setTaskEnabled(TASK_MAIN, 1 as libc::c_int != 0);
-    setTaskEnabled(TASK_SERIAL, 1 as libc::c_int != 0);
+    setTaskEnabled(TASK_MAIN, 1i32 != 0);
+    setTaskEnabled(TASK_SERIAL, 1i32 != 0);
     rescheduleTask(TASK_SERIAL,
-                   (1000000 as libc::c_int /
+                   (1000000i32 /
                         (*serialConfig()).serial_update_rate_hz as
                             libc::c_int) as uint32_t);
     let useBatteryVoltage: bool =
@@ -1088,14 +1026,14 @@ pub unsafe extern "C" fn fcTasksInit() {
                        useBatteryAlerts as libc::c_int != 0);
     if sensors(SENSOR_GYRO as libc::c_int as uint32_t) {
         rescheduleTask(TASK_GYROPID, gyro.targetLooptime);
-        setTaskEnabled(TASK_GYROPID, 1 as libc::c_int != 0);
+        setTaskEnabled(TASK_GYROPID, 1i32 != 0);
     }
     if sensors(SENSOR_ACC as libc::c_int as uint32_t) {
-        setTaskEnabled(TASK_ACCEL, 1 as libc::c_int != 0);
+        setTaskEnabled(TASK_ACCEL, 1i32 != 0);
         rescheduleTask(TASK_ACCEL, acc.accSamplingInterval);
-        setTaskEnabled(TASK_ATTITUDE, 1 as libc::c_int != 0);
+        setTaskEnabled(TASK_ATTITUDE, 1i32 != 0);
     }
-    setTaskEnabled(TASK_RX, 1 as libc::c_int != 0);
+    setTaskEnabled(TASK_RX, 1i32 != 0);
     setTaskEnabled(TASK_DISPATCH, dispatchIsEnabled());
     setTaskEnabled(TASK_GPS, feature(FEATURE_GPS as libc::c_int as uint32_t));
     setTaskEnabled(TASK_COMPASS,
@@ -1108,22 +1046,18 @@ pub unsafe extern "C" fn fcTasksInit() {
                        feature(FEATURE_GPS as libc::c_int as uint32_t) as
                            libc::c_int != 0);
     if feature(FEATURE_TELEMETRY as libc::c_int as uint32_t) {
-        setTaskEnabled(TASK_TELEMETRY, 1 as libc::c_int != 0);
+        setTaskEnabled(TASK_TELEMETRY, 1i32 != 0);
         if (*rxConfig()).serialrx_provider as libc::c_int ==
                SERIALRX_JETIEXBUS as libc::c_int {
             // Reschedule telemetry to 500hz for Jeti Exbus
-            rescheduleTask(TASK_TELEMETRY,
-                           (1000000 as libc::c_int / 500 as libc::c_int) as
-                               uint32_t);
+            rescheduleTask(TASK_TELEMETRY, (1000000i32 / 500i32) as uint32_t);
         } else if (*rxConfig()).serialrx_provider as libc::c_int ==
                       SERIALRX_CRSF as libc::c_int {
             // Reschedule telemetry to 500hz, 2ms for CRSF
-            rescheduleTask(TASK_TELEMETRY,
-                           (1000000 as libc::c_int / 500 as libc::c_int) as
-                               uint32_t);
+            rescheduleTask(TASK_TELEMETRY, (1000000i32 / 500i32) as uint32_t);
         }
     }
-    setTaskEnabled(TASK_PINIOBOX, 1 as libc::c_int != 0);
+    setTaskEnabled(TASK_PINIOBOX, 1i32 != 0);
     setTaskEnabled(TASK_RCDEVICE, rcdeviceIsEnabled());
 }
 #[no_mangle]
@@ -1141,8 +1075,7 @@ pub static mut cfTasks: [cfTask_t; 18] =
                               Some(taskSystemLoad as
                                        unsafe extern "C" fn(_: timeUs_t)
                                            -> ()),
-                          desiredPeriod:
-                              1000000 as libc::c_int / 10 as libc::c_int,
+                          desiredPeriod: 1000000i32 / 10i32,
                           staticPriority:
                               TASK_PRIORITY_MEDIUM_HIGH as libc::c_int as
                                   uint8_t,
@@ -1169,8 +1102,7 @@ pub static mut cfTasks: [cfTask_t; 18] =
                               Some(taskMain as
                                        unsafe extern "C" fn(_: timeUs_t)
                                            -> ()),
-                          desiredPeriod:
-                              1000000 as libc::c_int / 1000 as libc::c_int,
+                          desiredPeriod: 1000000i32 / 1000i32,
                           staticPriority:
                               TASK_PRIORITY_MEDIUM_HIGH as libc::c_int as
                                   uint8_t,
@@ -1195,7 +1127,7 @@ pub static mut cfTasks: [cfTask_t; 18] =
                               Some(taskMainPidLoop as
                                        unsafe extern "C" fn(_: timeUs_t)
                                            -> ()),
-                          desiredPeriod: 100 as libc::c_int,
+                          desiredPeriod: 100i32,
                           staticPriority:
                               TASK_PRIORITY_REALTIME as libc::c_int as
                                   uint8_t,
@@ -1219,8 +1151,7 @@ pub static mut cfTasks: [cfTask_t; 18] =
                               Some(taskUpdateAccelerometer as
                                        unsafe extern "C" fn(_: timeUs_t)
                                            -> ()),
-                          desiredPeriod:
-                              1000000 as libc::c_int / 1000 as libc::c_int,
+                          desiredPeriod: 1000000i32 / 1000i32,
                           staticPriority:
                               TASK_PRIORITY_MEDIUM as libc::c_int as uint8_t,
                           dynamicPriority: 0,
@@ -1244,8 +1175,7 @@ pub static mut cfTasks: [cfTask_t; 18] =
                               Some(imuUpdateAttitude as
                                        unsafe extern "C" fn(_: timeUs_t)
                                            -> ()),
-                          desiredPeriod:
-                              1000000 as libc::c_int / 100 as libc::c_int,
+                          desiredPeriod: 1000000i32 / 100i32,
                           staticPriority:
                               TASK_PRIORITY_MEDIUM as libc::c_int as uint8_t,
                           dynamicPriority: 0,
@@ -1272,8 +1202,7 @@ pub static mut cfTasks: [cfTask_t; 18] =
                               Some(taskUpdateRxMain as
                                        unsafe extern "C" fn(_: timeUs_t)
                                            -> ()),
-                          desiredPeriod:
-                              1000000 as libc::c_int / 33 as libc::c_int,
+                          desiredPeriod: 1000000i32 / 33i32,
                           staticPriority:
                               TASK_PRIORITY_HIGH as libc::c_int as uint8_t,
                           dynamicPriority: 0,
@@ -1297,8 +1226,7 @@ pub static mut cfTasks: [cfTask_t; 18] =
                               Some(taskHandleSerial as
                                        unsafe extern "C" fn(_: timeUs_t)
                                            -> ()),
-                          desiredPeriod:
-                              1000000 as libc::c_int / 100 as libc::c_int,
+                          desiredPeriod: 1000000i32 / 100i32,
                           staticPriority:
                               TASK_PRIORITY_LOW as libc::c_int as uint8_t,
                           dynamicPriority: 0,
@@ -1322,8 +1250,7 @@ pub static mut cfTasks: [cfTask_t; 18] =
                               Some(dispatchProcess as
                                        unsafe extern "C" fn(_: uint32_t)
                                            -> ()),
-                          desiredPeriod:
-                              1000000 as libc::c_int / 1000 as libc::c_int,
+                          desiredPeriod: 1000000i32 / 1000i32,
                           staticPriority:
                               TASK_PRIORITY_HIGH as libc::c_int as uint8_t,
                           dynamicPriority: 0,
@@ -1347,8 +1274,7 @@ pub static mut cfTasks: [cfTask_t; 18] =
                               Some(batteryUpdateVoltage as
                                        unsafe extern "C" fn(_: timeUs_t)
                                            -> ()),
-                          desiredPeriod:
-                              1000000 as libc::c_int / 50 as libc::c_int,
+                          desiredPeriod: 1000000i32 / 50i32,
                           staticPriority:
                               TASK_PRIORITY_MEDIUM as libc::c_int as uint8_t,
                           dynamicPriority: 0,
@@ -1372,8 +1298,7 @@ pub static mut cfTasks: [cfTask_t; 18] =
                               Some(batteryUpdateCurrentMeter as
                                        unsafe extern "C" fn(_: timeUs_t)
                                            -> ()),
-                          desiredPeriod:
-                              1000000 as libc::c_int / 50 as libc::c_int,
+                          desiredPeriod: 1000000i32 / 50i32,
                           staticPriority:
                               TASK_PRIORITY_MEDIUM as libc::c_int as uint8_t,
                           dynamicPriority: 0,
@@ -1397,8 +1322,7 @@ pub static mut cfTasks: [cfTask_t; 18] =
                               Some(taskBatteryAlerts as
                                        unsafe extern "C" fn(_: timeUs_t)
                                            -> ()),
-                          desiredPeriod:
-                              1000000 as libc::c_int / 5 as libc::c_int,
+                          desiredPeriod: 1000000i32 / 5i32,
                           staticPriority:
                               TASK_PRIORITY_MEDIUM as libc::c_int as uint8_t,
                           dynamicPriority: 0,
@@ -1421,8 +1345,7 @@ pub static mut cfTasks: [cfTask_t; 18] =
                               Some(gpsUpdate as
                                        unsafe extern "C" fn(_: timeUs_t)
                                            -> ()),
-                          desiredPeriod:
-                              1000000 as libc::c_int / 100 as libc::c_int,
+                          desiredPeriod: 1000000i32 / 100i32,
                           staticPriority:
                               TASK_PRIORITY_MEDIUM as libc::c_int as uint8_t,
                           dynamicPriority: 0,
@@ -1446,8 +1369,7 @@ pub static mut cfTasks: [cfTask_t; 18] =
                               Some(compassUpdate as
                                        unsafe extern "C" fn(_: timeUs_t)
                                            -> ()),
-                          desiredPeriod:
-                              1000000 as libc::c_int / 10 as libc::c_int,
+                          desiredPeriod: 1000000i32 / 10i32,
                           staticPriority:
                               TASK_PRIORITY_LOW as libc::c_int as uint8_t,
                           dynamicPriority: 0,
@@ -1470,8 +1392,7 @@ pub static mut cfTasks: [cfTask_t; 18] =
                               Some(taskUpdateBaro as
                                        unsafe extern "C" fn(_: timeUs_t)
                                            -> ()),
-                          desiredPeriod:
-                              1000000 as libc::c_int / 20 as libc::c_int,
+                          desiredPeriod: 1000000i32 / 20i32,
                           staticPriority:
                               TASK_PRIORITY_LOW as libc::c_int as uint8_t,
                           dynamicPriority: 0,
@@ -1495,8 +1416,7 @@ pub static mut cfTasks: [cfTask_t; 18] =
                               Some(taskCalculateAltitude as
                                        unsafe extern "C" fn(_: timeUs_t)
                                            -> ()),
-                          desiredPeriod:
-                              1000000 as libc::c_int / 40 as libc::c_int,
+                          desiredPeriod: 1000000i32 / 40i32,
                           staticPriority:
                               TASK_PRIORITY_LOW as libc::c_int as uint8_t,
                           dynamicPriority: 0,
@@ -1520,8 +1440,7 @@ pub static mut cfTasks: [cfTask_t; 18] =
                               Some(taskTelemetry as
                                        unsafe extern "C" fn(_: timeUs_t)
                                            -> ()),
-                          desiredPeriod:
-                              1000000 as libc::c_int / 250 as libc::c_int,
+                          desiredPeriod: 1000000i32 / 250i32,
                           staticPriority:
                               TASK_PRIORITY_LOW as libc::c_int as uint8_t,
                           dynamicPriority: 0,
@@ -1545,8 +1464,7 @@ pub static mut cfTasks: [cfTask_t; 18] =
                               Some(rcdeviceUpdate as
                                        unsafe extern "C" fn(_: timeUs_t)
                                            -> ()),
-                          desiredPeriod:
-                              1000000 as libc::c_int / 20 as libc::c_int,
+                          desiredPeriod: 1000000i32 / 20i32,
                           staticPriority:
                               TASK_PRIORITY_MEDIUM as libc::c_int as uint8_t,
                           dynamicPriority: 0,
@@ -1570,8 +1488,7 @@ pub static mut cfTasks: [cfTask_t; 18] =
                               Some(pinioBoxUpdate as
                                        unsafe extern "C" fn(_: timeUs_t)
                                            -> ()),
-                          desiredPeriod:
-                              1000000 as libc::c_int / 20 as libc::c_int,
+                          desiredPeriod: 1000000i32 / 20i32,
                           staticPriority:
                               TASK_PRIORITY_IDLE as libc::c_int as uint8_t,
                           dynamicPriority: 0,

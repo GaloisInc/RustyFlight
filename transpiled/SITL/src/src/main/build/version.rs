@@ -1,4 +1,5 @@
-use ::libc;
+use core;
+use libc;
 /*
  * This file is part of Cleanflight and Betaflight.
  *
@@ -23,10 +24,10 @@ pub static mut targetName: *const libc::c_char =
     b"SITL\x00" as *const u8 as *const libc::c_char;
 #[no_mangle]
 pub static mut shortGitRevision: *const libc::c_char =
-    b"cabb13d30\x00" as *const u8 as *const libc::c_char;
+    b"b2af5a1f7\x00" as *const u8 as *const libc::c_char;
 #[no_mangle]
 pub static mut buildDate: *const libc::c_char =
-    b"Jun 10 2020\x00" as *const u8 as *const libc::c_char;
+    b"Jun 17 2020\x00" as *const u8 as *const libc::c_char;
 #[no_mangle]
 pub static mut buildTime: *const libc::c_char =
-    b"11:15:58\x00" as *const u8 as *const libc::c_char;
+    b"17:55:16\x00" as *const u8 as *const libc::c_char;
