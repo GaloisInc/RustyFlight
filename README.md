@@ -147,6 +147,7 @@ sed -i -e 's/"-c"/"-c", "-fblocks"/g' compile_commands.json
 ## Rebuilding `src`
 
 `src-original` contains known good transpiled code. It *should* be identical to the freshly transpiled code, but we include it for reference.
+`src-original/spracingf3` contains already partially modifyied code (seet the notes below), while `src-original/sitl` contains untouched code.
 
 ### SITL
 
