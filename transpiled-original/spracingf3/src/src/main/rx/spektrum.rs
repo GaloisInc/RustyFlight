@@ -110,9 +110,52 @@ pub type int32_t = __int32_t;
 pub type uint8_t = __uint8_t;
 pub type uint16_t = __uint16_t;
 pub type uint32_t = __uint32_t;
+/* *
+  ******************************************************************************
+  * @file    stm32f30x_gpio.h
+  * @author  MCD Application Team
+  * @version V1.1.1
+  * @date    04-April-2014
+  * @brief   This file contains all the functions prototypes for the GPIO 
+  *          firmware library. 
+  ******************************************************************************
+  * @attention
+  *
+  * <h2><center>&copy; COPYRIGHT 2014 STMicroelectronics</center></h2>
+  *
+  * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
+  * You may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at:
+  *
+  *        http://www.st.com/software_license_agreement_liberty_v2
+  *
+  * Unless required by applicable law or agreed to in writing, software 
+  * distributed under the License is distributed on an "AS IS" BASIS, 
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  *
+  ******************************************************************************
+  */
+/* Define to prevent recursive inclusion -------------------------------------*/
+/* Includes ------------------------------------------------------------------*/
+/* * @addtogroup STM32F30x_StdPeriph_Driver
+  * @{
+  */
+/* * @addtogroup GPIO
+  * @{
+  */
+/* Exported types ------------------------------------------------------------*/
+/* * @defgroup Configuration_Mode_enumeration 
+  * @{
+  */
 pub type C2RustUnnamed = libc::c_uint;
+/* !< GPIO Analog In/Out Mode      */
+/* !< GPIO Alternate function Mode */
 pub const GPIO_Mode_AN: C2RustUnnamed = 3;
+/* !< GPIO Output Mode */
 pub const GPIO_Mode_AF: C2RustUnnamed = 2;
+/* !< GPIO Input Mode */
 pub const GPIO_Mode_OUT: C2RustUnnamed = 1;
 pub const GPIO_Mode_IN: C2RustUnnamed = 0;
 /* *
@@ -134,6 +177,25 @@ pub type C2RustUnnamed_1 = libc::c_uint;
 pub const GPIO_PuPd_DOWN: C2RustUnnamed_1 = 2;
 pub const GPIO_PuPd_UP: C2RustUnnamed_1 = 1;
 pub const GPIO_PuPd_NOPULL: C2RustUnnamed_1 = 0;
+/*
+ * This file is part of Cleanflight and Betaflight.
+ *
+ * Cleanflight and Betaflight are free software. You can redistribute
+ * this software and/or modify this software under the terms of the
+ * GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * Cleanflight and Betaflight are distributed in the hope that they
+ * will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this software.
+ *
+ * If not, see <http://www.gnu.org/licenses/>.
+ */
 pub type resourceOwner_e = libc::c_uint;
 pub const OWNER_TOTAL_COUNT: resourceOwner_e = 55;
 pub const OWNER_SPI_PREINIT_OPU: resourceOwner_e = 54;
@@ -517,6 +579,14 @@ pub const FEATURE_MOTOR_STOP: C2RustUnnamed_4 = 16;
 pub const FEATURE_RX_SERIAL: C2RustUnnamed_4 = 8;
 pub const FEATURE_INFLIGHT_ACC_CAL: C2RustUnnamed_4 = 4;
 pub const FEATURE_RX_PPM: C2RustUnnamed_4 = 1;
+#[inline]
+unsafe extern "C" fn serialPinConfig() -> *const serialPinConfig_t {
+    return &mut serialPinConfig_System;
+}
+#[inline]
+unsafe extern "C" fn rxConfig() -> *const rxConfig_t {
+    return &mut rxConfig_System;
+}
 // mapping of radio channels to internal RPYTA+ order
 // type of UART-based receiver (0 = spek 10, 1 = spek 11, 2 = sbus). Must be enabled by FEATURE_RX_SERIAL first.
 // invert the serial RX protocol compared to it's default setting
@@ -536,43 +606,6 @@ pub const FEATURE_RX_PPM: C2RustUnnamed_4 = 1;
 // Axis to log as debug values when debug_mode = RC_SMOOTHING
 // Input filter type (0 = PT1, 1 = BIQUAD)
 // Derivative filter type (0 = OFF, 1 = PT1, 2 = BIQUAD)
-/*
- * This file is part of Cleanflight and Betaflight.
- *
- * Cleanflight and Betaflight are free software. You can redistribute
- * this software and/or modify this software under the terms of the
- * GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option)
- * any later version.
- *
- * Cleanflight and Betaflight are distributed in the hope that they
- * will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this software.
- *
- * If not, see <http://www.gnu.org/licenses/>.
- */
-/*
-     * Note on SERIAL_BIDIR_PP
-     * With SERIAL_BIDIR_PP, the very first start bit of back-to-back bytes
-     * is lost and the first data byte will be lost by a framing error.
-     * To ensure the first start bit to be sent, prepend a zero byte (0x00)
-     * to actual data bytes.
-     */
-// disable pulls in BIDIR RX mode
-// Define known line control states which may be passed up by underlying serial driver callback
-// used by serial drivers to return frames to app
-#[inline]
-unsafe extern "C" fn serialPinConfig() -> *const serialPinConfig_t {
-    return &mut serialPinConfig_System;
-}
-#[inline]
-unsafe extern "C" fn rxConfig() -> *const rxConfig_t {
-    return &mut rxConfig_System;
-}
 /*
  * This file is part of Cleanflight and Betaflight.
  *

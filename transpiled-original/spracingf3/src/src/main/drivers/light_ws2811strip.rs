@@ -61,30 +61,6 @@ pub struct hsvColor_s {
     pub v: uint8_t,
 }
 pub type hsvColor_t = hsvColor_s;
-// 0 - 359
-// 0 - 255
-// 0 - 255
-/*
- * This file is part of Cleanflight and Betaflight.
- *
- * Cleanflight and Betaflight are free software. You can redistribute
- * this software and/or modify this software under the terms of the
- * GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option)
- * any later version.
- *
- * Cleanflight and Betaflight are distributed in the hope that they
- * will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this software.
- *
- * If not, see <http://www.gnu.org/licenses/>.
- */
-// IO pin identification
-// make sure that ioTag_t can't be assigned into IO_t without warning
 pub type ioTag_t = uint8_t;
 pub type ledStripFormatRGB_e = libc::c_uint;
 pub const LED_RGB: ledStripFormatRGB_e = 1;
@@ -110,6 +86,9 @@ pub static mut modeColors: *const modeColorIndexes_t =
 #[no_mangle]
 pub static mut specialColors: specialColorIndexes_t =
     specialColorIndexes_t{color: [0; 11],};
+// 0 - 359
+// 0 - 255
+// 0 - 255
 /*
  * This file is part of Cleanflight and Betaflight.
  *

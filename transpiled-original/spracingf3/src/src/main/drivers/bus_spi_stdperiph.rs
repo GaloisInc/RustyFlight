@@ -136,12 +136,38 @@ extern "C" {
      -> FlagStatus;
     #[no_mangle]
     fn spiTimeoutUserCallback(instance: *mut SPI_TypeDef) -> uint32_t;
+    /*
+ * This file is part of Cleanflight and Betaflight.
+ *
+ * Cleanflight and Betaflight are free software. You can redistribute
+ * this software and/or modify this software under the terms of the
+ * GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * Cleanflight and Betaflight are distributed in the hope that they
+ * will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this software.
+ *
+ * If not, see <http://www.gnu.org/licenses/>.
+ */
+    // preprocessor is used to convert pinid to requested C data value
+// compile-time error is generated if requested pin is not available (not set in TARGET_IO_PORTx)
+// ioTag_t and IO_t is supported, but ioTag_t is preferred
+    // expand pinid to to ioTag_t
+    // TODO
+    // declare available IO pins. Available pins are specified per target
+    // unimplemented
+    #[no_mangle]
+    fn IOConfigGPIOAF(io: IO_t, cfg: ioConfig_t, af: uint8_t);
     #[no_mangle]
     fn IOInit(io: IO_t, owner: resourceOwner_e, index: uint8_t);
     #[no_mangle]
     fn IOGetByTag(tag: ioTag_t) -> IO_t;
-    #[no_mangle]
-    fn IOConfigGPIOAF(io: IO_t, cfg: ioConfig_t, af: uint8_t);
     #[no_mangle]
     fn RCC_ClockCmd(periphTag: rccPeriphTag_t, NewState: FunctionalState);
     #[no_mangle]

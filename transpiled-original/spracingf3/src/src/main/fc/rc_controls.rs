@@ -8,27 +8,6 @@ extern "C" {
     fn feature(mask: uint32_t) -> bool;
     #[no_mangle]
     static mut rxConfig_System: rxConfig_t;
-    /*
- * This file is part of Cleanflight and Betaflight.
- *
- * Cleanflight and Betaflight are free software. You can redistribute
- * this software and/or modify this software under the terms of the
- * GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option)
- * any later version.
- *
- * Cleanflight and Betaflight are distributed in the hope that they
- * will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this software.
- *
- * If not, see <http://www.gnu.org/licenses/>.
- */
-    #[no_mangle]
-    static mut cmsInMenu: bool;
     #[no_mangle]
     fn cameraControlKeyPress(key: cameraControlKey_e,
                              holdDurationMs: uint32_t);
@@ -68,6 +47,10 @@ extern "C" {
     #[no_mangle]
     fn beeper(mode: beeperMode_e);
     #[no_mangle]
+    fn IS_RC_MODE_ACTIVE(boxId: boxId_e) -> bool;
+    #[no_mangle]
+    fn isModeActivationConditionPresent(modeId: boxId_e) -> bool;
+    #[no_mangle]
     fn vtxIncrementBand();
     #[no_mangle]
     fn vtxDecrementBand();
@@ -75,14 +58,40 @@ extern "C" {
     fn vtxIncrementChannel();
     #[no_mangle]
     fn vtxDecrementChannel();
-    #[no_mangle]
-    fn IS_RC_MODE_ACTIVE(boxId: boxId_e) -> bool;
-    #[no_mangle]
-    fn isModeActivationConditionPresent(modeId: boxId_e) -> bool;
+    /*
+ * This file is part of Cleanflight and Betaflight.
+ *
+ * Cleanflight and Betaflight are free software. You can redistribute
+ * this software and/or modify this software under the terms of the
+ * GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * Cleanflight and Betaflight are distributed in the hope that they
+ * will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this software.
+ *
+ * If not, see <http://www.gnu.org/licenses/>.
+ */
+    // Also used as XCLR (positive logic) for BMP085
+    // Barometer hardware to use
+    // size of baro filter array
+    // additional LPF to reduce baro noise
+    // apply Complimentary Filter to keep the calculated velocity based on baro velocity (i.e. near real velocity)
+    // apply CF to use ACC for height estimation
+    // Use temperature for telemetry
+    // Use pressure for telemetry
     #[no_mangle]
     fn baroSetCalibrationCycles(calibrationCyclesRequired: uint16_t);
     #[no_mangle]
     fn gyroStartCalibration(isFirstArmingCalibration: bool);
+    // cutoff frequency for the low pass filter used on the acc z-axis for althold in Hz
+    // acc alignment
+    // Which acc hardware to use on boards with more than one device
     #[no_mangle]
     fn accSetCalibrationCycles(calibrationCyclesRequired: uint16_t);
     #[no_mangle]
@@ -107,6 +116,26 @@ pub type uint8_t = __uint8_t;
 pub type uint16_t = __uint16_t;
 pub type uint32_t = __uint32_t;
 pub type pgn_t = uint16_t;
+/*
+ * This file is part of Cleanflight and Betaflight.
+ *
+ * Cleanflight and Betaflight are free software. You can redistribute
+ * this software and/or modify this software under the terms of the
+ * GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * Cleanflight and Betaflight are distributed in the hope that they
+ * will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this software.
+ *
+ * If not, see <http://www.gnu.org/licenses/>.
+ */
+// parameter group registry flags
 pub type C2RustUnnamed = libc::c_uint;
 pub const PGR_SIZE_SYSTEM_FLAG: C2RustUnnamed = 0;
 pub const PGR_SIZE_MASK: C2RustUnnamed = 4095;
@@ -133,6 +162,7 @@ pub union C2RustUnnamed_0 {
                                           _: libc::c_int) -> ()>,
 }
 pub type pgRegistry_t = pgRegistry_s;
+// documentary
 /*
  * This file is part of Cleanflight and Betaflight.
  *
@@ -179,27 +209,6 @@ pub const FEATURE_MOTOR_STOP: C2RustUnnamed_1 = 16;
 pub const FEATURE_RX_SERIAL: C2RustUnnamed_1 = 8;
 pub const FEATURE_INFLIGHT_ACC_CAL: C2RustUnnamed_1 = 4;
 pub const FEATURE_RX_PPM: C2RustUnnamed_1 = 1;
-/*
- * This file is part of Cleanflight and Betaflight.
- *
- * Cleanflight and Betaflight are free software. You can redistribute
- * this software and/or modify this software under the terms of the
- * GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option)
- * any later version.
- *
- * Cleanflight and Betaflight are distributed in the hope that they
- * will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this software.
- *
- * If not, see <http://www.gnu.org/licenses/>.
- */
-// IO pin identification
-// make sure that ioTag_t can't be assigned into IO_t without warning
 pub type ioTag_t = uint8_t;
 #[derive ( Copy, Clone )]
 #[repr(C)]
@@ -521,14 +530,13 @@ pub const BEEPER_RX_LOST: beeperMode_e = 2;
 pub const BEEPER_GYRO_CALIBRATED: beeperMode_e = 1;
 pub const BEEPER_SILENCE: beeperMode_e = 0;
 pub type cfTaskId_e = libc::c_uint;
-pub const TASK_SELF: cfTaskId_e = 26;
-pub const TASK_NONE: cfTaskId_e = 25;
-pub const TASK_COUNT: cfTaskId_e = 25;
-pub const TASK_PINIOBOX: cfTaskId_e = 24;
-pub const TASK_RCDEVICE: cfTaskId_e = 23;
-pub const TASK_CAMCTRL: cfTaskId_e = 22;
-pub const TASK_VTXCTRL: cfTaskId_e = 21;
-pub const TASK_CMS: cfTaskId_e = 20;
+pub const TASK_SELF: cfTaskId_e = 25;
+pub const TASK_NONE: cfTaskId_e = 24;
+pub const TASK_COUNT: cfTaskId_e = 24;
+pub const TASK_PINIOBOX: cfTaskId_e = 23;
+pub const TASK_RCDEVICE: cfTaskId_e = 22;
+pub const TASK_CAMCTRL: cfTaskId_e = 21;
+pub const TASK_VTXCTRL: cfTaskId_e = 20;
 pub const TASK_ESC_SENSOR: cfTaskId_e = 19;
 pub const TASK_OSD: cfTaskId_e = 18;
 pub const TASK_LEDSTRIP: cfTaskId_e = 17;
@@ -647,6 +655,20 @@ static mut isUsingSticksToArm: bool = 1i32 != 0;
 pub static mut rcCommand: [libc::c_float; 4] = [0.; 4];
 // interval [1000;2000] for THROTTLE and [-500;+500] for ROLL/PITCH/YAW
 #[no_mangle]
+pub static mut rcControlsConfig_System: rcControlsConfig_t =
+    rcControlsConfig_t{deadband: 0,
+                       yaw_deadband: 0,
+                       alt_hold_deadband: 0,
+                       alt_hold_fast_change: 0,
+                       yaw_control_reversed: false,};
+#[no_mangle]
+pub static mut rcControlsConfig_Copy: rcControlsConfig_t =
+    rcControlsConfig_t{deadband: 0,
+                       yaw_deadband: 0,
+                       alt_hold_deadband: 0,
+                       alt_hold_fast_change: 0,
+                       yaw_control_reversed: false,};
+#[no_mangle]
 #[link_section = ".pg_registry"]
 #[used]
 pub static mut rcControlsConfig_Registry: pgRegistry_t =
@@ -681,20 +703,6 @@ pub static mut rcControlsConfig_Registry: pgRegistry_t =
         }
     };
 #[no_mangle]
-pub static mut rcControlsConfig_Copy: rcControlsConfig_t =
-    rcControlsConfig_t{deadband: 0,
-                       yaw_deadband: 0,
-                       alt_hold_deadband: 0,
-                       alt_hold_fast_change: 0,
-                       yaw_control_reversed: false,};
-#[no_mangle]
-pub static mut rcControlsConfig_System: rcControlsConfig_t =
-    rcControlsConfig_t{deadband: 0,
-                       yaw_deadband: 0,
-                       alt_hold_deadband: 0,
-                       alt_hold_fast_change: 0,
-                       yaw_control_reversed: false,};
-#[no_mangle]
 #[link_section = ".pg_resetdata"]
 #[used]
 pub static mut pgResetTemplate_rcControlsConfig: rcControlsConfig_t =
@@ -709,6 +717,9 @@ pub static mut pgResetTemplate_rcControlsConfig: rcControlsConfig_t =
     };
 #[no_mangle]
 pub static mut armingConfig_Copy: armingConfig_t =
+    armingConfig_t{gyro_cal_on_first_arm: 0, auto_disarm_delay: 0,};
+#[no_mangle]
+pub static mut armingConfig_System: armingConfig_t =
     armingConfig_t{gyro_cal_on_first_arm: 0, auto_disarm_delay: 0,};
 #[no_mangle]
 #[link_section = ".pg_registry"]
@@ -742,9 +753,6 @@ pub static mut armingConfig_Registry: pgRegistry_t =
             init
         }
     };
-#[no_mangle]
-pub static mut armingConfig_System: armingConfig_t =
-    armingConfig_t{gyro_cal_on_first_arm: 0, auto_disarm_delay: 0,};
 #[no_mangle]
 #[link_section = ".pg_resetdata"]
 #[used]
@@ -875,7 +883,6 @@ pub unsafe extern "C" fn processRcStickPositions() {
     // an extra guard for disarming through switch to prevent that one frame can disarm it
     static mut rcDisarmTicks: uint8_t = 0;
     static mut doNotRepeat: bool = false;
-    if cmsInMenu { return }
     // checking sticks positions
     let mut stTmp: uint8_t = 0i32 as uint8_t;
     let mut i: libc::c_int = 0i32;

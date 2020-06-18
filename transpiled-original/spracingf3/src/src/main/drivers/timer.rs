@@ -405,8 +405,6 @@ pub const OWNER_MOTOR: resourceOwner_e = 3;
 pub const OWNER_PPMINPUT: resourceOwner_e = 2;
 pub const OWNER_PWMINPUT: resourceOwner_e = 1;
 pub const OWNER_FREE: resourceOwner_e = 0;
-pub type ioTag_t = uint8_t;
-pub type IO_t = *mut libc::c_void;
 /*
  * This file is part of Cleanflight and Betaflight.
  *
@@ -428,7 +426,9 @@ pub type IO_t = *mut libc::c_void;
  */
 // IO pin identification
 // make sure that ioTag_t can't be assigned into IO_t without warning
+pub type ioTag_t = uint8_t;
 // packet tag to specify IO pin
+pub type IO_t = *mut libc::c_void;
 // type specifying IO pin. Currently ioRec_t pointer, but this may change
 // NONE initializer for ioTag_t variables
 // NONE initializer for IO_t variable

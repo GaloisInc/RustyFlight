@@ -2,8 +2,6 @@ use core;
 use libc;
 extern "C" {
     #[no_mangle]
-    static mut cmsInMenu: bool;
-    #[no_mangle]
     static mut armingFlags: uint8_t;
     #[no_mangle]
     fn getArmingDisableFlags() -> armingDisableFlags_e;
@@ -685,7 +683,6 @@ pub unsafe extern "C" fn rcdeviceSend5KeyOSDCableSimualtionEvent(mut key:
 }
 unsafe extern "C" fn rcdevice5KeySimulationProcess(mut currentTimeUs:
                                                        timeUs_t) {
-    if cmsInMenu { return }
     if armingFlags as libc::c_int & ARMED as libc::c_int != 0 ||
            getArmingDisableFlags() as libc::c_uint &
                ARMING_DISABLED_RUNAWAY_TAKEOFF as libc::c_int as libc::c_uint

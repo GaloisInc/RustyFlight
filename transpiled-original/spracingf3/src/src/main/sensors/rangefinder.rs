@@ -274,14 +274,13 @@ pub struct rangefinder_s {
 }
 pub type rangefinder_t = rangefinder_s;
 pub type cfTaskId_e = libc::c_uint;
-pub const TASK_SELF: cfTaskId_e = 26;
-pub const TASK_NONE: cfTaskId_e = 25;
-pub const TASK_COUNT: cfTaskId_e = 25;
-pub const TASK_PINIOBOX: cfTaskId_e = 24;
-pub const TASK_RCDEVICE: cfTaskId_e = 23;
-pub const TASK_CAMCTRL: cfTaskId_e = 22;
-pub const TASK_VTXCTRL: cfTaskId_e = 21;
-pub const TASK_CMS: cfTaskId_e = 20;
+pub const TASK_SELF: cfTaskId_e = 25;
+pub const TASK_NONE: cfTaskId_e = 24;
+pub const TASK_COUNT: cfTaskId_e = 24;
+pub const TASK_PINIOBOX: cfTaskId_e = 23;
+pub const TASK_RCDEVICE: cfTaskId_e = 22;
+pub const TASK_CAMCTRL: cfTaskId_e = 21;
+pub const TASK_VTXCTRL: cfTaskId_e = 20;
 pub const TASK_ESC_SENSOR: cfTaskId_e = 19;
 pub const TASK_OSD: cfTaskId_e = 18;
 pub const TASK_LEDSTRIP: cfTaskId_e = 17;

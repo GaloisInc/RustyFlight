@@ -4,27 +4,6 @@ extern "C" {
     #[no_mangle]
     fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong)
      -> *mut libc::c_void;
-    /*
- * This file is part of Cleanflight and Betaflight.
- *
- * Cleanflight and Betaflight are free software. You can redistribute
- * this software and/or modify this software under the terms of the
- * GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option)
- * any later version.
- *
- * Cleanflight and Betaflight are distributed in the hope that they
- * will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this software.
- *
- * If not, see <http://www.gnu.org/licenses/>.
- */
-    #[no_mangle]
-    fn trampCmsUpdateStatusString();
     #[no_mangle]
     fn vtxCommonSetDevice(vtxDevice: *mut vtxDevice_t);
     #[no_mangle]
@@ -34,18 +13,9 @@ extern "C" {
                       count: libc::c_int);
     #[no_mangle]
     fn serialRead(instance: *mut serialPort_t) -> uint8_t;
-    //
-// configuration
-//
-    // not used for all telemetry systems, e.g. HoTT only works at 19200.
-    // which byte is used to reboot. Default 'R', could be changed carefully to something else.
-    //
-// configuration
-//
-    // !!TODO remove need for this
-    //
-// runtime
-//
+    #[no_mangle]
+    fn findSerialPortConfig(function: serialPortFunction_e)
+     -> *mut serialPortConfig_t;
     #[no_mangle]
     fn openSerialPort(identifier: serialPortIdentifier_e,
                       function: serialPortFunction_e,
@@ -53,9 +23,6 @@ extern "C" {
                       rxCallbackData: *mut libc::c_void, baudrate: uint32_t,
                       mode: portMode_e, options: portOptions_e)
      -> *mut serialPort_t;
-    #[no_mangle]
-    fn findSerialPortConfig(function: serialPortFunction_e)
-     -> *mut serialPortConfig_t;
     #[no_mangle]
     static mut vtxConfig_System: vtxConfig_t;
     #[no_mangle]
@@ -305,34 +272,6 @@ pub const SERIAL_PORT_USART3: serialPortIdentifier_e = 2;
 pub const SERIAL_PORT_USART2: serialPortIdentifier_e = 1;
 pub const SERIAL_PORT_USART1: serialPortIdentifier_e = 0;
 pub const SERIAL_PORT_NONE: serialPortIdentifier_e = -1;
-#[derive ( Copy, Clone )]
-#[repr(C)]
-pub struct serialPortConfig_s {
-    pub functionMask: uint16_t,
-    pub identifier: serialPortIdentifier_e,
-    pub msp_baudrateIndex: uint8_t,
-    pub gps_baudrateIndex: uint8_t,
-    pub blackbox_baudrateIndex: uint8_t,
-    pub telemetry_baudrateIndex: uint8_t,
-}
-pub type serialPortConfig_t = serialPortConfig_s;
-pub const TRAMP_STATUS_OFFLINE: trampStatus_e = 0;
-pub type trampStatus_e = libc::c_int;
-pub const TRAMP_STATUS_CHECK_FREQ_PW: trampStatus_e = 3;
-pub const TRAMP_STATUS_SET_FREQ_PW: trampStatus_e = 2;
-pub const TRAMP_STATUS_ONLINE: trampStatus_e = 1;
-pub const TRAMP_STATUS_BAD_DEVICE: trampStatus_e = -1;
-pub type trampReceiveState_e = libc::c_uint;
-pub const S_DATA: trampReceiveState_e = 2;
-pub const S_WAIT_CODE: trampReceiveState_e = 1;
-pub const S_WAIT_LEN: trampReceiveState_e = 0;
-pub type vtxConfig_t = vtxConfig_s;
-#[derive ( Copy, Clone )]
-#[repr(C)]
-pub struct vtxConfig_s {
-    pub vtxChannelActivationConditions: [vtxChannelActivationCondition_t; 10],
-    pub halfDuplex: uint8_t,
-}
 /*
  * This file is part of Cleanflight and Betaflight.
  *
@@ -352,6 +291,57 @@ pub struct vtxConfig_s {
  *
  * If not, see <http://www.gnu.org/licenses/>.
  */
+// 1
+// 2
+// 4
+// 8
+// 16
+// 32
+// 64
+// 128
+// 512
+// 1024
+// 2048
+// 4096
+// 8192
+// 16384
+// 32768
+// serial port identifiers are now fixed, these values are used by MSP commands.
+//
+// runtime
+//
+//
+// configuration
+//
+#[derive ( Copy, Clone )]
+#[repr(C)]
+pub struct serialPortConfig_s {
+    pub functionMask: uint16_t,
+    pub identifier: serialPortIdentifier_e,
+    pub msp_baudrateIndex: uint8_t,
+    pub gps_baudrateIndex: uint8_t,
+    pub blackbox_baudrateIndex: uint8_t,
+    pub telemetry_baudrateIndex: uint8_t,
+    // not used for all telemetry systems, e.g. HoTT only works at 19200.
+}
+pub type serialPortConfig_t = serialPortConfig_s;
+pub const TRAMP_STATUS_OFFLINE: trampStatus_e = 0;
+pub type trampStatus_e = libc::c_int;
+pub const TRAMP_STATUS_CHECK_FREQ_PW: trampStatus_e = 3;
+pub const TRAMP_STATUS_SET_FREQ_PW: trampStatus_e = 2;
+pub const TRAMP_STATUS_ONLINE: trampStatus_e = 1;
+pub const TRAMP_STATUS_BAD_DEVICE: trampStatus_e = -1;
+pub type trampReceiveState_e = libc::c_uint;
+pub const S_DATA: trampReceiveState_e = 2;
+pub const S_WAIT_CODE: trampReceiveState_e = 1;
+pub const S_WAIT_LEN: trampReceiveState_e = 0;
+pub type vtxConfig_t = vtxConfig_s;
+#[derive ( Copy, Clone )]
+#[repr(C)]
+pub struct vtxConfig_s {
+    pub vtxChannelActivationConditions: [vtxChannelActivationCondition_t; 10],
+    pub halfDuplex: uint8_t,
+}
 pub type vtxChannelActivationCondition_t = vtxChannelActivationCondition_s;
 #[derive ( Copy, Clone )]
 #[repr(C)]
@@ -361,6 +351,10 @@ pub struct vtxChannelActivationCondition_s {
     pub channel: uint8_t,
     pub range: channelRange_t,
 }
+// steps are 25 apart
+// a value of 0 corresponds to a channel value of 900 or less
+// a value of 48 corresponds to a channel value of 2100 or more
+// 48 steps between 900 and 2100
 pub type channelRange_t = channelRange_s;
 #[derive ( Copy, Clone )]
 #[repr(C)]
@@ -807,8 +801,7 @@ unsafe extern "C" fn vtxTrampProcess(mut vtxDevice: *mut vtxDevice_t,
             }
         }
         _ => { }
-    }
-    trampCmsUpdateStatusString();
+    };
 }
 // Interface to common VTX API
 unsafe extern "C" fn vtxTrampGetDeviceType(mut vtxDevice: *const vtxDevice_t)

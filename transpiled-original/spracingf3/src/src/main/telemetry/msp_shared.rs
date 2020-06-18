@@ -1,7 +1,12 @@
 use core;
 use libc;
+use alloc;
 extern "C" {
     pub type serialPort_s;
+    #[no_mangle]
+    fn mspFcProcessCommand(cmd: *mut mspPacket_t, reply: *mut mspPacket_t,
+                           mspPostProcessFn: *mut mspPostProcessFnPtr)
+     -> mspResult_e;
     #[no_mangle]
     fn sbufInit(sbuf: *mut sbuf_t, ptr: *mut uint8_t, end: *mut uint8_t)
      -> *mut sbuf_t;
@@ -18,10 +23,6 @@ extern "C" {
     #[no_mangle]
     fn sbufBytesRemaining(buf: *mut sbuf_t) -> libc::c_int;
     #[no_mangle]
-    fn mspFcProcessCommand(cmd: *mut mspPacket_t, reply: *mut mspPacket_t,
-                           mspPostProcessFn: *mut mspPostProcessFnPtr)
-     -> mspResult_e;
-    #[no_mangle]
     fn sbufAdvance(buf: *mut sbuf_t, size: libc::c_int);
     #[no_mangle]
     fn sbufSwitchToReader(buf: *mut sbuf_t, base: *mut uint8_t);
@@ -36,26 +37,6 @@ pub struct sbuf_s {
     pub ptr: *mut uint8_t,
     pub end: *mut uint8_t,
 }
-/*
- * This file is part of Cleanflight and Betaflight.
- *
- * Cleanflight and Betaflight are free software. You can redistribute
- * this software and/or modify this software under the terms of the
- * GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option)
- * any later version.
- *
- * Cleanflight and Betaflight are distributed in the hope that they
- * will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this software.
- *
- * If not, see <http://www.gnu.org/licenses/>.
- */
-// simple buffer-based serializer/deserializer without implicit size check
 pub type sbuf_t = sbuf_s;
 pub type mspResult_e = libc::c_int;
 pub const MSP_RESULT_CMD_UNKNOWN: mspResult_e = -2;
@@ -88,6 +69,25 @@ pub struct mspPackage_s {
     pub responsePacket: *mut mspPacket_s,
 }
 pub type mspPackage_t = mspPackage_s;
+/*
+ * This file is part of Cleanflight and Betaflight.
+ *
+ * Cleanflight and Betaflight are free software. You can redistribute
+ * this software and/or modify this software under the terms of the
+ * GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * Cleanflight and Betaflight are distributed in the hope that they
+ * will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this software.
+ *
+ * If not, see <http://www.gnu.org/licenses/>.
+ */
 #[derive ( Copy, Clone )]
 #[repr ( C )]
 pub union mspRxBuffer_u {
@@ -204,7 +204,6 @@ pub unsafe extern "C" fn handleMspFrame(mut frameStart: *mut uint8_t,
         return 1i32 != 0
     }
     if header as libc::c_int & 1i32 << 4i32 != 0 {
-        // data pointer must be first (sbuf_t* is equivalent to uint8_t **)
         // first packet in sequence
         let mut mspPayloadSize: uint8_t = sbufReadU8(frameBuf);
         (*packet).cmd = sbufReadU8(frameBuf) as int16_t;
@@ -232,7 +231,7 @@ pub unsafe extern "C" fn handleMspFrame(mut frameStart: *mut uint8_t,
     let frameBytesRemaining: uint8_t =
         sbufBytesRemaining(frameBuf) as uint8_t;
     let vla = frameBytesRemaining as usize;
-    let mut payload: Vec<uint8_t> = ::std::vec::from_elem(0, vla);
+    let mut payload: Vec<uint8_t> = ::alloc::vec::from_elem(0, vla);
     if bufferBytesRemaining as libc::c_int >=
            frameBytesRemaining as libc::c_int {
         sbufReadData(frameBuf, payload.as_mut_ptr() as *mut libc::c_void,
@@ -266,25 +265,6 @@ pub unsafe extern "C" fn handleMspFrame(mut frameStart: *mut uint8_t,
     processMspPacket();
     return 1i32 != 0;
 }
-/*
- * This file is part of Cleanflight and Betaflight.
- *
- * Cleanflight and Betaflight are free software. You can redistribute
- * this software and/or modify this software under the terms of the
- * GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option)
- * any later version.
- *
- * Cleanflight and Betaflight are distributed in the hope that they
- * will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this software.
- *
- * If not, see <http://www.gnu.org/licenses/>.
- */
 #[no_mangle]
 pub unsafe extern "C" fn sendMspReply(mut payloadSize: uint8_t,
                                       mut responseFn: mspResponseFnPtr)
@@ -292,7 +272,7 @@ pub unsafe extern "C" fn sendMspReply(mut payloadSize: uint8_t,
     static mut checksum_0: uint8_t = 0i32 as uint8_t;
     static mut seq: uint8_t = 0i32 as uint8_t;
     let vla = payloadSize as usize;
-    let mut payloadOut: Vec<uint8_t> = ::std::vec::from_elem(0, vla);
+    let mut payloadOut: Vec<uint8_t> = ::alloc::vec::from_elem(0, vla);
     let mut payload: sbuf_t =
         sbuf_t{ptr: 0 as *const uint8_t as *mut uint8_t,
                end: 0 as *const uint8_t as *mut uint8_t,};
@@ -324,7 +304,7 @@ pub unsafe extern "C" fn sendMspReply(mut payloadSize: uint8_t,
     let payloadBytesRemaining: uint8_t =
         sbufBytesRemaining(payloadBuf) as uint8_t;
     let vla_0 = payloadBytesRemaining as usize;
-    let mut frame: Vec<uint8_t> = ::std::vec::from_elem(0, vla_0);
+    let mut frame: Vec<uint8_t> = ::alloc::vec::from_elem(0, vla_0);
     if bufferBytesRemaining as libc::c_int >=
            payloadBytesRemaining as libc::c_int {
         sbufReadData(txBuf, frame.as_mut_ptr() as *mut libc::c_void,

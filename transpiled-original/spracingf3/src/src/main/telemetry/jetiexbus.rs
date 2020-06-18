@@ -61,9 +61,9 @@ extern "C" {
     #[no_mangle]
     static mut batteryConfig_System: batteryConfig_t;
     #[no_mangle]
-    fn getAmperageLatest() -> int32_t;
-    #[no_mangle]
     fn getBatteryVoltageLatest() -> uint16_t;
+    #[no_mangle]
+    fn getAmperageLatest() -> int32_t;
     #[no_mangle]
     fn getMAhDrawn() -> int32_t;
 }

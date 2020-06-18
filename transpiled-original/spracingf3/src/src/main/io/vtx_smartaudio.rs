@@ -31,12 +31,6 @@ extern "C" {
     #[no_mangle]
     static mut debugMode: uint8_t;
     #[no_mangle]
-    fn saCmsUpdate();
-    #[no_mangle]
-    fn saUpdateStatusString();
-    #[no_mangle]
-    fn saCmsResetOpmodel();
-    #[no_mangle]
     fn millis() -> timeMs_t;
     #[no_mangle]
     fn vtxCommonSetDevice(vtxDevice: *mut vtxDevice_t);
@@ -701,9 +695,9 @@ unsafe extern "C" fn saProcessResponse(mut buf: *mut uint8_t,
     match resp as libc::c_int {
         9 => {
             // Version 2 Get Settings
-            current_block_47 = 16831142245263204629;
+            current_block_47 = 17189961260979847415;
         }
-        1 => { current_block_47 = 16831142245263204629; }
+        1 => { current_block_47 = 17189961260979847415; }
         2 => {
             // Set Power
             current_block_47 = 13321564401369230990;
@@ -736,7 +730,7 @@ unsafe extern "C" fn saProcessResponse(mut buf: *mut uint8_t,
         _ => { saStat.badcode = saStat.badcode.wrapping_add(1); return }
     }
     match current_block_47 {
-        16831142245263204629 =>
+        17189961260979847415 =>
         // Version 1 Get Settings
         {
             if !(len < 7i32) {
@@ -773,20 +767,13 @@ unsafe extern "C" fn saProcessResponse(mut buf: *mut uint8_t,
         }
         _ => { }
     }
-    if memcmp(&mut saDevice as *mut smartAudioDevice_t as *const libc::c_void,
-              &mut saDevicePrev as *mut smartAudioDevice_t as
-                  *const libc::c_void,
-              ::core::mem::size_of::<smartAudioDevice_t>() as libc::c_ulong)
-           != 0 {
-        //if changes then trigger saCms update
-        saCmsResetOpmodel();
-        // Debug
-    }
+    (memcmp(&mut saDevice as *mut smartAudioDevice_t as *const libc::c_void,
+            &mut saDevicePrev as *mut smartAudioDevice_t as
+                *const libc::c_void,
+            ::core::mem::size_of::<smartAudioDevice_t>() as libc::c_ulong)) !=
+        0;
     saDevicePrev = saDevice;
     // Todo: Update states in saVtxDevice?
-    // Export current device status for CMS
-    saCmsUpdate();
-    saUpdateStatusString();
 }
 //
 // Datalink

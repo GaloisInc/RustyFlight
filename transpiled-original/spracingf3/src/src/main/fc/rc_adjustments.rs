@@ -162,7 +162,6 @@ pub type C2RustUnnamed_1 = libc::c_uint;
 pub const FD_YAW: C2RustUnnamed_1 = 2;
 pub const FD_PITCH: C2RustUnnamed_1 = 1;
 pub const FD_ROLL: C2RustUnnamed_1 = 0;
-// I-frame interval / P-frame interval
 /*
  * This file is part of Cleanflight and Betaflight.
  *

@@ -480,6 +480,25 @@ pub type ioConfig_t = uint8_t;
 pub type rccPeriphTag_t = uint8_t;
 // millisecond time
 pub type timeMs_t = uint32_t;
+/*
+ * This file is part of Cleanflight and Betaflight.
+ *
+ * Cleanflight and Betaflight are free software. You can redistribute
+ * this software and/or modify this software under the terms of the
+ * GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * Cleanflight and Betaflight are distributed in the hope that they
+ * will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this software.
+ *
+ * If not, see <http://www.gnu.org/licenses/>.
+ */
 pub type resourceOwner_e = libc::c_uint;
 pub const OWNER_TOTAL_COUNT: resourceOwner_e = 55;
 pub const OWNER_SPI_PREINIT_OPU: resourceOwner_e = 54;

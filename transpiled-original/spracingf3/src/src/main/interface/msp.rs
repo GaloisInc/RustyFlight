@@ -8,6 +8,28 @@ extern "C" {
     fn strlen(_: *const libc::c_char) -> libc::c_ulong;
     #[no_mangle]
     fn lrintf(_: libc::c_float) -> libc::c_long;
+    /*
+ * This file is part of Cleanflight and Betaflight.
+ *
+ * Cleanflight and Betaflight are free software. You can redistribute
+ * this software and/or modify this software under the terms of the
+ * GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * Cleanflight and Betaflight are distributed in the hope that they
+ * will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this software.
+ *
+ * If not, see <http://www.gnu.org/licenses/>.
+ */
+    // increment when a major release is made (big new feature, etc)
+    // increment when a minor release is made (small new feature, change etc)
+    // increment when a bug is fixed
     #[no_mangle]
     static targetName: *const libc::c_char;
     // lower case hexadecimal digits.
@@ -1113,8 +1135,6 @@ pub struct pidf_s {
     pub D: uint8_t,
     pub F: uint16_t,
 }
-// in seconds
-// enough for 4 x 3position switches / 4 aux channel
 #[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct controlRateConfig_s {
@@ -1195,6 +1215,7 @@ pub const MODELOGIC_OR: modeLogic_e = 0;
 pub struct boxBitmask_s {
     pub bits: [uint32_t; 2],
 }
+// in seconds
 // Breakpoint where TPA is activated
 // Sets the throttle limiting type - off, scale or clip
 // Sets the maximum pilot commanded throttle limit
@@ -2013,14 +2034,13 @@ pub const SENSOR_MAG: C2RustUnnamed_15 = 8;
 pub const SENSOR_BARO: C2RustUnnamed_15 = 4;
 pub const SENSOR_ACC: C2RustUnnamed_15 = 2;
 pub type cfTaskId_e = libc::c_uint;
-pub const TASK_SELF: cfTaskId_e = 26;
-pub const TASK_NONE: cfTaskId_e = 25;
-pub const TASK_COUNT: cfTaskId_e = 25;
-pub const TASK_PINIOBOX: cfTaskId_e = 24;
-pub const TASK_RCDEVICE: cfTaskId_e = 23;
-pub const TASK_CAMCTRL: cfTaskId_e = 22;
-pub const TASK_VTXCTRL: cfTaskId_e = 21;
-pub const TASK_CMS: cfTaskId_e = 20;
+pub const TASK_SELF: cfTaskId_e = 25;
+pub const TASK_NONE: cfTaskId_e = 24;
+pub const TASK_COUNT: cfTaskId_e = 24;
+pub const TASK_PINIOBOX: cfTaskId_e = 23;
+pub const TASK_RCDEVICE: cfTaskId_e = 22;
+pub const TASK_CAMCTRL: cfTaskId_e = 21;
+pub const TASK_VTXCTRL: cfTaskId_e = 20;
 pub const TASK_ESC_SENSOR: cfTaskId_e = 19;
 pub const TASK_OSD: cfTaskId_e = 18;
 pub const TASK_LEDSTRIP: cfTaskId_e = 17;
@@ -2268,14 +2288,6 @@ unsafe extern "C" fn systemConfig() -> *const systemConfig_t {
     return &mut systemConfig_System;
 }
 #[inline]
-unsafe extern "C" fn modeActivationConditionsMutable(mut _index: libc::c_int)
- -> *mut modeActivationCondition_t {
-    return &mut *modeActivationConditions_SystemArray.as_mut_ptr().offset(_index
-                                                                              as
-                                                                              isize)
-               as *mut modeActivationCondition_t;
-}
-#[inline]
 unsafe extern "C" fn adjustmentRanges(mut _index: libc::c_int)
  -> *const adjustmentRange_t {
     return &mut *adjustmentRanges_SystemArray.as_mut_ptr().offset(_index as
@@ -2298,6 +2310,14 @@ unsafe extern "C" fn modeActivationConditions(mut _index: libc::c_int)
                as *mut modeActivationCondition_t;
 }
 #[inline]
+unsafe extern "C" fn modeActivationConditionsMutable(mut _index: libc::c_int)
+ -> *mut modeActivationCondition_t {
+    return &mut *modeActivationConditions_SystemArray.as_mut_ptr().offset(_index
+                                                                              as
+                                                                              isize)
+               as *mut modeActivationCondition_t;
+}
+#[inline]
 unsafe extern "C" fn rcControlsConfigMutable() -> *mut rcControlsConfig_t {
     return &mut rcControlsConfig_System;
 }
@@ -2306,11 +2326,11 @@ unsafe extern "C" fn rcControlsConfig() -> *const rcControlsConfig_t {
     return &mut rcControlsConfig_System;
 }
 #[inline]
-unsafe extern "C" fn flight3DConfig() -> *const flight3DConfig_t {
+unsafe extern "C" fn flight3DConfigMutable() -> *mut flight3DConfig_t {
     return &mut flight3DConfig_System;
 }
 #[inline]
-unsafe extern "C" fn flight3DConfigMutable() -> *mut flight3DConfig_t {
+unsafe extern "C" fn flight3DConfig() -> *const flight3DConfig_t {
     return &mut flight3DConfig_System;
 }
 #[inline]
@@ -2330,11 +2350,11 @@ unsafe extern "C" fn failsafeConfig() -> *const failsafeConfig_t {
     return &mut failsafeConfig_System;
 }
 #[inline]
-unsafe extern "C" fn imuConfig() -> *const imuConfig_t {
+unsafe extern "C" fn imuConfigMutable() -> *mut imuConfig_t {
     return &mut imuConfig_System;
 }
 #[inline]
-unsafe extern "C" fn imuConfigMutable() -> *mut imuConfig_t {
+unsafe extern "C" fn imuConfig() -> *const imuConfig_t {
     return &mut imuConfig_System;
 }
 #[inline]
@@ -2354,11 +2374,11 @@ unsafe extern "C" fn motorConfig() -> *const motorConfig_t {
     return &mut motorConfig_System;
 }
 #[inline]
-unsafe extern "C" fn pidConfig() -> *const pidConfig_t {
+unsafe extern "C" fn pidConfigMutable() -> *mut pidConfig_t {
     return &mut pidConfig_System;
 }
 #[inline]
-unsafe extern "C" fn pidConfigMutable() -> *mut pidConfig_t {
+unsafe extern "C" fn pidConfig() -> *const pidConfig_t {
     return &mut pidConfig_System;
 }
 #[no_mangle]

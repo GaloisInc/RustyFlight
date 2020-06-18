@@ -81,25 +81,6 @@ pub struct sbuf_s {
 pub type sbuf_t = sbuf_s;
 pub type timeMs_t = uint32_t;
 pub type timeUs_t = uint32_t;
-/*
- * This file is part of Cleanflight and Betaflight.
- *
- * Cleanflight and Betaflight are free software. You can redistribute
- * this software and/or modify this software under the terms of the
- * GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option)
- * any later version.
- *
- * Cleanflight and Betaflight are distributed in the hope that they
- * will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this software.
- *
- * If not, see <http://www.gnu.org/licenses/>.
- */
 pub type portMode_e = libc::c_uint;
 pub const MODE_RXTX: portMode_e = 3;
 pub const MODE_TX: portMode_e = 2;
@@ -107,14 +88,6 @@ pub const MODE_RX: portMode_e = 1;
 pub type portOptions_e = libc::c_uint;
 pub const SERIAL_BIDIR_NOPULL: portOptions_e = 32;
 pub const SERIAL_BIDIR_PP: portOptions_e = 16;
-// disable pulls in BIDIR RX mode
-/*
-     * Note on SERIAL_BIDIR_PP
-     * With SERIAL_BIDIR_PP, the very first start bit of back-to-back bytes
-     * is lost and the first data byte will be lost by a framing error.
-     * To ensure the first start bit to be sent, prepend a zero byte (0x00)
-     * to actual data bytes.
-     */
 pub const SERIAL_BIDIR_OD: portOptions_e = 0;
 pub const SERIAL_BIDIR: portOptions_e = 8;
 pub const SERIAL_UNIDIR: portOptions_e = 0;
@@ -124,11 +97,9 @@ pub const SERIAL_STOPBITS_2: portOptions_e = 2;
 pub const SERIAL_STOPBITS_1: portOptions_e = 0;
 pub const SERIAL_INVERTED: portOptions_e = 1;
 pub const SERIAL_NOT_INVERTED: portOptions_e = 0;
-// Define known line control states which may be passed up by underlying serial driver callback
 pub type serialReceiveCallbackPtr
     =
     Option<unsafe extern "C" fn(_: uint16_t, _: *mut libc::c_void) -> ()>;
-// used by serial drivers to return frames to app
 #[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct serialPort_s {

@@ -163,13 +163,27 @@ What I needed to do:
 1. comment out [OSD module](https://oscarliang.com/betaflight-osd/) (which included vector tables that c2rust didn't like). More info about the OSD feature [here](https://oscarliang.com/betaflight-f3-fc-quadrant-25a-esc/). Alternatively compiling for a smaller flash size would work too.
 2. Copy the linker script
 3. Modify `Cargo.toml` to compile `libc` and `c2rust-bitfields` as `no_std`
-4. Implement `__set_BASEPRI_MAX()` and `__get_BASEPRI()` - the functions are inline assembly, so this might require new nightly rust and `#![feature(asm)]` enabled
+4. Add `#![feature(asm)]` to enable ASM declarations
 5. Mark `main.rs` and `lib.rs` as `#![no_std]`
-6. `src/src/main/telemetry/msp_shared.rs` calls for some reason `::std::vec`, change this to `alloc::vec`
+6. `src/src/main/telemetry/msp_shared.rs` calls for some reason `::std::vec`, change this to `alloc::vec` (this is defined as `uint8_t payload[frameBytesRemaining];` so I am not sure why that got turned into a vector).
 7. Define `#[panic_handler]`
+8. Change `pub fn main() { unsafe { ::std::process::exit(main_0() as i32) } }` in `main.rs` to `pub fn main() { unsafe { main_0(); } }`
 
 #### Outstanding
-* Lots of `error[E0412]: cannot find type c_int in crate libc`errors
+Aka still missing
+* Implement `__set_BASEPRI_MAX()` and `__get_BASEPRI()` - the functions are inline assembly (**NOTE** right now we have just stubs)
+* Lots of `error[E0412]: cannot find type c_int in crate libc`errors - probably the fact libc crate doesn't support `thumbv7m-none-eabi` target properly
+* If we actually need vectors (which we shouldn't), then an allocator has to be provided (fortunately there is [alloc-cortex-m](https://crates.io/crates/alloc-cortex-m)) with all the complexity that arises from it. Cleanflight has heap section in its linker file, but it is unclear if the heap is actually used.
+* `#[panic_handler]` and `#[alloc_error_handler]` have to be implemented
+* Some complex type error:
+  ```
+  error[E0282]: type annotations needed
+    --> src/src/main/sensors/rangefinder.rs:357:46
+  ```
+
+#### Summary
+The libc errors are the most problematic, because to fix them, either we have to remove libc dependency completely, or make libc support our embedded target. I am also concerned about the complex type error, it might be non-trivial to fix as there are many nested structs. The heap allocator and the inline ASM is fixable.
+The generated code is also very verbose and very hard to read without 1:1 reference to the original C implementation. Plus it takes several minutes to compile, so beware.
 
 ## Gazebo and SITL target
 Although [here are some basic instructions](https://github.com/cleanflight/cleanflight/tree/master/src/main/target/SITL) there are some extra steps that need to happen. [This video](https://www.youtube.com/watch?v=Qq6D3rDxgnk) might provide some insights as well.

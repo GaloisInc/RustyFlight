@@ -39,10 +39,6 @@ extern "C" {
     #[no_mangle]
     fn findSerialPortConfig(function: serialPortFunction_e)
      -> *mut serialPortConfig_t;
-    // !!TODO remove need for this
-    //
-// runtime
-//
     #[no_mangle]
     fn openSerialPort(identifier: serialPortIdentifier_e,
                       function: serialPortFunction_e,
@@ -139,8 +135,6 @@ pub const DEBUG_GYRO_FILTERED: C2RustUnnamed = 3;
 pub const DEBUG_BATTERY: C2RustUnnamed = 2;
 pub const DEBUG_CYCLETIME: C2RustUnnamed = 1;
 pub const DEBUG_NONE: C2RustUnnamed = 0;
-pub type timeDelta_t = int32_t;
-pub type timeMs_t = uint32_t;
 /*
  * This file is part of Cleanflight and Betaflight.
  *
@@ -161,7 +155,9 @@ pub type timeMs_t = uint32_t;
  * If not, see <http://www.gnu.org/licenses/>.
  */
 // time difference, 32 bits always sufficient
+pub type timeDelta_t = int32_t;
 // millisecond time
+pub type timeMs_t = uint32_t;
 // microsecond time
 pub type timeUs_t = uint32_t;
 /*

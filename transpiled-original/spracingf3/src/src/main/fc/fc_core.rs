@@ -66,19 +66,19 @@ extern "C" {
     #[no_mangle]
     fn millis() -> timeMs_t;
     #[no_mangle]
+    fn gyroUpdate(currentTimeUs: timeUs_t);
+    #[no_mangle]
     fn accIsCalibrationComplete() -> bool;
     #[no_mangle]
     static mut accelerometerConfig_System: accelerometerConfig_t;
     #[no_mangle]
     fn gyroReadTemperature();
     #[no_mangle]
-    fn gyroUpdate(currentTimeUs: timeUs_t);
+    fn gyroStartCalibration(isFirstArmingCalibration: bool);
     #[no_mangle]
     fn isGyroCalibrationComplete() -> bool;
     #[no_mangle]
     fn isFirstArmingGyroCalibrationRunning() -> bool;
-    #[no_mangle]
-    fn gyroStartCalibration(isFirstArmingCalibration: bool);
     #[no_mangle]
     fn gyroAbsRateDps(axis: libc::c_int) -> uint16_t;
     #[no_mangle]
@@ -102,13 +102,13 @@ extern "C" {
     #[no_mangle]
     fn IS_RC_MODE_ACTIVE(boxId: boxId_e) -> bool;
     #[no_mangle]
-    fn isAirmodeActive() -> bool;
-    #[no_mangle]
     fn updateActivatedModes();
     #[no_mangle]
-    fn updateAdjustmentStates();
+    fn isAirmodeActive() -> bool;
     #[no_mangle]
     fn processRcAdjustments(controlRateConfig: *mut controlRateConfig_s);
+    #[no_mangle]
+    fn updateAdjustmentStates();
     // (Super) rates are constrained to [0, 100] for Betaflight rates, so values higher than 100 won't make a difference. Range extended for RaceFlight rates.
     #[no_mangle]
     static mut rcCommand: [libc::c_float; 4];
@@ -338,6 +338,7 @@ pub const PGR_SIZE_SYSTEM_FLAG: C2RustUnnamed_0 = 0;
 pub const PGR_SIZE_MASK: C2RustUnnamed_0 = 4095;
 pub const PGR_PGN_VERSION_MASK: C2RustUnnamed_0 = 61440;
 pub const PGR_PGN_MASK: C2RustUnnamed_0 = 4095;
+// function that resets a single parameter group instance
 pub type pgResetFunc
     =
     unsafe extern "C" fn(_: *mut libc::c_void, _: libc::c_int) -> ();
@@ -359,6 +360,8 @@ pub union C2RustUnnamed_1 {
                                           _: libc::c_int) -> ()>,
 }
 pub type pgRegistry_t = pgRegistry_s;
+/* base */
+/* size */
 /*
  * This file is part of Cleanflight and Betaflight.
  *
@@ -594,6 +597,11 @@ pub struct systemConfig_s {
     pub boardIdentifier: [libc::c_char; 6],
 }
 pub type systemConfig_t = systemConfig_s;
+// in seconds
+// when aux channel is in range...
+// ..then apply the adjustment function to the auxSwitchChannel ...
+// ... via slot
+// enough for 4 x 3position switches / 4 aux channel
 #[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct pidProfile_s {
@@ -673,7 +681,6 @@ pub struct throttleCorrectionConfig_s {
     pub throttle_correction_angle: uint16_t,
     pub throttle_correction_value: uint8_t,
 }
-// in seconds
 // Breakpoint where TPA is activated
 // Sets the throttle limiting type - off, scale or clip
 // Sets the maximum pilot commanded throttle limit
@@ -854,14 +861,13 @@ pub union attitudeEulerAngles_t {
     pub values: C2RustUnnamed_5,
 }
 pub type cfTaskId_e = libc::c_uint;
-pub const TASK_SELF: cfTaskId_e = 26;
-pub const TASK_NONE: cfTaskId_e = 25;
-pub const TASK_COUNT: cfTaskId_e = 25;
-pub const TASK_PINIOBOX: cfTaskId_e = 24;
-pub const TASK_RCDEVICE: cfTaskId_e = 23;
-pub const TASK_CAMCTRL: cfTaskId_e = 22;
-pub const TASK_VTXCTRL: cfTaskId_e = 21;
-pub const TASK_CMS: cfTaskId_e = 20;
+pub const TASK_SELF: cfTaskId_e = 25;
+pub const TASK_NONE: cfTaskId_e = 24;
+pub const TASK_COUNT: cfTaskId_e = 24;
+pub const TASK_PINIOBOX: cfTaskId_e = 23;
+pub const TASK_RCDEVICE: cfTaskId_e = 22;
+pub const TASK_CAMCTRL: cfTaskId_e = 21;
+pub const TASK_VTXCTRL: cfTaskId_e = 20;
 pub const TASK_ESC_SENSOR: cfTaskId_e = 19;
 pub const TASK_OSD: cfTaskId_e = 18;
 pub const TASK_LEDSTRIP: cfTaskId_e = 17;
@@ -1147,6 +1153,14 @@ static mut runawayTakeoffCheckDisabled: bool = 0i32 != 0;
 static mut runawayTakeoffTriggerUs: timeUs_t = 0i32 as timeUs_t;
 static mut runawayTakeoffTemporarilyDisabled: bool = 0i32 != 0;
 #[no_mangle]
+pub static mut throttleCorrectionConfig_System: throttleCorrectionConfig_t =
+    throttleCorrectionConfig_t{throttle_correction_angle: 0,
+                               throttle_correction_value: 0,};
+#[no_mangle]
+pub static mut throttleCorrectionConfig_Copy: throttleCorrectionConfig_t =
+    throttleCorrectionConfig_t{throttle_correction_angle: 0,
+                               throttle_correction_value: 0,};
+#[no_mangle]
 #[link_section = ".pg_registry"]
 #[used]
 pub static mut throttleCorrectionConfig_Registry: pgRegistry_t =
@@ -1182,14 +1196,6 @@ pub static mut throttleCorrectionConfig_Registry: pgRegistry_t =
             init
         }
     };
-#[no_mangle]
-pub static mut throttleCorrectionConfig_System: throttleCorrectionConfig_t =
-    throttleCorrectionConfig_t{throttle_correction_angle: 0,
-                               throttle_correction_value: 0,};
-#[no_mangle]
-pub static mut throttleCorrectionConfig_Copy: throttleCorrectionConfig_t =
-    throttleCorrectionConfig_t{throttle_correction_angle: 0,
-                               throttle_correction_value: 0,};
 #[no_mangle]
 #[link_section = ".pg_resetdata"]
 #[used]

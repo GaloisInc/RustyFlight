@@ -248,12 +248,32 @@ pub type filterApplyFnPtr
     =
     Option<unsafe extern "C" fn(_: *mut filter_t, _: libc::c_float)
                -> libc::c_float>;
+/*
+ * This file is part of Cleanflight and Betaflight.
+ *
+ * Cleanflight and Betaflight are free software. You can redistribute
+ * this software and/or modify this software under the terms of the
+ * GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * Cleanflight and Betaflight are distributed in the hope that they
+ * will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this software.
+ *
+ * If not, see <http://www.gnu.org/licenses/>.
+ */
 pub type pgn_t = uint16_t;
 pub type C2RustUnnamed_2 = libc::c_uint;
 pub const PGR_SIZE_SYSTEM_FLAG: C2RustUnnamed_2 = 0;
 pub const PGR_SIZE_MASK: C2RustUnnamed_2 = 4095;
 pub const PGR_PGN_VERSION_MASK: C2RustUnnamed_2 = 61440;
 pub const PGR_PGN_MASK: C2RustUnnamed_2 = 4095;
+// function that resets a single parameter group instance
 pub type pgResetFunc
     =
     unsafe extern "C" fn(_: *mut libc::c_void, _: libc::c_int) -> ();
@@ -300,6 +320,15 @@ pub const FEATURE_MOTOR_STOP: C2RustUnnamed_4 = 16;
 pub const FEATURE_RX_SERIAL: C2RustUnnamed_4 = 8;
 pub const FEATURE_INFLIGHT_ACC_CAL: C2RustUnnamed_4 = 4;
 pub const FEATURE_RX_PPM: C2RustUnnamed_4 = 1;
+/* base */
+/* size */
+// The parameter group number, the top 4 bits are reserved for version
+// Size of the group in RAM, the top 4 bits are reserved for flags
+// Address of the group in RAM.
+// Address of the copy in RAM.
+// The pointer to update after loading the record into ram.
+// Pointer to init template
+// Pointer to pgResetFunc
 /*
  * This file is part of Cleanflight and Betaflight.
  *
@@ -667,7 +696,6 @@ pub struct gyroSensor_s {
     pub yawSpinDetected: bool,
     pub gyroAnalyseState: gyroAnalyseState_t,
 }
-pub type gyroAnalyseState_t = gyroAnalyseState_s;
 // lowpass gyro soft filter
 // lowpass2 gyro soft filter
 // notch filters
@@ -693,6 +721,7 @@ pub type gyroAnalyseState_t = gyroAnalyseState_s;
  * If not, see <http://www.gnu.org/licenses/>.
  */
 // max for F3 targets
+pub type gyroAnalyseState_t = gyroAnalyseState_s;
 #[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct gyroAnalyseState_s {
@@ -719,6 +748,10 @@ pub struct arm_rfft_fast_instance_f32 {
     pub fftLenRFFT: uint16_t,
     pub pTwiddleRFFT: *mut float32_t,
 }
+// accumulator for oversampled data => no aliasing and less noise
+// filter for downsampled accumulated gyro
+// downsampled gyro data circular buffer for frequency analysis
+// update state machine step information
 /* *
    * @brief 32-bit floating-point type definition.
    */
@@ -796,14 +829,13 @@ pub const ARMING_DISABLED_RX_FAILSAFE: armingDisableFlags_e = 4;
 pub const ARMING_DISABLED_FAILSAFE: armingDisableFlags_e = 2;
 pub const ARMING_DISABLED_NO_GYRO: armingDisableFlags_e = 1;
 pub type cfTaskId_e = libc::c_uint;
-pub const TASK_SELF: cfTaskId_e = 26;
-pub const TASK_NONE: cfTaskId_e = 25;
-pub const TASK_COUNT: cfTaskId_e = 25;
-pub const TASK_PINIOBOX: cfTaskId_e = 24;
-pub const TASK_RCDEVICE: cfTaskId_e = 23;
-pub const TASK_CAMCTRL: cfTaskId_e = 22;
-pub const TASK_VTXCTRL: cfTaskId_e = 21;
-pub const TASK_CMS: cfTaskId_e = 20;
+pub const TASK_SELF: cfTaskId_e = 25;
+pub const TASK_NONE: cfTaskId_e = 24;
+pub const TASK_COUNT: cfTaskId_e = 24;
+pub const TASK_PINIOBOX: cfTaskId_e = 23;
+pub const TASK_RCDEVICE: cfTaskId_e = 22;
+pub const TASK_CAMCTRL: cfTaskId_e = 21;
+pub const TASK_VTXCTRL: cfTaskId_e = 20;
 pub const TASK_ESC_SENSOR: cfTaskId_e = 19;
 pub const TASK_OSD: cfTaskId_e = 18;
 pub const TASK_LEDSTRIP: cfTaskId_e = 17;
@@ -1165,14 +1197,6 @@ pub unsafe extern "C" fn gyroSensorBusByDevice(mut whichSensor: uint8_t)
  -> *const busDevice_t {
     return &mut gyroSensor1.gyroDev.bus;
 }
-// gyro alignment
-// people keep forgetting that moving model while init results in wrong gyro offsets. and then they never reset gyro. so this is now on by default.
-// Gyro sample divider
-// gyro DLPF setting
-// gyro 32khz DLPF setting
-// Lowpass primary/secondary
-// Gyro calibration duration in 1/100 second
-// bandpass quality factor, 100 for steep sided bandpass
 // USE_GYRO_REGISTER_DUMP
 #[no_mangle]
 pub unsafe extern "C" fn gyroMpuConfiguration() -> *const mpuConfiguration_s {
@@ -1756,10 +1780,14 @@ unsafe extern "C" fn checkForYawSpin(mut gyroSensor: *mut gyroSensor_t,
         (*gyroSensor).yawSpinTimeUs = currentTimeUs
     };
 }
-unsafe extern "C" fn filterGyro(mut gyroSensor: *mut gyroSensor_t,
-                                mut sampleDeltaUs: timeDelta_t) {
+unsafe extern "C" fn filterGyroDebug(mut gyroSensor: *mut gyroSensor_t,
+                                     mut sampleDeltaUs: timeDelta_t) {
     let mut axis: libc::c_int = 0i32;
     while axis < 3i32 {
+        if debugMode as libc::c_int == DEBUG_GYRO_RAW as libc::c_int {
+            debug[axis as usize] =
+                (*gyroSensor).gyroDev.gyroADCRaw[axis as usize]
+        }
         // check for spin on yaw axis only
         // SIMULATOR_BUILD
         // scale gyro output to degrees per second
@@ -1769,84 +1797,6 @@ unsafe extern "C" fn filterGyro(mut gyroSensor: *mut gyroSensor_t,
                 (*gyroSensor).gyroDev.scale;
         // DEBUG_GYRO_SCALED records the unfiltered, scaled gyro output
         // DEBUG_GYRO_SCALED records the unfiltered, scaled gyro output
-        if isDynamicFilterActive() { (axis) == X as libc::c_int; }
-        // apply static notch filters and software lowpass filters
-        // apply static notch filters and software lowpass filters
-        gyroADCf =
-            (*gyroSensor).notchFilter1ApplyFn.expect("non-null function pointer")(&mut *(*gyroSensor).notchFilter1.as_mut_ptr().offset(axis
-                                                                                                                                           as
-                                                                                                                                           isize)
-                                                                                      as
-                                                                                      *mut biquadFilter_t
-                                                                                      as
-                                                                                      *mut filter_t,
-                                                                                  gyroADCf);
-        gyroADCf =
-            (*gyroSensor).notchFilter2ApplyFn.expect("non-null function pointer")(&mut *(*gyroSensor).notchFilter2.as_mut_ptr().offset(axis
-                                                                                                                                           as
-                                                                                                                                           isize)
-                                                                                      as
-                                                                                      *mut biquadFilter_t
-                                                                                      as
-                                                                                      *mut filter_t,
-                                                                                  gyroADCf);
-        gyroADCf =
-            (*gyroSensor).lowpassFilterApplyFn.expect("non-null function pointer")(&mut *(*gyroSensor).lowpassFilter.as_mut_ptr().offset(axis
-                                                                                                                                             as
-                                                                                                                                             isize)
-                                                                                       as
-                                                                                       *mut gyroLowpassFilter_t
-                                                                                       as
-                                                                                       *mut filter_t,
-                                                                                   gyroADCf);
-        gyroADCf =
-            (*gyroSensor).lowpass2FilterApplyFn.expect("non-null function pointer")(&mut *(*gyroSensor).lowpass2Filter.as_mut_ptr().offset(axis
-                                                                                                                                               as
-                                                                                                                                               isize)
-                                                                                        as
-                                                                                        *mut gyroLowpassFilter_t
-                                                                                        as
-                                                                                        *mut filter_t,
-                                                                                    gyroADCf);
-        if isDynamicFilterActive() {
-            gyroDataAnalysePush(&mut (*gyroSensor).gyroAnalyseState, axis,
-                                gyroADCf);
-            gyroADCf =
-                (*gyroSensor).notchFilterDynApplyFn.expect("non-null function pointer")(&mut *(*gyroSensor).notchFilterDyn.as_mut_ptr().offset(axis
-                                                                                                                                                   as
-                                                                                                                                                   isize)
-                                                                                            as
-                                                                                            *mut biquadFilter_t
-                                                                                            as
-                                                                                            *mut filter_t,
-                                                                                        gyroADCf);
-            (axis) == X as libc::c_int;
-        }
-        // DEBUG_GYRO_FILTERED records the scaled, filtered, after all software filtering has been applied.
-        // DEBUG_GYRO_FILTERED records the scaled, filtered, after all software filtering has been applied.
-        (*gyroSensor).gyroDev.gyroADCf[axis as usize] = gyroADCf;
-        if !(*gyroSensor).overflowDetected {
-            // integrate using trapezium rule to avoid bias
-            // integrate using trapezium rule to avoid bias
-            accumulatedMeasurements[axis as usize] +=
-                0.5f32 * (gyroPrevious[axis as usize] + gyroADCf) *
-                    sampleDeltaUs as libc::c_float;
-            gyroPrevious[axis as usize] = gyroADCf
-        }
-        axis += 1
-    };
-}
-unsafe extern "C" fn filterGyroDebug(mut gyroSensor: *mut gyroSensor_t,
-                                     mut sampleDeltaUs: timeDelta_t) {
-    let mut axis: libc::c_int = 0i32;
-    while axis < 3i32 {
-        if debugMode as libc::c_int == DEBUG_GYRO_RAW as libc::c_int {
-            debug[axis as usize] =
-                (*gyroSensor).gyroDev.gyroADCRaw[axis as usize]
-        }
-        let mut gyroADCf: libc::c_float =
-            (*gyroSensor).gyroDev.gyroADC[axis as usize] *
-                (*gyroSensor).gyroDev.scale;
         if debugMode as libc::c_int == DEBUG_GYRO_SCALED as libc::c_int {
             debug[axis as usize] = lrintf(gyroADCf) as int16_t
         }
@@ -1855,11 +1805,17 @@ unsafe extern "C" fn filterGyroDebug(mut gyroSensor: *mut gyroSensor_t,
                 if debugMode as libc::c_int == DEBUG_FFT as libc::c_int {
                     debug[0] = lrintf(gyroADCf) as int16_t
                 }
+                // store raw data
+                // store raw data
                 if debugMode as libc::c_int == DEBUG_FFT_FREQ as libc::c_int {
                     debug[3] = lrintf(gyroADCf) as int16_t
                 }
             }
         }
+        // store raw data
+        // store raw data
+        // apply static notch filters and software lowpass filters
+        // apply static notch filters and software lowpass filters
         gyroADCf =
             (*gyroSensor).notchFilter1ApplyFn.expect("non-null function pointer")(&mut *(*gyroSensor).notchFilter1.as_mut_ptr().offset(axis
                                                                                                                                            as
@@ -1912,10 +1868,84 @@ unsafe extern "C" fn filterGyroDebug(mut gyroSensor: *mut gyroSensor_t,
                 if debugMode as libc::c_int == DEBUG_FFT as libc::c_int {
                     debug[1] = lrintf(gyroADCf) as int16_t
                 }
+                // store data after dynamic notch
+                // store data after dynamic notch
             }
         }
+        // DEBUG_GYRO_FILTERED records the scaled, filtered, after all software filtering has been applied.
+        // DEBUG_GYRO_FILTERED records the scaled, filtered, after all software filtering has been applied.
         if debugMode as libc::c_int == DEBUG_GYRO_FILTERED as libc::c_int {
             debug[axis as usize] = lrintf(gyroADCf) as int16_t
+        }
+        (*gyroSensor).gyroDev.gyroADCf[axis as usize] = gyroADCf;
+        if !(*gyroSensor).overflowDetected {
+            // integrate using trapezium rule to avoid bias
+            // integrate using trapezium rule to avoid bias
+            accumulatedMeasurements[axis as usize] +=
+                0.5f32 * (gyroPrevious[axis as usize] + gyroADCf) *
+                    sampleDeltaUs as libc::c_float;
+            gyroPrevious[axis as usize] = gyroADCf
+        }
+        axis += 1
+    };
+}
+unsafe extern "C" fn filterGyro(mut gyroSensor: *mut gyroSensor_t,
+                                mut sampleDeltaUs: timeDelta_t) {
+    let mut axis: libc::c_int = 0i32;
+    while axis < 3i32 {
+        let mut gyroADCf: libc::c_float =
+            (*gyroSensor).gyroDev.gyroADC[axis as usize] *
+                (*gyroSensor).gyroDev.scale;
+        if isDynamicFilterActive() { (axis) == X as libc::c_int; }
+        gyroADCf =
+            (*gyroSensor).notchFilter1ApplyFn.expect("non-null function pointer")(&mut *(*gyroSensor).notchFilter1.as_mut_ptr().offset(axis
+                                                                                                                                           as
+                                                                                                                                           isize)
+                                                                                      as
+                                                                                      *mut biquadFilter_t
+                                                                                      as
+                                                                                      *mut filter_t,
+                                                                                  gyroADCf);
+        gyroADCf =
+            (*gyroSensor).notchFilter2ApplyFn.expect("non-null function pointer")(&mut *(*gyroSensor).notchFilter2.as_mut_ptr().offset(axis
+                                                                                                                                           as
+                                                                                                                                           isize)
+                                                                                      as
+                                                                                      *mut biquadFilter_t
+                                                                                      as
+                                                                                      *mut filter_t,
+                                                                                  gyroADCf);
+        gyroADCf =
+            (*gyroSensor).lowpassFilterApplyFn.expect("non-null function pointer")(&mut *(*gyroSensor).lowpassFilter.as_mut_ptr().offset(axis
+                                                                                                                                             as
+                                                                                                                                             isize)
+                                                                                       as
+                                                                                       *mut gyroLowpassFilter_t
+                                                                                       as
+                                                                                       *mut filter_t,
+                                                                                   gyroADCf);
+        gyroADCf =
+            (*gyroSensor).lowpass2FilterApplyFn.expect("non-null function pointer")(&mut *(*gyroSensor).lowpass2Filter.as_mut_ptr().offset(axis
+                                                                                                                                               as
+                                                                                                                                               isize)
+                                                                                        as
+                                                                                        *mut gyroLowpassFilter_t
+                                                                                        as
+                                                                                        *mut filter_t,
+                                                                                    gyroADCf);
+        if isDynamicFilterActive() {
+            gyroDataAnalysePush(&mut (*gyroSensor).gyroAnalyseState, axis,
+                                gyroADCf);
+            gyroADCf =
+                (*gyroSensor).notchFilterDynApplyFn.expect("non-null function pointer")(&mut *(*gyroSensor).notchFilterDyn.as_mut_ptr().offset(axis
+                                                                                                                                                   as
+                                                                                                                                                   isize)
+                                                                                            as
+                                                                                            *mut biquadFilter_t
+                                                                                            as
+                                                                                            *mut filter_t,
+                                                                                        gyroADCf);
+            (axis) == X as libc::c_int;
         }
         (*gyroSensor).gyroDev.gyroADCf[axis as usize] = gyroADCf;
         if !(*gyroSensor).overflowDetected {
@@ -2015,6 +2045,33 @@ pub unsafe extern "C" fn gyroGetAccumulationAverage(mut accumulationAverage:
         return 0i32 != 0
     };
 }
+/*
+ * This file is part of Cleanflight and Betaflight.
+ *
+ * Cleanflight and Betaflight are free software. You can redistribute
+ * this software and/or modify this software under the terms of the
+ * GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * Cleanflight and Betaflight are distributed in the hope that they
+ * will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this software.
+ *
+ * If not, see <http://www.gnu.org/licenses/>.
+ */
+// gyro alignment
+// people keep forgetting that moving model while init results in wrong gyro offsets. and then they never reset gyro. so this is now on by default.
+// Gyro sample divider
+// gyro DLPF setting
+// gyro 32khz DLPF setting
+// Lowpass primary/secondary
+// Gyro calibration duration in 1/100 second
+// bandpass quality factor, 100 for steep sided bandpass
 #[no_mangle]
 pub unsafe extern "C" fn gyroReadTemperature() {
     if gyroSensor1.gyroDev.temperatureFn.is_some() {

@@ -24,10 +24,10 @@ pub static mut targetName: *const libc::c_char =
     b"SPRACINGF3\x00" as *const u8 as *const libc::c_char;
 #[no_mangle]
 pub static mut shortGitRevision: *const libc::c_char =
-    b"3b0824b83\x00" as *const u8 as *const libc::c_char;
+    b"cabb13d30\x00" as *const u8 as *const libc::c_char;
 #[no_mangle]
 pub static mut buildDate: *const libc::c_char =
-    b"Dec  5 2019\x00" as *const u8 as *const libc::c_char;
+    b"Jun 17 2020\x00" as *const u8 as *const libc::c_char;
 #[no_mangle]
 pub static mut buildTime: *const libc::c_char =
-    b"17:39:59\x00" as *const u8 as *const libc::c_char;
+    b"01:29:42\x00" as *const u8 as *const libc::c_char;

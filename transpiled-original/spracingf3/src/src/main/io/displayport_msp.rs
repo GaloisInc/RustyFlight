@@ -10,10 +10,10 @@ extern "C" {
     fn displayInit(instance: *mut displayPort_t,
                    vTable: *const displayPortVTable_t);
     #[no_mangle]
+    fn mspSerialTxBytesFree() -> uint32_t;
+    #[no_mangle]
     fn mspSerialPush(cmd: uint8_t, data: *mut uint8_t, datalen: libc::c_int,
                      direction: mspDirection_e) -> libc::c_int;
-    #[no_mangle]
-    fn mspSerialTxBytesFree() -> uint32_t;
     #[no_mangle]
     static mut cliMode: uint8_t;
 }
@@ -203,13 +203,6 @@ unsafe extern "C" fn displayPortProfileMsp() -> *const displayPortProfile_t {
  */
 // no template required since defaults are zero
 #[no_mangle]
-pub static mut displayPortProfileMsp_Copy: displayPortProfile_t =
-    displayPortProfile_t{colAdjust: 0,
-                         rowAdjust: 0,
-                         invert: false,
-                         blackBrightness: 0,
-                         whiteBrightness: 0,};
-#[no_mangle]
 pub static mut displayPortProfileMsp_System: displayPortProfile_t =
     displayPortProfile_t{colAdjust: 0,
                          rowAdjust: 0,
@@ -250,6 +243,13 @@ pub static mut displayPortProfileMsp_Registry: pgRegistry_t =
             init
         }
     };
+#[no_mangle]
+pub static mut displayPortProfileMsp_Copy: displayPortProfile_t =
+    displayPortProfile_t{colAdjust: 0,
+                         rowAdjust: 0,
+                         invert: false,
+                         blackBrightness: 0,
+                         whiteBrightness: 0,};
 static mut mspDisplayPort: displayPort_t =
     displayPort_t{vTable: 0 as *const displayPortVTable_s,
                   device: 0 as *const libc::c_void as *mut libc::c_void,

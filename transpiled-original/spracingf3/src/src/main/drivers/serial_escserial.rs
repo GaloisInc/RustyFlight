@@ -407,6 +407,10 @@ extern "C" {
     #[no_mangle]
     static timerHardware: [timerHardware_t; 0];
     #[no_mangle]
+    fn timerConfigure(timHw: *const timerHardware_t, period: uint16_t,
+                      hz: uint32_t);
+    // This interface should be replaced.
+    #[no_mangle]
     fn timerChCCHandlerInit(self_0: *mut timerCCHandlerRec_t,
                             fn_0:
                                 Option<unsafe extern "C" fn(_:
@@ -425,16 +429,12 @@ extern "C" {
     #[no_mangle]
     fn timerGetByTag(ioTag: ioTag_t) -> *const timerHardware_t;
     #[no_mangle]
-    fn timerConfigure(timHw: *const timerHardware_t, period: uint16_t,
-                      hz: uint32_t);
-    #[no_mangle]
     fn timerChConfigIC(timHw: *const timerHardware_t, polarityRising: bool,
                        inputFilterSamples: libc::c_uint);
-    // function pointer used to encode a digital motor value into the DMA buffer representation
-    #[no_mangle]
-    fn pwmDisableMotors();
     #[no_mangle]
     fn pwmGetMotors() -> *mut pwmOutputPort_t;
+    #[no_mangle]
+    fn pwmDisableMotors();
     #[no_mangle]
     fn serialWrite(instance: *mut serialPort_t, ch: uint8_t);
     #[no_mangle]
@@ -618,34 +618,6 @@ pub union C2RustUnnamed_3 {
                                           _: libc::c_int) -> ()>,
 }
 pub type pgRegistry_t = pgRegistry_s;
-/* base */
-/* size */
-// The parameter group number, the top 4 bits are reserved for version
-// Size of the group in RAM, the top 4 bits are reserved for flags
-// Address of the group in RAM.
-// Address of the copy in RAM.
-// The pointer to update after loading the record into ram.
-// Pointer to init template
-// Pointer to pgResetFunc
-/*
- * This file is part of Cleanflight and Betaflight.
- *
- * Cleanflight and Betaflight are free software. You can redistribute
- * this software and/or modify this software under the terms of the
- * GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option)
- * any later version.
- *
- * Cleanflight and Betaflight are distributed in the hope that they
- * will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this software.
- *
- * If not, see <http://www.gnu.org/licenses/>.
- */
 pub type resourceOwner_e = libc::c_uint;
 pub const OWNER_TOTAL_COUNT: resourceOwner_e = 55;
 pub const OWNER_SPI_PREINIT_OPU: resourceOwner_e = 54;
@@ -703,7 +675,38 @@ pub const OWNER_MOTOR: resourceOwner_e = 3;
 pub const OWNER_PPMINPUT: resourceOwner_e = 2;
 pub const OWNER_PWMINPUT: resourceOwner_e = 1;
 pub const OWNER_FREE: resourceOwner_e = 0;
+/* base */
+/* size */
+// The parameter group number, the top 4 bits are reserved for version
+// Size of the group in RAM, the top 4 bits are reserved for flags
+// Address of the group in RAM.
+// Address of the copy in RAM.
+// The pointer to update after loading the record into ram.
+// Pointer to init template
+// Pointer to pgResetFunc
+/*
+ * This file is part of Cleanflight and Betaflight.
+ *
+ * Cleanflight and Betaflight are free software. You can redistribute
+ * this software and/or modify this software under the terms of the
+ * GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * Cleanflight and Betaflight are distributed in the hope that they
+ * will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this software.
+ *
+ * If not, see <http://www.gnu.org/licenses/>.
+ */
+// IO pin identification
+// make sure that ioTag_t can't be assigned into IO_t without warning
 pub type ioTag_t = uint8_t;
+// packet tag to specify IO pin
 pub type IO_t = *mut libc::c_void;
 // both ioTag_t and IO_t are guarantied to be zero if pinid is NONE (no pin)
 // this simplifies initialization (globals are zeroed on start) and allows

@@ -54,8 +54,6 @@ extern "C" {
                             sharedWithFunction: serialPortFunction_e)
      -> *mut serialPort_t;
     #[no_mangle]
-    fn serialWrite(instance: *mut serialPort_t, ch: uint8_t);
-    #[no_mangle]
     fn findSerialPortConfig(function: serialPortFunction_e)
      -> *mut serialPortConfig_t;
     #[no_mangle]
@@ -70,6 +68,8 @@ extern "C" {
                             function: serialPortFunction_e) -> portSharing_e;
     #[no_mangle]
     fn closeSerialPort(serialPort: *mut serialPort_t);
+    #[no_mangle]
+    fn serialWrite(instance: *mut serialPort_t, ch: uint8_t);
     #[no_mangle]
     fn serialTxBytesFree(instance: *const serialPort_t) -> uint32_t;
     #[no_mangle]
@@ -145,6 +145,35 @@ pub type portMode_e = libc::c_uint;
 pub const MODE_RXTX: portMode_e = 3;
 pub const MODE_TX: portMode_e = 2;
 pub const MODE_RX: portMode_e = 1;
+/*
+ * This file is part of Cleanflight and Betaflight.
+ *
+ * Cleanflight and Betaflight are free software. You can redistribute
+ * this software and/or modify this software under the terms of the
+ * GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * Cleanflight and Betaflight are distributed in the hope that they
+ * will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this software.
+ *
+ * If not, see <http://www.gnu.org/licenses/>.
+ */
+/*
+     * Note on SERIAL_BIDIR_PP
+     * With SERIAL_BIDIR_PP, the very first start bit of back-to-back bytes
+     * is lost and the first data byte will be lost by a framing error.
+     * To ensure the first start bit to be sent, prepend a zero byte (0x00)
+     * to actual data bytes.
+     */
+// disable pulls in BIDIR RX mode
+// Define known line control states which may be passed up by underlying serial driver callback
+// used by serial drivers to return frames to app
 #[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct serialPortVTable {

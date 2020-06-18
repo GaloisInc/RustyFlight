@@ -617,6 +617,14 @@ pub unsafe extern "C" fn dmaGetIdentifier(mut channel:
     }
     return DMA_NONE;
 }
+#[no_mangle]
+pub unsafe extern "C" fn dmaGetRefByIdentifier(identifier: dmaIdentifier_e)
+ -> *mut DMA_Channel_TypeDef {
+    return dmaDescriptors[(identifier as
+                               libc::c_uint).wrapping_sub(1i32 as
+                                                              libc::c_uint) as
+                              usize].ref_0;
+}
 /*
  * This file is part of Cleanflight and Betaflight.
  *
@@ -636,14 +644,6 @@ pub unsafe extern "C" fn dmaGetIdentifier(mut channel:
  *
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#[no_mangle]
-pub unsafe extern "C" fn dmaGetRefByIdentifier(identifier: dmaIdentifier_e)
- -> *mut DMA_Channel_TypeDef {
-    return dmaDescriptors[(identifier as
-                               libc::c_uint).wrapping_sub(1i32 as
-                                                              libc::c_uint) as
-                              usize].ref_0;
-}
 #[no_mangle]
 pub unsafe extern "C" fn dmaGetDescriptorByIdentifier(identifier:
                                                           dmaIdentifier_e)

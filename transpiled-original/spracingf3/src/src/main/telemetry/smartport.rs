@@ -6,6 +6,25 @@ extern "C" {
      -> *mut libc::c_void;
     #[no_mangle]
     fn lrintf(_: libc::c_float) -> libc::c_long;
+    /*
+ * This file is part of Cleanflight and Betaflight.
+ *
+ * Cleanflight and Betaflight are free software. You can redistribute
+ * this software and/or modify this software under the terms of the
+ * GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * Cleanflight and Betaflight are distributed in the hope that they
+ * will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this software.
+ *
+ * If not, see <http://www.gnu.org/licenses/>.
+ */
     #[no_mangle]
     fn feature(mask: uint32_t) -> bool;
     #[no_mangle]
@@ -36,13 +55,12 @@ extern "C" {
     fn serialRxBytesWaiting(instance: *const serialPort_t) -> uint32_t;
     #[no_mangle]
     fn serialRead(instance: *mut serialPort_t) -> uint8_t;
-    //
-// configuration
-//
-    // !!TODO remove need for this
-    //
-// runtime
-//
+    #[no_mangle]
+    fn findSerialPortConfig(function: serialPortFunction_e)
+     -> *mut serialPortConfig_t;
+    #[no_mangle]
+    fn determinePortSharing(portConfig_0: *const serialPortConfig_t,
+                            function: serialPortFunction_e) -> portSharing_e;
     #[no_mangle]
     fn openSerialPort(identifier: serialPortIdentifier_e,
                       function: serialPortFunction_e,
@@ -51,13 +69,9 @@ extern "C" {
                       mode: portMode_e, options: portOptions_e)
      -> *mut serialPort_t;
     #[no_mangle]
-    fn findSerialPortConfig(function: serialPortFunction_e)
-     -> *mut serialPortConfig_t;
-    #[no_mangle]
-    fn determinePortSharing(portConfig_0: *const serialPortConfig_t,
-                            function: serialPortFunction_e) -> portSharing_e;
-    #[no_mangle]
     fn closeSerialPort(serialPort: *mut serialPort_t);
+    #[no_mangle]
+    fn getMAhDrawn() -> int32_t;
     #[no_mangle]
     fn isBatteryVoltageConfigured() -> bool;
     #[no_mangle]
@@ -69,41 +83,20 @@ extern "C" {
     #[no_mangle]
     fn getAmperage() -> int32_t;
     #[no_mangle]
-    fn getMAhDrawn() -> int32_t;
-    #[no_mangle]
     static mut acc: acc_t;
     #[no_mangle]
     fn getEscSensorData(motorNumber: uint8_t) -> *mut escSensorData_t;
     #[no_mangle]
     fn calcEscRpm(erpm: libc::c_int) -> libc::c_int;
     #[no_mangle]
+    fn telemetryDetermineEnabledState(portSharing: portSharing_e) -> bool;
+    #[no_mangle]
     static mut telemetryConfig_System: telemetryConfig_t;
     #[no_mangle]
-    fn telemetryDetermineEnabledState(portSharing: portSharing_e) -> bool;
-    /*
- * This file is part of Cleanflight and Betaflight.
- *
- * Cleanflight and Betaflight are free software. You can redistribute
- * this software and/or modify this software under the terms of the
- * GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option)
- * any later version.
- *
- * Cleanflight and Betaflight are distributed in the hope that they
- * will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this software.
- *
- * If not, see <http://www.gnu.org/licenses/>.
- */
-    #[no_mangle]
-    fn sendMspReply(payloadSize: uint8_t, responseFn: mspResponseFnPtr)
+    fn handleMspFrame(frameStart: *mut uint8_t, frameLength: libc::c_int)
      -> bool;
     #[no_mangle]
-    fn handleMspFrame(frameStart: *mut uint8_t, frameLength: libc::c_int)
+    fn sendMspReply(payloadSize: uint8_t, responseFn: mspResponseFnPtr)
      -> bool;
 }
 pub type __int8_t = libc::c_schar;
@@ -373,7 +366,6 @@ pub type sensorAccReadFuncPtr
 pub type sensorAccInitFuncPtr
     =
     Option<unsafe extern "C" fn(_: *mut accDev_s) -> ()>;
-// millisecond time
 pub type timeMs_t = uint32_t;
 pub type accDev_t = accDev_s;
 #[derive ( Copy, Clone )]
@@ -502,10 +494,6 @@ pub struct serialPort_s {
     pub rxCallback: serialReceiveCallbackPtr,
     pub rxCallbackData: *mut libc::c_void,
     pub identifier: uint8_t,
-    // Breakpoint where TPA is activated
-    // Sets the throttle limiting type - off, scale or clip
-    // Sets the maximum pilot commanded throttle limit
-    // msp post process function, used for gracefully handling reboots, etc.
 }
 pub type serialReceiveCallbackPtr
     =
@@ -666,6 +654,9 @@ pub struct telemetryConfig_s {
     pub smartport_use_extra_sensors: uint8_t,
 }
 pub type telemetryConfig_t = telemetryConfig_s;
+// Breakpoint where TPA is activated
+// Sets the throttle limiting type - off, scale or clip
+// Sets the maximum pilot commanded throttle limit
 /*
  * This file is part of Cleanflight and Betaflight.
  *

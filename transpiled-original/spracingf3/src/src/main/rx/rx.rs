@@ -707,9 +707,6 @@ static mut rcSampleIndex: uint8_t = 0i32 as uint8_t;
 pub static mut rxChannelRangeConfigs_SystemArray: [rxChannelRangeConfig_t; 4]
            =
     [rxChannelRangeConfig_t{min: 0, max: 0,}; 4];
-#[no_mangle]
-pub static mut rxChannelRangeConfigs_CopyArray: [rxChannelRangeConfig_t; 4] =
-    [rxChannelRangeConfig_t{min: 0, max: 0,}; 4];
 // Initialized in run_static_initializers
 #[no_mangle]
 #[link_section = ".pg_registry"]
@@ -724,6 +721,9 @@ pub static mut rxChannelRangeConfigs_Registry: pgRegistry_t =
                      C2RustUnnamed_1{ptr:
                                          0 as *const libc::c_void as
                                              *mut libc::c_void,},};
+#[no_mangle]
+pub static mut rxChannelRangeConfigs_CopyArray: [rxChannelRangeConfig_t; 4] =
+    [rxChannelRangeConfig_t{min: 0, max: 0,}; 4];
 #[no_mangle]
 pub unsafe extern "C" fn pgResetFn_rxChannelRangeConfigs(mut rxChannelRangeConfigs_0:
                                                              *mut rxChannelRangeConfig_t) {
@@ -741,10 +741,6 @@ pub unsafe extern "C" fn pgResetFn_rxChannelRangeConfigs(mut rxChannelRangeConfi
 pub static mut rxFailsafeChannelConfigs_SystemArray:
            [rxFailsafeChannelConfig_t; 18] =
     [rxFailsafeChannelConfig_t{mode: 0, step: 0,}; 18];
-#[no_mangle]
-pub static mut rxFailsafeChannelConfigs_CopyArray:
-           [rxFailsafeChannelConfig_t; 18] =
-    [rxFailsafeChannelConfig_t{mode: 0, step: 0,}; 18];
 // Initialized in run_static_initializers
 #[no_mangle]
 #[link_section = ".pg_registry"]
@@ -759,6 +755,10 @@ pub static mut rxFailsafeChannelConfigs_Registry: pgRegistry_t =
                      C2RustUnnamed_1{ptr:
                                          0 as *const libc::c_void as
                                              *mut libc::c_void,},};
+#[no_mangle]
+pub static mut rxFailsafeChannelConfigs_CopyArray:
+           [rxFailsafeChannelConfig_t; 18] =
+    [rxFailsafeChannelConfig_t{mode: 0, step: 0,}; 18];
 #[no_mangle]
 pub unsafe extern "C" fn pgResetFn_rxFailsafeChannelConfigs(mut rxFailsafeChannelConfigs_0:
                                                                 *mut rxFailsafeChannelConfig_t) {

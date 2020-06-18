@@ -26,18 +26,18 @@ extern "C" {
     fn strstr(_: *const libc::c_char, _: *const libc::c_char)
      -> *mut libc::c_char;
     #[no_mangle]
-    fn strtok_r(__s: *mut libc::c_char, __delim: *const libc::c_char,
-                __save_ptr: *mut *mut libc::c_char) -> *mut libc::c_char;
-    #[no_mangle]
-    fn strcasestr(__haystack: *const libc::c_char,
-                  __needle: *const libc::c_char) -> *mut libc::c_char;
+    fn strcasecmp(_: *const libc::c_char, _: *const libc::c_char)
+     -> libc::c_int;
     #[no_mangle]
     fn strlen(_: *const libc::c_char) -> libc::c_ulong;
     #[no_mangle]
     fn ffs(__i: libc::c_int) -> libc::c_int;
     #[no_mangle]
-    fn strcasecmp(_: *const libc::c_char, _: *const libc::c_char)
-     -> libc::c_int;
+    fn strtok_r(__s: *mut libc::c_char, __delim: *const libc::c_char,
+                __save_ptr: *mut *mut libc::c_char) -> *mut libc::c_char;
+    #[no_mangle]
+    fn strcasestr(__haystack: *const libc::c_char,
+                  __needle: *const libc::c_char) -> *mut libc::c_char;
     #[no_mangle]
     fn strncasecmp(_: *const libc::c_char, _: *const libc::c_char,
                    _: libc::c_ulong) -> libc::c_int;
@@ -83,6 +83,25 @@ extern "C" {
     /* Exported types ------------------------------------------------------------*/
     #[no_mangle]
     static mut SystemCoreClock: uint32_t;
+    /*
+ * This file is part of Cleanflight and Betaflight.
+ *
+ * Cleanflight and Betaflight are free software. You can redistribute
+ * this software and/or modify this software under the terms of the
+ * GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * Cleanflight and Betaflight are distributed in the hope that they
+ * will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this software.
+ *
+ * If not, see <http://www.gnu.org/licenses/>.
+ */
     // increment when a major release is made (big new feature, etc)
     // increment when a minor release is made (small new feature, change etc)
     // increment when a bug is fixed
@@ -101,10 +120,61 @@ extern "C" {
     // configured via linker script when building binaries.
     #[no_mangle]
     static mut __config_end: uint8_t;
-    #[no_mangle]
-    fn pgFind(pgn: pgn_t) -> *const pgRegistry_t;
+    /*
+ * This file is part of Cleanflight and Betaflight.
+ *
+ * Cleanflight and Betaflight are free software. You can redistribute
+ * this software and/or modify this software under the terms of the
+ * GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * Cleanflight and Betaflight are distributed in the hope that they
+ * will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this software.
+ *
+ * If not, see <http://www.gnu.org/licenses/>.
+ */
+    // parameter group registry flags
+    // documentary
+    // function that resets a single parameter group instance
+    /* base */
+    /* size */
+    // The parameter group number, the top 4 bits are reserved for version
+    // Size of the group in RAM, the top 4 bits are reserved for flags
+    // Address of the group in RAM.
+    // Address of the copy in RAM.
+    // The pointer to update after loading the record into ram.
+    // Pointer to init template
+    // Pointer to pgResetFunc
     #[no_mangle]
     static __pg_registry_end: [pgRegistry_t; 0];
+    // Helper to iterate over the PG register.  Cheaper than a visitor style callback.
+    // Reset configuration to default (by name)
+    /* */
+    // Declare system config
+    /* */
+    // Declare system config array
+    /* */
+    // Register system config
+    /* Force external linkage for g++. Catch multi registration */
+    /* */
+    /* */
+    /* */
+    /* */
+    // Register system config array
+    /* */
+    /* */
+    /* */
+    // Emit reset defaults for config.
+// Config must be registered with PG_REGISTER_<xxx>_WITH_RESET_TEMPLATE macro
+    /* */
+    #[no_mangle]
+    fn pgFind(pgn: pgn_t) -> *const pgRegistry_t;
     #[no_mangle]
     static __pg_registry_start: [pgRegistry_t; 0];
     #[no_mangle]
@@ -140,29 +210,10 @@ extern "C" {
     fn i2cGetErrorCounter() -> uint16_t;
     #[no_mangle]
     fn gyroReadRegister(whichSensor: uint8_t, reg: uint8_t) -> uint8_t;
-    /*
- * This file is part of Cleanflight and Betaflight.
- *
- * Cleanflight and Betaflight are free software. You can redistribute
- * this software and/or modify this software under the terms of the
- * GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option)
- * any later version.
- *
- * Cleanflight and Betaflight are distributed in the hope that they
- * will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this software.
- *
- * If not, see <http://www.gnu.org/licenses/>.
- */
-    #[no_mangle]
-    fn millis() -> timeMs_t;
     #[no_mangle]
     fn delay(ms: timeMs_t);
+    #[no_mangle]
+    fn millis() -> timeMs_t;
     // Initialise a block of memory as a buffered writer.
 //
 // b should be sizeof(bufWriter_t) + the number of bytes to buffer.
@@ -182,6 +233,32 @@ extern "C" {
     fn dmaGetResourceIndex(identifier: dmaIdentifier_e) -> uint8_t;
     #[no_mangle]
     static ownerNames: [*const libc::c_char; 55];
+    /*
+ * This file is part of Cleanflight and Betaflight.
+ *
+ * Cleanflight and Betaflight are free software. You can redistribute
+ * this software and/or modify this software under the terms of the
+ * GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * Cleanflight and Betaflight are distributed in the hope that they
+ * will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this software.
+ *
+ * If not, see <http://www.gnu.org/licenses/>.
+ */
+    // preprocessor is used to convert pinid to requested C data value
+// compile-time error is generated if requested pin is not available (not set in TARGET_IO_PORTx)
+// ioTag_t and IO_t is supported, but ioTag_t is preferred
+    // expand pinid to to ioTag_t
+    // TODO
+    // declare available IO pins. Available pins are specified per target
+    // unimplemented
     #[no_mangle]
     fn IOGetByTag(tag: ioTag_t) -> IO_t;
     #[no_mangle]
@@ -243,9 +320,9 @@ extern "C" {
     #[no_mangle]
     static mut pilotConfig_Copy: pilotConfig_t;
     #[no_mangle]
-    static mut systemConfig_Copy: systemConfig_t;
-    #[no_mangle]
     static mut systemConfig_System: systemConfig_t;
+    #[no_mangle]
+    static mut systemConfig_Copy: systemConfig_t;
     #[no_mangle]
     fn writeEEPROM();
     #[no_mangle]
@@ -285,6 +362,8 @@ extern "C" {
     #[no_mangle]
     static mut customMotorMixer_CopyArray: [motorMixer_t; 8];
     #[no_mangle]
+    static mut mixerConfig_Copy: mixerConfig_t;
+    #[no_mangle]
     fn convertExternalToMotor(externalValue: uint16_t) -> libc::c_float;
     #[no_mangle]
     fn stopPwmAllMotors();
@@ -294,8 +373,6 @@ extern "C" {
     fn mixerLoadMix(index: libc::c_int, customMixers: *mut motorMixer_t);
     #[no_mangle]
     static mut mixerConfig_System: mixerConfig_t;
-    #[no_mangle]
-    static mut mixerConfig_Copy: mixerConfig_t;
     #[no_mangle]
     static mut motorConfig_System: motorConfig_t;
     #[no_mangle]
@@ -316,9 +393,9 @@ extern "C" {
     #[no_mangle]
     static mut customServoMixers_CopyArray: [servoMixer_t; 16];
     #[no_mangle]
-    static mut servoParams_SystemArray: [servoParam_t; 8];
-    #[no_mangle]
     static mut servoParams_CopyArray: [servoParam_t; 8];
+    #[no_mangle]
+    static mut servoParams_SystemArray: [servoParam_t; 8];
     #[no_mangle]
     fn servoMixerLoadMix(index: libc::c_int);
     #[no_mangle]
@@ -425,9 +502,9 @@ extern "C" {
                          rightC:
                              Option<unsafe extern "C" fn(_: uint8_t) -> ()>);
     #[no_mangle]
-    static mut vtxConfig_System: vtxConfig_t;
-    #[no_mangle]
     static mut vtxConfig_Copy: vtxConfig_t;
+    #[no_mangle]
+    static mut vtxConfig_System: vtxConfig_t;
     #[no_mangle]
     static mut beeperConfig_Copy: beeperConfig_t;
     #[no_mangle]
@@ -441,15 +518,15 @@ extern "C" {
     #[no_mangle]
     static rcChannelLetters: [libc::c_char; 0];
     #[no_mangle]
-    static mut rxFailsafeChannelConfigs_SystemArray:
-           [rxFailsafeChannelConfig_t; 18];
-    #[no_mangle]
     static mut rxFailsafeChannelConfigs_CopyArray:
            [rxFailsafeChannelConfig_t; 18];
     #[no_mangle]
-    static mut rxChannelRangeConfigs_CopyArray: [rxChannelRangeConfig_t; 4];
+    static mut rxFailsafeChannelConfigs_SystemArray:
+           [rxFailsafeChannelConfig_t; 18];
     #[no_mangle]
     static mut rxChannelRangeConfigs_SystemArray: [rxChannelRangeConfig_t; 4];
+    #[no_mangle]
+    static mut rxChannelRangeConfigs_CopyArray: [rxChannelRangeConfig_t; 4];
     #[no_mangle]
     fn parseRcChannels(input: *const libc::c_char,
                        rxConfig_0: *mut rxConfig_s);
@@ -537,6 +614,7 @@ pub union C2RustUnnamed {
                                           _: libc::c_int) -> ()>,
 }
 pub type pgRegistry_t = pgRegistry_s;
+pub type timeDelta_t = int32_t;
 /*
  * This file is part of Cleanflight and Betaflight.
  *
@@ -557,11 +635,29 @@ pub type pgRegistry_t = pgRegistry_s;
  * If not, see <http://www.gnu.org/licenses/>.
  */
 // time difference, 32 bits always sufficient
-pub type timeDelta_t = int32_t;
 // millisecond time
 pub type timeMs_t = uint32_t;
 // microsecond time
 pub type timeUs_t = uint32_t;
+/*
+ * This file is part of Cleanflight and Betaflight.
+ *
+ * Cleanflight and Betaflight are free software. You can redistribute
+ * this software and/or modify this software under the terms of the
+ * GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * Cleanflight and Betaflight are distributed in the hope that they
+ * will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this software.
+ *
+ * If not, see <http://www.gnu.org/licenses/>.
+ */
 #[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct displayPortVTable_s {
@@ -728,33 +824,11 @@ pub struct featureConfig_s {
     pub enabledFeatures: uint32_t,
 }
 pub type featureConfig_t = featureConfig_s;
+pub type ioTag_t = uint8_t;
+pub type IO_t = *mut libc::c_void;
 // 0 - 359
 // 0 - 255
 // 0 - 255
-/*
- * This file is part of Cleanflight and Betaflight.
- *
- * Cleanflight and Betaflight are free software. You can redistribute
- * this software and/or modify this software under the terms of the
- * GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option)
- * any later version.
- *
- * Cleanflight and Betaflight are distributed in the hope that they
- * will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this software.
- *
- * If not, see <http://www.gnu.org/licenses/>.
- */
-// IO pin identification
-// make sure that ioTag_t can't be assigned into IO_t without warning
-pub type ioTag_t = uint8_t;
-// packet tag to specify IO pin
-pub type IO_t = *mut libc::c_void;
 // Macros to convert between CLI bus number and I2CDevice.
 // I2C device address range in 7-bit address mode
 #[derive ( Copy, Clone )]
@@ -897,27 +971,6 @@ pub const DMA1_CH3_HANDLER: dmaIdentifier_e = 3;
 pub const DMA1_CH2_HANDLER: dmaIdentifier_e = 2;
 pub const DMA1_CH1_HANDLER: dmaIdentifier_e = 1;
 pub const DMA_NONE: dmaIdentifier_e = 0;
-/*
- * This file is part of Cleanflight and Betaflight.
- *
- * Cleanflight and Betaflight are free software. You can redistribute
- * this software and/or modify this software under the terms of the
- * GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option)
- * any later version.
- *
- * Cleanflight and Betaflight are distributed in the hope that they
- * will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this software.
- *
- * If not, see <http://www.gnu.org/licenses/>.
- */
-// Maximum page size of all supported SPI flash devices.
-// Used to detect flashfs allocation size being too small.
 pub type flashType_e = libc::c_uint;
 pub const FLASH_TYPE_NAND: flashType_e = 1;
 pub const FLASH_TYPE_NOR: flashType_e = 0;
@@ -987,6 +1040,10 @@ pub const PROTOCOL_SIMONK: C2RustUnnamed_1 = 0;
 pub struct pilotConfig_s {
     pub name: [libc::c_char; 17],
 }
+// Count of the number of erasable blocks on the device
+// In bytes
+// This is just pagesPerSector * pageSize
+// This is just sectorSize * sectors
 /*
  * This file is part of Cleanflight and Betaflight.
  *
@@ -1156,6 +1213,15 @@ pub struct modeActivationCondition_s {
     pub modeLogic: modeLogic_e,
     pub linkedTo: boxId_e,
 }
+// in seconds
+// Breakpoint where TPA is activated
+// Sets the throttle limiting type - off, scale or clip
+// Sets the maximum pilot commanded throttle limit
+// type to hold enough bits for CHECKBOX_ITEM_COUNT. Struct used for value-like behavior
+// steps are 25 apart
+// a value of 0 corresponds to a channel value of 900 or less
+// a value of 48 corresponds to a channel value of 2100 or more
+// 48 steps between 900 and 2100
 pub type modeActivationCondition_t = modeActivationCondition_s;
 pub type C2RustUnnamed_2 = libc::c_uint;
 pub const ADJUSTMENT_FUNCTION_COUNT: C2RustUnnamed_2 = 33;
@@ -1294,10 +1360,6 @@ pub struct motorMixer_s {
     pub pitch: libc::c_float,
     pub yaw: libc::c_float,
 }
-// in seconds
-// Breakpoint where TPA is activated
-// Sets the throttle limiting type - off, scale or clip
-// Sets the maximum pilot commanded throttle limit
 // when aux channel is in range...
 // ..then apply the adjustment function to the auxSwitchChannel ...
 // ... via slot
@@ -1563,14 +1625,6 @@ pub struct vtxConfig_s {
 }
 pub const DO_DIFF: C2RustUnnamed_15 = 16;
 pub type ledConfig_t = uint32_t;
-pub type rxChannelRangeConfig_t = rxChannelRangeConfig_s;
-#[derive ( Copy, Clone )]
-#[repr(C)]
-pub struct rxChannelRangeConfig_s {
-    pub min: uint16_t,
-    pub max: uint16_t,
-}
-pub type serialConsumer = unsafe extern "C" fn(_: uint8_t) -> ();
 pub type ledStripConfig_t = ledStripConfig_s;
 #[derive ( Copy, Clone )]
 #[repr(C)]
@@ -1599,6 +1653,14 @@ pub type modeColorIndexes_t = modeColorIndexes_s;
 pub struct modeColorIndexes_s {
     pub color: [uint8_t; 6],
 }
+pub type rxChannelRangeConfig_t = rxChannelRangeConfig_s;
+#[derive ( Copy, Clone )]
+#[repr(C)]
+pub struct rxChannelRangeConfig_s {
+    pub min: uint16_t,
+    pub max: uint16_t,
+}
+pub type serialConsumer = unsafe extern "C" fn(_: uint8_t) -> ();
 pub const DUMP_MASTER: C2RustUnnamed_15 = 1;
 pub const SHOW_DEFAULTS: C2RustUnnamed_15 = 32;
 #[derive ( Copy, Clone )]
@@ -1609,14 +1671,13 @@ pub struct cfCheckFuncInfo_t {
     pub averageExecutionTime: timeUs_t,
 }
 pub type cfTaskId_e = libc::c_uint;
-pub const TASK_SELF: cfTaskId_e = 26;
-pub const TASK_NONE: cfTaskId_e = 25;
-pub const TASK_COUNT: cfTaskId_e = 25;
-pub const TASK_PINIOBOX: cfTaskId_e = 24;
-pub const TASK_RCDEVICE: cfTaskId_e = 23;
-pub const TASK_CAMCTRL: cfTaskId_e = 22;
-pub const TASK_VTXCTRL: cfTaskId_e = 21;
-pub const TASK_CMS: cfTaskId_e = 20;
+pub const TASK_SELF: cfTaskId_e = 25;
+pub const TASK_NONE: cfTaskId_e = 24;
+pub const TASK_COUNT: cfTaskId_e = 24;
+pub const TASK_PINIOBOX: cfTaskId_e = 23;
+pub const TASK_RCDEVICE: cfTaskId_e = 22;
+pub const TASK_CAMCTRL: cfTaskId_e = 21;
+pub const TASK_VTXCTRL: cfTaskId_e = 20;
 pub const TASK_ESC_SENSOR: cfTaskId_e = 19;
 pub const TASK_OSD: cfTaskId_e = 18;
 pub const TASK_LEDSTRIP: cfTaskId_e = 17;
@@ -1916,40 +1977,19 @@ unsafe extern "C" fn systemConfig() -> *const systemConfig_t {
     return &mut systemConfig_System;
 }
 #[inline]
+unsafe extern "C" fn adjustmentRanges(mut _index: libc::c_int)
+ -> *const adjustmentRange_t {
+    return &mut *adjustmentRanges_SystemArray.as_mut_ptr().offset(_index as
+                                                                      isize)
+               as *mut adjustmentRange_t;
+}
+#[inline]
 unsafe extern "C" fn adjustmentRangesMutable(mut _index: libc::c_int)
  -> *mut adjustmentRange_t {
     return &mut *adjustmentRanges_SystemArray.as_mut_ptr().offset(_index as
                                                                       isize)
                as *mut adjustmentRange_t;
 }
-/*
- * This file is part of Cleanflight and Betaflight.
- *
- * Cleanflight and Betaflight are free software. You can redistribute
- * this software and/or modify this software under the terms of the
- * GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option)
- * any later version.
- *
- * Cleanflight and Betaflight are distributed in the hope that they
- * will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this software.
- *
- * If not, see <http://www.gnu.org/licenses/>.
- */
-// ARM flag
-// FLIGHT_MODE
-// When new flight modes are added, the parameter group version for 'modeActivationConditions' in src/main/fc/rc_modes.c has to be incremented to ensure that the RC modes configuration is reset.
-// RCMODE flags
-// type to hold enough bits for CHECKBOX_ITEM_COUNT. Struct used for value-like behavior
-// steps are 25 apart
-// a value of 0 corresponds to a channel value of 900 or less
-// a value of 48 corresponds to a channel value of 2100 or more
-// 48 steps between 900 and 2100
 #[inline]
 unsafe extern "C" fn modeActivationConditions(mut _index: libc::c_int)
  -> *const modeActivationCondition_t {
@@ -1957,13 +1997,6 @@ unsafe extern "C" fn modeActivationConditions(mut _index: libc::c_int)
                                                                               as
                                                                               isize)
                as *mut modeActivationCondition_t;
-}
-#[inline]
-unsafe extern "C" fn adjustmentRanges(mut _index: libc::c_int)
- -> *const adjustmentRange_t {
-    return &mut *adjustmentRanges_SystemArray.as_mut_ptr().offset(_index as
-                                                                      isize)
-               as *mut adjustmentRange_t;
 }
 #[inline]
 unsafe extern "C" fn modeActivationConditionsMutable(mut _index: libc::c_int)
@@ -2053,11 +2086,11 @@ unsafe extern "C" fn serialConfig() -> *const serialConfig_t {
     return &mut serialConfig_System;
 }
 #[inline]
-unsafe extern "C" fn vtxConfig() -> *const vtxConfig_t {
+unsafe extern "C" fn vtxConfigMutable() -> *mut vtxConfig_t {
     return &mut vtxConfig_System;
 }
 #[inline]
-unsafe extern "C" fn vtxConfigMutable() -> *mut vtxConfig_t {
+unsafe extern "C" fn vtxConfig() -> *const vtxConfig_t {
     return &mut vtxConfig_System;
 }
 #[inline]
@@ -2069,24 +2102,24 @@ unsafe extern "C" fn beeperConfig() -> *const beeperConfig_t {
     return &mut beeperConfig_System;
 }
 #[inline]
-unsafe extern "C" fn rxConfigMutable() -> *mut rxConfig_t {
-    return &mut rxConfig_System;
-}
-#[inline]
 unsafe extern "C" fn rxConfig() -> *const rxConfig_t {
     return &mut rxConfig_System;
 }
 #[inline]
-unsafe extern "C" fn rxFailsafeChannelConfigs(mut _index: libc::c_int)
- -> *const rxFailsafeChannelConfig_t {
+unsafe extern "C" fn rxConfigMutable() -> *mut rxConfig_t {
+    return &mut rxConfig_System;
+}
+#[inline]
+unsafe extern "C" fn rxFailsafeChannelConfigsMutable(mut _index: libc::c_int)
+ -> *mut rxFailsafeChannelConfig_t {
     return &mut *rxFailsafeChannelConfigs_SystemArray.as_mut_ptr().offset(_index
                                                                               as
                                                                               isize)
                as *mut rxFailsafeChannelConfig_t;
 }
 #[inline]
-unsafe extern "C" fn rxFailsafeChannelConfigsMutable(mut _index: libc::c_int)
- -> *mut rxFailsafeChannelConfig_t {
+unsafe extern "C" fn rxFailsafeChannelConfigs(mut _index: libc::c_int)
+ -> *const rxFailsafeChannelConfig_t {
     return &mut *rxFailsafeChannelConfigs_SystemArray.as_mut_ptr().offset(_index
                                                                               as
                                                                               isize)

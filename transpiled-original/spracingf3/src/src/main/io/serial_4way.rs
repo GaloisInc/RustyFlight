@@ -200,31 +200,6 @@ pub const GPIO_PuPd_DOWN: C2RustUnnamed_1 = 2;
 pub const GPIO_PuPd_UP: C2RustUnnamed_1 = 1;
 pub const GPIO_PuPd_NOPULL: C2RustUnnamed_1 = 0;
 pub type IO_t = *mut libc::c_void;
-/*
- * This file is part of Cleanflight and Betaflight.
- *
- * Cleanflight and Betaflight are free software. You can redistribute
- * this software and/or modify this software under the terms of the
- * GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option)
- * any later version.
- *
- * Cleanflight and Betaflight are distributed in the hope that they
- * will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this software.
- *
- * If not, see <http://www.gnu.org/licenses/>.
- */
-// IO pin identification
-// make sure that ioTag_t can't be assigned into IO_t without warning
-// packet tag to specify IO pin
-// type specifying IO pin. Currently ioRec_t pointer, but this may change
-// NONE initializer for ioTag_t variables
-// NONE initializer for IO_t variable
 // both ioTag_t and IO_t are guarantied to be zero if pinid is NONE (no pin)
 // this simplifies initialization (globals are zeroed on start) and allows
 //  omitting unused fields in structure initializers.
@@ -351,6 +326,28 @@ pub struct ioMem_s {
     pub D_FLASH_ADDR_L: uint8_t,
     pub D_PTR_I: *mut uint8_t,
 }
+/*
+ * This file is part of Cleanflight and Betaflight.
+ *
+ * Cleanflight and Betaflight are free software. You can redistribute
+ * this software and/or modify this software under the terms of the
+ * GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * Cleanflight and Betaflight are distributed in the hope that they
+ * will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this software.
+ *
+ * If not, see <http://www.gnu.org/licenses/>.
+ */
+/*
+ * Author: 4712
+*/
 pub type ioMem_t = ioMem_s;
 #[derive ( Copy, Clone )]
 #[repr ( C )]
@@ -373,7 +370,6 @@ pub static mut escHardware: [escHardware_t; 8] =
 pub static mut selected_esc: uint8_t = 0;
 #[no_mangle]
 pub static mut DeviceInfo: uint8_32_u = uint8_32_u{bytes: [0; 4],};
-//extern uint8_32_u DeviceInfo;
 #[inline]
 unsafe extern "C" fn isMcuConnected() -> bool {
     return DeviceInfo.bytes[0] as libc::c_int > 0i32;
@@ -392,6 +388,7 @@ unsafe extern "C" fn setEscInput(mut selEsc: uint8_t) {
                  (GPIO_Mode_IN as libc::c_int | 0i32 << 2i32 | 0i32 << 4i32 |
                       (GPIO_PuPd_UP as libc::c_int) << 5i32) as ioConfig_t);
 }
+//extern uint8_32_u DeviceInfo;
 #[no_mangle]
 pub unsafe extern "C" fn esc4wayInit() -> uint8_t {
     // StopPwmAllMotors();

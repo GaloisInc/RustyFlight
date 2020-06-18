@@ -5,16 +5,17 @@
 #![allow(non_upper_case_globals)]
 #![allow(unused_assignments)]
 #![allow(unused_mut)]
-#![feature(asm)]
 #![feature(c_variadic)]
 #![feature(const_raw_ptr_to_usize_cast)]
 #![feature(const_transmute)]
 #![feature(extern_types)]
 #![feature(main)]
 #![feature(ptr_wrapping_offset_from)]
+#![no_std]
+#![no_main]
+#![feature(asm)]
 
-
-
+extern crate alloc;
 
 pub mod src {
 pub mod lib {

@@ -100,44 +100,10 @@ pub const ADC_RSSI: C2RustUnnamed_1 = 3;
 pub const ADC_EXTERNAL1: C2RustUnnamed_1 = 2;
 pub const ADC_CURRENT: C2RustUnnamed_1 = 1;
 pub const ADC_BATTERY: C2RustUnnamed_1 = 0;
-/* base */
-/* size */
-// The parameter group number, the top 4 bits are reserved for version
-// Size of the group in RAM, the top 4 bits are reserved for flags
-// Address of the group in RAM.
-// Address of the copy in RAM.
-// The pointer to update after loading the record into ram.
-// Pointer to init template
-// Pointer to pgResetFunc
-/*
- * This file is part of Cleanflight and Betaflight.
- *
- * Cleanflight and Betaflight are free software. You can redistribute
- * this software and/or modify this software under the terms of the
- * GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option)
- * any later version.
- *
- * Cleanflight and Betaflight are distributed in the hope that they
- * will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this software.
- *
- * If not, see <http://www.gnu.org/licenses/>.
- */
-//
-// fixed ids, voltage can be measured at many different places, these identifiers are the ones we support or would consider supporting.
-//
 pub type voltageMeterId_e = libc::c_uint;
-//...
 pub const VOLTAGE_METER_ID_CELL_40: voltageMeterId_e = 119;
-// 80-119 for cell meters (40 cells)
 pub const VOLTAGE_METER_ID_CELL_2: voltageMeterId_e = 81;
 pub const VOLTAGE_METER_ID_CELL_1: voltageMeterId_e = 80;
-//...
 pub const VOLTAGE_METER_ID_ESC_MOTOR_20: voltageMeterId_e = 79;
 pub const VOLTAGE_METER_ID_ESC_MOTOR_12: voltageMeterId_e = 71;
 pub const VOLTAGE_METER_ID_ESC_MOTOR_11: voltageMeterId_e = 70;
@@ -149,31 +115,20 @@ pub const VOLTAGE_METER_ID_ESC_MOTOR_6: voltageMeterId_e = 65;
 pub const VOLTAGE_METER_ID_ESC_MOTOR_5: voltageMeterId_e = 64;
 pub const VOLTAGE_METER_ID_ESC_MOTOR_4: voltageMeterId_e = 63;
 pub const VOLTAGE_METER_ID_ESC_MOTOR_3: voltageMeterId_e = 62;
-// 60-79 for ESC motors (20 motors)
 pub const VOLTAGE_METER_ID_ESC_MOTOR_2: voltageMeterId_e = 61;
 pub const VOLTAGE_METER_ID_ESC_MOTOR_1: voltageMeterId_e = 60;
-// 50-59 for ESC combined (it's doubtful an FC would ever expose 51-59 however)
-// ...
 pub const VOLTAGE_METER_ID_ESC_COMBINED_10: voltageMeterId_e = 59;
 pub const VOLTAGE_METER_ID_ESC_COMBINED_1: voltageMeterId_e = 50;
-//..
 pub const VOLTAGE_METER_ID_12V_10: voltageMeterId_e = 49;
-// 40-49 for 12V meters
 pub const VOLTAGE_METER_ID_12V_2: voltageMeterId_e = 41;
 pub const VOLTAGE_METER_ID_12V_1: voltageMeterId_e = 40;
-//..
 pub const VOLTAGE_METER_ID_9V_10: voltageMeterId_e = 39;
-// 30-39 for 9V meters
 pub const VOLTAGE_METER_ID_9V_2: voltageMeterId_e = 31;
 pub const VOLTAGE_METER_ID_9V_1: voltageMeterId_e = 30;
-//..
 pub const VOLTAGE_METER_ID_5V_10: voltageMeterId_e = 29;
-// 20-29 for 5V meters
 pub const VOLTAGE_METER_ID_5V_2: voltageMeterId_e = 21;
 pub const VOLTAGE_METER_ID_5V_1: voltageMeterId_e = 20;
-//..
 pub const VOLTAGE_METER_ID_BATTERY_10: voltageMeterId_e = 19;
-// 10-19 for battery meters
 pub const VOLTAGE_METER_ID_BATTERY_2: voltageMeterId_e = 11;
 pub const VOLTAGE_METER_ID_BATTERY_1: voltageMeterId_e = 10;
 pub const VOLTAGE_METER_ID_NONE: voltageMeterId_e = 0;
@@ -184,6 +139,15 @@ pub struct voltageMeter_s {
     pub unfiltered: uint16_t,
     pub lowVoltageCutoff: bool,
 }
+/* base */
+/* size */
+// The parameter group number, the top 4 bits are reserved for version
+// Size of the group in RAM, the top 4 bits are reserved for flags
+// Address of the group in RAM.
+// Address of the copy in RAM.
+// The pointer to update after loading the record into ram.
+// Pointer to init template
+// Pointer to pgResetFunc
 // WARNING - do not mix usage of VOLTAGE_METER_* and VOLTAGE_SENSOR_*, they are separate concerns.
 pub type voltageMeter_t = voltageMeter_s;
 pub type voltageSensorADC_e = libc::c_uint;
@@ -323,6 +287,18 @@ pub unsafe extern "C" fn getVoltageMeterADC(mut index: uint8_t)
     return &mut *voltageMeterADCStates.as_mut_ptr().offset(index as isize) as
                *mut voltageMeterADCState_t;
 }
+#[no_mangle]
+pub static mut voltageSensorADCConfig_SystemArray:
+           [voltageSensorADCConfig_t; 1] =
+    [voltageSensorADCConfig_t{vbatscale: 0,
+                              vbatresdivval: 0,
+                              vbatresdivmultiplier: 0,}; 1];
+#[no_mangle]
+pub static mut voltageSensorADCConfig_CopyArray: [voltageSensorADCConfig_t; 1]
+           =
+    [voltageSensorADCConfig_t{vbatscale: 0,
+                              vbatresdivval: 0,
+                              vbatresdivmultiplier: 0,}; 1];
 // Initialized in run_static_initializers
 #[no_mangle]
 #[link_section = ".pg_registry"]
@@ -337,18 +313,6 @@ pub static mut voltageSensorADCConfig_Registry: pgRegistry_t =
                      C2RustUnnamed_0{ptr:
                                          0 as *const libc::c_void as
                                              *mut libc::c_void,},};
-#[no_mangle]
-pub static mut voltageSensorADCConfig_SystemArray:
-           [voltageSensorADCConfig_t; 1] =
-    [voltageSensorADCConfig_t{vbatscale: 0,
-                              vbatresdivval: 0,
-                              vbatresdivmultiplier: 0,}; 1];
-#[no_mangle]
-pub static mut voltageSensorADCConfig_CopyArray: [voltageSensorADCConfig_t; 1]
-           =
-    [voltageSensorADCConfig_t{vbatscale: 0,
-                              vbatresdivval: 0,
-                              vbatresdivmultiplier: 0,}; 1];
 #[no_mangle]
 pub unsafe extern "C" fn pgResetFn_voltageSensorADCConfig(mut instance:
                                                               *mut voltageSensorADCConfig_t) {

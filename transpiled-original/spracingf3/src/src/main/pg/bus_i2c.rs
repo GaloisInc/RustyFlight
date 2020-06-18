@@ -85,6 +85,14 @@ pub const I2CDEV_3: I2CDevice = 2;
 pub const I2CDEV_2: I2CDevice = 1;
 pub const I2CDEV_1: I2CDevice = 0;
 pub const I2CINVALID: I2CDevice = -1;
+#[derive ( Copy, Clone )]
+#[repr(C)]
+pub struct i2cConfig_s {
+    pub ioTagScl: ioTag_t,
+    pub ioTagSda: ioTag_t,
+    pub overClock: bool,
+    pub pullUp: bool,
+}
 /* base */
 /* size */
 // The parameter group number, the top 4 bits are reserved for version
@@ -94,16 +102,25 @@ pub const I2CINVALID: I2CDevice = -1;
 // The pointer to update after loading the record into ram.
 // Pointer to init template
 // Pointer to pgResetFunc
-// Macros to convert between CLI bus number and I2CDevice.
-// I2C device address range in 7-bit address mode
-#[derive ( Copy, Clone )]
-#[repr(C)]
-pub struct i2cConfig_s {
-    pub ioTagScl: ioTag_t,
-    pub ioTagSda: ioTag_t,
-    pub overClock: bool,
-    pub pullUp: bool,
-}
+/*
+ * This file is part of Cleanflight and Betaflight.
+ *
+ * Cleanflight and Betaflight are free software. You can redistribute
+ * this software and/or modify this software under the terms of the
+ * GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * Cleanflight and Betaflight are distributed in the hope that they
+ * will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this software.
+ *
+ * If not, see <http://www.gnu.org/licenses/>.
+ */
 pub type i2cConfig_t = i2cConfig_s;
 #[derive ( Copy, Clone )]
 #[repr(C)]
@@ -171,11 +188,11 @@ pub unsafe extern "C" fn pgResetFn_i2cConfig(mut i2cConfig:
     };
 }
 #[no_mangle]
-pub static mut i2cConfig_CopyArray: [i2cConfig_t; 2] =
+pub static mut i2cConfig_SystemArray: [i2cConfig_t; 2] =
     [i2cConfig_t{ioTagScl: 0, ioTagSda: 0, overClock: false, pullUp: false,};
         2];
 #[no_mangle]
-pub static mut i2cConfig_SystemArray: [i2cConfig_t; 2] =
+pub static mut i2cConfig_CopyArray: [i2cConfig_t; 2] =
     [i2cConfig_t{ioTagScl: 0, ioTagSda: 0, overClock: false, pullUp: false,};
         2];
 // Initialized in run_static_initializers

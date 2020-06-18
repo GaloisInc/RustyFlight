@@ -133,6 +133,7 @@ pub type C2RustUnnamed_0 = libc::c_uint;
 pub const GPIO_PuPd_DOWN: C2RustUnnamed_0 = 2;
 pub const GPIO_PuPd_UP: C2RustUnnamed_0 = 1;
 pub const GPIO_PuPd_NOPULL: C2RustUnnamed_0 = 0;
+pub type ioTag_t = uint8_t;
 /*
  * This file is part of Cleanflight and Betaflight.
  *
@@ -154,7 +155,6 @@ pub const GPIO_PuPd_NOPULL: C2RustUnnamed_0 = 0;
  */
 // IO pin identification
 // make sure that ioTag_t can't be assigned into IO_t without warning
-pub type ioTag_t = uint8_t;
 // packet tag to specify IO pin
 pub type IO_t = *mut libc::c_void;
 // NONE initializer for IO_t variable
@@ -410,7 +410,6 @@ pub type mpuConfiguration_t = mpuConfiguration_s;
 pub struct mpuConfiguration_s {
     pub resetFn: mpuResetFnPtr,
 }
-// RF = Register Flag
 pub type mpuResetFnPtr = Option<unsafe extern "C" fn() -> ()>;
 pub type sensorGyroReadDataFuncPtr
     =

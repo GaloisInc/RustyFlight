@@ -90,6 +90,26 @@ unsafe extern "C" fn pgSize(mut reg: *const pgRegistry_t) -> uint16_t {
 // The pointer to update after loading the record into ram.
 // Pointer to init template
 // Pointer to pgResetFunc
+// Helper to iterate over the PG register.  Cheaper than a visitor style callback.
+// Reset configuration to default (by name)
+/* */
+// Declare system config
+/* */
+// Declare system config array
+/* */
+// Register system config
+/* Force external linkage for g++. Catch multi registration */
+/* */
+/* */
+/* */
+/* */
+// Register system config array
+/* */
+/* */
+/* */
+// Emit reset defaults for config.
+// Config must be registered with PG_REGISTER_<xxx>_WITH_RESET_TEMPLATE macro
+/* */
 /*
  * This file is part of Cleanflight and Betaflight.
  *
@@ -155,26 +175,6 @@ pub unsafe extern "C" fn pgResetCopy(mut copy: *mut libc::c_void,
     }
     return 0i32 != 0;
 }
-// Helper to iterate over the PG register.  Cheaper than a visitor style callback.
-// Reset configuration to default (by name)
-/* */
-// Declare system config
-/* */
-// Declare system config array
-/* */
-// Register system config
-/* Force external linkage for g++. Catch multi registration */
-/* */
-/* */
-/* */
-/* */
-// Register system config array
-/* */
-/* */
-/* */
-// Emit reset defaults for config.
-// Config must be registered with PG_REGISTER_<xxx>_WITH_RESET_TEMPLATE macro
-/* */
 #[no_mangle]
 pub unsafe extern "C" fn pgLoad(mut reg: *const pgRegistry_t,
                                 mut from: *const libc::c_void,

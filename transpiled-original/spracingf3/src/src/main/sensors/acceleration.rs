@@ -206,7 +206,6 @@ pub const PGR_SIZE_SYSTEM_FLAG: C2RustUnnamed_1 = 0;
 pub const PGR_SIZE_MASK: C2RustUnnamed_1 = 4095;
 pub const PGR_PGN_VERSION_MASK: C2RustUnnamed_1 = 61440;
 pub const PGR_PGN_MASK: C2RustUnnamed_1 = 4095;
-// function that resets a single parameter group instance
 pub type pgResetFunc
     =
     unsafe extern "C" fn(_: *mut libc::c_void, _: libc::c_int) -> ();
@@ -253,16 +252,29 @@ pub const FEATURE_MOTOR_STOP: C2RustUnnamed_3 = 16;
 pub const FEATURE_RX_SERIAL: C2RustUnnamed_3 = 8;
 pub const FEATURE_INFLIGHT_ACC_CAL: C2RustUnnamed_3 = 4;
 pub const FEATURE_RX_PPM: C2RustUnnamed_3 = 1;
+/*
+ * This file is part of Cleanflight and Betaflight.
+ *
+ * Cleanflight and Betaflight are free software. You can redistribute
+ * this software and/or modify this software under the terms of the
+ * GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * Cleanflight and Betaflight are distributed in the hope that they
+ * will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this software.
+ *
+ * If not, see <http://www.gnu.org/licenses/>.
+ */
+// IO pin identification
+// make sure that ioTag_t can't be assigned into IO_t without warning
+// packet tag to specify IO pin
 pub type IO_t = *mut libc::c_void;
-/* base */
-/* size */
-// The parameter group number, the top 4 bits are reserved for version
-// Size of the group in RAM, the top 4 bits are reserved for flags
-// Address of the group in RAM.
-// Address of the copy in RAM.
-// The pointer to update after loading the record into ram.
-// Pointer to init template
-// Pointer to pgResetFunc
 /*
  * This file is part of Cleanflight and Betaflight.
  *
@@ -288,25 +300,6 @@ pub const I2CDEV_3: I2CDevice = 2;
 pub const I2CDEV_2: I2CDevice = 1;
 pub const I2CDEV_1: I2CDevice = 0;
 pub const I2CINVALID: I2CDevice = -1;
-/*
- * This file is part of Cleanflight and Betaflight.
- *
- * Cleanflight and Betaflight are free software. You can redistribute
- * this software and/or modify this software under the terms of the
- * GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option)
- * any later version.
- *
- * Cleanflight and Betaflight are distributed in the hope that they
- * will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this software.
- *
- * If not, see <http://www.gnu.org/licenses/>.
- */
 pub type busType_e = libc::c_uint;
 pub const BUSTYPE_MPU_SLAVE: busType_e = 3;
 pub const BUSTYPE_SPI: busType_e = 2;
@@ -344,7 +337,6 @@ pub struct deviceSpi_s {
     pub csnPin: IO_t,
 }
 pub type busDevice_t = busDevice_s;
-// Slave I2C on SPI master
 /*
  * This file is part of Cleanflight and Betaflight.
  *
@@ -409,43 +401,6 @@ pub struct accDev_s {
     pub revisionCode: libc::c_char,
     pub filler: [uint8_t; 2],
 }
-/*
- * This file is part of Cleanflight and Betaflight.
- *
- * Cleanflight and Betaflight are free software. You can redistribute
- * this software and/or modify this software under the terms of the
- * GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option)
- * any later version.
- *
- * Cleanflight and Betaflight are distributed in the hope that they
- * will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this software.
- *
- * If not, see <http://www.gnu.org/licenses/>.
- */
-//#define DEBUG_MPU_DATA_READY_INTERRUPT
-// MPU6050
-// MPU3050, 6000 and 6050
-// RA = Register Address
-//[7] PWR_MODE, [6:1] XG_OFFS_TC, [0] OTP_BNK_VLD
-//[7] PWR_MODE, [6:1] YG_OFFS_TC, [0] OTP_BNK_VLD
-//[7] PWR_MODE, [6:1] ZG_OFFS_TC, [0] OTP_BNK_VLD
-//[7:0] X_FINE_GAIN
-//[7:0] Y_FINE_GAIN
-//[7:0] Z_FINE_GAIN
-//[15:0] XA_OFFS
-//[15:0] YA_OFFS
-//[15:0] ZA_OFFS
-// Product ID Register
-//[15:0] XG_OFFS_USR
-//[15:0] YG_OFFS_USR
-//[15:0] ZG_OFFS_USR
-// RF = Register Flag
 pub type mpuDetectionResult_t = mpuDetectionResult_s;
 #[derive ( Copy, Clone )]
 #[repr(C)]
@@ -520,6 +475,9 @@ pub struct int16_flightDynamicsTrims_s {
     pub yaw: int16_t,
 }
 pub type flightDynamicsTrims_def_t = int16_flightDynamicsTrims_s;
+// cutoff frequency for the low pass filter used on the acc z-axis for althold in Hz
+// acc alignment
+// Which acc hardware to use on boards with more than one device
 #[derive ( Copy, Clone )]
 #[repr ( C )]
 pub union flightDynamicsTrims_u {
@@ -669,24 +627,6 @@ static mut accFilter: [biquadFilter_t; 3] =
                     y1: 0.,
                     y2: 0.,}; 3];
 #[no_mangle]
-pub static mut accelerometerConfig_System: accelerometerConfig_t =
-    accelerometerConfig_t{acc_lpf_hz: 0,
-                          acc_align: ALIGN_DEFAULT,
-                          acc_hardware: 0,
-                          acc_high_fsr: false,
-                          accZero: flightDynamicsTrims_u{raw: [0; 3],},
-                          accelerometerTrims:
-                              rollAndPitchTrims_u{raw: [0; 2],},};
-#[no_mangle]
-pub static mut accelerometerConfig_Copy: accelerometerConfig_t =
-    accelerometerConfig_t{acc_lpf_hz: 0,
-                          acc_align: ALIGN_DEFAULT,
-                          acc_hardware: 0,
-                          acc_high_fsr: false,
-                          accZero: flightDynamicsTrims_u{raw: [0; 3],},
-                          accelerometerTrims:
-                              rollAndPitchTrims_u{raw: [0; 2],},};
-#[no_mangle]
 #[link_section = ".pg_registry"]
 #[used]
 pub static mut accelerometerConfig_Registry: pgRegistry_t =
@@ -732,6 +672,24 @@ pub static mut accelerometerConfig_Registry: pgRegistry_t =
             init
         }
     };
+#[no_mangle]
+pub static mut accelerometerConfig_Copy: accelerometerConfig_t =
+    accelerometerConfig_t{acc_lpf_hz: 0,
+                          acc_align: ALIGN_DEFAULT,
+                          acc_hardware: 0,
+                          acc_high_fsr: false,
+                          accZero: flightDynamicsTrims_u{raw: [0; 3],},
+                          accelerometerTrims:
+                              rollAndPitchTrims_u{raw: [0; 2],},};
+#[no_mangle]
+pub static mut accelerometerConfig_System: accelerometerConfig_t =
+    accelerometerConfig_t{acc_lpf_hz: 0,
+                          acc_align: ALIGN_DEFAULT,
+                          acc_hardware: 0,
+                          acc_high_fsr: false,
+                          accZero: flightDynamicsTrims_u{raw: [0; 3],},
+                          accelerometerTrims:
+                              rollAndPitchTrims_u{raw: [0; 2],},};
 #[no_mangle]
 pub unsafe extern "C" fn resetRollAndPitchTrims(mut rollAndPitchTrims:
                                                     *mut rollAndPitchTrims_t) {
@@ -837,29 +795,6 @@ pub unsafe extern "C" fn accDetect(mut dev: *mut accDev_t,
     sensorsSet(SENSOR_ACC as libc::c_int as uint32_t);
     return 1i32 != 0;
 }
-/*
- * This file is part of Cleanflight and Betaflight.
- *
- * Cleanflight and Betaflight are free software. You can redistribute
- * this software and/or modify this software under the terms of the
- * GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option)
- * any later version.
- *
- * Cleanflight and Betaflight are distributed in the hope that they
- * will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this software.
- *
- * If not, see <http://www.gnu.org/licenses/>.
- */
-// Type of accelerometer used/detected
-// cutoff frequency for the low pass filter used on the acc z-axis for althold in Hz
-// acc alignment
-// Which acc hardware to use on boards with more than one device
 #[no_mangle]
 pub unsafe extern "C" fn accInit(mut gyroSamplingInverval: uint32_t) -> bool {
     memset(&mut acc as *mut acc_t as *mut libc::c_void, 0i32,

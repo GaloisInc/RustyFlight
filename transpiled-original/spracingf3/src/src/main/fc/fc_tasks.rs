@@ -2,8 +2,6 @@ use core;
 use libc;
 extern "C" {
     #[no_mangle]
-    fn cmsHandler(currentTimeUs: timeUs_t);
-    #[no_mangle]
     fn feature(mask: uint32_t) -> bool;
     #[no_mangle]
     static mut gyro: gyro_t;
@@ -847,14 +845,13 @@ pub const TASK_PRIORITY_MEDIUM: C2RustUnnamed_4 = 3;
 pub const TASK_PRIORITY_LOW: C2RustUnnamed_4 = 1;
 pub const TASK_PRIORITY_IDLE: C2RustUnnamed_4 = 0;
 pub type cfTaskId_e = libc::c_uint;
-pub const TASK_SELF: cfTaskId_e = 26;
-pub const TASK_NONE: cfTaskId_e = 25;
-pub const TASK_COUNT: cfTaskId_e = 25;
-pub const TASK_PINIOBOX: cfTaskId_e = 24;
-pub const TASK_RCDEVICE: cfTaskId_e = 23;
-pub const TASK_CAMCTRL: cfTaskId_e = 22;
-pub const TASK_VTXCTRL: cfTaskId_e = 21;
-pub const TASK_CMS: cfTaskId_e = 20;
+pub const TASK_SELF: cfTaskId_e = 25;
+pub const TASK_NONE: cfTaskId_e = 24;
+pub const TASK_COUNT: cfTaskId_e = 24;
+pub const TASK_PINIOBOX: cfTaskId_e = 23;
+pub const TASK_RCDEVICE: cfTaskId_e = 22;
+pub const TASK_CAMCTRL: cfTaskId_e = 21;
+pub const TASK_VTXCTRL: cfTaskId_e = 20;
 pub const TASK_ESC_SENSOR: cfTaskId_e = 19;
 pub const TASK_OSD: cfTaskId_e = 18;
 pub const TASK_LEDSTRIP: cfTaskId_e = 17;
@@ -1111,13 +1108,12 @@ pub unsafe extern "C" fn fcTasksInit() {
     setTaskEnabled(TASK_ESC_SENSOR,
                    feature(FEATURE_ESC_SENSOR as libc::c_int as uint32_t));
     setTaskEnabled(TASK_PINIOBOX, 1i32 != 0);
-    setTaskEnabled(TASK_CMS, 1i32 != 0);
     setTaskEnabled(TASK_VTXCTRL, 1i32 != 0);
     setTaskEnabled(TASK_CAMCTRL, 1i32 != 0);
     setTaskEnabled(TASK_RCDEVICE, rcdeviceIsEnabled());
 }
 #[no_mangle]
-pub static mut cfTasks: [cfTask_t; 25] =
+pub static mut cfTasks: [cfTask_t; 24] =
     unsafe {
         [{
              let mut init =
@@ -1583,29 +1579,6 @@ pub static mut cfTasks: [cfTask_t; 25] =
                                        unsafe extern "C" fn(_: timeUs_t)
                                            -> ()),
                           desiredPeriod: 1000000i32 / 100i32,
-                          staticPriority:
-                              TASK_PRIORITY_LOW as libc::c_int as uint8_t,
-                          dynamicPriority: 0,
-                          taskAgeCycles: 0,
-                          taskLatestDeltaTime: 0,
-                          lastExecutedAt: 0,
-                          lastSignaledAt: 0,
-                          movingSumExecutionTime: 0,
-                          maxExecutionTime: 0,
-                          totalExecutionTime: 0,};
-             init
-         },
-         {
-             let mut init =
-                 cfTask_t{taskName:
-                              b"CMS\x00" as *const u8 as *const libc::c_char,
-                          subTaskName: 0 as *const libc::c_char,
-                          checkFunc: None,
-                          taskFunc:
-                              Some(cmsHandler as
-                                       unsafe extern "C" fn(_: timeUs_t)
-                                           -> ()),
-                          desiredPeriod: 1000000i32 / 60i32,
                           staticPriority:
                               TASK_PRIORITY_LOW as libc::c_int as uint8_t,
                           dynamicPriority: 0,

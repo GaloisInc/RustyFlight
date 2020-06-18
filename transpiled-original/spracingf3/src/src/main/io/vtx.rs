@@ -312,6 +312,14 @@ unsafe extern "C" fn vtxSettingsConfigMutable() -> *mut vtxSettingsConfig_t {
  * If not, see <http://www.gnu.org/licenses/>.
  */
 #[no_mangle]
+pub static mut vtxSettingsConfig_Copy: vtxSettingsConfig_t =
+    vtxSettingsConfig_t{band: 0,
+                        channel: 0,
+                        power: 0,
+                        freq: 0,
+                        pitModeFreq: 0,
+                        lowPowerDisarm: 0,};
+#[no_mangle]
 #[link_section = ".pg_registry"]
 #[used]
 pub static mut vtxSettingsConfig_Registry: pgRegistry_t =
@@ -347,14 +355,6 @@ pub static mut vtxSettingsConfig_Registry: pgRegistry_t =
     };
 #[no_mangle]
 pub static mut vtxSettingsConfig_System: vtxSettingsConfig_t =
-    vtxSettingsConfig_t{band: 0,
-                        channel: 0,
-                        power: 0,
-                        freq: 0,
-                        pitModeFreq: 0,
-                        lowPowerDisarm: 0,};
-#[no_mangle]
-pub static mut vtxSettingsConfig_Copy: vtxSettingsConfig_t =
     vtxSettingsConfig_t{band: 0,
                         channel: 0,
                         power: 0,

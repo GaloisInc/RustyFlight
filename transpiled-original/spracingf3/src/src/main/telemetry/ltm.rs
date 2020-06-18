@@ -24,6 +24,9 @@ extern "C" {
                             function: serialPortFunction_e) -> portSharing_e;
     #[no_mangle]
     fn serialWrite(instance: *mut serialPort_t, ch: uint8_t);
+    //
+// runtime
+//
     #[no_mangle]
     fn openSerialPort(identifier: serialPortIdentifier_e,
                       function: serialPortFunction_e,
@@ -65,10 +68,6 @@ pub struct hsvColor_s {
     pub v: uint8_t,
 }
 pub type hsvColor_t = hsvColor_s;
-// 0 - 359
-// 0 - 255
-// 0 - 255
-// millisecond time
 pub type timeMs_t = uint32_t;
 pub type C2RustUnnamed = libc::c_uint;
 pub const WAS_ARMED_WITH_PREARM: C2RustUnnamed = 4;
@@ -234,6 +233,9 @@ pub struct serialPortConfig_s {
     pub blackbox_baudrateIndex: uint8_t,
     pub telemetry_baudrateIndex: uint8_t,
 }
+// 0 - 359
+// 0 - 255
+// 0 - 255
 //
 // configuration
 //

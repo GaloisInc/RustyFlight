@@ -1,33 +1,12 @@
 use core;
 use libc;
 extern "C" {
-    /*
- * This file is part of Cleanflight and Betaflight.
- *
- * Cleanflight and Betaflight are free software. You can redistribute
- * this software and/or modify this software under the terms of the
- * GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option)
- * any later version.
- *
- * Cleanflight and Betaflight are distributed in the hope that they
- * will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this software.
- *
- * If not, see <http://www.gnu.org/licenses/>.
- */
-    // Macros to convert between CLI bus number and I2CDevice.
-    // I2C device address range in 7-bit address mode
-    #[no_mangle]
-    fn i2cRead(device: I2CDevice, addr_: uint8_t, reg: uint8_t, len: uint8_t,
-               buf: *mut uint8_t) -> bool;
     #[no_mangle]
     fn i2cWrite(device: I2CDevice, addr_: uint8_t, reg: uint8_t,
                 data: uint8_t) -> bool;
+    #[no_mangle]
+    fn i2cRead(device: I2CDevice, addr_: uint8_t, reg: uint8_t, len: uint8_t,
+               buf: *mut uint8_t) -> bool;
 }
 pub type __uint8_t = libc::c_uchar;
 pub type __uint16_t = libc::c_ushort;
@@ -59,6 +38,7 @@ pub struct SPI_TypeDef {
     pub RESERVED8: uint16_t,
     /* !< Reserved, 0x22                                                            */
 }
+// packet tag to specify IO pin
 pub type IO_t = *mut libc::c_void;
 pub type I2CDevice = libc::c_int;
 pub const I2CDEV_4: I2CDevice = 3;

@@ -223,9 +223,9 @@ extern "C" {
     #[no_mangle]
     static mut gyro: gyro_t;
     #[no_mangle]
-    static mut accelerometerConfig_System: accelerometerConfig_t;
-    #[no_mangle]
     static mut gyroConfig_System: gyroConfig_t;
+    #[no_mangle]
+    static mut accelerometerConfig_System: accelerometerConfig_t;
     #[no_mangle]
     static mut barometerConfig_System: barometerConfig_t;
     #[no_mangle]
@@ -340,28 +340,6 @@ pub const PGR_SIZE_SYSTEM_FLAG: C2RustUnnamed = 0;
 pub const PGR_SIZE_MASK: C2RustUnnamed = 4095;
 pub const PGR_PGN_VERSION_MASK: C2RustUnnamed = 61440;
 pub const PGR_PGN_MASK: C2RustUnnamed = 4095;
-/*
- * This file is part of Cleanflight and Betaflight.
- *
- * Cleanflight and Betaflight are free software. You can redistribute
- * this software and/or modify this software under the terms of the
- * GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option)
- * any later version.
- *
- * Cleanflight and Betaflight are distributed in the hope that they
- * will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this software.
- *
- * If not, see <http://www.gnu.org/licenses/>.
- */
-// parameter group registry flags
-// documentary
-// function that resets a single parameter group instance
 pub type pgResetFunc
     =
     unsafe extern "C" fn(_: *mut libc::c_void, _: libc::c_int) -> ();
@@ -383,15 +361,6 @@ pub union C2RustUnnamed_0 {
                                           _: libc::c_int) -> ()>,
 }
 pub type pgRegistry_t = pgRegistry_s;
-/* base */
-/* size */
-// The parameter group number, the top 4 bits are reserved for version
-// Size of the group in RAM, the top 4 bits are reserved for flags
-// Address of the group in RAM.
-// Address of the copy in RAM.
-// The pointer to update after loading the record into ram.
-// Pointer to init template
-// Pointer to pgResetFunc
 // millisecond time
 pub type timeMs_t = uint32_t;
 // microsecond time
@@ -648,6 +617,46 @@ pub struct rxConfig_s {
     pub rc_smoothing_input_type: uint8_t,
     pub rc_smoothing_derivative_type: uint8_t,
 }
+// mapping of radio channels to internal RPYTA+ order
+// type of UART-based receiver (0 = spek 10, 1 = spek 11, 2 = sbus). Must be enabled by FEATURE_RX_SERIAL first.
+// invert the serial RX protocol compared to it's default setting
+// allow rx to operate in half duplex mode on F4, ignored for F1 and F3.
+// number of bind pulses for Spektrum satellite receivers
+// whenever we will reset (exit) binding mode after hard reboot
+// Some radios have not a neutral point centered on 1500. can be changed here
+// minimum rc end
+// maximum rc end
+// Camera angle to be scaled into rc commands
+// Throttle setpoint percent where airmode gets activated
+// true to use frame drop flags in the rx protocol
+// offset applied to the RSSI value before it is returned
+// Determines the smoothing algorithm to use: INTERPOLATION or FILTER
+// Filter cutoff frequency for the input filter (0 = auto)
+// Filter cutoff frequency for the setpoint weight derivative filter (0 = auto)
+// Axis to log as debug values when debug_mode = RC_SMOOTHING
+// Input filter type (0 = PT1, 1 = BIQUAD)
+// Derivative filter type (0 = OFF, 1 = PT1, 2 = BIQUAD)
+/*
+ * This file is part of Cleanflight and Betaflight.
+ *
+ * Cleanflight and Betaflight are free software. You can redistribute
+ * this software and/or modify this software under the terms of the
+ * GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * Cleanflight and Betaflight are distributed in the hope that they
+ * will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this software.
+ *
+ * If not, see <http://www.gnu.org/licenses/>.
+ */
+// IO pin identification
+// make sure that ioTag_t can't be assigned into IO_t without warning
 pub type ioTag_t = uint8_t;
 pub const SENSOR_RANGEFINDER: C2RustUnnamed_10 = 16;
 pub const CURRENT_METER_VIRTUAL: currentMeterSource_e = 2;
@@ -916,40 +925,8 @@ pub struct baro_s {
     pub baroPressure: int32_t,
 }
 pub type baroDev_t = baroDev_s;
-#[derive ( Copy, Clone )]
-#[repr(C)]
-pub struct baroDev_s {
-    pub busdev: busDevice_t,
-    pub ut_delay: uint16_t,
-    pub up_delay: uint16_t,
-    pub start_ut: baroOpFuncPtr,
-    pub get_ut: baroOpFuncPtr,
-    pub start_up: baroOpFuncPtr,
-    pub get_up: baroOpFuncPtr,
-    pub calculate: baroCalculateFuncPtr,
-}
-pub type baroCalculateFuncPtr
-    =
-    Option<unsafe extern "C" fn(_: *mut int32_t, _: *mut int32_t) -> ()>;
-// mapping of radio channels to internal RPYTA+ order
-// type of UART-based receiver (0 = spek 10, 1 = spek 11, 2 = sbus). Must be enabled by FEATURE_RX_SERIAL first.
-// invert the serial RX protocol compared to it's default setting
-// allow rx to operate in half duplex mode on F4, ignored for F1 and F3.
-// number of bind pulses for Spektrum satellite receivers
-// whenever we will reset (exit) binding mode after hard reboot
-// Some radios have not a neutral point centered on 1500. can be changed here
-// minimum rc end
-// maximum rc end
-// Camera angle to be scaled into rc commands
-// Throttle setpoint percent where airmode gets activated
-// true to use frame drop flags in the rx protocol
-// offset applied to the RSSI value before it is returned
-// Determines the smoothing algorithm to use: INTERPOLATION or FILTER
-// Filter cutoff frequency for the input filter (0 = auto)
-// Filter cutoff frequency for the setpoint weight derivative filter (0 = auto)
-// Axis to log as debug values when debug_mode = RC_SMOOTHING
-// Input filter type (0 = PT1, 1 = BIQUAD)
-// Derivative filter type (0 = OFF, 1 = PT1, 2 = BIQUAD)
+// Use temperature for telemetry
+// Use pressure for telemetry
 /*
  * This file is part of Cleanflight and Betaflight.
  *
@@ -970,6 +947,21 @@ pub type baroCalculateFuncPtr
  * If not, see <http://www.gnu.org/licenses/>.
  */
 // XXX
+#[derive ( Copy, Clone )]
+#[repr(C)]
+pub struct baroDev_s {
+    pub busdev: busDevice_t,
+    pub ut_delay: uint16_t,
+    pub up_delay: uint16_t,
+    pub start_ut: baroOpFuncPtr,
+    pub get_ut: baroOpFuncPtr,
+    pub start_up: baroOpFuncPtr,
+    pub get_up: baroOpFuncPtr,
+    pub calculate: baroCalculateFuncPtr,
+}
+pub type baroCalculateFuncPtr
+    =
+    Option<unsafe extern "C" fn(_: *mut int32_t, _: *mut int32_t) -> ()>;
 pub type baroOpFuncPtr
     =
     Option<unsafe extern "C" fn(_: *mut baroDev_s) -> ()>;
@@ -999,18 +991,6 @@ pub struct deviceI2C_s {
     pub device: I2CDevice,
     pub address: uint8_t,
 }
-pub type I2CDevice = libc::c_int;
-pub const I2CDEV_4: I2CDevice = 3;
-pub const I2CDEV_3: I2CDevice = 2;
-pub const I2CDEV_2: I2CDevice = 1;
-pub const I2CDEV_1: I2CDevice = 0;
-pub const I2CINVALID: I2CDevice = -1;
-#[derive ( Copy, Clone )]
-#[repr(C)]
-pub struct deviceSpi_s {
-    pub instance: *mut SPI_TypeDef,
-    pub csnPin: IO_t,
-}
 /*
  * This file is part of Cleanflight and Betaflight.
  *
@@ -1030,10 +1010,39 @@ pub struct deviceSpi_s {
  *
  * If not, see <http://www.gnu.org/licenses/>.
  */
-// IO pin identification
-// make sure that ioTag_t can't be assigned into IO_t without warning
+pub type I2CDevice = libc::c_int;
+pub const I2CDEV_4: I2CDevice = 3;
+pub const I2CDEV_3: I2CDevice = 2;
+pub const I2CDEV_2: I2CDevice = 1;
+pub const I2CDEV_1: I2CDevice = 0;
+pub const I2CINVALID: I2CDevice = -1;
+#[derive ( Copy, Clone )]
+#[repr(C)]
+pub struct deviceSpi_s {
+    pub instance: *mut SPI_TypeDef,
+    pub csnPin: IO_t,
+}
 // packet tag to specify IO pin
 pub type IO_t = *mut libc::c_void;
+/*
+ * This file is part of Cleanflight and Betaflight.
+ *
+ * Cleanflight and Betaflight are free software. You can redistribute
+ * this software and/or modify this software under the terms of the
+ * GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * Cleanflight and Betaflight are distributed in the hope that they
+ * will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this software.
+ *
+ * If not, see <http://www.gnu.org/licenses/>.
+ */
 pub type busType_e = libc::c_uint;
 pub const BUSTYPE_MPU_SLAVE: busType_e = 3;
 pub const BUSTYPE_SPI: busType_e = 2;
@@ -1081,6 +1090,7 @@ pub const CW180_DEG: sensor_align_e = 3;
 pub const CW90_DEG: sensor_align_e = 2;
 pub const CW0_DEG: sensor_align_e = 1;
 pub const ALIGN_DEFAULT: sensor_align_e = 0;
+// Slave I2C on SPI master
 /*
  * This file is part of Cleanflight and Betaflight.
  *
@@ -1306,38 +1316,6 @@ pub struct rollAndPitchTrims_s {
     pub roll: int16_t,
     pub pitch: int16_t,
 }
-// extend this data size (from uint16_t)
-// Idle value for DShot protocol, full motor output = 10000
-// Set the minimum throttle command sent to the ESC (Electronic Speed Controller). This is the minimum value that allow motors to run at a idle speed.
-// This is the maximum value for the ESCs at full power this value can be increased up to 2000
-// This is the value for the ESCs when they are not armed. In some cases, this value must be lowered down to 900 for some specific ESCs
-// Magnetic poles in the motors for calculating actual RPM from eRPM provided by ESC telemetry
-// in seconds
-// allow disarm/arm on throttle down + roll left/right
-// allow automatically disarming multicopters after auto_disarm_delay seconds of zero throttle. Disabled when 0
-// Get your magnetic decliniation from here : http://magnetic-declination.com/
-                                            // For example, -6deg 37min, = -637 Japan, format is [sign]dddmm (degreesminutes) default is zero.
-// mag alignment
-// Which mag hardware to use on boards with more than one device
-/*
- * This file is part of Cleanflight and Betaflight.
- *
- * Cleanflight and Betaflight are free software. You can redistribute
- * this software and/or modify this software under the terms of the
- * GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option)
- * any later version.
- *
- * Cleanflight and Betaflight are distributed in the hope that they
- * will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this software.
- *
- * If not, see <http://www.gnu.org/licenses/>.
- */
 pub type gyroConfig_t = gyroConfig_s;
 #[derive ( Copy, Clone )]
 #[repr(C)]
@@ -1424,14 +1402,25 @@ pub struct voltageSensorADCConfig_s {
     pub vbatresdivmultiplier: uint8_t,
 }
 pub const VOLTAGE_SENSOR_ADC_VBAT: C2RustUnnamed_11 = 0;
-// gyro alignment
-// people keep forgetting that moving model while init results in wrong gyro offsets. and then they never reset gyro. so this is now on by default.
-// Gyro sample divider
-// gyro DLPF setting
-// gyro 32khz DLPF setting
-// Lowpass primary/secondary
-// Gyro calibration duration in 1/100 second
-// bandpass quality factor, 100 for steep sided bandpass
+// extend this data size (from uint16_t)
+// Idle value for DShot protocol, full motor output = 10000
+// Set the minimum throttle command sent to the ESC (Electronic Speed Controller). This is the minimum value that allow motors to run at a idle speed.
+// This is the maximum value for the ESCs at full power this value can be increased up to 2000
+// This is the value for the ESCs when they are not armed. In some cases, this value must be lowered down to 900 for some specific ESCs
+// Magnetic poles in the motors for calculating actual RPM from eRPM provided by ESC telemetry
+// in seconds
+// allow disarm/arm on throttle down + roll left/right
+// allow automatically disarming multicopters after auto_disarm_delay seconds of zero throttle. Disabled when 0
+// Get your magnetic decliniation from here : http://magnetic-declination.com/
+                                            // For example, -6deg 37min, = -637 Japan, format is [sign]dddmm (degreesminutes) default is zero.
+// mag alignment
+// Which mag hardware to use on boards with more than one device
+// Also used as XCLR (positive logic) for BMP085
+// Barometer hardware to use
+// size of baro filter array
+// additional LPF to reduce baro noise
+// apply Complimentary Filter to keep the calculated velocity based on baro velocity (i.e. near real velocity)
+// apply CF to use ACC for height estimation
 // introduce a deadband around the stick center for pitch and roll axis. Must be greater than zero.
 // introduce a deadband around the stick center for yaw axis. Must be greater than zero.
 // defines the neutral zone of throttle stick during altitude hold, default setting is +/-40
@@ -1694,11 +1683,11 @@ pub const VOLTAGE_SENSOR_ADC_5V: C2RustUnnamed_11 = 3;
 pub const VOLTAGE_SENSOR_ADC_9V: C2RustUnnamed_11 = 2;
 pub const VOLTAGE_SENSOR_ADC_12V: C2RustUnnamed_11 = 1;
 #[inline]
-unsafe extern "C" fn blackboxConfigMutable() -> *mut blackboxConfig_t {
+unsafe extern "C" fn blackboxConfig() -> *const blackboxConfig_t {
     return &mut blackboxConfig_System;
 }
 #[inline]
-unsafe extern "C" fn blackboxConfig() -> *const blackboxConfig_t {
+unsafe extern "C" fn blackboxConfigMutable() -> *mut blackboxConfig_t {
     return &mut blackboxConfig_System;
 }
 #[inline]
@@ -1746,13 +1735,40 @@ unsafe extern "C" fn pidConfig() -> *const pidConfig_t {
 }
 #[no_mangle]
 pub static mut inputSource_e: C2RustUnnamed_9 = INPUT_STABILIZED_ROLL;
-#[inline]
-unsafe extern "C" fn accelerometerConfig() -> *const accelerometerConfig_t {
-    return &mut accelerometerConfig_System;
-}
+/*
+ * This file is part of Cleanflight and Betaflight.
+ *
+ * Cleanflight and Betaflight are free software. You can redistribute
+ * this software and/or modify this software under the terms of the
+ * GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * Cleanflight and Betaflight are distributed in the hope that they
+ * will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this software.
+ *
+ * If not, see <http://www.gnu.org/licenses/>.
+ */
+// gyro alignment
+// people keep forgetting that moving model while init results in wrong gyro offsets. and then they never reset gyro. so this is now on by default.
+// Gyro sample divider
+// gyro DLPF setting
+// gyro 32khz DLPF setting
+// Lowpass primary/secondary
+// Gyro calibration duration in 1/100 second
+// bandpass quality factor, 100 for steep sided bandpass
 #[inline]
 unsafe extern "C" fn gyroConfig() -> *const gyroConfig_t {
     return &mut gyroConfig_System;
+}
+#[inline]
+unsafe extern "C" fn accelerometerConfig() -> *const accelerometerConfig_t {
+    return &mut accelerometerConfig_System;
 }
 #[inline]
 unsafe extern "C" fn barometerConfig() -> *const barometerConfig_t {
@@ -1799,6 +1815,9 @@ unsafe extern "C" fn compassConfig() -> *const compassConfig_t {
  * If not, see <http://www.gnu.org/licenses/>.
  */
 #[no_mangle]
+pub static mut blackboxConfig_System: blackboxConfig_t =
+    blackboxConfig_t{p_ratio: 0, device: 0, record_acc: 0, mode: 0,};
+#[no_mangle]
 pub static mut blackboxConfig_Copy: blackboxConfig_t =
     blackboxConfig_t{p_ratio: 0, device: 0, record_acc: 0, mode: 0,};
 #[no_mangle]
@@ -1835,9 +1854,6 @@ pub static mut blackboxConfig_Registry: pgRegistry_t =
             init
         }
     };
-#[no_mangle]
-pub static mut blackboxConfig_System: blackboxConfig_t =
-    blackboxConfig_t{p_ratio: 0, device: 0, record_acc: 0, mode: 0,};
 #[no_mangle]
 #[link_section = ".pg_resetdata"]
 #[used]

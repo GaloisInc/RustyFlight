@@ -18,39 +18,20 @@ extern "C" {
     #[no_mangle]
     fn pwmWriteMotor(index: uint8_t, value: libc::c_float);
     #[no_mangle]
+    fn pwmShutdownPulsesForAllMotors(motorCount_0: uint8_t);
+    #[no_mangle]
     fn pwmAreMotorsEnabled() -> bool;
     #[no_mangle]
     fn pwmCompleteMotorUpdate(motorCount_0: uint8_t);
-    #[no_mangle]
-    fn pwmShutdownPulsesForAllMotors(motorCount_0: uint8_t);
     #[no_mangle]
     fn timerioTagGetByUsage(usageFlag: timerUsageFlag_e, index: uint8_t)
      -> ioTag_t;
     #[no_mangle]
     static mut hardwareMotorType: uint8_t;
-    /*
- * This file is part of Cleanflight and Betaflight.
- *
- * Cleanflight and Betaflight are free software. You can redistribute
- * this software and/or modify this software under the terms of the
- * GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option)
- * any later version.
- *
- * Cleanflight and Betaflight are distributed in the hope that they
- * will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this software.
- *
- * If not, see <http://www.gnu.org/licenses/>.
- */
-    #[no_mangle]
-    fn delay(ms: timeMs_t);
     #[no_mangle]
     fn delayMicroseconds(us: timeUs_t);
+    #[no_mangle]
+    fn delay(ms: timeMs_t);
     #[no_mangle]
     static mut currentPidProfile: *mut pidProfile_s;
     #[no_mangle]
@@ -754,9 +735,6 @@ pub unsafe extern "C" fn pgResetFn_motorConfig(mut motorConfig_0:
 #[no_mangle]
 pub static mut customMotorMixer_CopyArray: [motorMixer_t; 8] =
     [motorMixer_t{throttle: 0., roll: 0., pitch: 0., yaw: 0.,}; 8];
-#[no_mangle]
-pub static mut customMotorMixer_SystemArray: [motorMixer_t; 8] =
-    [motorMixer_t{throttle: 0., roll: 0., pitch: 0., yaw: 0.,}; 8];
 // Initialized in run_static_initializers
 #[no_mangle]
 #[link_section = ".pg_registry"]
@@ -771,6 +749,9 @@ pub static mut customMotorMixer_Registry: pgRegistry_t =
                      C2RustUnnamed_1{ptr:
                                          0 as *const libc::c_void as
                                              *mut libc::c_void,},};
+#[no_mangle]
+pub static mut customMotorMixer_SystemArray: [motorMixer_t; 8] =
+    [motorMixer_t{throttle: 0., roll: 0., pitch: 0., yaw: 0.,}; 8];
 static mut motorCount: uint8_t = 0;
 static mut motorMixRange: libc::c_float = 0.;
 #[no_mangle]

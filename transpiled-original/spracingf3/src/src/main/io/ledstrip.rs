@@ -9,40 +9,6 @@ extern "C" {
      -> *mut libc::c_void;
     #[no_mangle]
     fn strchr(_: *const libc::c_char, _: libc::c_int) -> *mut libc::c_char;
-    /*
- * This file is part of Cleanflight and Betaflight.
- *
- * Cleanflight and Betaflight are free software. You can redistribute
- * this software and/or modify this software under the terms of the
- * GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option)
- * any later version.
- *
- * Cleanflight and Betaflight are distributed in the hope that they
- * will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this software.
- *
- * If not, see <http://www.gnu.org/licenses/>.
- */
-    // expand to t if bit is 1, f when bit is 0. Other bit values are not supported
-    // Expand all argumens and call macro with them. When expansion of some argument contains ',', it will be passed as multiple arguments
-// #define TAKE3(_1,_2,_3) CONCAT3(_1,_2,_3)
-// #define MULTI2 A,B
-// PP_CALL(TAKE3, MULTI2, C) expands to ABC
-    /*
-http://resnet.uoregon.edu/~gurney_j/jmpc/bitwise.html
-*/
-    /*
- * https://groups.google.com/forum/?hl=en#!msg/comp.lang.c/attFnqwhvGk/sGBKXvIkY3AJ
- * Return (v ? floor(log2(v)) : 0) when 0 <= v < 1<<[8, 16, 32, 64].
- * Inefficient algorithm, intended for compile-time constants.
- */
-    // non ISO variant from linux kernel; checks ptr type, but triggers 'ISO C forbids braced-groups within expressions [-Wpedantic]'
-//  __extension__ is here to disable this warning
     // using memcpy_fn will force memcpy function call, instead of inlining it. In most cases function call takes fewer instructions
 //  than inlined version (inlining is cheaper for very small moves < 8 bytes / 2 store instructions)
     #[no_mangle]
@@ -59,15 +25,15 @@ http://resnet.uoregon.edu/~gurney_j/jmpc/bitwise.html
     #[no_mangle]
     fn getLedHsv(index: uint16_t, color: *mut hsvColor_t);
     #[no_mangle]
-    fn setStripColor(color: *const hsvColor_t);
-    #[no_mangle]
-    fn isWS2811LedStripReady() -> bool;
-    #[no_mangle]
     fn ws2811UpdateStrip(ledFormat: ledStripFormatRGB_e);
     #[no_mangle]
     fn ws2811LedStripInit(ioTag: ioTag_t);
     #[no_mangle]
     fn setLedHsv(index: uint16_t, color: *const hsvColor_t);
+    #[no_mangle]
+    fn setStripColor(color: *const hsvColor_t);
+    #[no_mangle]
+    fn isWS2811LedStripReady() -> bool;
     #[no_mangle]
     fn vtxCommonDevice() -> *mut vtxDevice_t;
     #[no_mangle]
@@ -633,11 +599,11 @@ unsafe extern "C" fn atoi(mut __nptr: *const libc::c_char) -> libc::c_int {
                   10i32) as libc::c_int;
 }
 #[inline]
-unsafe extern "C" fn ledStripConfigMutable() -> *mut ledStripConfig_t {
+unsafe extern "C" fn ledStripConfig() -> *const ledStripConfig_t {
     return &mut ledStripConfig_System;
 }
 #[inline]
-unsafe extern "C" fn ledStripConfig() -> *const ledStripConfig_t {
+unsafe extern "C" fn ledStripConfigMutable() -> *mut ledStripConfig_t {
     return &mut ledStripConfig_System;
 }
 #[no_mangle]

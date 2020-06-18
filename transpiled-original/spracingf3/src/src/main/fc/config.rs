@@ -10,13 +10,13 @@ extern "C" {
     #[no_mangle]
     fn writeConfigToEEPROM();
     #[no_mangle]
+    fn pgResetAll();
+    #[no_mangle]
     fn featureConfigured(mask: uint32_t) -> bool;
     #[no_mangle]
     fn featureSet(mask: uint32_t);
     #[no_mangle]
     fn featureClear(mask: uint32_t);
-    #[no_mangle]
-    fn pgResetAll();
     #[no_mangle]
     fn timerGetByTag(ioTag: ioTag_t) -> *const timerHardware_t;
     #[no_mangle]
@@ -32,11 +32,9 @@ extern "C" {
     #[no_mangle]
     fn isModeActivationConditionPresent(modeId: boxId_e) -> bool;
     #[no_mangle]
-    fn useAdjustmentConfig(pidProfileToUse: *mut pidProfile_s);
-    #[no_mangle]
     fn resetAdjustmentStates();
-    // allow disarm/arm on throttle down + roll left/right
-    // allow automatically disarming multicopters after auto_disarm_delay seconds of zero throttle. Disabled when 0
+    #[no_mangle]
+    fn useAdjustmentConfig(pidProfileToUse: *mut pidProfile_s);
     #[no_mangle]
     fn useRcControlsConfig(pidProfileToUse: *mut pidProfile_s);
     #[no_mangle]
@@ -47,11 +45,11 @@ extern "C" {
     fn imuConfigure(throttle_correction_angle: uint16_t,
                     throttle_correction_value: uint8_t);
     #[no_mangle]
+    static mut motorConfig_System: motorConfig_t;
+    #[no_mangle]
     static mixers: [mixer_t; 0];
     #[no_mangle]
     static mut mixerConfig_System: mixerConfig_t;
-    #[no_mangle]
-    static mut motorConfig_System: motorConfig_t;
     #[no_mangle]
     static mut pidProfiles_SystemArray: [pidProfile_t; 3];
     #[no_mangle]
@@ -64,61 +62,15 @@ extern "C" {
     fn beeperConfirmationBeeps(beepCount: uint8_t);
     #[no_mangle]
     fn reevaluateLedConfig();
-    /*
- * This file is part of Cleanflight and Betaflight.
- *
- * Cleanflight and Betaflight are free software. You can redistribute
- * this software and/or modify this software under the terms of the
- * GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option)
- * any later version.
- *
- * Cleanflight and Betaflight are distributed in the hope that they
- * will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this software.
- *
- * If not, see <http://www.gnu.org/licenses/>.
- */
-    // 1
-    // 2
-    // 4
-    // 8
-    // 16
-    // 32
-    // 64
-    // 128
-    // 512
-    // 1024
-    // 2048
-    // 4096
-    // 8192
-    // 16384
-    // 32768
-    // serial port identifiers are now fixed, these values are used by MSP commands.
-    //
-// runtime
-//
-    //
-// configuration
-//
-    // not used for all telemetry systems, e.g. HoTT only works at 19200.
-    // which byte is used to reboot. Default 'R', could be changed carefully to something else.
-    //
-// configuration
-//
     #[no_mangle]
     fn findSerialPortConfig(function: serialPortFunction_e)
      -> *mut serialPortConfig_t;
     #[no_mangle]
+    fn isSerialConfigValid(serialConfig_0: *const serialConfig_t) -> bool;
+    #[no_mangle]
     static mut serialConfig_System: serialConfig_t;
     #[no_mangle]
     fn pgResetFn_serialConfig(serialConfig_0: *mut serialConfig_t);
-    #[no_mangle]
-    fn isSerialConfigValid(serialConfig_0: *const serialConfig_t) -> bool;
     #[no_mangle]
     static mut beeperConfig_System: beeperConfig_t;
     #[no_mangle]
@@ -257,6 +209,30 @@ pub const PGR_PGN_MASK: C2RustUnnamed_0 = 4095;
 pub type pgResetFunc
     =
     unsafe extern "C" fn(_: *mut libc::c_void, _: libc::c_int) -> ();
+/*
+ * This file is part of Cleanflight and Betaflight.
+ *
+ * Cleanflight and Betaflight are free software. You can redistribute
+ * this software and/or modify this software under the terms of the
+ * GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * Cleanflight and Betaflight are distributed in the hope that they
+ * will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this software.
+ *
+ * If not, see <http://www.gnu.org/licenses/>.
+ */
+// parameter group registry flags
+// documentary
+// function that resets a single parameter group instance
+/* base */
+/* size */
 #[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct pgRegistry_s {
@@ -459,7 +435,6 @@ pub union flightDynamicsTrims_u {
     pub raw: [int16_t; 3],
     pub values: flightDynamicsTrims_def_t,
 }
-pub type flightDynamicsTrims_def_t = int16_flightDynamicsTrims_s;
 // in seconds
 // Limit to the accumulated error
 // the angle when the throttle correction is maximal. in 0.1 degres, ex 225 = 22.5 ,30.0, 450 = 45.0 deg
@@ -483,6 +458,7 @@ pub type flightDynamicsTrims_def_t = int16_flightDynamicsTrims_s;
  *
  * If not, see <http://www.gnu.org/licenses/>.
  */
+pub type flightDynamicsTrims_def_t = int16_flightDynamicsTrims_s;
 #[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct int16_flightDynamicsTrims_s {
@@ -1215,11 +1191,11 @@ pub static mut modeColors: *const modeColorIndexes_t =
 pub static mut specialColors: specialColorIndexes_t =
     specialColorIndexes_t{color: [0; 11],};
 #[inline]
-unsafe extern "C" fn serialConfigMutable() -> *mut serialConfig_t {
+unsafe extern "C" fn serialConfig() -> *const serialConfig_t {
     return &mut serialConfig_System;
 }
 #[inline]
-unsafe extern "C" fn serialConfig() -> *const serialConfig_t {
+unsafe extern "C" fn serialConfigMutable() -> *mut serialConfig_t {
     return &mut serialConfig_System;
 }
 #[inline]
@@ -1231,19 +1207,19 @@ unsafe extern "C" fn beeperConfig() -> *const beeperConfig_t {
     return &mut beeperConfig_System;
 }
 #[inline]
-unsafe extern "C" fn beeperDevConfigMutable() -> *mut beeperDevConfig_t {
-    return &mut beeperDevConfig_System;
-}
-#[inline]
 unsafe extern "C" fn beeperDevConfig() -> *const beeperDevConfig_t {
     return &mut beeperDevConfig_System;
 }
 #[inline]
-unsafe extern "C" fn rxConfig() -> *const rxConfig_t {
-    return &mut rxConfig_System;
+unsafe extern "C" fn beeperDevConfigMutable() -> *mut beeperDevConfig_t {
+    return &mut beeperDevConfig_System;
 }
 #[inline]
 unsafe extern "C" fn rxConfigMutable() -> *mut rxConfig_t {
+    return &mut rxConfig_System;
+}
+#[inline]
+unsafe extern "C" fn rxConfig() -> *const rxConfig_t {
     return &mut rxConfig_System;
 }
 #[inline]

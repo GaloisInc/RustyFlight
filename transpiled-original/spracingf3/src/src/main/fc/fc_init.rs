@@ -34,10 +34,6 @@ extern "C" {
     #[no_mangle]
     fn feature(mask: uint32_t) -> bool;
     #[no_mangle]
-    fn cmsDisplayPortRegister(pDisplay: *mut displayPort_t) -> bool;
-    #[no_mangle]
-    fn cmsInit();
-    #[no_mangle]
     fn i2cInit(device: I2CDevice);
     #[no_mangle]
     fn i2cHardwareConfigure(i2cConfig_0: *const i2cConfig_s);
@@ -71,11 +67,11 @@ extern "C" {
     #[no_mangle]
     fn spiPinConfigure(pConfig: *const spiPinConfig_s);
     #[no_mangle]
-    static mut flashConfig_System: flashConfig_t;
-    #[no_mangle]
     fn IOInitGlobal();
     #[no_mangle]
     fn flashInit(flashConfig_0: *const flashConfig_t) -> bool;
+    #[no_mangle]
+    static mut flashConfig_System: flashConfig_t;
     #[no_mangle]
     static mut serialPinConfig_System: serialPinConfig_t;
     #[no_mangle]
@@ -205,9 +201,9 @@ extern "C" {
     #[no_mangle]
     static mut spiPinConfig_SystemArray: [spiPinConfig_t; 3];
     #[no_mangle]
-    static mut pinioConfig_System: pinioConfig_t;
-    #[no_mangle]
     fn pinioInit(pinioConfig_0: *const pinioConfig_s);
+    #[no_mangle]
+    static mut pinioConfig_System: pinioConfig_t;
     #[no_mangle]
     static mut pinioBoxConfig_System: pinioBoxConfig_t;
     #[no_mangle]
@@ -222,27 +218,6 @@ extern "C" {
     // Stores the RX RSSI channel.
     #[no_mangle]
     fn spektrumBind(rxConfig_0: *mut rxConfig_t);
-    /*
- * This file is part of Cleanflight and Betaflight.
- *
- * Cleanflight and Betaflight are free software. You can redistribute
- * this software and/or modify this software under the terms of the
- * GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option)
- * any later version.
- *
- * Cleanflight and Betaflight are distributed in the hope that they
- * will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this software.
- *
- * If not, see <http://www.gnu.org/licenses/>.
- */
-    #[no_mangle]
-    fn displayPortSrxlInit() -> *mut displayPort_t;
     #[no_mangle]
     static mut serialConfig_System: serialConfig_t;
     //
@@ -282,8 +257,6 @@ extern "C" {
  */
     #[no_mangle]
     fn pinioBoxInit(pinioBoxConfig_0: *const pinioBoxConfig_t);
-    #[no_mangle]
-    fn displayPortMspInit() -> *mut displayPort_s;
     #[no_mangle]
     fn vtxInit();
     #[no_mangle]
@@ -549,31 +522,6 @@ pub struct spiPinConfig_s {
     pub ioTagMiso: ioTag_t,
     pub ioTagMosi: ioTag_t,
 }
-// The update rate of motor outputs (50-498Hz)
-// Pwm Protocol
-// Active-High vs Active-Low. Useful for brushed FCs converted for brushless operation
-// PWM values, in milliseconds, common range is 1000-2000 (1ms to 2ms)
-// This is the value for servos when they should be in the middle. e.g. 1500.
-// The update rate of servo outputs (50-498Hz)
-/*
- * This file is part of Cleanflight and Betaflight.
- *
- * Cleanflight and Betaflight are free software. You can redistribute
- * this software and/or modify this software under the terms of the
- * GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option)
- * any later version.
- *
- * Cleanflight and Betaflight are distributed in the hope that they
- * will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this software.
- *
- * If not, see <http://www.gnu.org/licenses/>.
- */
 #[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct flashConfig_s {
@@ -595,6 +543,12 @@ pub struct statusLedConfig_s {
     pub ioTags: [ioTag_t; 3],
     pub inversion: uint8_t,
 }
+// The update rate of motor outputs (50-498Hz)
+// Pwm Protocol
+// Active-High vs Active-Low. Useful for brushed FCs converted for brushless operation
+// PWM values, in milliseconds, common range is 1000-2000 (1ms to 2ms)
+// This is the value for servos when they should be in the middle. e.g. 1500.
+// The update rate of servo outputs (50-498Hz)
 /*
  * This file is part of Cleanflight and Betaflight.
  *
@@ -1260,25 +1214,6 @@ unsafe extern "C" fn spiPinConfig(mut _index: libc::c_int)
 unsafe extern "C" fn pinioConfig() -> *const pinioConfig_t {
     return &mut pinioConfig_System;
 }
-/*
- * This file is part of Cleanflight and Betaflight.
- *
- * Cleanflight and Betaflight are free software. You can redistribute
- * this software and/or modify this software under the terms of the
- * GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option)
- * any later version.
- *
- * Cleanflight and Betaflight are distributed in the hope that they
- * will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this software.
- *
- * If not, see <http://www.gnu.org/licenses/>.
- */
 #[inline]
 unsafe extern "C" fn pinioBoxConfig() -> *const pinioBoxConfig_t {
     return &mut pinioBoxConfig_System;
@@ -1527,21 +1462,13 @@ pub unsafe extern "C" fn init() {
     /*
  * CMS, display devices and OSD
  */
-    cmsInit();
     let mut osdDisplayPort: *mut displayPort_t = 0 as *mut displayPort_t;
     //The OSD need to be initialised after GYRO to avoid GYRO initialisation failure on some targets
     if feature(FEATURE_OSD as libc::c_int as uint32_t) {
         // OSD over MSP; not supported (yet)
-        osdDisplayPort = displayPortMspInit();
         // osdInit  will register with CMS by itself.
         osdInit(osdDisplayPort);
     }
-    // If BFOSD is not active, then register MSP_DISPLAYPORT as a CMS device.
-    if osdDisplayPort.is_null() {
-        cmsDisplayPortRegister(displayPortMspInit());
-    }
-    // Register the srxl Textgen telemetry sensor as a displayport device
-    cmsDisplayPortRegister(displayPortSrxlInit());
     ledStripInit();
     if feature(FEATURE_LED_STRIP as libc::c_int as uint32_t) {
         ledStripEnable();

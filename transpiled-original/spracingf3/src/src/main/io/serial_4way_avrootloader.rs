@@ -5,21 +5,21 @@ extern "C" {
     fn micros() -> timeUs_t;
     #[no_mangle]
     fn millis() -> timeMs_t;
-    #[no_mangle]
-    static mut selected_esc: uint8_t;
-    #[no_mangle]
-    fn isEscHi(selEsc: uint8_t) -> bool;
-    #[no_mangle]
-    fn setEscHi(selEsc: uint8_t);
-    #[no_mangle]
-    fn setEscLo(selEsc: uint8_t);
-    #[no_mangle]
-    fn setEscInput(selEsc: uint8_t);
-    #[no_mangle]
-    fn setEscOutput(selEsc: uint8_t);
     //extern uint8_32_u DeviceInfo;
     #[no_mangle]
     fn isMcuConnected() -> bool;
+    #[no_mangle]
+    fn setEscLo(selEsc: uint8_t);
+    #[no_mangle]
+    fn isEscHi(selEsc: uint8_t) -> bool;
+    #[no_mangle]
+    static mut selected_esc: uint8_t;
+    #[no_mangle]
+    fn setEscOutput(selEsc: uint8_t);
+    #[no_mangle]
+    fn setEscHi(selEsc: uint8_t);
+    #[no_mangle]
+    fn setEscInput(selEsc: uint8_t);
 }
 pub type __uint8_t = libc::c_uchar;
 pub type __uint16_t = libc::c_ushort;
@@ -27,6 +27,18 @@ pub type __uint32_t = libc::c_uint;
 pub type uint8_t = __uint8_t;
 pub type uint16_t = __uint16_t;
 pub type uint32_t = __uint32_t;
+// millisecond time
+pub type timeMs_t = uint32_t;
+// microsecond time
+pub type timeUs_t = uint32_t;
+#[derive ( Copy, Clone )]
+#[repr(C)]
+pub struct ioMem_s {
+    pub D_NUM_BYTES: uint8_t,
+    pub D_FLASH_ADDR_H: uint8_t,
+    pub D_FLASH_ADDR_L: uint8_t,
+    pub D_PTR_I: *mut uint8_t,
+}
 /*
  * This file is part of Cleanflight and Betaflight.
  *
@@ -46,19 +58,9 @@ pub type uint32_t = __uint32_t;
  *
  * If not, see <http://www.gnu.org/licenses/>.
  */
-// time difference, 32 bits always sufficient
-// millisecond time
-pub type timeMs_t = uint32_t;
-// microsecond time
-pub type timeUs_t = uint32_t;
-#[derive ( Copy, Clone )]
-#[repr(C)]
-pub struct ioMem_s {
-    pub D_NUM_BYTES: uint8_t,
-    pub D_FLASH_ADDR_H: uint8_t,
-    pub D_FLASH_ADDR_L: uint8_t,
-    pub D_PTR_I: *mut uint8_t,
-}
+/*
+ * Author: 4712
+*/
 pub type ioMem_t = ioMem_s;
 #[derive ( Copy, Clone )]
 #[repr ( C )]

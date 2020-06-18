@@ -45,7 +45,6 @@ pub struct SPI_TypeDef {
     pub RESERVED8: uint16_t,
     /* !< Reserved, 0x22                                                            */
 }
-pub type ioTag_t = uint8_t;
 /*
  * This file is part of Cleanflight and Betaflight.
  *
@@ -67,6 +66,7 @@ pub type ioTag_t = uint8_t;
  */
 // IO pin identification
 // make sure that ioTag_t can't be assigned into IO_t without warning
+pub type ioTag_t = uint8_t;
 // packet tag to specify IO pin
 pub type IO_t = *mut libc::c_void;
 /*
@@ -187,8 +187,8 @@ pub unsafe extern "C" fn spiDeviceByInstance(mut instance: *mut SPI_TypeDef)
            (0x40000000i32 as uint32_t).wrapping_add(0x3800i32 as libc::c_uint)
                as *mut SPI_TypeDef {
         return SPIDEV_2
-    }
-    return SPIINVALID;
+    } // read transaction
+    return SPIINVALID; // read transaction
 }
 #[no_mangle]
 pub unsafe extern "C" fn spiInstanceByDevice(mut device: SPIDevice)
@@ -196,44 +196,13 @@ pub unsafe extern "C" fn spiInstanceByDevice(mut device: SPIDevice)
     if device as libc::c_int >= 3i32 { return 0 as *mut SPI_TypeDef }
     return spiDevice[device as usize].dev;
 }
-/*
- * This file is part of Cleanflight and Betaflight.
- *
- * Cleanflight and Betaflight are free software. You can redistribute
- * this software and/or modify this software under the terms of the
- * GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option)
- * any later version.
- *
- * Cleanflight and Betaflight are distributed in the hope that they
- * will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this software.
- *
- * If not, see <http://www.gnu.org/licenses/>.
- */
-/*
-  Flash M25p16 tolerates 20mhz, SPI_CLOCK_FAST should sit around 20 or less.
-*/
-//00.56250 MHz
-//09.00000 MHz
-//18.00000 MHz
-//18.00000 MHz
-// Macros to convert between CLI bus number and SPIDevice.
-// Size of SPI CS pre-initialization tag arrays
 #[no_mangle]
 pub unsafe extern "C" fn spiInit(mut device: SPIDevice) -> bool {
     match device as libc::c_int {
         -1 => { return 0i32 != 0 }
-        1 => {
-            spiInitDevice(device); // read transaction
-            return 1i32 != 0
-        }
+        1 => { spiInitDevice(device); return 1i32 != 0 }
         0 | 2 | 3 | _ => { }
-    } // read transaction
+    }
     return 0i32 != 0;
 }
 #[no_mangle]

@@ -7,27 +7,6 @@ extern "C" {
     #[no_mangle]
     fn memcmp(_: *const libc::c_void, _: *const libc::c_void,
               _: libc::c_ulong) -> libc::c_int;
-    /*
- * This file is part of Cleanflight and Betaflight.
- *
- * Cleanflight and Betaflight are free software. You can redistribute
- * this software and/or modify this software under the terms of the
- * GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option)
- * any later version.
- *
- * Cleanflight and Betaflight are distributed in the hope that they
- * will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this software.
- *
- * If not, see <http://www.gnu.org/licenses/>.
- */
-    #[no_mangle]
-    static mut cmsInMenu: bool;
     #[no_mangle]
     fn crc16_ccitt_sbuf_append(dst: *mut sbuf_s, start: *mut uint8_t);
     #[no_mangle]
@@ -38,9 +17,6 @@ extern "C" {
     fn sbufWriteU16BigEndian(dst: *mut sbuf_t, val: uint16_t);
     #[no_mangle]
     fn sbufFill(dst: *mut sbuf_t, data: uint8_t, len: libc::c_int);
-    #[no_mangle]
-    fn sbufWriteData(dst: *mut sbuf_t, data: *const libc::c_void,
-                     len: libc::c_int);
     #[no_mangle]
     fn sbufBytesRemaining(buf: *mut sbuf_t) -> libc::c_int;
     #[no_mangle]
@@ -386,61 +362,6 @@ pub unsafe extern "C" fn srxlFrameFlightPackCurrent(mut dst: *mut sbuf_t,
     }
     return 0i32 != 0;
 }
-// Text Generator COLS
-/*
-typedef struct
-{
-    UINT8       identifier;
-    UINT8       sID;               // Secondary ID
-    UINT8       lineNumber;        // Line number to display (0 = title, 1-8 for general, 254 = Refresh backlight, 255 = Erase all text on screen)
-    char        text[13];          // 0-terminated text when < 13 chars
-} STRU_SPEKTRUM_SRXL_TEXTGEN;
-*/
-static mut srxlTextBuff: [[libc::c_char; 13]; 9] = [[0; 13]; 9];
-static mut lineSent: [bool; 9] = [false; 9];
-// Airware 1.20
-//#define SPEKTRUM_SRXL_TEXTGEN_BUFFER_COLS 13 // Airware 1.21
-//**************************************************************************
-// API Running in external client task context. E.g. in the CMS task
-#[no_mangle]
-pub unsafe extern "C" fn spektrumTmTextGenPutChar(mut col: uint8_t,
-                                                  mut row: uint8_t,
-                                                  mut c: libc::c_char)
- -> libc::c_int {
-    if (row as libc::c_int) < 9i32 && (col as libc::c_int) < 12i32 {
-        // Only update and force a tm transmision if something has actually changed.
-        if srxlTextBuff[row as usize][col as usize] as libc::c_int !=
-               c as libc::c_int {
-            srxlTextBuff[row as usize][col as usize] = c;
-            lineSent[row as usize] = 0i32 != 0
-        }
-    }
-    return 0i32;
-}
-//**************************************************************************
-#[no_mangle]
-pub unsafe extern "C" fn srxlFrameText(mut dst: *mut sbuf_t,
-                                       mut currentTimeUs: timeUs_t) -> bool {
-    static mut lineNo: uint8_t = 0i32 as uint8_t;
-    let mut lineCount: libc::c_int = 0i32;
-    // Skip already sent lines...
-    while lineSent[lineNo as usize] as libc::c_int != 0 && lineCount < 9i32 {
-        lineNo = ((lineNo as libc::c_int + 1i32) % 9i32) as uint8_t;
-        lineCount += 1
-    }
-    sbufWriteU8(dst, 0xci32 as uint8_t);
-    sbufWriteU8(dst, 0i32 as uint8_t);
-    sbufWriteU8(dst, lineNo);
-    sbufWriteData(dst,
-                  srxlTextBuff[lineNo as usize].as_mut_ptr() as
-                      *const libc::c_void, 13i32);
-    lineSent[lineNo as usize] = 1i32 != 0;
-    lineNo = ((lineNo as libc::c_int + 1i32) % 9i32) as uint8_t;
-    // Always send something, Always one user frame after the two mandatory frames
-    // I.e. All of the three frame prep routines QOS, RPM, TEXT should always return true
-    // too keep the "Waltz" sequence intact.
-    return 1i32 != 0;
-}
 static mut vtxDeviceType: uint8_t = 0;
 unsafe extern "C" fn collectVtxTmData(mut vtx: *mut spektrumVtx_t) {
     let mut vtxDevice: *const vtxDevice_t = vtxCommonDevice();
@@ -558,7 +479,7 @@ unsafe extern "C" fn srxlFrameVTX(mut dst: *mut sbuf_t,
     return 0i32 != 0;
 }
 #[no_mangle]
-pub static mut srxlScheduleFuncs: [srxlScheduleFnPtr; 5] =
+pub static mut srxlScheduleFuncs: [srxlScheduleFnPtr; 4] =
     unsafe {
         [Some(srxlFrameQos as
                   unsafe extern "C" fn(_: *mut sbuf_t, _: timeUs_t) -> bool),
@@ -567,8 +488,6 @@ pub static mut srxlScheduleFuncs: [srxlScheduleFnPtr; 5] =
          Some(srxlFrameFlightPackCurrent as
                   unsafe extern "C" fn(_: *mut sbuf_t, _: timeUs_t) -> bool),
          Some(srxlFrameVTX as
-                  unsafe extern "C" fn(_: *mut sbuf_t, _: timeUs_t) -> bool),
-         Some(srxlFrameText as
                   unsafe extern "C" fn(_: *mut sbuf_t, _: timeUs_t) -> bool)]
     };
 unsafe extern "C" fn processSrxl(mut currentTimeUs: timeUs_t) {
@@ -587,16 +506,7 @@ unsafe extern "C" fn processSrxl(mut currentTimeUs: timeUs_t) {
                                   usize];
         srxlScheduleUserIndex =
             ((srxlScheduleUserIndex as libc::c_int + 1i32) %
-                 (1i32 + 1i32 + 1i32)) as uint8_t;
-        // Boost CMS performance by sending nothing else but CMS Text frames when in a CMS menu.
-        // Sideeffect, all other reports are still not sent if user leaves CMS without a proper EXIT.
-        if cmsInMenu as libc::c_int != 0 &&
-               pCurrentDisplay == &mut srxlDisplayPort as *mut displayPort_t {
-            srxlFnPtr =
-                Some(srxlFrameText as
-                         unsafe extern "C" fn(_: *mut sbuf_t, _: timeUs_t)
-                             -> bool)
-        }
+                 (1i32 + 0i32 + 1i32)) as uint8_t
     }
     if srxlFnPtr.is_some() {
         srxlInitializeFrame(dst);

@@ -8,32 +8,6 @@ extern "C" {
     static i2cHardware: [i2cHardware_t; 0];
     #[no_mangle]
     static mut i2cDevice: [i2cDevice_t; 0];
-    /*
- * This file is part of Cleanflight and Betaflight.
- *
- * Cleanflight and Betaflight are free software. You can redistribute
- * this software and/or modify this software under the terms of the
- * GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option)
- * any later version.
- *
- * Cleanflight and Betaflight are distributed in the hope that they
- * will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this software.
- *
- * If not, see <http://www.gnu.org/licenses/>.
- */
-    // preprocessor is used to convert pinid to requested C data value
-// compile-time error is generated if requested pin is not available (not set in TARGET_IO_PORTx)
-// ioTag_t and IO_t is supported, but ioTag_t is preferred
-    // expand pinid to to ioTag_t
-    // TODO
-    // declare available IO pins. Available pins are specified per target
-    // unimplemented
     #[no_mangle]
     fn IOGetByTag(tag: ioTag_t) -> IO_t;
 }
@@ -110,6 +84,8 @@ pub const I2CDEV_3: I2CDevice = 2;
 pub const I2CDEV_2: I2CDevice = 1;
 pub const I2CDEV_1: I2CDevice = 0;
 pub const I2CINVALID: I2CDevice = -1;
+// Macros to convert between CLI bus number and I2CDevice.
+// I2C device address range in 7-bit address mode
 #[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct i2cConfig_s {

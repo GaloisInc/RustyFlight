@@ -27,11 +27,7 @@ extern "C" {
                       mode: portMode_e, options: portOptions_e)
      -> *mut serialPort_t;
     #[no_mangle]
-    fn crsfScheduleDeviceInfoResponse();
-    #[no_mangle]
     fn crsfScheduleMspResponse();
-    #[no_mangle]
-    fn crsfProcessDisplayPortCmd(frameStart: *mut uint8_t);
     #[no_mangle]
     fn bufferCrsfMspFrame(frameStart: *mut uint8_t, frameLength: libc::c_int)
      -> bool;
@@ -357,7 +353,6 @@ pub union crsfFrame_u {
 }
 pub type crsfFrame_t = crsfFrame_u;
 pub type crsfPayloadRcChannelsPacked_t = crsfPayloadRcChannelsPacked_s;
-// +1 for CRC at end of payload
 /*
  * CRSF protocol
  *
@@ -481,16 +476,6 @@ unsafe extern "C" fn crsfDataReceive(mut c: uint16_t,
                                 crsfScheduleMspResponse();
                             }
                         }
-                        40 => { crsfScheduleDeviceInfoResponse(); }
-                        125 => {
-                            let mut frameStart_0: *mut uint8_t =
-                                (&mut crsfFrame.frame.payload as
-                                     *mut [uint8_t; 59] as
-                                     *mut uint8_t).offset(CRSF_FRAME_ORIGIN_DEST_SIZE
-                                                              as libc::c_int
-                                                              as isize);
-                            crsfProcessDisplayPortCmd(frameStart_0);
-                        }
                         _ => { }
                     }
                 }
@@ -552,6 +537,7 @@ unsafe extern "C" fn crsfReadRawRC(mut rxRuntimeConfig:
                 crsfChannelData[chan as usize] as libc::c_float +
                 881i32 as libc::c_float) as uint16_t;
 }
+// +1 for CRC at end of payload
 #[no_mangle]
 pub unsafe extern "C" fn crsfRxWriteTelemetryData(mut data:
                                                       *const libc::c_void,

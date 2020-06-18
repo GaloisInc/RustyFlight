@@ -597,22 +597,8 @@ pub static mut pgResetTemplate_pidConfig: pidConfig_t =
         init
     };
 // The anti gravity throttle highpass filter cutoff
-// Initialized in run_static_initializers
 #[no_mangle]
-#[link_section = ".pg_registry"]
-#[used]
-pub static mut pidProfiles_Registry: pgRegistry_t =
-    pgRegistry_t{pgn: 0,
-                 size: 0,
-                 address: 0 as *const uint8_t as *mut uint8_t,
-                 copy: 0 as *const uint8_t as *mut uint8_t,
-                 ptr: 0 as *const *mut uint8_t as *mut *mut uint8_t,
-                 reset:
-                     C2RustUnnamed_3{ptr:
-                                         0 as *const libc::c_void as
-                                             *mut libc::c_void,},};
-#[no_mangle]
-pub static mut pidProfiles_SystemArray: [pidProfile_t; 3] =
+pub static mut pidProfiles_CopyArray: [pidProfile_t; 3] =
     [pidProfile_t{yaw_lowpass_hz: 0,
                   dterm_lowpass_hz: 0,
                   dterm_notch_hz: 0,
@@ -658,8 +644,22 @@ pub static mut pidProfiles_SystemArray: [pidProfile_t; 3] =
                   abs_control_gain: 0,
                   abs_control_limit: 0,
                   abs_control_error_limit: 0,}; 3];
+// Initialized in run_static_initializers
 #[no_mangle]
-pub static mut pidProfiles_CopyArray: [pidProfile_t; 3] =
+#[link_section = ".pg_registry"]
+#[used]
+pub static mut pidProfiles_Registry: pgRegistry_t =
+    pgRegistry_t{pgn: 0,
+                 size: 0,
+                 address: 0 as *const uint8_t as *mut uint8_t,
+                 copy: 0 as *const uint8_t as *mut uint8_t,
+                 ptr: 0 as *const *mut uint8_t as *mut *mut uint8_t,
+                 reset:
+                     C2RustUnnamed_3{ptr:
+                                         0 as *const libc::c_void as
+                                             *mut libc::c_void,},};
+#[no_mangle]
+pub static mut pidProfiles_SystemArray: [pidProfile_t; 3] =
     [pidProfile_t{yaw_lowpass_hz: 0,
                   dterm_lowpass_hz: 0,
                   dterm_notch_hz: 0,

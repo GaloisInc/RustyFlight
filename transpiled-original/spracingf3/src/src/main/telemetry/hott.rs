@@ -19,15 +19,22 @@ extern "C" {
     #[no_mangle]
     fn getEstimatedVario() -> int16_t;
     #[no_mangle]
-    fn getBatteryVoltage() -> uint16_t;
-    #[no_mangle]
-    fn getBatteryState() -> batteryState_e;
+    fn getMAhDrawn() -> int32_t;
     #[no_mangle]
     fn getAmperage() -> int32_t;
     #[no_mangle]
-    fn getMAhDrawn() -> int32_t;
+    fn getBatteryState() -> batteryState_e;
     #[no_mangle]
-    static mut telemetryConfig_System: telemetryConfig_t;
+    fn getBatteryVoltage() -> uint16_t;
+    #[no_mangle]
+    fn findSerialPortConfig(function: serialPortFunction_e)
+     -> *mut serialPortConfig_t;
+    #[no_mangle]
+    fn determinePortSharing(portConfig_0: *const serialPortConfig_t,
+                            function: serialPortFunction_e) -> portSharing_e;
+    //
+// runtime
+//
     #[no_mangle]
     fn openSerialPort(identifier: serialPortIdentifier_e,
                       function: serialPortFunction_e,
@@ -38,11 +45,7 @@ extern "C" {
     #[no_mangle]
     fn closeSerialPort(serialPort: *mut serialPort_t);
     #[no_mangle]
-    fn findSerialPortConfig(function: serialPortFunction_e)
-     -> *mut serialPortConfig_t;
-    #[no_mangle]
-    fn determinePortSharing(portConfig_0: *const serialPortConfig_t,
-                            function: serialPortFunction_e) -> portSharing_e;
+    static mut telemetryConfig_System: telemetryConfig_t;
     #[no_mangle]
     fn telemetryDetermineEnabledState(portSharing: portSharing_e) -> bool;
 }

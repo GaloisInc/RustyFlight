@@ -19,6 +19,13 @@ extern "C" {
     fn systemResetToBootloader();
     #[no_mangle]
     fn cliEnter(serialPort: *mut serialPort_s);
+    // which byte is used to reboot. Default 'R', could be changed carefully to something else.
+    //
+// configuration
+//
+    #[no_mangle]
+    fn findNextSerialPortConfig(function: serialPortFunction_e)
+     -> *mut serialPortConfig_t;
     #[no_mangle]
     fn serialRxBytesWaiting(instance: *const serialPort_t) -> uint32_t;
     #[no_mangle]
@@ -40,9 +47,6 @@ extern "C" {
     static mut serialConfig_System: serialConfig_t;
     #[no_mangle]
     fn findSerialPortConfig(function: serialPortFunction_e)
-     -> *mut serialPortConfig_t;
-    #[no_mangle]
-    fn findNextSerialPortConfig(function: serialPortFunction_e)
      -> *mut serialPortConfig_t;
     #[no_mangle]
     fn isSerialPortShared(portConfig: *const serialPortConfig_t,

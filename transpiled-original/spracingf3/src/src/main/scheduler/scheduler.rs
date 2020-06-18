@@ -8,7 +8,7 @@ extern "C" {
     fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong)
      -> *mut libc::c_void;
     #[no_mangle]
-    static mut cfTasks: [cfTask_t; 25];
+    static mut cfTasks: [cfTask_t; 24];
     #[no_mangle]
     fn micros() -> timeUs_t;
 }
@@ -20,7 +20,6 @@ pub type int32_t = __int32_t;
 pub type uint8_t = __uint8_t;
 pub type uint16_t = __uint16_t;
 pub type uint32_t = __uint32_t;
-pub type timeDelta_t = int32_t;
 /*
  * This file is part of Cleanflight and Betaflight.
  *
@@ -41,7 +40,7 @@ pub type timeDelta_t = int32_t;
  * If not, see <http://www.gnu.org/licenses/>.
  */
 // time difference, 32 bits always sufficient
-// millisecond time
+pub type timeDelta_t = int32_t;
 // microsecond time
 pub type timeUs_t = uint32_t;
 pub type C2RustUnnamed = libc::c_uint;
@@ -73,14 +72,13 @@ pub struct cfTaskInfo_t {
     pub averageExecutionTime: timeUs_t,
 }
 pub type cfTaskId_e = libc::c_uint;
-pub const TASK_SELF: cfTaskId_e = 26;
-pub const TASK_NONE: cfTaskId_e = 25;
-pub const TASK_COUNT: cfTaskId_e = 25;
-pub const TASK_PINIOBOX: cfTaskId_e = 24;
-pub const TASK_RCDEVICE: cfTaskId_e = 23;
-pub const TASK_CAMCTRL: cfTaskId_e = 22;
-pub const TASK_VTXCTRL: cfTaskId_e = 21;
-pub const TASK_CMS: cfTaskId_e = 20;
+pub const TASK_SELF: cfTaskId_e = 25;
+pub const TASK_NONE: cfTaskId_e = 24;
+pub const TASK_COUNT: cfTaskId_e = 24;
+pub const TASK_PINIOBOX: cfTaskId_e = 23;
+pub const TASK_RCDEVICE: cfTaskId_e = 22;
+pub const TASK_CAMCTRL: cfTaskId_e = 21;
+pub const TASK_VTXCTRL: cfTaskId_e = 20;
 pub const TASK_ESC_SENSOR: cfTaskId_e = 19;
 pub const TASK_OSD: cfTaskId_e = 18;
 pub const TASK_LEDSTRIP: cfTaskId_e = 17;
@@ -153,13 +151,13 @@ pub static mut averageSystemLoadPercent: uint16_t = 0i32 as uint16_t;
 static mut taskQueuePos: libc::c_int = 0i32;
 static mut taskQueueSize: libc::c_int = 0i32;
 // No need for a linked list for the queue, since items are only inserted at startup
-static mut taskQueueArray: [*mut cfTask_t; 26] =
-    [0 as *const cfTask_t as *mut cfTask_t; 26];
+static mut taskQueueArray: [*mut cfTask_t; 25] =
+    [0 as *const cfTask_t as *mut cfTask_t; 25];
 // extra item for NULL pointer at end of queue
 #[no_mangle]
 pub unsafe extern "C" fn queueClear() {
     memset(taskQueueArray.as_mut_ptr() as *mut libc::c_void, 0i32,
-           ::core::mem::size_of::<[*mut cfTask_t; 26]>() as libc::c_ulong);
+           ::core::mem::size_of::<[*mut cfTask_t; 25]>() as libc::c_ulong);
     taskQueuePos = 0i32;
     taskQueueSize = 0i32;
 }

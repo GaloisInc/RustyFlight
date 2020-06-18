@@ -145,6 +145,36 @@ pub union C2RustUnnamed_0 {
                                           _: libc::c_int) -> ()>,
 }
 pub type pgRegistry_t = pgRegistry_s;
+/* base */
+/* size */
+// The parameter group number, the top 4 bits are reserved for version
+// Size of the group in RAM, the top 4 bits are reserved for flags
+// Address of the group in RAM.
+// Address of the copy in RAM.
+// The pointer to update after loading the record into ram.
+// Pointer to init template
+// Pointer to pgResetFunc
+/*
+ * This file is part of Cleanflight and Betaflight.
+ *
+ * Cleanflight and Betaflight are free software. You can redistribute
+ * this software and/or modify this software under the terms of the
+ * GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * Cleanflight and Betaflight are distributed in the hope that they
+ * will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this software.
+ *
+ * If not, see <http://www.gnu.org/licenses/>.
+ */
+// IO pin identification
+// make sure that ioTag_t can't be assigned into IO_t without warning
 pub type ioTag_t = uint8_t;
 #[derive ( Copy, Clone )]
 #[repr(C)]
@@ -180,15 +210,6 @@ pub struct rxConfig_s {
     pub rc_smoothing_input_type: uint8_t,
     pub rc_smoothing_derivative_type: uint8_t,
 }
-/* base */
-/* size */
-// The parameter group number, the top 4 bits are reserved for version
-// Size of the group in RAM, the top 4 bits are reserved for flags
-// Address of the group in RAM.
-// Address of the copy in RAM.
-// The pointer to update after loading the record into ram.
-// Pointer to init template
-// Pointer to pgResetFunc
 /*
  * This file is part of Cleanflight and Betaflight.
  *
@@ -507,20 +528,6 @@ unsafe extern "C" fn rxConfig() -> *const rxConfig_t {
  * If not, see <http://www.gnu.org/licenses/>.
  */
 #[no_mangle]
-pub static mut telemetryConfig_System: telemetryConfig_t =
-    telemetryConfig_t{gpsNoFixLatitude: 0,
-                      gpsNoFixLongitude: 0,
-                      telemetry_inverted: 0,
-                      halfDuplex: 0,
-                      frsky_coordinate_format: FRSKY_FORMAT_DMS,
-                      frsky_unit: FRSKY_UNIT_METRICS,
-                      frsky_vfas_precision: 0,
-                      hottAlarmSoundInterval: 0,
-                      pidValuesAsTelemetry: 0,
-                      report_cell_voltage: 0,
-                      flysky_sensors: [0; 15],
-                      smartport_use_extra_sensors: 0,};
-#[no_mangle]
 #[link_section = ".pg_registry"]
 #[used]
 pub static mut telemetryConfig_Registry: pgRegistry_t =
@@ -554,6 +561,20 @@ pub static mut telemetryConfig_Registry: pgRegistry_t =
             init
         }
     };
+#[no_mangle]
+pub static mut telemetryConfig_System: telemetryConfig_t =
+    telemetryConfig_t{gpsNoFixLatitude: 0,
+                      gpsNoFixLongitude: 0,
+                      telemetry_inverted: 0,
+                      halfDuplex: 0,
+                      frsky_coordinate_format: FRSKY_FORMAT_DMS,
+                      frsky_unit: FRSKY_UNIT_METRICS,
+                      frsky_vfas_precision: 0,
+                      hottAlarmSoundInterval: 0,
+                      pidValuesAsTelemetry: 0,
+                      report_cell_voltage: 0,
+                      flysky_sensors: [0; 15],
+                      smartport_use_extra_sensors: 0,};
 #[no_mangle]
 pub static mut telemetryConfig_Copy: telemetryConfig_t =
     telemetryConfig_t{gpsNoFixLatitude: 0,
@@ -595,6 +616,31 @@ pub static mut pgResetTemplate_telemetryConfig: telemetryConfig_t =
                               smartport_use_extra_sensors: 0i32 as uint8_t,};
         init
     };
+/*
+ * This file is part of Cleanflight and Betaflight.
+ *
+ * Cleanflight and Betaflight are free software. You can redistribute
+ * this software and/or modify this software under the terms of the
+ * GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * Cleanflight and Betaflight are distributed in the hope that they
+ * will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this software.
+ *
+ * If not, see <http://www.gnu.org/licenses/>.
+ */
+/*
+ * telemetry.h
+ *
+ *  Created on: 6 Apr 2014
+ *      Author: Hydra
+ */
 #[no_mangle]
 pub unsafe extern "C" fn telemetryInit() {
     initFrSkyHubTelemetry();

@@ -33,6 +33,25 @@ extern "C" {
     fn sbufWriteU8(dst: *mut sbuf_t, val: uint8_t);
     #[no_mangle]
     fn sbufWriteString(dst: *mut sbuf_t, string: *const libc::c_char);
+    /*
+ * This file is part of Cleanflight and Betaflight.
+ *
+ * Cleanflight and Betaflight are free software. You can redistribute
+ * this software and/or modify this software under the terms of the
+ * GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * Cleanflight and Betaflight are distributed in the hope that they
+ * will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this software.
+ *
+ * If not, see <http://www.gnu.org/licenses/>.
+ */
     #[no_mangle]
     fn feature(mask: uint32_t) -> bool;
     #[no_mangle]
@@ -123,6 +142,28 @@ pub const BARO_MODE: C2RustUnnamed_1 = 8;
 pub const MAG_MODE: C2RustUnnamed_1 = 4;
 pub const HORIZON_MODE: C2RustUnnamed_1 = 2;
 pub const ANGLE_MODE: C2RustUnnamed_1 = 1;
+// data pointer must be first (sbuf_t* is equivalent to uint8_t **)
+/*
+ * This file is part of Cleanflight and Betaflight.
+ *
+ * Cleanflight and Betaflight are free software. You can redistribute
+ * this software and/or modify this software under the terms of the
+ * GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * Cleanflight and Betaflight are distributed in the hope that they
+ * will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this software.
+ *
+ * If not, see <http://www.gnu.org/licenses/>.
+ */
+// Digital protocol has fixed values
+// Note: this is called MultiType/MULTITYPE_* in baseflight.
 pub type mixerMode = libc::c_uint;
 pub const MIXER_QUADX_1234: mixerMode = 26;
 pub const MIXER_CUSTOM_TRI: mixerMode = 25;
@@ -130,11 +171,13 @@ pub const MIXER_CUSTOM_AIRPLANE: mixerMode = 24;
 pub const MIXER_CUSTOM: mixerMode = 23;
 pub const MIXER_ATAIL4: mixerMode = 22;
 pub const MIXER_SINGLECOPTER: mixerMode = 21;
+// PPM -> servo relay
 pub const MIXER_DUALCOPTER: mixerMode = 20;
 pub const MIXER_RX_TO_SERVO: mixerMode = 19;
 pub const MIXER_HEX6H: mixerMode = 18;
 pub const MIXER_VTAIL4: mixerMode = 17;
 pub const MIXER_HELI_90_DEG: mixerMode = 16;
+// airplane / singlecopter / dualcopter (not yet properly supported)
 pub const MIXER_HELI_120_CCPM: mixerMode = 15;
 pub const MIXER_AIRPLANE: mixerMode = 14;
 pub const MIXER_OCTOFLATX: mixerMode = 13;
@@ -215,7 +258,6 @@ pub struct box_s {
     pub boxName: *const libc::c_char,
     pub permanentId: uint8_t,
 }
-// data pointer must be first (sbuf_t* is equivalent to uint8_t **)
 /*
  * This file is part of Cleanflight and Betaflight.
  *

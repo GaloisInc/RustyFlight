@@ -47,3 +47,4 @@ RUN rustup component add rustfmt
 RUN rustup target install thumbv7m-none-eabi --toolchain stable
 RUN rustup target install thumbv7m-none-eabi --toolchain ${RUST_NIGHTLY_TOOLCHAIN}
 RUN cargo +${RUST_NIGHTLY_TOOLCHAIN} install c2rust
+RUN rustup default ${RUST_NIGHTLY_TOOLCHAIN}

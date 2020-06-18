@@ -35,9 +35,6 @@ extern "C" {
     fn sbufPtr(buf: *mut sbuf_t) -> *mut uint8_t;
     #[no_mangle]
     fn sbufSwitchToReader(buf: *mut sbuf_t, base: *mut uint8_t);
-    // Device management
-    #[no_mangle]
-    fn cmsDisplayPortRegister(pDisplay: *mut displayPort_t) -> bool;
     #[no_mangle]
     static mut systemConfig_System: systemConfig_t;
     #[no_mangle]
@@ -51,20 +48,6 @@ extern "C" {
     #[no_mangle]
     static mut attitude: attitudeEulerAngles_t;
     #[no_mangle]
-    fn displayPortCrsfInit() -> *mut displayPort_s;
-    #[no_mangle]
-    fn crsfDisplayPortScreen() -> *mut crsfDisplayPortScreen_t;
-    #[no_mangle]
-    fn crsfDisplayPortMenuOpen();
-    #[no_mangle]
-    fn crsfDisplayPortMenuExit();
-    #[no_mangle]
-    fn crsfDisplayPortRefresh();
-    #[no_mangle]
-    fn crsfDisplayPortNextRow() -> libc::c_int;
-    #[no_mangle]
-    fn crsfDisplayPortSetDimensions(rows: uint8_t, cols: uint8_t);
-    #[no_mangle]
     static mut gpsSol: gpsSolutionData_t;
     #[no_mangle]
     fn crsfRxWriteTelemetryData(data: *const libc::c_void, len: libc::c_int);
@@ -73,6 +56,10 @@ extern "C" {
     #[no_mangle]
     fn crsfRxIsActive() -> bool;
     #[no_mangle]
+    fn getMAhDrawn() -> int32_t;
+    #[no_mangle]
+    fn getAmperage() -> int32_t;
+    #[no_mangle]
     fn calculateBatteryPercentageRemaining() -> uint8_t;
     #[no_mangle]
     fn isBatteryVoltageConfigured() -> bool;
@@ -80,10 +67,6 @@ extern "C" {
     fn getBatteryVoltage() -> uint16_t;
     #[no_mangle]
     fn isAmperageConfigured() -> bool;
-    #[no_mangle]
-    fn getAmperage() -> int32_t;
-    #[no_mangle]
-    fn getMAhDrawn() -> int32_t;
     #[no_mangle]
     fn handleMspFrame(frameStart: *mut uint8_t, frameLength: libc::c_int)
      -> bool;
@@ -282,69 +265,45 @@ pub const CRSF_FRAMETYPE_BATTERY_SENSOR: crsfFrameType_e = 8;
 pub const CRSF_FRAMETYPE_GPS: crsfFrameType_e = 2;
 pub type C2RustUnnamed_3 = libc::c_uint;
 // in seconds
-// client request to poll/refresh cms menu
-// client request to close cms menu
-pub const CRSF_DISPLAYPORT_SUBCMD_POLL: C2RustUnnamed_3 = 5;
-// client request to open cms menu
-pub const CRSF_DISPLAYPORT_SUBCMD_CLOSE: C2RustUnnamed_3 = 4;
-// clear client screen
-pub const CRSF_DISPLAYPORT_SUBCMD_OPEN: C2RustUnnamed_3 = 3;
-// transmit displayport buffer to remote
-pub const CRSF_DISPLAYPORT_SUBCMD_CLEAR: C2RustUnnamed_3 = 2;
-pub const CRSF_DISPLAYPORT_SUBCMD_UPDATE: C2RustUnnamed_3 = 1;
-pub type C2RustUnnamed_4 = libc::c_uint;
-pub const CRSF_DISPLAYPORT_OPEN_COLS_OFFSET: C2RustUnnamed_4 = 2;
-pub const CRSF_DISPLAYPORT_OPEN_ROWS_OFFSET: C2RustUnnamed_4 = 1;
-pub type C2RustUnnamed_5 = libc::c_uint;
 // 11 bits per channel * 16 channels = 22 bytes.
-pub const CRSF_FRAME_ATTITUDE_PAYLOAD_SIZE: C2RustUnnamed_5 = 6;
-pub const CRSF_FRAME_RC_CHANNELS_PAYLOAD_SIZE: C2RustUnnamed_5 = 22;
-pub const CRSF_FRAME_LINK_STATISTICS_PAYLOAD_SIZE: C2RustUnnamed_5 = 10;
-pub const CRSF_FRAME_BATTERY_SENSOR_PAYLOAD_SIZE: C2RustUnnamed_5 = 8;
-pub const CRSF_FRAME_GPS_PAYLOAD_SIZE: C2RustUnnamed_5 = 15;
-pub type C2RustUnnamed_6 = libc::c_uint;
+pub const CRSF_FRAME_ATTITUDE_PAYLOAD_SIZE: C2RustUnnamed_3 = 6;
+pub const CRSF_FRAME_RC_CHANNELS_PAYLOAD_SIZE: C2RustUnnamed_3 = 22;
+pub const CRSF_FRAME_LINK_STATISTICS_PAYLOAD_SIZE: C2RustUnnamed_3 = 10;
+pub const CRSF_FRAME_BATTERY_SENSOR_PAYLOAD_SIZE: C2RustUnnamed_3 = 8;
+pub const CRSF_FRAME_GPS_PAYLOAD_SIZE: C2RustUnnamed_3 = 15;
+pub type C2RustUnnamed_4 = libc::c_uint;
 // combined length of all fields except payload
 // length of Extended Dest/Origin, TYPE and CRC fields combined
-pub const CRSF_FRAME_LENGTH_NON_PAYLOAD: C2RustUnnamed_6 = 4;
+pub const CRSF_FRAME_LENGTH_NON_PAYLOAD: C2RustUnnamed_4 = 4;
 // length of TYPE and CRC fields combined
-pub const CRSF_FRAME_LENGTH_EXT_TYPE_CRC: C2RustUnnamed_6 = 4;
+pub const CRSF_FRAME_LENGTH_EXT_TYPE_CRC: C2RustUnnamed_4 = 4;
 // length of CRC field
-pub const CRSF_FRAME_LENGTH_TYPE_CRC: C2RustUnnamed_6 = 2;
+pub const CRSF_FRAME_LENGTH_TYPE_CRC: C2RustUnnamed_4 = 2;
 // length of TYPE field
-pub const CRSF_FRAME_LENGTH_CRC: C2RustUnnamed_6 = 1;
+pub const CRSF_FRAME_LENGTH_CRC: C2RustUnnamed_4 = 1;
 // length of FRAMELENGTH field
-pub const CRSF_FRAME_LENGTH_TYPE: C2RustUnnamed_6 = 1;
+pub const CRSF_FRAME_LENGTH_TYPE: C2RustUnnamed_4 = 1;
 // length of ADDRESS field
-pub const CRSF_FRAME_LENGTH_FRAMELENGTH: C2RustUnnamed_6 = 1;
-pub const CRSF_FRAME_LENGTH_ADDRESS: C2RustUnnamed_6 = 1;
-pub type C2RustUnnamed_7 = libc::c_uint;
-pub const CRSF_FRAME_ORIGIN_DEST_SIZE: C2RustUnnamed_7 = 2;
-pub const CRSF_FRAME_RX_MSP_FRAME_SIZE: C2RustUnnamed_7 = 8;
-pub const CRSF_FRAME_TX_MSP_FRAME_SIZE: C2RustUnnamed_7 = 58;
-pub type C2RustUnnamed_8 = libc::c_uint;
-pub const CRSF_ADDRESS_CRSF_TRANSMITTER: C2RustUnnamed_8 = 238;
-pub const CRSF_ADDRESS_CRSF_RECEIVER: C2RustUnnamed_8 = 236;
-pub const CRSF_ADDRESS_RADIO_TRANSMITTER: C2RustUnnamed_8 = 234;
-pub const CRSF_ADDRESS_RACE_TAG: C2RustUnnamed_8 = 204;
-pub const CRSF_ADDRESS_RESERVED2: C2RustUnnamed_8 = 202;
-pub const CRSF_ADDRESS_FLIGHT_CONTROLLER: C2RustUnnamed_8 = 200;
-pub const CRSF_ADDRESS_TBS_BLACKBOX: C2RustUnnamed_8 = 196;
-pub const CRSF_ADDRESS_GPS: C2RustUnnamed_8 = 194;
-pub const CRSF_ADDRESS_CURRENT_SENSOR: C2RustUnnamed_8 = 192;
-pub const CRSF_ADDRESS_RESERVED1: C2RustUnnamed_8 = 138;
-pub const CRSF_ADDRESS_TBS_CORE_PNP_PRO: C2RustUnnamed_8 = 128;
-pub const CRSF_ADDRESS_USB: C2RustUnnamed_8 = 16;
-pub const CRSF_ADDRESS_BROADCAST: C2RustUnnamed_8 = 0;
-#[derive ( Copy, Clone )]
-#[repr(C)]
-pub struct crsfDisplayPortScreen_s {
-    pub buffer: [libc::c_char; 288],
-    pub pendingTransport: [bool; 9],
-    pub rows: uint8_t,
-    pub cols: uint8_t,
-    pub reset: bool,
-}
-pub type crsfDisplayPortScreen_t = crsfDisplayPortScreen_s;
+pub const CRSF_FRAME_LENGTH_FRAMELENGTH: C2RustUnnamed_4 = 1;
+pub const CRSF_FRAME_LENGTH_ADDRESS: C2RustUnnamed_4 = 1;
+pub type C2RustUnnamed_5 = libc::c_uint;
+pub const CRSF_FRAME_ORIGIN_DEST_SIZE: C2RustUnnamed_5 = 2;
+pub const CRSF_FRAME_RX_MSP_FRAME_SIZE: C2RustUnnamed_5 = 8;
+pub const CRSF_FRAME_TX_MSP_FRAME_SIZE: C2RustUnnamed_5 = 58;
+pub type C2RustUnnamed_6 = libc::c_uint;
+pub const CRSF_ADDRESS_CRSF_TRANSMITTER: C2RustUnnamed_6 = 238;
+pub const CRSF_ADDRESS_CRSF_RECEIVER: C2RustUnnamed_6 = 236;
+pub const CRSF_ADDRESS_RADIO_TRANSMITTER: C2RustUnnamed_6 = 234;
+pub const CRSF_ADDRESS_RACE_TAG: C2RustUnnamed_6 = 204;
+pub const CRSF_ADDRESS_RESERVED2: C2RustUnnamed_6 = 202;
+pub const CRSF_ADDRESS_FLIGHT_CONTROLLER: C2RustUnnamed_6 = 200;
+pub const CRSF_ADDRESS_TBS_BLACKBOX: C2RustUnnamed_6 = 196;
+pub const CRSF_ADDRESS_GPS: C2RustUnnamed_6 = 194;
+pub const CRSF_ADDRESS_CURRENT_SENSOR: C2RustUnnamed_6 = 192;
+pub const CRSF_ADDRESS_RESERVED1: C2RustUnnamed_6 = 138;
+pub const CRSF_ADDRESS_TBS_CORE_PNP_PRO: C2RustUnnamed_6 = 128;
+pub const CRSF_ADDRESS_USB: C2RustUnnamed_6 = 16;
+pub const CRSF_ADDRESS_BROADCAST: C2RustUnnamed_6 = 0;
 #[derive ( Copy, Clone )]
 #[repr(C)]
 pub struct gpsLocation_s {
@@ -364,19 +323,19 @@ pub struct gpsSolutionData_s {
     pub numSat: uint8_t,
 }
 pub type gpsSolutionData_t = gpsSolutionData_s;
-pub type C2RustUnnamed_9 = libc::c_uint;
-pub const SENSOR_GPSMAG: C2RustUnnamed_9 = 64;
-pub const SENSOR_GPS: C2RustUnnamed_9 = 32;
-pub const SENSOR_RANGEFINDER: C2RustUnnamed_9 = 16;
-pub const SENSOR_SONAR: C2RustUnnamed_9 = 16;
-pub const SENSOR_MAG: C2RustUnnamed_9 = 8;
-pub const SENSOR_BARO: C2RustUnnamed_9 = 4;
-pub const SENSOR_ACC: C2RustUnnamed_9 = 2;
-pub const SENSOR_GYRO: C2RustUnnamed_9 = 1;
-pub const CRSF_FRAME_GPS_INDEX: C2RustUnnamed_10 = 3;
-pub const CRSF_FRAME_FLIGHT_MODE_INDEX: C2RustUnnamed_10 = 2;
-pub const CRSF_FRAME_BATTERY_SENSOR_INDEX: C2RustUnnamed_10 = 1;
-pub const CRSF_FRAME_ATTITUDE_INDEX: C2RustUnnamed_10 = 0;
+pub type C2RustUnnamed_7 = libc::c_uint;
+pub const SENSOR_GPSMAG: C2RustUnnamed_7 = 64;
+pub const SENSOR_GPS: C2RustUnnamed_7 = 32;
+pub const SENSOR_RANGEFINDER: C2RustUnnamed_7 = 16;
+pub const SENSOR_SONAR: C2RustUnnamed_7 = 16;
+pub const SENSOR_MAG: C2RustUnnamed_7 = 8;
+pub const SENSOR_BARO: C2RustUnnamed_7 = 4;
+pub const SENSOR_ACC: C2RustUnnamed_7 = 2;
+pub const SENSOR_GYRO: C2RustUnnamed_7 = 1;
+pub const CRSF_FRAME_GPS_INDEX: C2RustUnnamed_8 = 3;
+pub const CRSF_FRAME_FLIGHT_MODE_INDEX: C2RustUnnamed_8 = 2;
+pub const CRSF_FRAME_BATTERY_SENSOR_INDEX: C2RustUnnamed_8 = 1;
+pub const CRSF_FRAME_ATTITUDE_INDEX: C2RustUnnamed_8 = 0;
 // latitude * 1e+7
 // longitude * 1e+7
 // altitude in 0.01m
@@ -412,9 +371,9 @@ pub struct mspBuffer_s {
     pub bytes: [uint8_t; 96],
     pub len: libc::c_int,
 }
-pub type C2RustUnnamed_10 = libc::c_uint;
-pub const CRSF_SCHEDULE_COUNT_MAX: C2RustUnnamed_10 = 4;
-pub const CRSF_FRAME_START_INDEX: C2RustUnnamed_10 = 0;
+pub type C2RustUnnamed_8 = libc::c_uint;
+pub const CRSF_SCHEDULE_COUNT_MAX: C2RustUnnamed_8 = 4;
+pub const CRSF_FRAME_START_INDEX: C2RustUnnamed_8 = 0;
 // set BASEPRI_MAX, with global memory barrier, returns true
 #[inline]
 unsafe extern "C" fn __basepriSetMemRetVal(mut prio: uint8_t) -> uint8_t {
@@ -471,8 +430,7 @@ pub unsafe extern "C" fn handleCrsfMspFrameBuffer(mut payloadSize: uint8_t,
                           mspFrameLength) {
             requestHandled =
                 (requestHandled as libc::c_int |
-                     sendMspReply(payloadSize, responseFn) as libc::c_int) as
-                    bool
+                     sendMspReply(payloadSize, responseFn) as libc::c_int) != 0
         }
         pos += 1i32 + mspFrameLength;
         let mut __basepri_save: uint8_t = __get_BASEPRI() as uint8_t;
@@ -712,59 +670,6 @@ pub unsafe extern "C" fn crsfFrameDeviceInfo(mut dst: *mut sbuf_t) {
         sbufPtr(dst).wrapping_offset_from(lengthPtr) as libc::c_long as
             uint8_t;
 }
-unsafe extern "C" fn crsfFrameDisplayPortRow(mut dst: *mut sbuf_t,
-                                             mut row: uint8_t) {
-    let mut lengthPtr: *mut uint8_t = sbufPtr(dst);
-    let mut buflen: uint8_t = (*crsfDisplayPortScreen()).cols;
-    let mut rowStart: *mut libc::c_char =
-        &mut *(*(crsfDisplayPortScreen as
-                     unsafe extern "C" fn()
-                         ->
-                             *mut crsfDisplayPortScreen_t)()).buffer.as_mut_ptr().offset((row
-                                                                                              as
-                                                                                              libc::c_int
-                                                                                              *
-                                                                                              buflen
-                                                                                                  as
-                                                                                                  libc::c_int)
-                                                                                             as
-                                                                                             isize)
-            as *mut libc::c_char;
-    let frameLength: uint8_t =
-        (CRSF_FRAME_LENGTH_EXT_TYPE_CRC as libc::c_int +
-             buflen as libc::c_int) as uint8_t;
-    sbufWriteU8(dst, frameLength);
-    sbufWriteU8(dst,
-                CRSF_FRAMETYPE_DISPLAYPORT_CMD as libc::c_int as uint8_t);
-    sbufWriteU8(dst,
-                CRSF_ADDRESS_RADIO_TRANSMITTER as libc::c_int as uint8_t);
-    sbufWriteU8(dst,
-                CRSF_ADDRESS_FLIGHT_CONTROLLER as libc::c_int as uint8_t);
-    sbufWriteU8(dst,
-                CRSF_DISPLAYPORT_SUBCMD_UPDATE as libc::c_int as uint8_t);
-    sbufWriteU8(dst, row);
-    sbufWriteData(dst, rowStart as *const libc::c_void,
-                  buflen as libc::c_int);
-    *lengthPtr =
-        sbufPtr(dst).wrapping_offset_from(lengthPtr) as libc::c_long as
-            uint8_t;
-}
-unsafe extern "C" fn crsfFrameDisplayPortClear(mut dst: *mut sbuf_t) {
-    let mut lengthPtr: *mut uint8_t = sbufPtr(dst);
-    sbufWriteU8(dst,
-                (32i32 + CRSF_FRAME_LENGTH_EXT_TYPE_CRC as libc::c_int) as
-                    uint8_t);
-    sbufWriteU8(dst,
-                CRSF_FRAMETYPE_DISPLAYPORT_CMD as libc::c_int as uint8_t);
-    sbufWriteU8(dst,
-                CRSF_ADDRESS_RADIO_TRANSMITTER as libc::c_int as uint8_t);
-    sbufWriteU8(dst,
-                CRSF_ADDRESS_FLIGHT_CONTROLLER as libc::c_int as uint8_t);
-    sbufWriteU8(dst, CRSF_DISPLAYPORT_SUBCMD_CLEAR as libc::c_int as uint8_t);
-    *lengthPtr =
-        sbufPtr(dst).wrapping_offset_from(lengthPtr) as libc::c_long as
-            uint8_t;
-}
 static mut crsfScheduleCount: uint8_t = 0;
 static mut crsfSchedule: [uint8_t; 4] = [0; 4];
 static mut mspReplyPending: bool = false;
@@ -849,7 +754,6 @@ pub unsafe extern "C" fn initCrsfTelemetry() {
     crsfTelemetryEnabled = crsfRxIsActive();
     deviceInfoReplyPending = 0i32 != 0;
     mspReplyPending = 0i32 != 0;
-    cmsDisplayPortRegister(displayPortCrsfInit());
     let mut index: libc::c_int = 0i32;
     if sensors(SENSOR_ACC as libc::c_int as uint32_t) {
         let fresh1 = index;
@@ -880,28 +784,6 @@ pub unsafe extern "C" fn initCrsfTelemetry() {
 #[no_mangle]
 pub unsafe extern "C" fn checkCrsfTelemetryState() -> bool {
     return crsfTelemetryEnabled;
-}
-#[no_mangle]
-pub unsafe extern "C" fn crsfProcessDisplayPortCmd(mut frameStart:
-                                                       *mut uint8_t) {
-    let mut cmd: uint8_t = *frameStart;
-    let mut rows: uint8_t = 0;
-    let mut cols: uint8_t = 0;
-    match cmd as libc::c_int {
-        3 => {
-            rows =
-                *frameStart.offset(CRSF_DISPLAYPORT_OPEN_ROWS_OFFSET as
-                                       libc::c_int as isize);
-            cols =
-                *frameStart.offset(CRSF_DISPLAYPORT_OPEN_COLS_OFFSET as
-                                       libc::c_int as isize);
-            crsfDisplayPortSetDimensions(rows, cols);
-            crsfDisplayPortMenuOpen();
-        }
-        4 => { crsfDisplayPortMenuExit(); }
-        5 => { crsfDisplayPortRefresh(); }
-        _ => { }
-    };
 }
 /*
  * Called periodically by the scheduler
@@ -936,30 +818,6 @@ pub unsafe extern "C" fn handleCrsfTelemetry(mut currentTimeUs: timeUs_t) {
         crsfFrameDeviceInfo(dst);
         crsfFinalize(dst);
         deviceInfoReplyPending = 0i32 != 0;
-        crsfLastCycleTime = currentTimeUs;
-        return
-    }
-    if (*crsfDisplayPortScreen()).reset {
-        (*crsfDisplayPortScreen()).reset = 0i32 != 0;
-        let mut crsfDisplayPortBuf: sbuf_t =
-            sbuf_t{ptr: 0 as *mut uint8_t, end: 0 as *mut uint8_t,};
-        let mut dst_0: *mut sbuf_t = &mut crsfDisplayPortBuf;
-        crsfInitializeFrame(dst_0);
-        crsfFrameDisplayPortClear(dst_0);
-        crsfFinalize(dst_0);
-        crsfLastCycleTime = currentTimeUs;
-        return
-    }
-    let nextRow: libc::c_int = crsfDisplayPortNextRow();
-    if nextRow >= 0i32 {
-        let mut crsfDisplayPortBuf_0: sbuf_t =
-            sbuf_t{ptr: 0 as *mut uint8_t, end: 0 as *mut uint8_t,};
-        let mut dst_1: *mut sbuf_t = &mut crsfDisplayPortBuf_0;
-        crsfInitializeFrame(dst_1);
-        crsfFrameDisplayPortRow(dst_1, nextRow as uint8_t);
-        crsfFinalize(dst_1);
-        (*crsfDisplayPortScreen()).pendingTransport[nextRow as usize] =
-            0i32 != 0;
         crsfLastCycleTime = currentTimeUs;
         return
     }
